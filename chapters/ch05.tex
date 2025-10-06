@@ -1,0 +1,24 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Akar Primitif, Residu Kuadratik, dan Logaritma Diskrit}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa memahami akar primitif di \(\Zp\), residu kuadratik, simbol Legendre, dan masalah logaritma diskrit beserta implikasi keamanannya.
+
+\section{Akar Primitif di \(\Zp\)}
+Untuk prima \(p\), himpunan \(\Zp^\times\) membentuk grup abelian siklik orde \(p-1\). Sebuah elemen \(g\) disebut \emph{akar primitif} jika \(\langle g\rangle = \Zp^\times\). Keberadaan akar primitif di \(\Zp\) terjamin; perhitungan generator penting untuk kriptografi berbasis grup siklik \citep{hoffstein}.
+
+\section{Residu Kuadratik dan Simbol Legendre}
+Bilangan \(a\in\Zp\) disebut \emph{residu kuadratik} jika ada \(x\) sehingga \(x^2\equiv a\pmod p\). Simbol Legendre didefinisikan \(\left(\tfrac{a}{p}\right)\in\{-1,0,1\}\) dengan nilai 1 jika residu kuadratik non-nol, 0 jika \(p\mid a\), dan -1 selain itu. Kriteria Euler: \(\left(\tfrac{a}{p}\right)\equiv a^{(p-1)/2}\pmod p\) \citep{hoffstein}.
+
+\section{Masalah Logaritma Diskrit}
+Diberi \(g\) generator dan \(h\in\langle g\rangle\), masalah mencari \(x\) dengan \(g^x\equiv h\) disebut \emph{logaritma diskrit}. Diyakini sulit pada banyak grup, dan menjadi dasar skema Diffie--Hellman dan ElGamal \citep{diffiehellman,hoffstein}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Tentukan apakah \(3\) adalah akar primitif modulo \(p=7\). Jika tidak, temukan satu generator.
+  \item Hitung \(\left(\tfrac{5}{11}\right)\) menggunakan Kriteria Euler.
+  \item Diberi \(g=2\) modulo \(p=29\) dan \(h=18\), carilah \(x\) sehingga \(2^x\equiv 18\pmod{29}\) dengan pencarian kecil (baby-step).
+\end{enumerate}
+
+\end{document}

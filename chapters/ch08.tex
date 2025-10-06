@@ -1,0 +1,27 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{LFSR, Vigen\`{e}re, SEAL, RC4}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa memahami LFSR, sandi Vigen\`{e}re, dan sandi alir modern SEAL dan RC4 beserta aspek keamanannya.
+
+\section{Linear Feedback Shift Register (LFSR)}
+LFSR menghasilkan deret biner melalui umpan balik linear atas \(\mathbb{F}_2\). Banyak dipakai sebagai komponen pembangkit keystream; tetapi lineritas memudahkan kriptoanalisis jika digunakan tanpa pengacakan tambahan \citep{menezes}.
+
+\section{Sandi Vigen\`{e}re}
+Sandi klasik polialfabetik menggunakan kunci kata untuk menentukan pergeseran siklik per posisi. Rentan terhadap analisis Kasiski dan indeks koincidensi; tidak aman secara modern \citep{stallings}.
+
+\section{SEAL}
+SEAL adalah sandi alir berkecepatan tinggi berbasis fungsi pseudo-acak yang dipetakan dari kunci dan nonce, dirancang untuk efisiensi perangkat lunak \citep{seal}.
+
+\section{RC4}
+RC4 adalah sandi alir terkenal dengan inisialisasi KSA dan PRGA yang menghasilkan keystream. Ditemukan berbagai bias pada keluaran awal sehingga butuh pembuangan byte awal; banyak standar modern tidak lagi merekomendasikan RC4 \citep{rc4,stallings}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Jelaskan mengapa LFSR murni tidak cocok sebagai sandi alir modern.
+  \item Demonstrasikan enkripsi dan dekripsi singkat dengan sandi Vigen\`{e}re.
+  \item Mengapa RC4 tidak direkomendasikan pada protokol modern seperti TLS?
+\end{enumerate}
+
+\end{document}

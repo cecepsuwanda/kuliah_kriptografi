@@ -1,0 +1,34 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Aritmetika Bilangan Bulat dan Kongruensi}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa memahami FPB/GCD, keterbagian, kongruensi, ring \(\Zn\), Algoritma Euklid dan Euklid diperluas, serta penerapannya untuk invers modulo.
+
+\section{Keterbagian, FPB, dan Algoritma Euklid}
+\begin{definition}[FPB/GCD]
+FPB dari bilangan bulat \(a\) dan \(b\), ditulis \(\gcd(a,b)\), adalah pembagi bersama terbesar. Algoritma Euklid menghitung \(\gcd(a,b)\) secara efisien dengan pembagian berulang \citep{rosen}.
+\end{definition}
+
+\begin{theorem}[Identitas Bezout]
+Untuk \(a,b\in\Z\) tidak keduanya nol, terdapat \(x,y\in\Z\) sehingga \(ax+by=\gcd(a,b)\). Nilai \(x,y\) dihitung dengan Algoritma Euklid diperluas \citep{hoffstein}.
+\end{theorem}
+
+\section{Kongruensi dan Ring \(\Zn\)}
+\begin{definition}[Kongruensi]
+Untuk \(n\ge 2\), dua bilangan bulat \(a,b\) kongruen modulo \(n\), ditulis \(a\equiv b \pmod n\), jika \(n\mid (a-b)\). Kelas sisa modulo \(n\) membentuk ring \(\Zn\) \citep{hoffstein}.
+\end{definition}
+
+\section{Invers Perkalian Modulo}
+Elemen \([a]\in\Zn\) memiliki invers perkalian jika dan hanya jika \(\gcd(a,n)=1\). Algoritma Euklid diperluas menghasilkan invers \(a^{-1} \bmod n\).
+
+\paragraph{Contoh.} Cari invers dari \(a=17\) modulo \(n=43\). Dengan Euklid diperluas diperoleh \(17\cdot 38 \equiv 1 \pmod{43}\), sehingga \(17^{-1}\equiv 38\bmod 43\).
+
+\section{Latihan}
+\begin{enumerate}
+  \item Hitung \(\gcd(414, 662)\) dan koefisien Bezout-nya.
+  \item Tentukan semua solusi dari \(15x\equiv 6 \pmod{21}\).
+  \item Temukan invers dari \(11\) modulo \(97\), jika ada.
+\end{enumerate}
+
+\end{document}

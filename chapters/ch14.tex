@@ -1,0 +1,24 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Analisis Sistem Kripto Sederhana}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa mampu melakukan analisis dasar terhadap sistem kripto sederhana dan mengidentifikasi kelemahannya.
+
+\section{Metodologi Analisis}
+Langkah-langkah umum: model ancaman, asumsi penyerang, enumerasi ruang kunci, analisis statistik (mis. frekuensi), dan serangan yang memanfaatkan struktur (linearitas, periode pendek, bias) \citep{stallings}.
+
+\section{Contoh: Analisis Sandi Substitusi Tunggal}
+Sandi substitusi tunggal mempertahankan distribusi frekuensi huruf. Serangan analisis frekuensi, bigram/trigram, dan heuristik bahasa dapat memulihkan pemetaan kunci secara bertahap.
+
+\section{Contoh: Analisis RC4 Awal}
+Bias pada byte awal keystream RC4 memungkinkan kebocoran informasi kunci pada protokol tertentu jika \emph{nonce} berulang, sehingga mitigasi dengan pembuangan byte awal tidak cukup pada banyak skenario modern \citep{rc4}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Lakukan analisis frekuensi pada pesan terenkripsi dengan substitusi tunggal untuk menebak sebagian kunci.
+  \item Identifikasi asumsi penyerang pada analisis yang Anda lakukan.
+  \item Usulkan perbaikan desain untuk menutup celah yang ditemukan.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,30 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Distribusi Kunci dan Manajemen Kunci}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa memahami latar belakang, konsep, metode distribusi kunci rahasia dan publik, usia kunci, pengendalian pemakaian, serta peran pihak ketiga tepercaya.
+
+\section{Latar Belakang dan Konsep Dasar}
+Distribusi dan manajemen kunci adalah fondasi keamanan praktis. Tanpa pengelolaan yang benar, primitif yang kuat sekalipun menjadi rentan \citep{stallings}.
+
+\section{Metode Distribusi Kunci Rahasia}
+Pertukaran kunci secara fisik, protokol berbasis \emph{key exchange} (mis. Diffie--Hellman), dan penggunaan \emph{key wrapping}. Tantangan: autentikasi pihak dan mitigasi serangan MITM \citep{diffiehellman,katzlindell}.
+
+\section{Distribusi Kunci Publik}
+Menggunakan direktori publik, sertifikat digital dalam PKI, atau \emph{web of trust}. Validasi dan pencabutan sertifikat (CRL/OCSP) menjadi bagian penting \citep{stallings}.
+
+\section{Usia Kunci dan Pengendalian Pemakaian}
+Kebijakan rotasi kunci, masa berlaku, cakupan penggunaan (key usage), dan penanganan kompromi kunci. Audit dan logging untuk \emph{non-repudiation} dan forensik \citep{menezes}.
+
+\section{Layanan Pihak Ketiga Terpercaya}
+CA, TSA (Time-Stamping Authority), dan KDC (Key Distribution Center) pada sistem tertentu. Keamanan keseluruhan bergantung pada keandalan dan tata kelola layanan ini.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Bandingkan PKI berbasis hierarki CA dan \emph{web of trust}.
+  \item Jelaskan mitigasi serangan MITM pada pertukaran kunci Diffie--Hellman.
+  \item Rancang kebijakan rotasi kunci untuk layanan web berskala menengah.
+\end{enumerate}
+
+\end{document}

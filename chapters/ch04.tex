@@ -1,0 +1,32 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Sistem Kongruensi Linier, CRT, dan Teorema Kecil Fermat}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa menguasai penyelesaian kongruensi linier, Teorema Sisa Tiongkok (CRT), fungsi phi Euler, medan hingga \(\Zp\), dan Teorema Kecil Fermat beserta aplikasinya.
+
+\section{Kongruensi Linier dan Fungsi \(\varphi\) Euler}
+Persamaan \(ax\equiv b\pmod n\) memiliki solusi jika dan hanya jika \(\gcd(a,n)\mid b\). Jumlah kelas sisa invertibel di \(\Zn\) adalah \(\varphi(n)\). Untuk \(n=\prod p_i^{e_i}\), \(\varphi(n)=\prod p_i^{e_i-1}(p_i-1)\) \citep{hoffstein}.
+
+\section{Teorema Sisa Tiongkok (CRT)}
+Jika \(n_1,\dots,n_k\) saling bebas, maka sistem
+\[ x\equiv a_i \pmod{n_i},\quad i=1,\dots,k \]
+mempunyai solusi unik modulo \(N=\prod n_i\). CRT penting untuk percepatan perhitungan modular (misal implementasi RSA) \citep{menezes}.
+
+\section{Medan Hingga \(\Zp\) dan FLT}
+Untuk prima \(p\), \(\Zp\) adalah medan: setiap elemen non-nol memiliki invers.
+\begin{theorem}[Teorema Kecil Fermat]
+Jika \(p\) prima dan \(a\not\equiv 0\pmod p\), maka \(a^{p-1}\equiv 1\pmod p\). Secara umum, \(a^p\equiv a\pmod p\) untuk semua \(a\in\Z\) \citep{rosen}.
+\end{theorem}
+Aplikasi: menguji invertibilitas, menyederhanakan perpangkatan modular, dan fondasi RSA \citep{rsa}.
+
+\paragraph{Contoh.} Selesaikan \(7x\equiv 1\pmod{19}\). Karena \(7^{18}\equiv 1\), maka \(7^{-1}\equiv 7^{17} \bmod 19\). Perhitungan cepat (eksponeniasi biner) memberi \(7^{-1}\equiv 11\bmod 19\).
+
+\section{Latihan}
+\begin{enumerate}
+  \item Selesaikan sistem: \(x\equiv 2\pmod 3\), \(x\equiv 3\pmod 5\), \(x\equiv 2\pmod 7\).
+  \item Hitung \(\varphi(2^4\cdot 3^2\cdot 5)\).
+  \item Buktikan atau beri argumen mengapa \(a^{\varphi(n)}\equiv 1\pmod n\) jika \(\gcd(a,n)=1\) (Teorema Euler).
+\end{enumerate}
+
+\end{document}

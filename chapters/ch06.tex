@@ -1,0 +1,26 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Sandi Blok dan Sandi Alir; DES}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa memahami perbedaan sandi blok dan sandi alir, struktur tinggi DES, dan isu keamanannya.
+
+\section{Sandi Blok vs. Sandi Alir}
+Sandi blok memproses blok tetap (mis. 64/128 bit) dengan kunci rahasia, memerlukan mode operasi (ECB, CBC, CTR, GCM). Sandi alir menghasilkan keystream untuk di-XOR dengan plaintext. Pemilihan mode sangat krusial bagi keamanan \citep{stallings,menezes}.
+
+\section{Data Encryption Standard (DES)}
+DES adalah sandi blok 64-bit dengan kunci efektif 56-bit, menggunakan struktur Feistel 16 putaran. Kini DES dianggap tidak aman karena ruang kunci kecil (serangan brute force) dan kelemahan desain historis \citep{nist_des,stallings}.
+
+\paragraph{Ringkas Struktur.} DES menggunakan permutasi awal/akhir, ekspansi, S-box nonlinier, dan P-box permutasi. Desain Feistel memastikan dekripsi menggunakan algoritma yang sama dengan urutan subkunci terbalik.
+
+\section{Isu Keamanan dan Penggantinya}
+Serangan pencarian kunci menyeluruh dan teknik kriptoanalisis modern melemahkan DES. Triple-DES dan akhirnya AES menggantikan DES pada standar internasional \citep{nist_des,nist_aes}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Jelaskan perbedaan konseptual antara sandi blok dan sandi alir.
+  \item Mengapa kunci 56-bit dianggap tidak memadai saat ini?
+  \item Sebutkan keuntungan struktur Feistel untuk desain sandi blok.
+\end{enumerate}
+
+\end{document}
