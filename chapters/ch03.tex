@@ -7,28 +7,53 @@ Mahasiswa memahami FPB/GCD, keterbagian, kongruensi, ring \(\Zn\), Algoritma Euk
 
 \section{Keterbagian, FPB, dan Algoritma Euklid}
 \begin{definition}[FPB/GCD]
-FPB dari bilangan bulat \(a\) dan \(b\), ditulis \(\gcd(a,b)\), adalah pembagi bersama terbesar. Algoritma Euklid menghitung \(\gcd(a,b)\) secara efisien dengan pembagian berulang \citep{rosen}.
+FPB dari bilangan bulat \(a\) dan \(b\), ditulis \(\gcd(a,b)\), adalah pembagi bersama terbesar. Algoritma Euklid menghitung \(\gcd(a,b)\) secara efisien dengan pembagian berulang \citep{rosen}. Kompleksitasnya linear dalam jumlah digit (kuasi-linear dengan pembagian cepat), dan menjadi dasar banyak algoritma pada kriptografi bilangan bulat.
 \end{definition}
+
+Konsep keterbagian dan FPB menyediakan fondasi untuk memahami struktur bilangan bulat dan sifat-sifat kongruensi. Algoritma Euklid bekerja dengan mengurangi ukuran masalah secara sistematis menggunakan operasi bagi dan sisa, sehingga dalam beberapa langkah mencapai nilai FPB. Keunggulan utama algoritma ini adalah kesederhanaan sekaligus efisiensi teoretis dan praktis, membuatnya andalan di hampir semua pustaka matematika dan kriptografi. Interpretasi geometris dan aritmetis dari langkah-langkahnya juga memberi intuisi mengapa prosedur tersebut selalu berhenti dan menghasilkan jawaban benar.
+
+Varian pentingnya adalah Algoritma Euklid diperluas, yang tidak hanya menghitung FPB tetapi juga koefisien Bezout yang mengekspresikan FPB sebagai kombinasi linear \(ax+by\). Informasi ini sangat berharga karena langsung memberikan invers modulo ketika FPB bernilai satu. Analisis kompleksitas menunjukkan bahwa biaya tambahan untuk menghitung koefisien ini tetap sebanding dengan biaya perhitungan FPB itu sendiri. Karena alasan tersebut, hampir semua implementasi yang membutuhkan FPB akan sekaligus mengekstrak koefisien Bezout untuk pemakaian berikutnya \citep{hoffstein}.
 
 \begin{theorem}[Identitas Bezout]
 Untuk \(a,b\in\Z\) tidak keduanya nol, terdapat \(x,y\in\Z\) sehingga \(ax+by=\gcd(a,b)\). Nilai \(x,y\) dihitung dengan Algoritma Euklid diperluas \citep{hoffstein}.
 \end{theorem}
+
+\begin{example}[Euklid Diperluas]
+Misal \(a=240,b=46\). Rangkaian pembagian memberi \(\gcd(240,46)=2\) dan menghasilkan representasi Bezout \(2=240(-9)+46(47)\); maka invers dari \([46]\) modulo \(240\) tidak ada, namun invers dari \([23]\) modulo \(240\) ada karena \(\gcd(23,240)=1\).
+\end{example}
+
+Dalam konteks kriptografi, koefisien Bezout acap kali dipakai untuk menghitung invers modulo dan menyelesaikan kongruensi linier. Prosedur ini berulang kali muncul pada konstruksi kunci RSA dan protokol berbasis grup multiplikatif. Dari sudut pandang implementasi, menyimpan jejak langkah Euklid memudahkan rekonstruksi koefisien tanpa biaya tambahan signifikan. Oleh karenanya, memahami detail Euklid diperluas merupakan investasi penting untuk bab-bab selanjutnya.
 
 \section{Kongruensi dan Ring \(\Zn\)}
 \begin{definition}[Kongruensi]
 Untuk \(n\ge 2\), dua bilangan bulat \(a,b\) kongruen modulo \(n\), ditulis \(a\equiv b \pmod n\), jika \(n\mid (a-b)\). Kelas sisa modulo \(n\) membentuk ring \(\Zn\) \citep{hoffstein}.
 \end{definition}
 
+Operasi penjumlahan dan perkalian pada kelas sisa terdefinisi dengan baik karena hasilnya tidak bergantung pada wakil yang dipilih. Struktur ring \(\Zn\) memperkenankan kita melakukan aritmetika modular dengan cara yang konsisten dan tertutup. Jika \(n\) adalah bilangan prima, maka \(\Zn\) bahkan menjadi medan sehingga setiap elemen tak nol memiliki invers perkalian. Fakta ini menjelaskan mengapa modulus prima sering diutamakan pada banyak rancangan skema kriptografi.
+
+Ketika \(n\) bukan prima, \(\Zn\) memiliki pembagi nol dan tidak semua elemen tak nol invertibel. Analisis lebih lanjut menunjukkan bahwa himpunan elemen invertibel \(\Zn^*\) membentuk grup multiplikatif berukuran \(\varphi(n)\). Degradasi sifat dari medan ke ring menuntut kewaspadaan dalam memanipulasi persamaan, karena pembatalan faktor tidak selalu sah. Keterampilan ini penting saat menyelesaikan sistem kongruensi dan menganalisis keamanan skema berbasis aritmetika modular.
+
 \section{Invers Perkalian Modulo}
 Elemen \([a]\in\Zn\) memiliki invers perkalian jika dan hanya jika \(\gcd(a,n)=1\). Algoritma Euklid diperluas menghasilkan invers \(a^{-1} \bmod n\).
 
 \paragraph{Contoh.} Cari invers dari \(a=17\) modulo \(n=43\). Dengan Euklid diperluas diperoleh \(17\cdot 38 \equiv 1 \pmod{43}\), sehingga \(17^{-1}\equiv 38\bmod 43\).
+
+Syarat \(\gcd(a,n)=1\) memastikan bahwa kelas \([a]\) berada di dalam grup \(\Zn^*\) sehingga perkalian oleh \([a]\) merupakan permutasi atas elemen invertibel. Dari sisi teori, hal ini berkaitan dengan teorema Lagrange yang menyatakan orde unsur membagi orde grup. Secara praktis, mencari invers menggunakan Euklid diperluas jauh lebih efisien daripada melakukan pencarian buta. Algoritme tersebut bekerja dengan kombinasi linear yang secara bertahap mereduksi masalah hingga menemukan koefisien yang diinginkan.
+
+Hubungan erat antara invers modulo dan fungsi totien Euler terlihat dalam identitas \(a^{\varphi(n)}\equiv 1\pmod n\) untuk \(\gcd(a,n)=1\). Identitas ini tidak langsung memberi invers, tetapi sering dipakai untuk validasi hasil atau konstruksi teoretis. Pada implementasi, kita selalu memilih Euklid diperluas karena stabil dan deterministik. Keduanya saling melengkapi: teori memberikan jaminan, algoritme menyediakan cara komputasi yang efisien \citep{hoffstein,rosen}.
+
+\section{Aplikasi ke Kriptografi}
+Konsep \(\gcd\), invers modulo, dan aritmetika \(\Zn\) menjadi fondasi RSA, Diffie--Hellman, dan skema lain. Misalnya, kunci privat RSA bergantung pada invers modulo dari eksponen publik terhadap \(\varphi(n)\); sedangkan perhitungan invers modulo adalah rutin harian di banyak protokol. Selain itu, penyelesaian kongruensi linier menjadi subrutin untuk normalisasi parameter dan validasi kondisi keamanan. Keandalan modul aritmetika pada perangkat lunak kriptografi sangat memengaruhi keseluruhan keamanan sistem.
+
+Pada desain protokol, sering kali kita perlu memproyeksikan masalah ke modulus berbeda menggunakan CRT untuk efisiensi, lalu menggabungkan kembali hasilnya. Setiap langkah tetap membutuhkan invers dan manipulasi kongruensi yang benar agar tidak menimbulkan kesalahan fatal. Di tingkat implementasi rendah, representasi bilangan besar, manajemen memori, dan penghindaran kebocoran waktu menjadi pertimbangan tambahan. Bacaan lanjutan: \citep{hoffstein,hardywright,nivenzuckermanmontgomery}.
 
 \section{Latihan}
 \begin{enumerate}
   \item Hitung \(\gcd(414, 662)\) dan koefisien Bezout-nya.
   \item Tentukan semua solusi dari \(15x\equiv 6 \pmod{21}\).
   \item Temukan invers dari \(11\) modulo \(97\), jika ada.
+  \item Buktikan bahwa jika \(a\mid bc\) dan \(\gcd(a,b)=1\), maka \(a\mid c\).
+  \item Untuk \(n=pq\) dengan \(p,q\) prima berbeda, buktikan bahwa \(\Zn\) memiliki tepat \(\varphi(n)\) elemen yang invertibel dan simpulkan bentuk grup \(\Zn^*\).
 \end{enumerate}
 
 \end{document}

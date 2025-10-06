@@ -8,17 +8,33 @@ Mahasiswa memahami akar primitif di \(\Zp\), residu kuadratik, simbol Legendre, 
 \section{Akar Primitif di \(\Zp\)}
 Untuk prima \(p\), himpunan \(\Zp^\times\) membentuk grup abelian siklik orde \(p-1\). Sebuah elemen \(g\) disebut \emph{akar primitif} jika \(\langle g\rangle = \Zp^\times\). Keberadaan akar primitif di \(\Zp\) terjamin; perhitungan generator penting untuk kriptografi berbasis grup siklik \citep{hoffstein}.
 
+\paragraph{Algoritma Mencari Generator.} Faktorkan \(p-1=\prod q_i^{e_i}\). Pilih \(g>1\) acak dan cek bahwa \(g^{(p-1)/q_i}\not\equiv 1\pmod p\) untuk semua faktor prima \(q_i\). Jika terpenuhi, \(g\) adalah generator. Pemeriksaan ini memastikan orde \(g\) tepat \(p-1\) sehingga menghasilkan seluruh elemen tak nol di \(\Zp\).
+
+Pada tingkat konsep, keberadaan generator pada \(\Zp^\times\) menggarisbawahi sifat grup siklik yang memudahkan analisis aritmetika. Dengan mengetahui sebuah generator, representasi setiap elemen dapat ditulis sebagai perpangkatan dari \(g\), yang menyederhanakan banyak perhitungan teoretis. Namun, masalah kebalikannya yakni mencari eksponen dari representasi tersebut (logaritma diskrit) diyakini sulit pada parameter yang tepat. Kontras antara mudahnya perpangkatan dan sulitnya logaritma ini adalah sumber keamanan sejumlah protokol kunci publik.
+
+Dari sisi implementasi, pemilihan generator lazim dilakukan melalui pencobaan acak dengan uji orde sebagaimana di atas. Untuk meminimalkan biaya faktorisasi, praktik umum memilih \(p\) sehingga \(p-1\) memiliki bentuk yang memudahkan uji faktor prima kecil, atau bahkan \(p\) bertipe \emph{safe prime} agar struktur subgrup lebih terkendali. Dokumentasi referensi seperti \citep{shoup_nt} memberikan pembahasan algoritmik yang rinci untuk keperluan ini. Pada sistem produksi, prosedur ini dipaketkan dalam pembangkit parameter yang juga memverifikasi sifat keamanan lain.
+
 \section{Residu Kuadratik dan Simbol Legendre}
 Bilangan \(a\in\Zp\) disebut \emph{residu kuadratik} jika ada \(x\) sehingga \(x^2\equiv a\pmod p\). Simbol Legendre didefinisikan \(\left(\tfrac{a}{p}\right)\in\{-1,0,1\}\) dengan nilai 1 jika residu kuadratik non-nol, 0 jika \(p\mid a\), dan -1 selain itu. Kriteria Euler: \(\left(\tfrac{a}{p}\right)\equiv a^{(p-1)/2}\pmod p\) \citep{hoffstein}.
 
+\paragraph{Hukum Resiprositas Kuadrat (sketsa).} Untuk prima ganjil \(p,q\), \(\left(\tfrac{p}{q}\right)\left(\tfrac{q}{p}\right)=(-1)^{\frac{p-1}{2}\cdot\frac{q-1}{2}}\). Pernyataan klasik ini mengaitkan residualitas kuadratik satu prima terhadap yang lain dan memungkinkan reduksi perhitungan berulang. Di samping itu, aturan tambahan untuk faktor 2 dan sifat simbol Jacobi memperluas kalkulus ke modulus komposit. Implementasi modern mengandalkan kombinasi kriteria Euler, resiprositas, dan reduksi cepat untuk mengevaluasi simbol dengan efisien \citep{shoup_nt}.
+
+Dalam kriptografi, pengujian residu kuadratik muncul pada protokol tertentu dan analisis keamanan yang melibatkan keputusan keanggotaan subgrup. Kehati-hatian diperlukan karena informasi residu dapat membocorkan bit-bit tentang nilai rahasia dalam beberapa konstruksi. Oleh sebab itu, ketika menggunakan operasi kuadrat atau akar kuadrat modulo prima, perancang sering merancang skema agar tidak mengungkapkan lebih dari yang diperlukan. Literatur klasik dan modern memberikan kiat implementasi agar sifat-sifat ini tidak menurunkan jaminan keamanan secara tak sengaja.
+
 \section{Masalah Logaritma Diskrit}
 Diberi \(g\) generator dan \(h\in\langle g\rangle\), masalah mencari \(x\) dengan \(g^x\equiv h\) disebut \emph{logaritma diskrit}. Diyakini sulit pada banyak grup, dan menjadi dasar skema Diffie--Hellman dan ElGamal \citep{diffiehellman,hoffstein}.
+
+\paragraph{Algoritma Klasik.} \emph{Baby-step giant-step} dan \emph{Pollard's rho} menyelesaikan DLP dalam sekitar \(O(\sqrt{p})\) operasi pada \(\Zp^\times\). Untuk grup eliptik, analog serupa berlaku dengan konstanta berbeda. Algoritma ini menunjukkan bahwa peningkatan ukuran parameter memberikan pertumbuhan biaya kuadrat untuk penyerang umum. Meski bukan bukti kekerasan problem, hasil ini menjadi panduan praktis dalam menetapkan ukuran kunci.
+
+\paragraph{Keamanan Parameter.} Pemilihan \(p\) sehingga \(p-1\) tidak memiliki faktor kecil besar (mis. \emph{safe prime}) membantu mencegah serangan subgrup kecil; standar ukuran kunci mengikuti \citep{nist_sp_800_131a}. Selain itu, validasi generator pada subgrup orde besar menghindari jebakan penggunaan orde kecil yang melemahkan keamanan. Di beberapa konteks, pemilihan kurva eliptik standar menggantikan grup \(\Zp^\times\) karena menawarkan fitur implementasi dan kinerja yang baik. Referensi \citep{shoup_nt} merinci aspek teoretis yang mendasari keputusan-keputusan desain tersebut.
 
 \section{Latihan}
 \begin{enumerate}
   \item Tentukan apakah \(3\) adalah akar primitif modulo \(p=7\). Jika tidak, temukan satu generator.
   \item Hitung \(\left(\tfrac{5}{11}\right)\) menggunakan Kriteria Euler.
   \item Diberi \(g=2\) modulo \(p=29\) dan \(h=18\), carilah \(x\) sehingga \(2^x\equiv 18\pmod{29}\) dengan pencarian kecil (baby-step).
+  \item Buktikan bahwa jumlah residu kuadratik non-nol di \(\Zp\) adalah \((p-1)/2\).
+  \item Implementasikan Pollard's rho untuk DLP kecil dan uji pada \(\Z_{101}^\times\).
 \end{enumerate}
 
 \end{document}

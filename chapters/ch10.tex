@@ -8,20 +8,37 @@ Mahasiswa memahami tujuan dan cara kerja tanda tangan digital, skema RSA, serta 
 \section{Konsep dan Model Keamanan}
 Tanda tangan digital menyediakan otentikasi, integritas, dan nir-sangkal. Keamanan formal: unforgeability under chosen-message attack (UF-CMA). Praktik: menandatangani \emph{hash} pesan, bukan pesan mentah \citep{katzlindell}.
 
+Dalam praktik, parameter dan padding mempengaruhi keamanan. Model UF-CMA menjadi acuan evaluasi skema standar modern.
+
+Narasi formal UF-CMA mendefinisikan permainan antara penantang dan penyerang yang memiliki orakel penandatanganan. Tujuannya adalah memastikan tidak ada penyerang berwaktu-polynomial yang dapat menghasilkan tanda tangan valid atas pesan baru yang belum pernah diminta sebelumnya. Model ini menangkap skenario dunia nyata ketika sistem menandatangani banyak pesan sepanjang masa operasi. Dengan dasar ini, perancang skema dapat menalar ketahanan skema terhadap berbagai jenis adaptasi lawan.
+
+Di luar definisi, implementasi memerlukan pemilihan fungsi hash, padding, dan representasi bilangan yang konsisten agar verifikasi interoperabel. Banyak kesalahan keamanan historis bersumber dari ketidakcocokan encoding atau pemeriksaan yang longgar. Oleh sebab itu, spesifikasi standar menuliskan detail yang tampak kecil namun berdampak besar pada keamanan. Disiplin ini memastikan model yang kuat bertranslasi ke sistem yang kuat pula.
+
 \section{Tanda Tangan RSA}
-Kunci seperti RSA enkripsi. Tanda tangan atas pesan \(m\) biasanya pada digest \(H(m)\): \(\sigma\equiv H(m)^d\bmod n\). Verifikasi: cek \(H(m)\equiv \sigma^e\bmod n\). Gunakan padding dan skema standar seperti RSA-PSS \citep{katzlindell,stallings}.
+Kunci seperti RSA enkripsi. Tanda tangan atas pesan \(m\) biasanya pada digest \(H(m)\): \(\sigma\equiv H(m)^d\bmod n\). Verifikasi: cek \(H(m)\equiv \sigma^e\bmod n\). Gunakan padding dan skema standar seperti RSA-PSS; spesifikasi dan parameter terdapat pada PKCS\#1 \citep{katzlindell,stallings,rfc8017}.
+
+\paragraph{EdDSA/ECDSA/DSA Singkat.} Skema berbasis eliptik (ECDSA, EdDSA) menawarkan ukuran tanda tangan kecil dan performa baik. Penggunaan \emph{nonce} deterministik mencegah kebocoran kunci privat saat entropi lemah \citep{rfc6979,rfc8032,fips186-5}.
+
+RSA-PSS dirancang dengan garansi keamanan dalam model random oracle dan menambahkan garam (salt) untuk memperkeras serangan yang memanfaatkan struktur. Dibandingkan skema lama seperti PKCS\#1 v1.5, PSS lebih tahan terhadap serangan adaptif yang dikenal di literatur. Pada praktiknya, pemilihan panjang garam dan fungsi hash mengikuti rekomendasi standar untuk menjaga interoperabilitas. Dengan demikian, PSS menjadi pilihan utama ketika kompatibilitas dan keamanan jangka panjang dibutuhkan.
+
+Untuk ECDSA dan EdDSA, kualitas \emph{nonce} sangat krusial: korelasi atau pengulangan nonce dapat membocorkan kunci privat melalui analisis linear sederhana. Standar modern menganjurkan penggunaan nonce deterministik yang berasal dari hash pesan dan kunci privat. Pendekatan ini mengurangi ketergantungan pada generator acak operasional yang mungkin tidak andal. Spesifikasi juga mengatur representasi titik kurva dan validasi agar verifikasi aman dari masukan berbahaya.
 
 \section{Ong--Schnorr--Shamir (OSS)}
 OSS adalah keluarga skema tanda tangan awal berbasis gagasan trapdoor, menawarkan efisiensi tertentu namun jarang digunakan dibanding ECDSA/RSA modern. Fokus pembelajaran: struktur umum tanda tangan dan verifikasi batch \citep{stallings}.
 
+Mempelajari OSS memberikan perspektif historis tentang evolusi gagasan tanda tangan digital. Struktur dan pembuktiannya membuka jalan bagi teknik yang lebih matang pada generasi berikutnya. Perbandingan dengan RSA atau ECDSA menekankan bagaimana asumsi matematis dan efisiensi memengaruhi adopsi. Pada akhirnya, pemahaman ini memperkaya intuisi saat menilai skema tanda tangan baru.
+
 \section{Verifikasi Batch}
 Untuk kelas skema tertentu (mis. tanda tangan yang bersifat homomorfik), beberapa tanda tangan dapat diverifikasi sekaligus guna efisiensi. Perlu analisis keamanan untuk mencegah serangan yang mengeksploitasi penggabungan \citep{katzlindell}.
+
+Verifikasi batch menukar sedikit kompleksitas analisis dengan keuntungan performa ketika jumlah tanda tangan besar. Namun, bila verifikasi batch tidak dirancang dengan pengecekan acak yang tepat, penyerang dapat menyisipkan tanda tangan buruk yang lolos uji kolektif. Karena itu, protokol batch biasanya memasukkan koefisien acak atau uji parsial untuk mengikat setiap tanda tangan secara individual. Praktik ini menurunkan risiko kegagalan sistemik akibat satu vektor serangan.
 
 \section{Latihan}
 \begin{enumerate}
   \item Uraikan perbedaan RSA-PKCS\#1 v1.5, RSA-PSS, dan implikasi keamanannya.
   \item Mengapa tanda tangan dilakukan atas hash, bukan pesan asli?
   \item Berikan sketsa bagaimana verifikasi batch dapat menghemat waktu untuk tanda tangan bergaya RSA.
+  \item Tunjukkan bagaimana kegagalan \emph{nonce} acak pada ECDSA dapat membocorkan kunci privat; jelaskan mitigasi deterministik \citep{rfc6979}.
 \end{enumerate}
 
 \end{document}

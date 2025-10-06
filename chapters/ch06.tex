@@ -6,21 +6,30 @@
 Mahasiswa memahami perbedaan sandi blok dan sandi alir, struktur tinggi DES, dan isu keamanannya.
 
 \section{Sandi Blok vs. Sandi Alir}
-Sandi blok memproses blok tetap (mis. 64/128 bit) dengan kunci rahasia, memerlukan mode operasi (ECB, CBC, CTR, GCM). Sandi alir menghasilkan keystream untuk di-XOR dengan plaintext. Pemilihan mode sangat krusial bagi keamanan \citep{stallings,menezes}.
+Sandi blok memproses blok tetap (mis. 64/128 bit) dengan kunci rahasia, memerlukan mode operasi (ECB, CBC, CTR, GCM). Sandi alir menghasilkan keystream untuk di-XOR dengan plaintext. Pemilihan mode sangat krusial bagi keamanan \citep{stallings,menezes}. Lihat rekomendasi resmi mode pada \citep{nist_sp_800_38a,nist_sp_800_38d}.
+
+Dalam praktik, sandi blok digabungkan dengan skema autentikasi untuk mencegah serangan penyisipan atau pengubahan pesan yang tak terdeteksi. Misalnya, mode CBC memberikan kerahasiaan namun memerlukan MAC terpisah untuk integritas, sedangkan GCM menawarkan enkripsi terautentikasi dalam satu konstruksi. Sandi alir, yang menghasilkan keystream pseudo-acak, sangat efisien untuk data streaming namun mewajibkan pemakaian nonce unik agar tidak terjadi reuse yang merusak keamanan. Desainer sistem harus menimbang parallelism, throughput, dan persyaratan autentikasi ketika memilih mode atau jenis sandi.
+
+Pertimbangan implementasi meliputi pengelolaan IV/nonce, penanganan padding, serta mitigasi kebocoran waktu dan kanal samping lainnya. Banyak pustaka kriptografi modern menyediakan antarmuka AEAD (Authenticated Encryption with Associated Data) guna mengurangi kesalahan penggunaan. Di sisi interoperabilitas, standar industri mengarahkan pilihan mode untuk kasus penggunaan tertentu sehingga lebih mudah diaudit. Dokumentasi standar menyediakan parameter baku agar ekosistem kripto tetap konsisten lintas platform dan produk \citep{nist_sp_800_38a,nist_sp_800_38d}.
 
 \section{Data Encryption Standard (DES)}
 DES adalah sandi blok 64-bit dengan kunci efektif 56-bit, menggunakan struktur Feistel 16 putaran. Kini DES dianggap tidak aman karena ruang kunci kecil (serangan brute force) dan kelemahan desain historis \citep{nist_des,stallings}.
 
-\paragraph{Ringkas Struktur.} DES menggunakan permutasi awal/akhir, ekspansi, S-box nonlinier, dan P-box permutasi. Desain Feistel memastikan dekripsi menggunakan algoritma yang sama dengan urutan subkunci terbalik.
+\paragraph{Ringkas Struktur.} DES menggunakan permutasi awal/akhir, ekspansi, S-box nonlinier, dan P-box permutasi. Desain Feistel memastikan dekripsi menggunakan algoritma yang sama dengan urutan subkunci terbalik. Penjadwalan subkunci menghasilkan 16 subkunci berbeda yang diterapkan per putaran untuk memperkenalkan variasi dan difusi. Walaupun arsitekturnya elegan untuk masanya, ukuran blok dan kunci tidak memadai untuk menahan ancaman komputasi modern.
+
+Keterbatasan kunci 56-bit memungkinkan serangan pencarian kunci menyeluruh dilakukan secara praktis dengan perangkat keras terjangkau. Selain itu, beberapa sifat S-box dan struktur internal membuka peluang optimisasi bagi penyerang. Akibatnya, komunitas dan lembaga standar merekomendasikan transisi ke algoritma yang lebih kuat seperti 3DES dan kemudian AES. Sejarah DES memberikan pelajaran penting tentang margin keamanan dan kebutuhan untuk memperbarui standar seiring perkembangan teknologi.
 
 \section{Isu Keamanan dan Penggantinya}
-Serangan pencarian kunci menyeluruh dan teknik kriptoanalisis modern melemahkan DES. Triple-DES dan akhirnya AES menggantikan DES pada standar internasional \citep{nist_des,nist_aes}.
+Serangan pencarian kunci menyeluruh dan teknik kriptoanalisis modern melemahkan DES. Triple-DES (TDEA) dan akhirnya AES menggantikan DES pada standar internasional \citep{nist_des,nist_sp_800_67r2,nist_aes}. Mode yang memberikan \emph{authenticated encryption} seperti GCM direkomendasikan untuk lalu lintas data modern \citep{nist_sp_800_38d}. Transisi ini juga diiringi pedoman migrasi panjang kunci dan penghentian algoritma warisan.
+
+Dalam ekosistem saat ini, AES menjadi pilihan utama karena ketersediaan akselerasi perangkat keras dan analisis kriptografi yang matang. TDEA hanya dipertahankan untuk kompatibilitas sistem lama dengan batasan penggunaan yang ketat. Rekomendasi standar membantu organisasi mengelola fase transisi agar kompatibilitas tetap terjaga tanpa mengorbankan keamanan inti. Dokumentasi resmi menetapkan parameter, batas masa pakai, dan praktik operasi yang aman untuk mencegah salah-konfigurasi \citep{nist_sp_800_67r2,nist_sp_800_38d}.
 
 \section{Latihan}
 \begin{enumerate}
   \item Jelaskan perbedaan konseptual antara sandi blok dan sandi alir.
   \item Mengapa kunci 56-bit dianggap tidak memadai saat ini?
   \item Sebutkan keuntungan struktur Feistel untuk desain sandi blok.
+  \item Bandingkan sifat keamanan CBC, CTR, dan GCM; kapan Anda memilih masing-masing?
 \end{enumerate}
 
 \end{document}

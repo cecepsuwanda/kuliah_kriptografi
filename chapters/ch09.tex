@@ -6,24 +6,32 @@
 Mahasiswa memahami konsep sistem kunci publik, peran Teorema Kecil Fermat/Euler, dan konstruksi RSA beserta aspek keamanannya.
 
 \section{Konsep Sistem Kunci Publik}
-Model asimetris menggunakan kunci publik untuk enkripsi dan kunci privat untuk dekripsi. Keuntungan utama: distribusi kunci menjadi sederhana; kelemahan: efisiensi lebih rendah dibanding simetris \citep{katzlindell}.
+Model asimetris menggunakan kunci publik untuk enkripsi dan kunci privat untuk dekripsi. Keuntungan utama: distribusi kunci menjadi sederhana; kelemahan: efisiensi lebih rendah dibanding simetris \citep{katzlindell}. Untuk menyeimbangkan biaya, sistem modern hampir selalu menggunakan enkripsi hibrida: kunci publik membungkus kunci sesi, dan kunci sesi melakukan enkripsi bulk yang efisien. Pendekatan ini juga mempermudah rotasi kunci dan memisahkan siklus hidup kunci jangka panjang dari kunci operasional.
+
+Di tingkat keamanan, keberhasilan model asimetris bertumpu pada asumsi kesulitan matematis seperti faktorisasi atau logaritma diskrit. Parameter yang dipilih harus memberikan margin terhadap perkembangan kriptoanalisis dan komputer yang semakin cepat. Di sisi praktik, tata kelola kunci mencakup penyimpanan aman, pemulihan pasca insiden, dan audit jejak tanda tangan. Kerangka ini memastikan manfaat fleksibilitas asimetris tidak dibayangi oleh risiko operasional.
 
 \section{Teorema Kecil Fermat dan Euler}
 FLT: untuk prima \(p\) dan \(a\not\equiv 0\pmod p\), \(a^{p-1}\equiv 1\pmod p\). Generalisasi: \(a^{\varphi(n)}\equiv 1\pmod n\) jika \(\gcd(a,n)=1\). Identitas ini digunakan dalam pembuktian kebenaran RSA \citep{hoffstein,rosen}.
 
+Kedua teorema tersebut bukan hanya artefak teoretis, melainkan panduan praktis untuk menyederhanakan perpangkatan modular. Pengurangan eksponen modulo \(p-1\) atau \(\varphi(n)\) sering memangkas biaya komputasi secara dramatis. Pada konteks bukti kebenaran RSA, struktur ini menjamin bahwa perpangkatan oleh eksponen yang tepat memetakan kembali pesan ke dirinya. Korelasi antara struktur grup dan operasi perpangkatan menjadi inti dari keamanan dan keefektifan RSA.
+
 \section{Skema RSA}
-\textbf{Pembangkit kunci.} Pilih prima besar \(p,q\), hitung \(n=pq\), \(\varphi(n)=(p-1)(q-1)\). Pilih \(e\) koprima dengan \(\varphi(n)\), lalu hitung \(d\equiv e^{-1}\pmod{\varphi(n)}\). Kunci publik: \((n,e)\), kunci privat: \(d\).
+\textbf{Pembangkit kunci.} Pilih prima besar \(p,q\), hitung \(n=pq\), \(\varphi(n)=(p-1)(q-1)\) (atau gunakan \(\lambda(n)=\operatorname{lcm}(p-1,q-1)\)). Pilih \(e\) koprima dengan \(\varphi(n)\), lalu hitung \(d\equiv e^{-1}\pmod{\varphi(n)}\). Kunci publik: \((n,e)\), kunci privat: \(d\).
 
 \textbf{Enkripsi/Dekripsi.} Enkripsi: \(c\equiv m^e\bmod n\). Dekripsi: \(m\equiv c^d\bmod n\). Benar karena \(ed\equiv 1\pmod{\varphi(n)}\) dan Teorema Euler \citep{rsa}.
 
+\paragraph{Padding dan Keamanan Semantik.} RSA mentah tidak aman secara IND-CPA/CCA. Gunakan OAEP untuk enkripsi (IND-CPA dalam model random oracle) dan PSS untuk tanda tangan; lihat standar PKCS\#1 \citep{rfc8017}.
+
+Integrasi RSA ke dalam protokol harus memperhatikan format pesan, label, dan parameter yang disyaratkan standar. Kesalahan kecil pada padding atau verifikasi dapat menghasilkan vektor serangan yang signifikan. Di sisi operasional, pemilihan ukuran kunci dan eksponen publik yang lazim (mis. \(e=65537\)) menggabungkan keseimbangan antara keamanan dan kinerja. Disarankan mengikuti rekomendasi standar dan menggunakan pustaka yang telah diaudit untuk meminimalkan risiko implementasi.
+
 \section{Praktik Aman RSA}
-Gunakan padding aman semisal OAEP; hindari eksponen kecil tanpa mitigasi, lindungi terhadap serangan waktu dan side-channel; gunakan CRT untuk percepatan dekripsi dengan hati-hati \citep{katzlindell,menezes}.
+Gunakan padding aman semisal OAEP; hindari eksponen kecil tanpa mitigasi, lindungi terhadap serangan waktu dan side-channel; gunakan CRT untuk percepatan dekripsi dengan hati-hati \citep{katzlindell,menezes}. Ikuti pedoman ukuran kunci dan transisi algoritma dari \citep{nist_sp_800_131a}.
 
 \section{Latihan}
 \begin{enumerate}
   \item Bangkitkan contoh kecil RSA dengan \(p=53\), \(q=59\), pilih \(e=17\), hitung \(d\).
   \item Tunjukkan bahwa dekripsi memulihkan pesan dengan Teorema Euler.
-  \item Jelaskan peran padding OAEP pada keamanan semantik.
+  \item Jelaskan peran padding OAEP pada keamanan semantik; rujuk definisi dan parameter pada \citep{rfc8017}.
 \end{enumerate}
 
 \end{document}

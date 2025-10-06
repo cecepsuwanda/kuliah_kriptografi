@@ -6,19 +6,30 @@
 Mahasiswa memahami fungsi hash kriptografis, MAC, dan konsep \emph{unconditionally secure authentication code}.
 
 \section{Fungsi Hash}
-Hash kriptografis memetakan pesan ke digest berdimensi tetap dengan sifat tahan tabrakan, tahan pra-citra, dan tahan pra-citra kedua. Banyak skema dibangun di atas hash (tanda tangan, komitmen, integritas berkas) \citep{menezes}.
+Hash kriptografis memetakan pesan ke digest berdimensi tetap dengan sifat tahan tabrakan, tahan pra-citra, dan tahan pra-citra kedua. Banyak skema dibangun di atas hash (tanda tangan, komitmen, integritas berkas) \citep{menezes}. Standar keluarga SHA-2 dan SHA-3 terdokumentasi pada \citep{fips180-4,fips202}.
+
+Fungsi turunan dari SHA-3 (KMAC, cSHAKE) diatur dalam \citep{nist_sp_800_185} yang memberikan fleksibilitas domain-separation dan MAC berbasis sponge.
+
+Dalam praktik, pemilihan fungsi hash mempertimbangkan performa platform, dukungan perangkat keras, dan ekosistem pustaka yang tersedia. Transisi dari SHA-1 ke SHA-2 dipicu oleh tabrakan praktis dan pedoman standar yang melarang penggunaannya untuk tanda tangan baru. SHA-3 menawarkan keluarga yang independen desainnya dan fungsi turunan yang kaya fitur. Keduanya memberi opsi yang sehat untuk kebutuhan yang berbeda di aplikasi dunia nyata.
+
+Implementasi hash harus memperhatikan detail padding, endianness, dan pemrosesan pesan besar untuk menghindari inkonsistensi. Penyerang sering memanfaatkan variasi encoding atau interpretasi input untuk membuat kelemahan yang tidak diantisipasi perancang. Oleh karena itu, mengikuti spesifikasi resmi dan uji vektor sangat dianjurkan. Dengan cara ini, abstraksi matematika yang kuat dapat diwujudkan dalam kode yang dapat diandalkan.
 
 \section{Message Authentication Code (MAC)}
-MAC memberikan otentikasi dan integritas berbasis kunci rahasia bersama. Contoh konstruksi: HMAC yang menggabungkan fungsi hash dengan kunci rahasia dan memiliki analisis formal luas \citep{katzlindell}.
+MAC memberikan otentikasi dan integritas berbasis kunci rahasia bersama. Contoh konstruksi: HMAC yang menggabungkan fungsi hash dengan kunci rahasia dan memiliki analisis formal luas \citep{katzlindell}. Spesifikasi HMAC terdapat pada \citep{rfc2104}. Untuk blok cipher, CMAC adalah standar autentikasi berbasis sandi blok \citep{nist_sp_800_38b}.
+
+Perancangan sistem harus menentukan apa saja yang dimasukkan sebagai \'associated data\' agar integritas metadata turut dijaga. MAC yang kuat mencegah modifikasi tak terdeteksi, namun tidak menyamarkan isi; karena itu ia sering dipadukan dengan enkripsi AEAD. Penanganan ulang pesan, pemulihan kesalahan, dan penandaan ulang (re-tagging) perlu kebijakan yang jelas agar tidak menciptakan vektor serangan. Dokumentasi standar memberikan panduan parameter dan uji kepatuhan agar implementasi konsisten dan aman.
 
 \section{Unconditionally Secure Authentication Code}
 Kode otentikasi bersyarat tak-terikat (unconditional) menjamin keamanan informasi-teoretik tanpa asumsi komputasional, biasanya memerlukan kunci sepanjang pesan atau overhead lebih besar, dan cocok pada skenario khusus \citep{menezes}.
+
+Skema tak-terikat cocok di lingkungan yang dapat menerima biaya kunci besar, misalnya saluran dengan kebutuhan data rendah namun keamanan sangat tinggi. Contohnya, sistem militer atau infrastruktur kontrol yang memprioritaskan jaminan teoretik dibanding efisiensi. Meski tidak umum di produk konsumen, mempelajari skema ini menegaskan batas kemampuan MAC komputasional. Perspektif ini membantu merancang kebijakan keamanan yang realistis sesuai kebutuhan operasional.
 
 \section{Latihan}
 \begin{enumerate}
   \item Jelaskan perbedaan jaminan keamanan MAC vs. tanda tangan digital.
   \item Tunjukkan skema HMAC pada tingkat tinggi dan mengapa tahan terhadap tabrakan hash tertentu.
   \item Berikan contoh skenario di mana kode autentikasi tak-terikat lebih tepat.
+  \item Implementasikan CMAC atas AES dan uji dengan test vector standar \citep{nist_sp_800_38b}.
 \end{enumerate}
 
 \end{document}
