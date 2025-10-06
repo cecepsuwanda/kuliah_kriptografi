@@ -10,15 +10,21 @@ Mahasiswa memahami varian DES (iterated DES, DESX), prinsip AES, dan gambaran ID
 
 Standar resmi untuk TDEA mendefinisikan parameter kunci dan masa transisi \citep{nist_sp_800_67r2}. Dalam praktik modern, TDEA dibatasi pada interoperabilitas warisan; AES direkomendasikan.
 
+Penggunaan varian DES memerlukan kebijakan operasional yang ketat untuk mencegah konfigurasi lemah. Misalnya, pemilihan tiga kunci independen pada 3DES menutup celah serangan yang mungkin muncul bila kunci berulang. DESX menambahkan lapisan whitening untuk meningkatkan ruang kunci efektif, tetapi tetap diwarisi batasan struktur internal DES. Karena itu, organisasi didorong menyiapkan rencana migrasi ke AES untuk jangka panjang.
+
 \section{Advanced Encryption Standard (AES)}
 AES (Rijndael) adalah sandi blok 128-bit dengan ukuran kunci 128/192/256-bit. Bukan Feistel, melainkan transformasi putaran: SubBytes, ShiftRows, MixColumns, AddRoundKey yang didefinisikan atas medan hingga \(\mathbb{F}_{2^8}\). AES adalah standar de facto saat ini \citep{nist_aes}.
 
 Sifat desain: S-box berasal dari inversi pada \(\mathbb{F}_{2^8}\) diikuti transformasi afin; MixColumns memberikan difusi melalui perkalian matriks di \(\mathbb{F}_{2^8}\). Implementasi perlu menghindari kebocoran side-channel (cache/timing) melalui teknik seperti tabel konstan, bitslicing, atau AES-NI.
 
+Di tingkat protokol, AES banyak dipakai dalam mode AEAD seperti GCM untuk memberikan kerahasiaan dan autentikasi secara bersamaan. Kesuksesan AES juga didorong oleh dukungan perangkat keras luas yang menurunkan latensi dan konsumsi daya. Penyetelan parameter putaran dan penghindaran penggunaan mode yang lemah seperti ECB adalah bagian dari praktik baik. Dokumentasi standar menyediakan pedoman interoperabilitas agar implementasi dari vendor berbeda tetap kompatibel.
+
 \section{IDEA}
 International Data Encryption Algorithm menggunakan operasi campuran penjumlahan modulo \(2^{16}\), XOR, dan perkalian modulo \(2^{16}+1\). Desain ini menyeimbangkan difusi dan konfusi dengan operasi heterogen \citep{stallings}.
 
 IDEA memiliki hak paten yang berdampak historis pada adopsi, walau kini patennya telah berakhir di banyak yurisdiksi; namun ekosistem modern lebih memusat pada AES.
+
+Kendati begitu, mempelajari IDEA tetap relevan untuk memahami pendekatan desain yang memanfaatkan operasi berbeda demi keamanan. Kombinasi operasi modular dan biner memperkenalkan nonlinieritas dan difusi yang cukup baik pada zamannya. Perbandingan dengan AES membantu menyoroti keuntungan desain berbasis medan hingga terhadap efisiensi dan kemudahan analisis modern. Wawasan ini penting saat mengevaluasi proposal sandi blok baru.
 
 \section{Latihan}
 \begin{enumerate}

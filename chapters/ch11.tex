@@ -6,7 +6,9 @@
 Mahasiswa memahami latar belakang, konsep, metode distribusi kunci rahasia dan publik, usia kunci, pengendalian pemakaian, serta peran pihak ketiga tepercaya.
 
 \section{Latar Belakang dan Konsep Dasar}
-Distribusi dan manajemen kunci adalah fondasi keamanan praktis. Tanpa pengelolaan yang benar, primitif yang kuat sekalipun menjadi rentan \citep{stallings}.
+Distribusi dan manajemen kunci adalah fondasi keamanan praktis. Tanpa pengelolaan yang benar, primitif yang kuat sekalipun menjadi rentan \citep{stallings}. Siklus hidup kunci mencakup pembangkitan, distribusi, penyimpanan, rotasi, penonaktifan, dan pemusnahan yang aman. Setiap tahap memerlukan kontrol organisasi, dukungan teknis, dan audit yang konsisten. Dengan cara ini, risiko dari kompromi kunci dapat diminimalkan dan dampaknya dapat dikelola.
+
+Kebijakan manajemen kunci juga harus disejajarkan dengan persyaratan regulasi dan standar industri untuk memastikan kepatuhan. Dokumentasi proses membantu respons insiden ketika terjadi kebocoran atau kesalahan operasional. Infrastruktur pendukung seperti HSM dan modul kepercayaan lainnya memperkuat batas keamanan teknis. Kombinasi antara tata kelola dan teknologi membentuk pertahanan berlapis yang andal.
 
 \section{Metode Distribusi Kunci Rahasia}
 Pertukaran kunci secara fisik, protokol berbasis \emph{key exchange} (mis. Diffie--Hellman), dan penggunaan \emph{key wrapping}. Tantangan: autentikasi pihak dan mitigasi serangan MITM \citep{diffiehellman,katzlindell}. Setelah negosiasi, gunakan KDF standar untuk menurunkan kunci sesi yang terikat konteks \citep{nist_sp_800_108,nist_sp_800_56c_r2}.
@@ -20,7 +22,9 @@ Kebijakan rotasi kunci, masa berlaku, cakupan penggunaan (key usage), dan penang
 Transisi algoritma dan panjang kunci mengikuti pedoman nasional \citep{nist_sp_800_131a}. Sumber entropi dan DRBG yang kuat diperlukan untuk pembangkitan kunci yang aman \citep{nist_sp_800_90a_r1}.
 
 \section{Layanan Pihak Ketiga Terpercaya}
-CA, TSA (Time-Stamping Authority), dan KDC (Key Distribution Center) pada sistem tertentu. Keamanan keseluruhan bergantung pada keandalan dan tata kelola layanan ini.
+CA, TSA (Time-Stamping Authority), dan KDC (Key Distribution Center) pada sistem tertentu. Keamanan keseluruhan bergantung pada keandalan dan tata kelola layanan ini. Untuk CA, program akar tepercaya dan audit eksternal menjaga integritas ekosistem sertifikat publik. Pada Kerberos, ketersediaan dan keamanan KDC krusial agar autentikasi tidak menjadi titik tunggal kegagalan.
+
+Koordinasi operasional antara pihak tepercaya dan organisasi pengguna menentukan kualitas pengalaman dan keamanan keseluruhan. SLA yang jelas, pemantauan, dan pelaporan insiden mempercepat pemulihan ketika terjadi gangguan. Selain itu, uji berkala terhadap prosedur pencabutan dan pemulihan memastikan kesiapan menghadapi situasi darurat. Prinsip kehati-hatian ini mengurangi risiko sistemik pada infrastruktur kunci skala besar.
 
 \section{Latihan}
 \begin{enumerate}

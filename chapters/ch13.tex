@@ -8,13 +8,23 @@ Mahasiswa memahami peran Kerberos, PGP, dan gambaran sistem pembayaran elektroni
 \section{Kerberos}
 Kerberos adalah protokol otentikasi jaringan berbasis tiket yang mengandalkan KDC (AS dan TGS). Prinsip: otentikasi mutual, tiket sementara (TGT), dan sesi kunci sementara untuk layanan \citep{kerberos,stallings}. Standarisasi protokol V5 dijabarkan dalam \citep{rfc4120}.
 
+Arsitektur Kerberos menitikberatkan pada pembagian kepercayaan antara otoritas autentikasi dan layanan aplikasi. Tiket yang diterbitkan menyertakan masa berlaku dan pembatasan sehingga penyalahgunaan dapat dibatasi secara temporal. Protokol juga dirancang untuk meminimalkan paparan kunci jangka panjang melalui derivasi kunci sesi dinamis. Pada penerapan organisasi, sinkronisasi waktu dan ketahanan KDC adalah faktor keandalan yang tidak dapat diabaikan.
+
+Implementasi Kerberos harus mematuhi enkripsi dan checksum yang disetujui standar untuk mencegah downgrade. Integrasi dengan direktori dan infrastruktur izin memperkaya kemampuan kontrol akses lintas layanan. Audit dan logging tiket membantu menelusuri insiden keamanan dan memastikan kepatuhan kebijakan. Keseluruhan rancangan memberikan model otentikasi yang skalabel untuk lingkungan perusahaan.
+
 \section{Pretty Good Privacy (PGP)}
 PGP menggabungkan kriptografi simetris dan asimetris: enkripsi pesan dengan kunci sesi simetris (mis. AES), lalu kunci sesi dienkripsi dengan kunci publik penerima; juga menyediakan tanda tangan dan manajemen kunci ala \emph{web of trust} \citep{pgp,stallings}. Standar OpenPGP terdokumentasi dalam \citep{rfc4880}.
+
+Model \emph{web of trust} pada PGP memungkinkan pengguna membangun jaringan kepercayaan secara desentralisasi melalui praktik penandatanganan kunci. Pendekatan ini fleksibel, namun menuntut literasi keamanan yang baik dari pengguna agar tidak salah menilai keandalan kunci. Pemilihan parameter kripto mengikuti standar modern untuk memastikan interoperabilitas dengan perangkat lunak yang beragam. Dokumentasi juga mengatur format paket, kompresi, dan perlindungan integritas untuk menjaga keamanan end-to-end.
+
+Dalam praktik, PGP digunakan untuk email aman, distribusi perangkat lunak, dan verifikasi dokumen. Tantangan operasional termasuk manajemen kunci pengguna, rotasi, dan pencabutan yang ramah pengguna. Antarmuka dan praktik UX yang baik sangat memengaruhi adopsi dan efektivitas keamanan. Referensi standar membantu menyelaraskan ekosistem agar pengalaman pengguna tidak mengorbankan prinsip keamanan.
 
 \section{Sistem Pembayaran Elektronik}
 Gagasan sistem pembayaran elektronik universal mencakup aspek privasi, otentikasi, integritas, dan non-repudiation. Contoh komponen: token, tanda tangan, bukti tanpa pengungkapan penuh, serta infrastruktur sertifikat. Rancang bangun membutuhkan regulasi dan tata kelola tambahan.
 
 Salah satu gagasan awal yang berpengaruh adalah \emph{blind signatures} untuk pembayaran tak-terlacak \citep{chaum_blind}.
+
+Sistem pembayaran modern mengeksplorasi ragam arsitektur dari terpusat hingga terdesentralisasi. Keseimbangan antara privasi, pencegahan kecurangan, dan kepatuhan regulasi adalah tantangan inti. Teknik kriptografi seperti bukti tanpa pengetahuan dan tanda tangan ambang digunakan untuk mencapai tujuan yang tampak berlawanan. Penerapan kebijakan dan audit yang jelas menjaga agar inovasi kriptografi tetap sejalan dengan tuntutan hukum dan sosial.
 
 \section{Latihan}
 \begin{enumerate}

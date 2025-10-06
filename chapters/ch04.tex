@@ -8,12 +8,16 @@ Mahasiswa menguasai penyelesaian kongruensi linier, Teorema Sisa Tiongkok (CRT),
 \section{Kongruensi Linier dan Fungsi \(\varphi\) Euler}
 Persamaan \(ax\equiv b\pmod n\) memiliki solusi jika dan hanya jika \(\gcd(a,n)\mid b\). Jumlah kelas sisa invertibel di \(\Zn\) adalah \(\varphi(n)\). Untuk \(n=\prod p_i^{e_i}\), \(\varphi(n)=\prod p_i^{e_i-1}(p_i-1)\) \citep{hoffstein}. Fungsi \(\varphi\) bersifat multiplikatif dan sangat penting pada teori bilangan komputasional serta kriptografi (mis. RSA). Bacaan terbuka: \citep{shoup_nt}.
 
+Selain menentukan ukuran grup invertibel, fungsi \(\varphi\) muncul dalam teorema Euler yang menjelaskan struktur perpangkatan modular. Dalam pemecahan kongruensi linier, reduksi oleh \(\gcd(a,n)\) sering kali menyederhanakan masalah menjadi kasus yang dapat ditangani dengan invers modulo. Prosedur ini berjalan sistematis: faktorkan \(\gcd\), bagi kedua sisi, lalu cari invers pada modulus yang telah direduksi. Pemahaman alur ini penting karena menjadi subrutin pada banyak protokol, termasuk pembangkitan kunci dan validasi parameter pada skema asimetris.
+
 \section{Teorema Sisa Tiongkok (CRT)}
 Jika \(n_1,\dots,n_k\) saling bebas, maka sistem
 \[ x\equiv a_i \pmod{n_i},\quad i=1,\dots,k \]
 mempunyai solusi unik modulo \(N=\prod n_i\). Salah satu konstruksi eksplisit: \(x=\sum a_i M_i y_i\) dengan \(M_i=N/n_i\) dan \(y_i\equiv M_i^{-1}\pmod{n_i}\). CRT penting untuk percepatan perhitungan modular (misal implementasi RSA) \citep{menezes}.
 
 \paragraph{Contoh.} Selesaikan \(x\equiv 2\pmod 3\), \(x\equiv 3\pmod 5\), \(x\equiv 2\pmod 7\). Diperoleh \(N=105\), \(M_1=35\), \(y_1\equiv 2\), \(M_2=21\), \(y_2\equiv 1\), \(M_3=15\), \(y_3\equiv 1\). Maka \(x\equiv 2\cdot35\cdot2+3\cdot21\cdot1+2\cdot15\cdot1\equiv 23\pmod{105}\).
+
+Di luar contoh konstruktif, CRT memiliki interpretasi struktural sebagai isomorfisme antara \(\mathbb{Z}/N\mathbb{Z}\) dengan produk langsung \(\prod \mathbb{Z}/n_i\mathbb{Z}\). Pandangan ini menjelaskan mengapa komputasi pada modulus besar dapat dipecah menjadi komputasi pada modulus-modulus kecil yang independen. Dalam implementasi RSA, teknik ini menghemat waktu dekripsi secara signifikan dengan mengerjakan perpangkatan di modulo \(p\) dan \(q\) lalu menggabungkannya. Meski demikian, setiap optimasi harus disertai verifikasi konsistensi dan perlindungan terhadap serangan kanal samping.
 
 \section{Medan Hingga \(\Zp\) dan FLT}
 Untuk prima \(p\), \(\Zp\) adalah medan: setiap elemen non-nol memiliki invers.
@@ -24,8 +28,16 @@ Aplikasi: menguji invertibilitas, menyederhanakan perpangkatan modular, dan fond
 
 \paragraph{Contoh.} Selesaikan \(7x\equiv 1\pmod{19}\). Karena \(7^{18}\equiv 1\), maka \(7^{-1}\equiv 7^{17} \bmod 19\). Perhitungan cepat (eksponeniasi biner/square-and-multiply) memberi \(7^{-1}\equiv 11\bmod 19\).
 
+Sebagai konsekuensi lebih luas, teorema Euler memperumumkan FLT pada modulus komposit dengan mengganti pangkat \(p-1\) menjadi \(\varphi(n)\). Kedua teorema ini menjadi titik awal bagi teknik optimisasi seperti reduksi eksponen dan pra-komputasi pada algoritma perpangkatan. Dalam pembuktian kebenaran RSA, sifat tersebut memastikan bahwa perpangkatan oleh eksponen dekripsi membalik enkripsi pada kelas sisa yang relevan. Kerangka ini menunjukkan keterkaitan erat antara struktur aljabar dan keamanan kriptografi.
+
+Pada praktik implementasi, bekerja di medan \(\Zp\) memudahkan analisis karena tidak ada pembagi nol, sehingga pembatalan faktor sah untuk elemen tak nol. Pemilihan modulus prima yang sesuai juga memengaruhi performa, terutama ketika digunakan teknik aritmetika khusus seperti Montgomery atau Barrett reduction. Namun, untuk modulus komposit yang penting pada RSA, kehati-hatian ekstra diperlukan agar manipulasi aljabar tetap valid. Desainer sistem perlu memahami batas-batas pembatalan agar tidak membuat asumsi yang keliru.
+
 \section{Eksponeniasi Modular Efisien}
 Algoritma \emph{square-and-multiply} menghitung \(a^e\bmod n\) dalam \(O(\log e)\) langkah perkalian modular. Teknik ini esensial dalam RSA dan Diffie--Hellman.
+
+Secara umum, representasi biner dari eksponen menentukan urutan kuadrat dan kali yang harus dilakukan. Berbagai optimisasi seperti sliding window, pra-komputasi tabel, dan penggunaan basis Non-Adjacent Form (NAF) dapat menurunkan jumlah operasi. Pada pengaturan kunci publik, pengurangan biaya perpangkatan berdampak langsung pada latensi enkripsi/dekripsi dan throughput sistem. Di sisi keamanan, implementasi harus menyeimbangkan performa dengan mitigasi kebocoran waktu dan cache.
+
+Sebagai tambahan, teknik reduksi modular yang efisien seperti Montgomery reduction menghindari pembagian eksplisit yang mahal pada perangkat keras umum. Integrasi teknik ini dengan algoritma perpangkatan menghasilkan jalur komputasi yang stabil dan konsisten. Pada implementasi yang sensitif, pendekatan waktu konstan mencegah penyerang menyimpulkan bit-bit eksponen dari variasi waktu eksekusi. Dengan demikian, optimisasi aritmetika harus dipadukan dengan praktik pengkodean aman.
 
 \section{Latihan}
 \begin{enumerate}

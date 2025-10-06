@@ -10,14 +10,24 @@ LFSR menghasilkan deret biner melalui umpan balik linear atas \(\mathbb{F}_2\). 
 
 Untuk mengatasi linearitas, skema modern menggabungkan beberapa LFSR dengan fungsi nonlinier atau menggunakan konstruk modern hasil proyek eSTREAM.
 
+Model matematika LFSR memungkinkan analisis periode, distribusi bit, dan sifat linear kompleksitas deret yang dihasilkan. Pada tataran ideal, periode maksimal tercapai ketika polinomial umpan balik primitif digunakan, sehingga seluruh keadaan non-nol dilalui. Namun, linearitas berarti bahwa korelasi dan serangan Berlekamp–Massey dapat memulihkan struktur dari sejumlah bit keluaran. Oleh karena itu, LFSR jarang dipakai sendirian pada sistem yang menuntut kerahasiaan kuat.
+
+Penggabungan beberapa LFSR melalui fungsi boolean nonlinier atau filter/combiner berusaha mematahkan linearitas yang dieksploitasi penyerang. Alternatif yang lebih modern adalah sandi alir berbasis ARX atau desain sponge yang dipilih melalui kompetisi terbuka. Portofolio eSTREAM mendokumentasikan kandidat terbaik untuk perangkat lunak dan perangkat keras setelah evaluasi luas komunitas. Hasil ini memberi rujukan praktis bagi desainer yang membutuhkan kecepatan sekaligus keamanan \citep{estream}.
+
 \section{Sandi Vigen\`{e}re}
 Sandi klasik polialfabetik menggunakan kunci kata untuk menentukan pergeseran siklik per posisi. Rentan terhadap analisis Kasiski dan indeks koincidensi; tidak aman secara modern \citep{stallings}.
+
+Secara historis, Vigen\`{e}re dianggap kuat karena menyamarkan hubungan langsung antara huruf plaintext dan ciphertext. Namun, pola pengulangan kunci memunculkan korelasi yang dapat dieksploitasi melalui analisis statistik. Teknik seperti uji Kasiski memperkirakan panjang kunci dari jarak pengulangan, kemudian memecahkan tiap selang sebagai sandi Caesar. Pengalaman ini menegaskan perlunya kerandoman yang lebih sistematis pada skema modern.
+
+Meski sudah usang untuk keamanan, Vigen\`{e}re tetap bernilai pedagogis untuk memperkenalkan konsep polialfabetik. Eksperimen laboratorium menggunakan teks bahasa alami dengan distribusi huruf yang tidak seragam memperlihatkan kelemahannya secara nyata. Perbandingan dengan metode modern juga membantu mengilustrasikan transisi dari heuristik ke pendekatan matematis formal. Pembelajaran ini mempersiapkan pemahaman terhadap definisi indikator keamanan seperti IND-CPA.
 
 \section{SEAL}
 SEAL adalah sandi alir berkecepatan tinggi berbasis fungsi pseudo-acak yang dipetakan dari kunci dan nonce, dirancang untuk efisiensi perangkat lunak \citep{seal}.
 
+SEAL mengadopsi prinsip desain yang mengutamakan operasi cepat pada prosesor umum, sehingga cocok untuk aplikasi bandwidth tinggi. Struktur internalnya menyusun transformasi terjadwal yang menghasilkan keystream dengan persebaran yang baik. Evaluasi keamanan meninjau ketahanan terhadap korelasi dan serangan analitik lainnya, serta efektivitas terhadap implementasi nyata. Dokumentasi teknis menekankan pentingnya pengelolaan nonce dan kunci agar tidak terjadi reuse yang melemahkan jaminan keamanan.
+
 \section{RC4}
-RC4 adalah sandi alir terkenal dengan inisialisasi KSA dan PRGA yang menghasilkan keystream. Ditemukan berbagai bias pada keluaran awal sehingga butuh pembuangan byte awal; banyak standar modern tidak lagi merekomendasikan RC4 \citep{rc4,stallings}.
+RC4 adalah sandi alir terkenal dengan inisialisasi KSA dan PRGA yang menghasilkan keystream. Ditemukan berbagai bias pada keluaran awal sehingga butuh pembuangan byte awal; banyak standar modern tidak lagi merekomendasikan RC4 \citep{rc4,stallings}. Standar Internet bahkan melarang penggunaan RC4 pada rangkaian sandi TLS karena kelemahan yang tidak dapat diperbaiki secara praktis \citep{rfc7465}.
 
 Alternatif modern yang disarankan: ChaCha20-Poly1305, distandardkan untuk protokol Internet \citep{rfc8439}. Portofolio eSTREAM juga merekomendasikan beberapa kandidat untuk perangkat lunak dan perangkat keras \citep{estream}.
 

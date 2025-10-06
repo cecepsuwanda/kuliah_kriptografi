@@ -8,11 +8,19 @@ Mahasiswa mampu melakukan analisis dasar terhadap sistem kripto sederhana dan me
 \section{Metodologi Analisis}
 Langkah-langkah umum: model ancaman, asumsi penyerang, enumerasi ruang kunci, analisis statistik (mis. frekuensi), dan serangan yang memanfaatkan struktur (linearitas, periode pendek, bias) \citep{stallings}. Untuk sandi blok modern, dua pendekatan utama adalah kriptoanalisis linear dan diferensial \citep{heys_tutorial}.
 
+Setiap metodologi membutuhkan definisi target yang jelas: apakah kerahasiaan, integritas, atau autentikasi yang diserang. Proses biasanya dimulai dengan pemodelan sistem dan identifikasi asumsi yang dapat dieksploitasi, lalu berlanjut pada pengumpulan bukti melalui eksperimen terstruktur. Analisis matematis mengubah observasi menjadi argumen yang mendukung atau menolak hipotesis kelemahan. Dengan cara ini, penelitian kriptoanalisis membangun pemahaman kumulatif yang memandu perbaikan desain.
+
+Untuk sandi blok, kriptoanalisis linear mencari korelasi linear antara bit input dan output lintas putaran yang menghasilkan keunggulan prediksi. Sementara itu, kriptoanalisis diferensial menelusuri bagaimana perbedaan pada input memengaruhi distribusi perbedaan pada output. Keduanya memerlukan estimasi probabilitas dan konstruksi jalur karakteristik yang akurat. Kesadaran akan teknik ini mendorong perancang untuk menghindari struktur yang dapat menimbulkan jalur probabilitas tinggi.
+
 \section{Contoh: Analisis Sandi Substitusi Tunggal}
 Sandi substitusi tunggal mempertahankan distribusi frekuensi huruf. Serangan analisis frekuensi, bigram/trigram, dan heuristik bahasa dapat memulihkan pemetaan kunci secara bertahap.
 
+Eksperimen laboratorium dapat dimulai dengan menghitung histogram huruf dan membandingkannya dengan distribusi bahasa yang diketahui. Kemudian, pengelompokan pasangan huruf (bigram) dan tiga huruf (trigram) memperkaya petunjuk untuk penempatan substitusi yang benar. Penyempurnaan dilakukan iteratif menggunakan kamus dan konteks untuk menyelesaikan ambiguitas. Meskipun sederhana, pendekatan ini menunjukkan kekuatan statistik terhadap sandi yang tidak memiliki difusi memadai.
+
 \section{Contoh: Analisis RC4 Awal}
 Bias pada byte awal keystream RC4 memungkinkan kebocoran informasi kunci pada protokol tertentu jika \emph{nonce} berulang, sehingga mitigasi dengan pembuangan byte awal tidak cukup pada banyak skenario modern \citep{rc4}.
+
+Dalam konteks protokol jaringan, kelemahan ini dieksploitasi ketika banyak paket menggunakan kunci atau nonce yang berkorelasi, sehingga pola bias terakumulasi. Analisis statistik atas sejumlah besar paket dapat mengungkap informasi tentang kunci internal. Pembelajaran dari kasus ini mendorong komunitas untuk melarang RC4 di standar modern dan beralih ke alternatif AEAD yang kuat. Rekomendasi semacam ini memperlihatkan hubungan erat antara kriptoanalisis dan kebijakan standar.
 
 \section{Catatan Etika dan Tanggung Jawab}
 Analisis kriptografi harus dilakukan pada lingkungan terkendali dan sistem yang Anda miliki izin untuk menguji. Tujuannya adalah meningkatkan desain dan implementasi, bukan mengeksploitasi kelemahan.

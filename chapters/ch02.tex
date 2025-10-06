@@ -14,16 +14,22 @@ Mahasiswa mampu membedakan sistem kunci publik dan privat (simetris), menjelaska
 Skema \emph{Public-Key Encryption} (PKE) didefinisikan oleh prosedur \(\mathsf{Gen},\mathsf{Enc},\mathsf{Dec}\). Tujuan keamanan utama adalah IND-CPA/IND-CCA; banyak skema modern memerlukan \emph{padding} dan transformasi yang tepat (mis. RSA-OAEP) untuk mencapai keamanan yang diinginkan \citep{rfc8017,katzlindell}.
 \end{definition}
 
+Pada praktik sistem besar, pendekatan yang paling umum adalah enkripsi hibrida yang memadukan kedua dunia: kunci publik digunakan untuk menyepakati atau membungkus kunci sesi, sedangkan kunci sesi simetris digunakan untuk mengenkripsi data dalam jumlah besar. Strategi ini menekan latensi, memaksimalkan throughput, dan tetap mempertahankan kemudahan distribusi kunci publik pada awal sesi. Perancangan harus memperhatikan format pesan, inklusi \emph{associated data}, serta mekanisme autentikasi agar tidak terjadi kerentanan pada lapisan protokol. Literatur modern menekankan pemodelan formal sehingga integrasi antarprimitif tidak membuka celah yang tak terduga \citep{katzlindell,bonehshoup}.
+
+Pemilihan parameter juga krusial karena menentukan margin keamanan terhadap kemajuan komputasi dan kriptoanalisis. Rekomendasi ukuran kunci, kurva eliptik, dan algoritma transisi dibahas dalam standar yang diadopsi luas oleh industri. Dokumentasi seperti \citep{nist_sp_800_56a_r3,nist_sp_800_131a} menjadi rujukan saat mengatur kebijakan jangka panjang. Pada akhirnya, keputusan arsitektural perlu menyeimbangkan kebutuhan interoperabilitas, performa, dan kepatuhan regulasi tanpa mengorbankan model keamanan formal.
+
 \section{Fungsi Hash Kriptografis}
 \begin{definition}[Fungsi Hash]
 Pemetaan deterministik dari string panjang ke nilai tetap (digest) dengan sifat tahan tabrakan, tahan pra-citra, dan tahan pra-citra kedua (secara ideal).
 \end{definition}
-Penggunaan: merangkum pesan, membangun MAC dan tanda tangan, verifikasi integritas \citep{menezes}. Standar keluarga SHA-2 dan SHA-3 terdokumentasi pada \citep{fips180-4,fips202}.
+Penggunaan: merangkum pesan, membangun MAC dan tanda tangan, verifikasi integritas \citep{menezes}. Standar keluarga SHA-2 dan SHA-3 terdokumentasi pada \citep{fips180-4,fips202}. Dalam perancangan protokol, ukuran digest dipilih dengan mempertimbangkan margin keamanan terhadap serangan tabrakan praktis. Banyak sistem produksi beralih ke SHA-256 atau SHA-3-256 untuk keseimbangan antara keamanan dan kinerja yang baik.
 
-Sifat penting lain: fungsi hash ideal dimodelkan sebagai \emph{random oracle} dalam beberapa analisis keamanan; meskipun demikian, standar implementasi mengatur parameter dan varian yang digunakan.
+Sifat penting lain: fungsi hash ideal kerap dimodelkan sebagai \emph{random oracle} dalam pembuktian keamanan. Walaupun model ini idealisasi, ia memudahkan analisis skema seperti OAEP atau PSS yang mengandalkan sifat acak hash pada proses transformasi. Di luar pembuktian, praktik implementasi harus mematuhi standar resmi dan menghindari varian usang. Sisi rekayasa juga meliputi pemrosesan pesan besar, padding yang benar, dan proteksi dari kesalahan implementasi yang dapat melemahkan jaminan formal.
 
 \section{Tanda Tangan Digital}
-Skema tanda tangan menjamin keaslian dan nir-sangkal. Pihak penandatangan menggunakan kunci privat untuk menghasilkan tanda tangan atas pesan (sering atas hash pesan); pihak verifikator menggunakan kunci publik untuk memverifikasi \citep{katzlindell}. Standar modern meliputi RSA-PSS dan ECDSA/EdDSA; praktik baik termasuk penggunaan \emph{nonce} deterministik untuk DSA/ECDSA \citep{rfc8017,fips186-5,rfc6979}.
+Skema tanda tangan menjamin keaslian dan nir-sangkal. Pihak penandatangan menggunakan kunci privat untuk menghasilkan tanda tangan atas pesan (sering atas hash pesan); pihak verifikator menggunakan kunci publik untuk memverifikasi \citep{katzlindell}. Standar modern meliputi RSA-PSS dan ECDSA/EdDSA; praktik baik termasuk penggunaan \emph{nonce} deterministik untuk DSA/ECDSA \citep{rfc8017,fips186-5,rfc6979}. Selain itu, pemilihan domain parameter, kurva, dan fungsi hash memengaruhi tingkat keamanan dan interoperabilitas antarplatform.
+
+Dalam skenario produksi, tata kelola kunci dan proses penandatanganan harus diisolasi dari serangan kanal samping. Sistem \emph{hardware security module} (HSM) lazim digunakan untuk melindungi kunci privat dan memastikan audit yang tepat. Verifikasi tanda tangan perlu memasukkan kebijakan kebaruan (freshness), waktu, dan domain aplikasi untuk mencegah serangan pengulangan. Dokumentasi standar memberikan pedoman tentang encoding, padding, dan penanganan kesalahan agar implementasi tidak membuka ruang eksploitasi \citep{rfc8017,rfc8032}.
 
 \begin{definition}[EUF-CMA]
 Keamanan tanda tangan biasanya dimodelkan sebagai \emph{Existential Unforgeability under Chosen-Message Attack} (EUF-CMA): tidak ada lawan berwaktu-polynomial yang dapat memalsukan tanda tangan atas pesan baru sekalipun ia memiliki orakel penandatanganan atas pesan-pesan pilihannya.
@@ -31,6 +37,10 @@ Keamanan tanda tangan biasanya dimodelkan sebagai \emph{Existential Unforgeabili
 
 \section{Sertifikat Digital dan PKI}
 Sertifikat mengikat identitas dengan kunci publik menggunakan tanda tangan dari \emph{Certificate Authority} (CA). PKI menyediakan prosedur penerbitan, pencabutan, dan validasi sertifikat. Keamanannya bergantung pada kebijakan dan keandalan CA \citep{stallings}. Profil sertifikat Internet berbasis X.509 dan CRL didefinisikan dalam \citep{rfc5280}; validasi rantai dan kebijakan dipercaya merupakan inti operasional pada TLS dan ekosistem web.
+
+Dalam praktik, verifikasi sertifikat bukan hanya memeriksa tanda tangan, tetapi juga memvalidasi masa berlaku, kebijakan penggunaan kunci, dan status pencabutan. Mekanisme OCSP memungkinkan pemeriksaan status secara daring untuk mengurangi jendela eksploitasi sertifikat yang dicabut \citep{rfc6960}. Di sisi infrastruktur, daftar akar tepercaya pada sistem operasi dan peramban menentukan CA mana yang diakui dalam ekosistem publik. Kebijakan audit dan transparansi sertifikat turut membantu mencegah penerbitan yang salah atau berbahaya.
+
+Arsitektur PKI yang sehat menuntut pemisahan peran, prosedur rotasi kunci, dan pelaporan insiden yang jelas. Organisasi besar sering memadukan PKI internal dan eksternal untuk melayani kebutuhan layanan privat dan publik secara bersamaan. Dokumentasi proses yang konsisten memudahkan penelusuran masalah dan kepatuhan saat terjadi insiden. Rujukan standar memastikan organisasi mampu mengikuti praktik terbaik tanpa menciptakan solusi ad-hoc yang rentan.
 
 \section{Latihan}
 \begin{enumerate}
