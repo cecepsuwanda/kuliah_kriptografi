@@ -1,4 +1,30 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 \chapter{Algoritma Kriptografi Klasik}
+\section{Tujuan Pembelajaran}
+Membedakan sandi substitusi dan transposisi; memahami kelemahan analisis frekuensi; mengenal Caesar dan Vigen\`{e}re.
+
+\section{Ringkasan Materi}
+Sandi klasik bermanfaat pedagogis tetapi tidak aman secara modern. Analisis frekuensi dan struktur bahasa memudahkan pemecahan \citep{wikipedia_caesar,wikipedia_vigenere}.
+
+\section{Materi}
+\subsection{Substitusi Monoalfabetik}
+Sandi Caesar mengganti huruf dengan pergeseran tetap; ruang kunci kecil dan mudah dipecahkan.
+
+\subsection{Substitusi Polialfabetik}
+Vigen\`{e}re menggunakan kunci sebagai pola pergeseran. Masih rentan terhadap analisis Kasiski dan indeks koincidensi.
+
+\subsection{Transposisi}
+Mengubah posisi huruf tanpa mengubah simbol; pola bahasa tetap terlihat.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Implementasikan sandi Caesar dan serang dengan analisis frekuensi.
+  \item Dekripsi pesan Vigen\`{e}re dengan metode Kasiski.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{wikipedia_caesar} dan \citep{wikipedia_vigenere}.
+\end{itemize}
 \end{document}

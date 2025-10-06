@@ -1,4 +1,34 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 \chapter{Teori Bilangan}
+\section{Tujuan Pembelajaran}
+Memahami aritmetika modulo, invers, teorema kecil Fermat dan Euler, orde elemen, grup siklik, dan aplikasinya pada RSA serta Diffie--Hellman.
+
+\section{Ringkasan Materi}
+Banyak skema bergantung pada struktur matematika seperti \(\mathbb{Z}_n\), grup perkalian modulo prima, dan kesulitan komputasional faktorisasi atau logaritma diskrit \citep{hac,bonehshoup}.
+
+\section{Materi}
+\subsection{Aritmetika Modulo}
+Definisi kongruensi, penjumlahan, perkalian, invers modulo menggunakan Euclidean Algorithm.
+
+\subsection{Teorema Fermat dan Euler}
+Jika \(p\) prima: \(a^{p-1}\equiv 1\; (\bmod\; p)\) untuk \(a\not\equiv 0\). Umum: \(a^{\varphi(n)}\equiv 1\; (\bmod\; n)\) bila \(\gcd(a,n)=1\).
+
+\subsection{Orde dan Grup}
+Orde elemen, generator grup siklik, aplikasi pada Diffie--Hellman di grup yang cocok.
+
+\subsection{Penerapan pada Skema}
+RSA menggunakan faktorisasi \(n=pq\); keamanan DH bergantung pada sulitnya logaritma diskrit.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Temukan invers dari 37 modulo 101.
+  \item Buktikan \(a^{\varphi(n)}\equiv 1\) untuk \(\gcd(a,n)=1\).
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{hac} Bab teori bilangan.
+  \item \citep{bonehshoup} ringkasan teori bilangan untuk kripto.
+\end{itemize}
 \end{document}

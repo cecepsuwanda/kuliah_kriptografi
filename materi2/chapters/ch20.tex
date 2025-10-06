@@ -1,4 +1,27 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 \chapter{Public Key Infrastructure (PKI)}
+\section{Tujuan Pembelajaran}
+Memahami PKI, X.509, hierarki CA, dan validasi sertifikat.
+
+\section{Ringkasan Materi}
+PKI menyediakan pengelolaan identitas dan kunci publik dengan kepercayaan bertingkat: CA akar dan menengah, sertifikat X.509, CRL/OCSP, dan kebijakan \citep{rfc5280}.
+
+\section{Materi}
+\subsection{Sertifikat X.509}
+Struktur subjek, kunci, masa berlaku, ekstensi, dan tanda tangan CA.
+
+\subsection{Validasi}
+Pemilihan jalur ke CA tepercaya, pemeriksaan masa berlaku, pencabutan (CRL/OCSP), dan penegakan kebijakan.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Uraikan proses validasi sertifikat TLS sisi klien.
+  \item Jelaskan perbedaan CRL vs OCSP.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{rfc5280}.
+\end{itemize}
 \end{document}

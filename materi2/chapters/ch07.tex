@@ -1,4 +1,30 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 \chapter{Algoritma Kriptografi Modern}
+\section{Tujuan Pembelajaran}
+Memahami perbedaan paradigma modern: keamanan komputasional, bukti reduksi, dan pemodelan orakel.
+
+\section{Ringkasan Materi}
+Kriptografi modern mengandalkan asumsi matematis dan definisi formal. Primitif inti: PRG, PRF, dan permutasi acak semu sebagai landasan cipher blok; konstruksi hash modern dan keamanan kolisi/preimage; serta tanda tangan digital berbasis skema kunci publik \citep{bonehshoup,bellare_rogaway_notes}.
+
+\section{Materi}
+\subsection{Keamanan Kerahasiaan}
+IND-CPA untuk enkripsi; untuk ketahanan terhadap dekripsi adaptif dibutuhkan IND-CCA, biasanya melalui mode seperti GCM atau skema hibrida dengan bukti \citep{bellare_rogaway_notes}.
+
+\subsection{Integritas dan Autentikasi}
+MAC untuk data dengan kunci simetris; tanda tangan digital untuk penandatanganan publik.
+
+\subsection{Konstruksi}
+Dari PRF ke cipher blok (Feistel/SPN), dari kompresi ke hash (Merkle–Damgård, sponge).
+
+\section{Latihan}
+\begin{enumerate}
+  \item Jelaskan mengapa IND-CPA tidak cukup untuk skenario dengan orakel dekripsi.
+  \item Hubungkan PRG \(\Rightarrow\) PRF \(\Rightarrow\) block cipher secara konseptual.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{bonehshoup,bellare_rogaway_notes}.
+\end{itemize}
 \end{document}

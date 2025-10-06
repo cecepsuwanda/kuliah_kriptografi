@@ -1,4 +1,27 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 \chapter{Digital Signature Standard (DSS): DSA dan SHA}
+\section{Tujuan Pembelajaran}
+Memahami DSA, parameter domain, peran hash SHA, dan implikasi keamanan.
+
+\section{Ringkasan Materi}
+DSS mengacu pada standar federal untuk tanda tangan digital, historisnya menggabungkan DSA dan keluarga SHA. Keamanan sangat bergantung pada pemilihan parameter dan keacakan nonce \(k\) yang kuat \citep{fips186_5,fips1804}.
+
+\section{Materi}
+\subsection{DSA}
+Berbasis logaritma diskrit: tanda tangan \((r,s)\) memerlukan nonce \(k\) unik; kebocoran atau reuse \(k\) membocorkan kunci privat.
+
+\subsection{Hash SHA}
+SHA-2 (mis. SHA-256) dan SHA-3 untuk fungsi hash modern; MD5/SHA-1 tidak direkomendasikan untuk keamanan baru \citep{fips1804,fips202}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Tunjukkan bagaimana reuse nonce \(k\) pada DSA membocorkan kunci privat.
+  \item Bandingkan SHA-256 dan SHA3-256.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{fips186_5,fips1804,fips202}.
+\end{itemize}
 \end{document}

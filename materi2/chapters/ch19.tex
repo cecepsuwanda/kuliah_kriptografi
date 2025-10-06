@@ -1,4 +1,27 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 \chapter{Protokol Kriptografi}
+\section{Tujuan Pembelajaran}
+Memahami peran protokol dalam menggabungkan primitif untuk mencapai tujuan sistemik (kerahasiaan, integritas, autentikasi, forward secrecy).
+
+\section{Ringkasan Materi}
+Protokol menetapkan urutan pesan dan aturan derivasi kunci. Contoh: TLS 1.3 menyederhanakan handshake, menerapkan forward secrecy, dan mengautentikasi server (opsional klien) \citep{rfc8446}.
+
+\section{Materi}
+\subsection{Handshake dan Kunci}
+Pertukaran kunci (mis. (EC)DHE), derivasi kunci sesi, dan pemisahan kunci untuk enkripsi dan autentikasi.
+
+\subsection{Properti Lanjutan}
+Forward secrecy, session resumption, dan 0-RTT dengan implikasi keamanan tertentu.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Jelaskan bagaimana TLS 1.3 mencapai forward secrecy.
+  \item Bandingkan autentikasi berbasis sertifikat vs PSK.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{rfc8446}.
+\end{itemize}
 \end{document}
