@@ -12,7 +12,16 @@ Setelah mempelajari bab ini, mahasiswa mampu:
 \end{itemize}
 
 \section{Sejarah Singkat}
-Kriptografi telah digunakan sejak zaman kuno, misalnya sandi Caesar pada Romawi dan sandi Vigen\`{e}re pada abad ke-16. Revolusi besar terjadi pada abad ke-20 melalui karya Claude Shannon dan perkembangan mesin Enigma pada Perang Dunia II, diikuti munculnya kriptografi modern berbasis teori kompleksitas komputasi pada tahun 1970-an (Diffie--Hellman dan RSA). Rujukan modern yang komprehensif dapat dilihat pada \citep{stallings,katzlindell,menezes}.
+Kriptografi telah digunakan sejak zaman kuno, misalnya sandi Caesar pada Romawi dan sandi Vigen\`{e}re pada abad ke-16 \citep{wikipedia_caesar,wikipedia_vigenere}. Revolusi besar terjadi pada abad ke-20 melalui karya Claude Shannon yang merumuskan fondasi teoretis kerahasiaan informasi \citep{shannon1949} dan perkembangan mesin Enigma pada Perang Dunia II. Era kriptografi modern dimulai pada 1970-an dengan konsep kunci publik (Diffie--Hellman) dan RSA \citep{diffiehellman,rsa}, yang disertai pendekatan keamanan komputasional yang diformalkan lebih lanjut dalam literatur modern \citep{katzlindell,bonehshoup}. Untuk gambaran komprehensif dan materi rujukan terbuka, lihat \citep{menezes,stallings}.
+
+\section{Motivasi dan Aplikasi Dunia Nyata}
+Kriptografi hadir dalam hampir semua sistem informasi modern:
+\begin{itemize}
+  \item \textbf{Keamanan kanal komunikasi}: Protokol TLS 1.3 melindungi koneksi web melalui negosiasi kunci dan kripto simetris \citep{rfc8446}.
+  \item \textbf{Perlindungan data tersimpan}: Enkripsi disk/file memastikan kerahasiaan data saat perangkat hilang/curian.
+  \item \textbf{Otentikasi dan tanda tangan}: Validasi identitas, tanda tangan digital, dan non-repudiation pada dokumen.
+  \item \textbf{Manajemen kunci}: Kebijakan ukuran kunci, rotasi, dan siklus hidup kunci mengacu pada pedoman NIST \citep{nist_sp_800_57pt1r5}.
+\end{itemize}
 
 \section{Definisi dan Tujuan Keamanan}
 \begin{definition}[Kriptografi]
@@ -27,27 +36,67 @@ Tujuan keamanan umum:
   \item \textbf{Nir-sangkal}: pengirim tidak dapat menyangkal telah mengirim pesan (umum pada tanda tangan digital).
 \end{itemize}
 
+\section{Prinsip Kerckhoffs}
+\begin{definition}[Prinsip Kerckhoffs]
+Sistem kriptografi harus tetap aman meskipun seluruh detail sistem (algoritma) diketahui publik; hanya kunci yang harus dirahasiakan.\footnote{Dikenal juga sebagai menolak ``security by obscurity''.}
+\end{definition}
+Prinsip ini menekankan pentingnya desain terbuka dan analisis publik bagi keamanan jangka panjang \citep{kerckhoffs1883,katzlindell,bonehshoup}.
+
+\section{Terminologi dan Notasi}
+Kita gunakan notasi standar: pesan asli (plaintext) \(M\), ciphertext \(C\), kunci \(K\), dan skema kriptografi \(\mathsf{Scheme}=(\mathsf{Gen},\mathsf{Enc},\mathsf{Dec})\). Untuk kunci rahasia \(K\), enkripsi \(C=\mathsf{Enc}_K(M)\) dan dekripsi \(M=\mathsf{Dec}_K(C)\) harus memenuhi \(\mathsf{Dec}_K(\mathsf{Enc}_K(M))=M\). Istilah lain yang umum: lawan/penyerang (adversary), ruang kunci, dan ruang pesan \citep{rfc4949,katzlindell}.
+
+\section{Model Ancaman dan Orakel}
+Model ancaman mendeskripsikan kemampuan lawan:
+\begin{itemize}
+  \item \textbf{Hanya ciphertext} (COA): lawan melihat ciphertext saja.
+  \item \textbf{Chosen-Plaintext Attack} (CPA): lawan dapat memilih plaintext dan memperoleh ciphertext dari orakel enkripsi.
+  \item \textbf{Chosen-Ciphertext Attack} (CCA): lawan dapat mengirim ciphertext ke orakel dekripsi (dengan pembatasan tertentu) untuk mendapatkan dekripsi.
+\end{itemize}
+Tujuan standar pada kriptografi modern adalah \emph{indistinguishability} terhadap CPA/CCA (IND-CPA/IND-CCA), yakni ketidakmampuan lawan membedakan enkripsi dua pesan yang dipilihnya \citep{katzlindell,bonehshoup}.
+
 \section{Model Dasar Sistem Kriptografi}
-Sebuah skema kriptografi tipikal melibatkan pesan asli (plaintext), kunci, algoritma enkripsi menghasilkan ciphertext, serta algoritma dekripsi untuk memulihkan plaintext. Keamanan dinilai terhadap model penyerang (misalnya penyerang yang mengetahui ciphertext saja, atau memiliki akses ke orakel enkripsi/dekripsi) \citep{katzlindell}.
+Sebuah skema kriptografi tipikal melibatkan pesan asli (plaintext), kunci, algoritma enkripsi menghasilkan ciphertext, serta algoritma dekripsi untuk memulihkan plaintext. Keamanan dinilai terhadap model penyerang (misalnya COA, CPA, CCA) serta didefinisikan melalui permainan keamanan yang memformalkan indistinguishability \citep{katzlindell,bonehshoup}.
+
+\section{Keamanan Informasi vs. Komputasional}
+\textbf{Perfect secrecy} (Shannon) menyatakan bahwa ciphertext tidak mengungkapkan informasi apapun tentang plaintext: secara formal, distribusi \(M\) independen dari \(C\) \citep{shannon1949}. Sementara itu, \textbf{keamanan komputasional} hanya menuntut bahwa setiap lawan berwaktu-polynomial memiliki peluang sukses yang tak berarti (negligible) dalam memecahkan tujuan keamanan tertentu \citep{katzlindell}.
+
+\section{One-Time Pad (OTP)}
+Skema OTP mengenkripsi \(M\) dengan kunci acak \(K\) sepanjang \(M\) melalui \(C=M\oplus K\). Bila kunci benar-benar acak, sepanjang pesan, dan tidak digunakan ulang, OTP mencapai perfect secrecy. Kelemahan utamanya adalah distribusi dan pengelolaan kunci yang sebesar pesan, serta bahaya fatal bila kunci diulang.
+
+\begin{example}[OTP singkat]
+Misalkan pesan biner \(M=10110010\) dan kunci acak \(K=01100101\). Maka \(C=M\oplus K=11010111\). Dekripsi mengulang operasi XOR yang sama.
+\end{example}
 
 \section{Kriptografi Konvensional (Simetris)}
-Kriptografi simetris menggunakan satu kunci rahasia bersama untuk enkripsi dan dekripsi. Keluarga utama: \emph{sandi blok} (block cipher) dan \emph{sandi alir} (stream cipher). Keunggulan utama adalah efisiensi; kelemahannya adalah pendistribusian kunci rahasia ke semua pihak yang berkomunikasi \citep{stallings}.
+Kriptografi simetris menggunakan satu kunci rahasia bersama untuk enkripsi dan dekripsi. Keluarga utama: \emph{sandi blok} (block cipher) dan \emph{sandi alir} (stream cipher). Sandi blok biasanya digunakan dengan \emph{mode operasi} (CBC, CTR, GCM) untuk mencapai kerahasiaan dan/atau autentikasi; sandi alir menghasilkan \emph{keystream} yang di-XOR-kan dengan plaintext. Keunggulan utama kripto simetris adalah efisiensi; tantangan utamanya adalah distribusi/manajemen kunci rahasia \citep{stallings,menezes}.
+
+Pada sistem nyata, kanal aman seperti TLS 1.3 biasanya menggunakan \emph{kripto asimetris} hanya untuk negosiasi kunci, kemudian beralih ke kripto simetris yang lebih cepat untuk lalu lintas data \citep{rfc8446}.
 
 \section{Contoh Sederhana: Sandi Geser}
-Misal alfabet Latin dan pergeseran 3 (sandi Caesar). Enkripsi: ganti setiap huruf dengan huruf ke-3 berikutnya secara siklik. Dekripsi: geser balik 3. Sandi klasik ini mudah dipecahkan (misal analisis frekuensi) sehingga tidak aman secara modern.
+Misal alfabet Latin dan pergeseran 3 (sandi Caesar). Enkripsi: ganti setiap huruf dengan huruf ke-3 berikutnya secara siklik. Dekripsi: geser balik 3. Sandi klasik ini mudah dipecahkan (misal analisis frekuensi) sehingga tidak aman secara modern \citep{wikipedia_caesar}. Varian polialfabetik seperti Vigen\`{e}re memperumit analisis tetapi tetap rentan terhadap teknik \emph{Kasiski} dan analisis frekuensi tingkat lanjut \citep{wikipedia_vigenere}.
+
+Sebagai perbandingan, sandi modern dievaluasi dengan kerangka formal (IND-CPA/CCA) dan analisis kompleksitas, bukan sekadar upaya menutupi algoritma.
 
 \section{Latihan}
 \begin{enumerate}
   \item Terapkan sandi Caesar dengan pergeseran 7 untuk mengenkripsi dan mendekripsi sebuah kalimat. Diskusikan kelemahan utamanya.
   \item Sebutkan perbedaan tujuan \emph{integritas} dan \emph{otentikasi}. Berikan contoh skenario.
   \item Uraikan mengapa distribusi kunci adalah masalah utama pada kriptografi simetris.
+  \item (Kerckhoffs) Jelaskan mengapa mengandalkan kerahasiaan algoritma bukan strategi yang baik.
+  \item (Model ancaman) Beri contoh aplikasi yang membutuhkan IND-CCA daripada hanya IND-CPA.
+  \item (OTP) Tunjukkan bahwa jika kunci OTP digunakan ulang pada dua pesan, maka \(C_1\oplus C_2=M_1\oplus M_2\) dan jelaskan akibatnya.
+  \item (Konsep) Mengapa perfect secrecy sulit dicapai pada sistem praktis? Hubungkan dengan biaya distribusi kunci dan skala sistem.
 \end{enumerate}
 
 \section{Bacaan Lanjutan}
 \begin{itemize}
   \item \citep{stallings} untuk pengantar menyeluruh sistem klasik dan modern.
   \item \citep{katzlindell} untuk landasan formal dan definisi keamanan.
+  \item \citep{bonehshoup} sebagai buku terbuka yang menekankan pembuktian keamanan modern.
   \item \citep{menezes} sebagai referensi terbuka yang kaya dengan detail teknis.
+  \item \citep{shannon1949} untuk dasar kerahasiaan sempurna.
+  \item \citep{rfc8446} untuk contoh protokol produksi yang menggunakan kriptografi modern.
+  \item \citep{nist_sp_800_57pt1r5} untuk praktik manajemen kunci.
 \end{itemize}
 
 \end{document}

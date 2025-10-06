@@ -7,12 +7,16 @@ Mahasiswa memahami FPB/GCD, keterbagian, kongruensi, ring \(\Zn\), Algoritma Euk
 
 \section{Keterbagian, FPB, dan Algoritma Euklid}
 \begin{definition}[FPB/GCD]
-FPB dari bilangan bulat \(a\) dan \(b\), ditulis \(\gcd(a,b)\), adalah pembagi bersama terbesar. Algoritma Euklid menghitung \(\gcd(a,b)\) secara efisien dengan pembagian berulang \citep{rosen}.
+FPB dari bilangan bulat \(a\) dan \(b\), ditulis \(\gcd(a,b)\), adalah pembagi bersama terbesar. Algoritma Euklid menghitung \(\gcd(a,b)\) secara efisien dengan pembagian berulang \citep{rosen}. Kompleksitasnya linear dalam jumlah digit (kuasi-linear dengan pembagian cepat), dan menjadi dasar banyak algoritma pada kriptografi bilangan bulat.
 \end{definition}
 
 \begin{theorem}[Identitas Bezout]
 Untuk \(a,b\in\Z\) tidak keduanya nol, terdapat \(x,y\in\Z\) sehingga \(ax+by=\gcd(a,b)\). Nilai \(x,y\) dihitung dengan Algoritma Euklid diperluas \citep{hoffstein}.
 \end{theorem}
+
+\begin{example}[Euklid Diperluas]
+Misal \(a=240,b=46\). Rangkaian pembagian memberi \(\gcd(240,46)=2\) dan menghasilkan representasi Bezout \(2=240(-9)+46(47)\); maka invers dari \([46]\) modulo \(240\) tidak ada, namun invers dari \([23]\) modulo \(240\) ada karena \(\gcd(23,240)=1\).
+\end{example}
 
 \section{Kongruensi dan Ring \(\Zn\)}
 \begin{definition}[Kongruensi]
@@ -24,11 +28,16 @@ Elemen \([a]\in\Zn\) memiliki invers perkalian jika dan hanya jika \(\gcd(a,n)=1
 
 \paragraph{Contoh.} Cari invers dari \(a=17\) modulo \(n=43\). Dengan Euklid diperluas diperoleh \(17\cdot 38 \equiv 1 \pmod{43}\), sehingga \(17^{-1}\equiv 38\bmod 43\).
 
+\section{Aplikasi ke Kriptografi}
+Konsep \(\gcd\), invers modulo, dan aritmetika \(\Zn\) menjadi fondasi RSA, Diffie--Hellman, dan skema lain. Misalnya, kunci privat RSA bergantung pada invers modulo dari eksponen publik terhadap \(\varphi(n)\); sedangkan perhitungan invers modulo adalah rutin harian di banyak protokol. Bacaan lanjutan: \citep{hoffstein,hardywright,nivenzuckermanmontgomery}.
+
 \section{Latihan}
 \begin{enumerate}
   \item Hitung \(\gcd(414, 662)\) dan koefisien Bezout-nya.
   \item Tentukan semua solusi dari \(15x\equiv 6 \pmod{21}\).
   \item Temukan invers dari \(11\) modulo \(97\), jika ada.
+  \item Buktikan bahwa jika \(a\mid bc\) dan \(\gcd(a,b)=1\), maka \(a\mid c\).
+  \item Untuk \(n=pq\) dengan \(p,q\) prima berbeda, buktikan bahwa \(\Zn\) memiliki tepat \(\varphi(n)\) elemen yang invertibel dan simpulkan bentuk grup \(\Zn^*\).
 \end{enumerate}
 
 \end{document}

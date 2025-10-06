@@ -6,27 +6,40 @@
 Mahasiswa mampu membedakan sistem kunci publik dan privat (simetris), menjelaskan fungsi hash, tanda tangan digital, serta konsep sertifikat digital dan infrastruktur kunci publik (PKI).
 
 \section{Sistem Kunci Publik vs. Kunci Privat}
-\textbf{Kunci privat/simetris}: satu kunci rahasia bersama. Contoh penggunaan: AES dalam mode operasi yang aman. Keunggulan: sangat cepat; kelemahan: distribusi kunci.
+\textbf{Kunci privat/simetris}: satu kunci rahasia bersama. Contoh penggunaan: AES dalam mode operasi yang aman. Keunggulan: sangat cepat; kelemahan: distribusi kunci dan skala distribusi ke banyak pihak.
 
 \textbf{Kunci publik/asimetris}: pasangan kunci (publik, privat). Publik untuk enkripsi atau verifikasi, privat untuk dekripsi atau penandatanganan. Memudahkan distribusi kunci, tetapi relatif lebih lambat \citep{katzlindell,stallings}.
+
+\begin{definition}[PKE dan Keamanan]
+Skema \emph{Public-Key Encryption} (PKE) didefinisikan oleh prosedur \(\mathsf{Gen},\mathsf{Enc},\mathsf{Dec}\). Tujuan keamanan utama adalah IND-CPA/IND-CCA; banyak skema modern memerlukan \emph{padding} dan transformasi yang tepat (mis. RSA-OAEP) untuk mencapai keamanan yang diinginkan \citep{rfc8017,katzlindell}.
+\end{definition}
 
 \section{Fungsi Hash Kriptografis}
 \begin{definition}[Fungsi Hash]
 Pemetaan deterministik dari string panjang ke nilai tetap (digest) dengan sifat tahan tabrakan, tahan pra-citra, dan tahan pra-citra kedua (secara ideal).
 \end{definition}
-Penggunaan: ringkas pesan, membangun MAC dan tanda tangan, verifikasi integritas \citep{menezes}.
+Penggunaan: merangkum pesan, membangun MAC dan tanda tangan, verifikasi integritas \citep{menezes}. Standar keluarga SHA-2 dan SHA-3 terdokumentasi pada \citep{fips180-4,fips202}.
+
+Sifat penting lain: fungsi hash ideal dimodelkan sebagai \emph{random oracle} dalam beberapa analisis keamanan; meskipun demikian, standar implementasi mengatur parameter dan varian yang digunakan.
 
 \section{Tanda Tangan Digital}
-Skema tanda tangan menjamin keaslian dan nir-sangkal. Pihak penandatangan menggunakan kunci privat untuk menghasilkan tanda tangan atas pesan (sering atas hash pesan); pihak verifikator menggunakan kunci publik untuk memverifikasi \citep{katzlindell}.
+Skema tanda tangan menjamin keaslian dan nir-sangkal. Pihak penandatangan menggunakan kunci privat untuk menghasilkan tanda tangan atas pesan (sering atas hash pesan); pihak verifikator menggunakan kunci publik untuk memverifikasi \citep{katzlindell}. Standar modern meliputi RSA-PSS dan ECDSA/EdDSA; praktik baik termasuk penggunaan \emph{nonce} deterministik untuk DSA/ECDSA \citep{rfc8017,fips186-5,rfc6979}.
+
+\begin{definition}[EUF-CMA]
+Keamanan tanda tangan biasanya dimodelkan sebagai \emph{Existential Unforgeability under Chosen-Message Attack} (EUF-CMA): tidak ada lawan berwaktu-polynomial yang dapat memalsukan tanda tangan atas pesan baru sekalipun ia memiliki orakel penandatanganan atas pesan-pesan pilihannya.
+\end{definition}
 
 \section{Sertifikat Digital dan PKI}
-Sertifikat mengikat identitas dengan kunci publik menggunakan tanda tangan dari \emph{Certificate Authority} (CA). PKI menyediakan prosedur penerbitan, pencabutan, dan validasi sertifikat. Keamanannya bergantung pada kebijakan dan keandalan CA \citep{stallings}.
+Sertifikat mengikat identitas dengan kunci publik menggunakan tanda tangan dari \emph{Certificate Authority} (CA). PKI menyediakan prosedur penerbitan, pencabutan, dan validasi sertifikat. Keamanannya bergantung pada kebijakan dan keandalan CA \citep{stallings}. Profil sertifikat Internet berbasis X.509 dan CRL didefinisikan dalam \citep{rfc5280}; validasi rantai dan kebijakan dipercaya merupakan inti operasional pada TLS dan ekosistem web.
 
 \section{Latihan}
 \begin{enumerate}
   \item Jelaskan mengapa fungsi hash harus tahan tabrakan. Apa dampaknya pada tanda tangan digital jika tidak?
   \item Bandingkan model distribusi kunci pada sistem simetris vs. asimetris.
   \item Berikan contoh penggunaan sertifikat digital pada protokol TLS.
+  \item (RSA-OAEP) Mengapa padding diperlukan pada RSA untuk mencapai IND-CPA? Rujuk \citep{rfc8017}.
+  \item (EUF-CMA) Berikan sketsa permainan keamanan untuk tanda tangan dan jelaskan peran orakel penandatanganan.
+  \item (PKI) Uraikan proses validasi rantai sertifikat sesuai \citep{rfc5280}.
 \end{enumerate}
 
 \end{document}
