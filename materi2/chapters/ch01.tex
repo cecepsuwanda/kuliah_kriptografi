@@ -1,6 +1,6 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
-\chapter{Pengantar Kriptografi}
+\chapter{Pengantar Kriptografi}\label{ch:pengantar}
 \section{Tujuan Pembelajaran}
 Setelah mempelajari bab ini, mahasiswa mampu: (i) menjelaskan tujuan dan ruang lingkup kriptografi; (ii) mengaitkan layanan keamanan dengan primitif kriptografi; (iii) memahami konsep pembuktian keamanan tingkat tinggi; dan (iv) mengenali peran kriptografi dalam sistem nyata seperti TLS \citep{rfc8446}.
 
@@ -16,7 +16,8 @@ Empat pilar: kerahasiaan (confidentiality), integritas (integrity), autentikasi 
   \item \textbf{Cipher simetris}: enkripsi efisien untuk kerahasiaan data (mis. AES). 
   \item \textbf{Fungsi hash}: ringkas pesan, deteksi perubahan, digunakan pada tanda tangan dan MAC.
   \item \textbf{MAC dan AEAD}: autentikasi pesan, sering digabung dengan enkripsi (mis. GCM).
-  \item \textbf{Kripto kunci publik}: pertukaran kunci (Diffie--Hellman), tanda tangan (RSA/DSA/ECDSA).
+  \item \textbf{Kripto kunci publik}: pertukaran kunci (DH), 
+    tanda tangan (RSA/DSA/ECDSA).
 \end{itemize}
 
 \subsection{Model dan Pembuktian}
