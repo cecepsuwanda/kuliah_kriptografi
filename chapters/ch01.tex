@@ -12,10 +12,14 @@ Setelah mempelajari bab ini, mahasiswa mampu:
 \end{itemize}
 
 \section{Sejarah Singkat}
-Kriptografi telah digunakan sejak zaman kuno, misalnya sandi Caesar pada Romawi dan sandi Vigen\`{e}re pada abad ke-16 \citep{wikipedia_caesar,wikipedia_vigenere}. Revolusi besar terjadi pada abad ke-20 melalui karya Claude Shannon yang merumuskan fondasi teoretis kerahasiaan informasi \citep{shannon1949} dan perkembangan mesin Enigma pada Perang Dunia II. Era kriptografi modern dimulai pada 1970-an dengan konsep kunci publik (Diffie--Hellman) dan RSA \citep{diffiehellman,rsa}, yang disertai pendekatan keamanan komputasional yang diformalkan lebih lanjut dalam literatur modern \citep{katzlindell,bonehshoup}. Untuk gambaran komprehensif dan materi rujukan terbuka, lihat \citep{menezes,stallings}.
+Kriptografi telah digunakan sejak zaman kuno, misalnya sandi Caesar pada Romawi dan sandi Vigen\`{e}re pada abad ke-16 \citep{wikipedia_caesar,wikipedia_vigenere}. Praktik-praktik ini menggambarkan kebutuhan manusia sejak dahulu untuk menyembunyikan pesan dari pihak yang tidak berhak, sekaligus menunjukkan bahwa keamanan yang hanya bergantung pada penyamaran sederhana mudah runtuh. Perkembangan historis berikutnya menampilkan beragam sandi substitusi dan transposisi yang pada masanya efektif, namun kemudian dapat dipecahkan dengan analisis frekuensi dan teknik statistik. Dari sini, lahir kesadaran bahwa keamanan memerlukan landasan yang lebih kuat daripada sekadar kerumitan visual atau kerahasiaan algoritma.
+
+Revolusi besar abad ke-20 terjadi melalui karya Claude Shannon, yang merumuskan fondasi teoretis kerahasiaan informasi dan memperkenalkan konsep perfect secrecy \citep{shannon1949}. Pada masa yang sama, pengalaman kriptografi militer seperti mesin Enigma mendorong lahirnya disiplin teknik dan analisis sistematis terhadap desain sandi. Era kriptografi modern kemudian dimulai pada 1970-an dengan konsep kunci publik (Diffie--Hellman) dan RSA \citep{diffiehellman,rsa}, yang membuka paradigma baru dalam distribusi kunci dan layanan keamanan digital. Pendekatan keamanan komputasional diformalkan lebih lanjut, antara lain melalui catatan kuliah dan buku modern \citep{katzlindell,bonehshoup,bellare_rogaway_notes}, sementara referensi terbuka seperti \citep{menezes,stallings} menyediakan jembatan antara teori dan praktik.
 
 \section{Motivasi dan Aplikasi Dunia Nyata}
-Kriptografi hadir dalam hampir semua sistem informasi modern:
+Kriptografi hadir dalam hampir semua sistem informasi modern dan menggerakkan berbagai layanan yang kita gunakan setiap hari. Pada aplikasi peramban web, pengamanan koneksi menggunakan protokol TLS memadukan negosiasi kunci asimetris dengan enkripsi simetris demi kinerja yang baik. Di sisi penyimpanan, enkripsi disk penuh dan proteksi file melindungi data saat perangkat hilang atau dicuri, menekan risiko kebocoran yang merugikan organisasi dan individu. Di dunia dokumen dan transaksi, tanda tangan digital memastikan integritas isi dan keaslian penandatangan, sekaligus menyediakan sifat nir-sangkal ketika dikombinasikan dengan infrastruktur kunci publik yang benar.
+
+Lanskap industri juga mengandalkan kebijakan manajemen kunci yang disiplin agar sistem tetap aman seiring perubahan ancaman. Rekomendasi ukuran kunci, masa berlaku, rotasi, dan penghapusan aman diatur dalam standar yang banyak diacu. Pada protokol jaringan, TLS 1.3 menyederhanakan negosiasi dan memperbaiki keamanan dibanding generasi sebelumnya \citep{rfc8446}. Secara umum, integrasi kriptografi yang baik membutuhkan pemilihan primitif yang tepat, penerapan mode operasi yang benar, dan tata kelola kunci yang konsisten \citep{nist_sp_800_57pt1r5}.
 \begin{itemize}
   \item \textbf{Keamanan kanal komunikasi}: Protokol TLS 1.3 melindungi koneksi web melalui negosiasi kunci dan kripto simetris \citep{rfc8446}.
   \item \textbf{Perlindungan data tersimpan}: Enkripsi disk/file memastikan kerahasiaan data saat perangkat hilang/curian.
@@ -25,10 +29,10 @@ Kriptografi hadir dalam hampir semua sistem informasi modern:
 
 \section{Definisi dan Tujuan Keamanan}
 \begin{definition}[Kriptografi]
-Kriptografi adalah ilmu dan seni merancang mekanisme yang memungkinkan pihak-pihak berkomunikasi dengan aman di hadapan penyerang, dengan tujuan utama seperti kerahasiaan, integritas, keaslian/origin, dan nir-sangkal.
+Kriptografi adalah ilmu dan seni merancang mekanisme yang memungkinkan pihak-pihak berkomunikasi dengan aman di hadapan penyerang, dengan tujuan utama seperti kerahasiaan, integritas, keaslian/origin, dan nir-sangkal. Dalam praktik, kriptografi juga menyentuh aspek ketersediaan, auditabilitas, dan ketahanan terhadap kegagalan komponen, karena sistem nyata jarang beroperasi dalam kondisi ideal. Definisi formal di literatur modern menekankan spesifikasi antarmuka algoritma, ruang kunci, dan permainan keamanan untuk memformalkan kemampuan lawan. Dengan demikian, kriptografi modern tidak hanya mengusulkan algoritma, tetapi juga membuktikan jaminan keamanan di bawah model dan asumsi tertentu.
 \end{definition}
 
-Tujuan keamanan umum:
+Tujuan keamanan umum menguraikan kualitas yang hendak dicapai oleh suatu sistem kriptografi dalam berbagai konteks penggunaan. Kerahasiaan menuntut bahwa hanya pihak berwenang yang dapat mengetahui isi pesan, sementara integritas memastikan setiap perubahan dapat dideteksi secara andal. Otentikasi mengafirmasi identitas pihak pengirim atau penyusun pesan, sehingga komunikasi tidak dapat disusupi tanpa terdeteksi. Nir-sangkal berperan besar pada skenario hukum dan kepatuhan, di mana bukti digital harus dapat dipertanggungjawabkan dan tidak dapat ditarik kembali secara sepihak.
 \begin{itemize}
   \item \textbf{Kerahasiaan}: hanya pihak berwenang yang mengetahui isi pesan.
   \item \textbf{Integritas}: perubahan pesan dapat dideteksi.
@@ -40,13 +44,17 @@ Tujuan keamanan umum:
 \begin{definition}[Prinsip Kerckhoffs]
 Sistem kriptografi harus tetap aman meskipun seluruh detail sistem (algoritma) diketahui publik; hanya kunci yang harus dirahasiakan.\footnote{Dikenal juga sebagai menolak ``security by obscurity''.}
 \end{definition}
-Prinsip ini menekankan pentingnya desain terbuka dan analisis publik bagi keamanan jangka panjang \citep{kerckhoffs1883,katzlindell,bonehshoup}.
+Prinsip ini menekankan pentingnya desain terbuka dan analisis publik bagi keamanan jangka panjang \citep{kerckhoffs1883,katzlindell,bonehshoup}. Dengan transparansi algoritma, komunitas dapat menguji, memverifikasi, dan menemukan kelemahan lebih dini sebelum algoritma diadopsi luas. Sebaliknya, bergantung pada kerahasiaan algoritma sering menciptakan rasa aman palsu, karena kebocoran implementasi atau rekayasa balik dapat membuka semua rincian dalam waktu singkat. Oleh sebab itu, praktik terbaik berfokus pada kekuatan matematis dan pengelolaan kunci yang benar sebagai sumber keamanan utama.
 
 \section{Terminologi dan Notasi}
-Kita gunakan notasi standar: pesan asli (plaintext) \(M\), ciphertext \(C\), kunci \(K\), dan skema kriptografi \(\mathsf{Scheme}=(\mathsf{Gen},\mathsf{Enc},\mathsf{Dec})\). Untuk kunci rahasia \(K\), enkripsi \(C=\mathsf{Enc}_K(M)\) dan dekripsi \(M=\mathsf{Dec}_K(C)\) harus memenuhi \(\mathsf{Dec}_K(\mathsf{Enc}_K(M))=M\). Istilah lain yang umum: lawan/penyerang (adversary), ruang kunci, dan ruang pesan \citep{rfc4949,katzlindell}.
+Kita gunakan notasi standar: pesan asli (plaintext) \(M\), ciphertext \(C\), kunci \(K\), dan skema kriptografi \(\mathsf{Scheme}=(\mathsf{Gen},\mathsf{Enc},\mathsf{Dec})\). Untuk kunci rahasia \(K\), enkripsi \(C=\mathsf{Enc}_K(M)\) dan dekripsi \(M=\mathsf{Dec}_K(C)\) harus memenuhi \(\mathsf{Dec}_K(\mathsf{Enc}_K(M))=M\). Istilah lain yang umum: lawan/penyerang (adversary), ruang kunci, dan ruang pesan \citep{rfc4949,katzlindell}. Selain itu, kita sering menyebut \emph{parameter keamanan} \(\lambda\) untuk mengendalikan ukuran kunci dan kompleksitas, serta menggunakan notasi probabilistik untuk memodelkan pemilihan kunci dan keacakan internal.
+
+Terminologi modern juga memperkenalkan konsep orakel, yakni antarmuka ideal yang dapat diakses lawan untuk menguji skema di bawah kemampuan tertentu. Misalnya, orakel enkripsi pada model IND-CPA melayani permintaan enkripsi dari lawan terhadap pesan pilihannya. Notasi permainan keamanan (security games) menggambarkan interaksi antara penantang dan lawan, dan menjadi cara standar untuk mendefinisikan dan membuktikan sifat seperti ketidakterbedaan. Rujukan ringkas dan konsisten terhadap istilah ini dapat ditemukan pada \citep{bellare_rogaway_notes,katzlindell}.
 
 \section{Model Ancaman dan Orakel}
-Model ancaman mendeskripsikan kemampuan lawan:
+Model ancaman mendeskripsikan kemampuan lawan dan batasan lingkungan di mana skema bekerja. Pada tingkat dasar, kita membedakan antara skenario di mana lawan hanya mengamati ciphertext (COA) dan skenario yang lebih kuat seperti CPA dan CCA. Perbedaan ini penting karena asumsi kemampuan lawan memengaruhi desain dan bukti keamanan. Model yang terlalu lemah menyebabkan klaim keamanan yang tidak realistis, sementara model yang terlalu kuat mungkin tidak praktis untuk dicapai tanpa biaya tinggi.
+
+Secara operasional, banyak sistem modern mengincar IND-CPA untuk kerahasiaan pasif dan IND-CCA ketika dekripsi adaptif oleh lawan perlu dipertimbangkan (misalnya pada protokol pesan terenkripsi dengan layanan dekripsi terpisah). Orakel pada permainan IND-CPA memberikan ciphertext atas pesan yang dipilih lawan, sedangkan pada IND-CCA orakel dekripsi tersedia dengan pembatasan tertentu. Literatur standar membahas rancangan permainan ini secara formal dan memberikan contoh skema yang mencapai target tersebut \citep{katzlindell,bonehshoup,bellare_rogaway_notes}.
 \begin{itemize}
   \item \textbf{Hanya ciphertext} (COA): lawan melihat ciphertext saja.
   \item \textbf{Chosen-Plaintext Attack} (CPA): lawan dapat memilih plaintext dan memperoleh ciphertext dari orakel enkripsi.
@@ -55,13 +63,19 @@ Model ancaman mendeskripsikan kemampuan lawan:
 Tujuan standar pada kriptografi modern adalah \emph{indistinguishability} terhadap CPA/CCA (IND-CPA/IND-CCA), yakni ketidakmampuan lawan membedakan enkripsi dua pesan yang dipilihnya \citep{katzlindell,bonehshoup}.
 
 \section{Model Dasar Sistem Kriptografi}
-Sebuah skema kriptografi tipikal melibatkan pesan asli (plaintext), kunci, algoritma enkripsi menghasilkan ciphertext, serta algoritma dekripsi untuk memulihkan plaintext. Keamanan dinilai terhadap model penyerang (misalnya COA, CPA, CCA) serta didefinisikan melalui permainan keamanan yang memformalkan indistinguishability \citep{katzlindell,bonehshoup}.
+Sebuah skema kriptografi tipikal melibatkan pesan asli (plaintext), kunci, algoritma enkripsi menghasilkan ciphertext, serta algoritma dekripsi untuk memulihkan plaintext. Keamanan dinilai terhadap model penyerang (misalnya COA, CPA, CCA) serta didefinisikan melalui permainan keamanan yang memformalkan indistinguishability \citep{katzlindell,bonehshoup}. Dalam praktik, implementasi juga perlu mempertimbangkan antarmuka aplikasi, penanganan kesalahan, dan kebocoran samping seperti waktu dan konsumsi daya, yang dapat memberikan keuntungan tambahan bagi penyerang.
+
+Komponen lain dari model adalah asumsi komputasional yang menopang keamanan, seperti sulitnya faktorisasi bilangan besar atau sulitnya logaritma diskrit pada grup tertentu. Asumsi ini menentukan parameter yang aman dan memandu transisi algoritma saat muncul teknik kriptoanalisis baru. Dengan pendekatan yang koheren antara model, asumsi, dan implementasi, sebuah skema dapat memberikan jaminan yang dapat diaudit dan diuji secara independen.
 
 \section{Keamanan Informasi vs. Komputasional}
-\textbf{Perfect secrecy} (Shannon) menyatakan bahwa ciphertext tidak mengungkapkan informasi apapun tentang plaintext: secara formal, distribusi \(M\) independen dari \(C\) \citep{shannon1949}. Sementara itu, \textbf{keamanan komputasional} hanya menuntut bahwa setiap lawan berwaktu-polynomial memiliki peluang sukses yang tak berarti (negligible) dalam memecahkan tujuan keamanan tertentu \citep{katzlindell}.
+\textbf{Perfect secrecy} (Shannon) menyatakan bahwa ciphertext tidak mengungkapkan informasi apapun tentang plaintext: secara formal, distribusi \(M\) independen dari \(C\) \citep{shannon1949}. Mencapai tingkat ini pada skema umum sulit karena menuntut kunci sepanjang pesan dan distribusi kunci yang sempurna, yang tidak realistis untuk banyak aplikasi. Walau demikian, konsep ini menjadi tolok ukur untuk memahami batas teoretis keamanan dan menginspirasi desain skema dengan jaminan kuat pada kondisi terbatas. Di sisi lain, banyak kebutuhan praktis dapat dipenuhi dengan jaminan probabilistik yang memadai.
+
+\textbf{Keamanan komputasional} hanya menuntut bahwa setiap lawan berwaktu-polynomial memiliki peluang sukses yang tak berarti (negligible) dalam memecahkan tujuan keamanan tertentu \citep{katzlindell}. Pendekatan ini bergantung pada asumsi kesulitan komputasional dan memungkinkan penggunaan kunci yang relatif pendek, serta integrasi dengan protokol kompleks. Dalam kerangka ini, desain dan pembuktian formal menjadi alat utama untuk menilai apakah primitif tertentu memenuhi target keamanan di bawah model ancaman yang relevan.
 
 \section{One-Time Pad (OTP)}
-Skema OTP mengenkripsi \(M\) dengan kunci acak \(K\) sepanjang \(M\) melalui \(C=M\oplus K\). Bila kunci benar-benar acak, sepanjang pesan, dan tidak digunakan ulang, OTP mencapai perfect secrecy. Kelemahan utamanya adalah distribusi dan pengelolaan kunci yang sebesar pesan, serta bahaya fatal bila kunci diulang.
+Skema OTP mengenkripsi \(M\) dengan kunci acak \(K\) sepanjang \(M\) melalui \(C=M\oplus K\). Bila kunci benar-benar acak, sepanjang pesan, dan tidak digunakan ulang, OTP mencapai perfect secrecy. Kelemahan utamanya adalah distribusi dan pengelolaan kunci yang sebesar pesan, serta bahaya fatal bila kunci diulang. Walaupun demikian, OTP tetap relevan sebagai contoh ekstrem yang memperlihatkan trade-off antara sumber daya kunci dan jaminan keamanan.
+
+Dalam praktik, OTP jarang digunakan di luar skenario khusus karena persyaratan keacakan dan distribusinya sulit dipenuhi secara aman dalam skala besar. Kesalahan implementasi—seperti penggunaan ulang kunci—dapat menghasilkan kebocoran struktur pesan melalui operasi XOR dua ciphertext. Studi kasus historis menunjukkan bahwa ketidakpatuhan pada disiplin kunci segera meruntuhkan perfect secrecy yang dijanjikan teori. Oleh karena itu, OTP lebih berguna sebagai alat pedagogis dan pembanding terhadap skema komputasional modern.
 
 \begin{example}[OTP singkat]
 Misalkan pesan biner \(M=10110010\) dan kunci acak \(K=01100101\). Maka \(C=M\oplus K=11010111\). Dekripsi mengulang operasi XOR yang sama.
@@ -70,10 +84,14 @@ Misalkan pesan biner \(M=10110010\) dan kunci acak \(K=01100101\). Maka \(C=M\op
 \section{Kriptografi Konvensional (Simetris)}
 Kriptografi simetris menggunakan satu kunci rahasia bersama untuk enkripsi dan dekripsi. Keluarga utama: \emph{sandi blok} (block cipher) dan \emph{sandi alir} (stream cipher). Sandi blok biasanya digunakan dengan \emph{mode operasi} (CBC, CTR, GCM) untuk mencapai kerahasiaan dan/atau autentikasi; sandi alir menghasilkan \emph{keystream} yang di-XOR-kan dengan plaintext. Keunggulan utama kripto simetris adalah efisiensi; tantangan utamanya adalah distribusi/manajemen kunci rahasia \citep{stallings,menezes}.
 
+Mode operasi menentukan bagaimana blok dienkripsi di atas pesan panjang dan bagaimana integritas/autentikasi ditambahkan ketika diperlukan. Misalnya, CTR menyediakan kerahasiaan dan paralelisme tinggi, sedangkan GCM memberikan autentikasi terintegrasi yang efisien pada perangkat keras dan perangkat lunak. Dalam banyak protokol, kripto asimetris hanya digunakan untuk negosiasi kunci, sementara beban utama enkripsi data berlangsung dengan kripto simetris. Desain yang tepat harus memperhatikan nonce unik, pemilihan parameter yang benar, dan penanganan kesalahan agar tidak membuka celah keamanan.
+
 Pada sistem nyata, kanal aman seperti TLS 1.3 biasanya menggunakan \emph{kripto asimetris} hanya untuk negosiasi kunci, kemudian beralih ke kripto simetris yang lebih cepat untuk lalu lintas data \citep{rfc8446}.
 
 \section{Contoh Sederhana: Sandi Geser}
 Misal alfabet Latin dan pergeseran 3 (sandi Caesar). Enkripsi: ganti setiap huruf dengan huruf ke-3 berikutnya secara siklik. Dekripsi: geser balik 3. Sandi klasik ini mudah dipecahkan (misal analisis frekuensi) sehingga tidak aman secara modern \citep{wikipedia_caesar}. Varian polialfabetik seperti Vigen\`{e}re memperumit analisis tetapi tetap rentan terhadap teknik \emph{Kasiski} dan analisis frekuensi tingkat lanjut \citep{wikipedia_vigenere}.
+
+Contoh-contoh klasik ini berguna untuk memahami prinsip dasar seperti difusi dan konfusi yang kemudian dimatangkan dalam desain sandi modern. Mereka juga menunjukkan pentingnya statistik bahasa dan struktur pesan dalam kriptoanalisis, sehingga mendorong penggunaan metode matematis yang lebih kuat. Dalam konteks pendidikan, experimentasi dengan sandi klasik memberi intuisi tentang mengapa definisi formal dan bukti keamanan diperlukan. Dengan demikian, meski sederhana, sandi geser menjadi titik awal yang efektif untuk membangun pemahaman menuju kriptografi modern.
 
 Sebagai perbandingan, sandi modern dievaluasi dengan kerangka formal (IND-CPA/CCA) dan analisis kompleksitas, bukan sekadar upaya menutupi algoritma.
 
