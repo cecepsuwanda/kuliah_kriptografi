@@ -1,0 +1,32 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Tipe dan Mode Algoritma Simetri}
+\section{Tujuan Pembelajaran}
+Memahami perbedaan sandi blok dan alir, serta mode operasi (ECB, CBC, CTR, GCM) dan sifat keamanannya.
+
+\section{Ringkasan Materi}
+Mode operasi memetakan cipher blok menjadi enkripsi pesan panjang dan, pada AEAD, menggabungkan autentikasi. Pemilihan nonce dan parameter sangat krusial untuk keamanan \citep{sp80038a,sp80038d}.
+
+\section{Materi}
+\subsection{Sandi Blok vs Sandi Alir}
+Sandi blok beroperasi pada blok tetap; sandi alir menghasilkan keystream untuk di-XOR dengan plaintext.
+
+\subsection{Mode Operasi}
+\begin{itemize}
+  \item ECB: tidak aman karena mengungkap pola.
+  \item CBC: butuh IV acak; rentan padding oracle tanpa autentikasi.
+  \item CTR: butuh nonce unik; mudah diparalelkan.
+  \item GCM: AEAD dengan tag autentikasi; sangat sensitif pada reuse nonce \citep{sp80038d}.
+\end{itemize}
+
+\section{Latihan}
+\begin{enumerate}
+  \item Beri contoh serangan pola pada ECB.
+  \item Jelaskan dampak reuse nonce pada CTR/GCM.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{sp80038a,sp80038d}.
+\end{itemize}
+\end{document}

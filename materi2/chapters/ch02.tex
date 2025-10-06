@@ -1,0 +1,39 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Jenis-Jenis Serangan di dalam Kriptografi}
+\section{Tujuan Pembelajaran}
+Mahasiswa mampu mengklasifikasikan model serangan (COA, KPA, CPA, CCA), memahami serangan implementasi (side-channel), dan mengaitkannya dengan target keamanan standar.
+
+\section{Ringkasan Materi}
+Keamanan dinilai relatif terhadap kemampuan lawan. Desain skema harus jelas targetnya (mis. IND-CPA/IND-CCA). Implementasi menambah permukaan serangan seperti analisis waktu, daya, dan fault injection \citep{bonehshoup,bellare_rogaway_notes}.
+
+\section{Materi}
+\subsection{Model Serangan Teoretis}
+\begin{itemize}
+  \item Hanya ciphertext (COA)
+  \item Known-plaintext (KPA)
+  \item Chosen-plaintext (CPA): lawan dapat meminta enkripsi pesan pilihannya.
+  \item Chosen-ciphertext (CCA): lawan memiliki orakel dekripsi terbatas.
+\end{itemize}
+Target umum: IND-CPA untuk kerahasiaan pasif dan IND-CCA saat dekripsi adaptif perlu dipertimbangkan.
+
+\subsection{Serangan Implementasi}
+\begin{itemize}
+  \item \textbf{Timing/power analysis}: kebocoran samping dari waktu/energi.
+  \item \textbf{Fault attacks}: kesalahan terinduksi mengungkap kunci.
+  \item \textbf{Cache/EM leaks}: pola akses memori atau emisi elektromagnetik.
+\end{itemize}
+Mitigasi memerlukan disiplin implementasi dan parameter yang tepat.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Beri contoh skenario yang menuntut IND-CCA.
+  \item Jelaskan perbedaan antara keamanan algoritme dan keamanan implementasi.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{bonehshoup} bab keamanan formal.
+  \item \citep{bellare_rogaway_notes} catatan pengantar modern.
+\end{itemize}
+\end{document}

@@ -1,0 +1,27 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Otentikasi dan Tanda Tangan Digital}
+\section{Tujuan Pembelajaran}
+Membedakan MAC vs tanda tangan digital, memahami AEAD, dan target keamanan EUF-CMA.
+
+\section{Ringkasan Materi}
+MAC memberikan integritas dan autentikasi kunci bersama; tanda tangan memungkinkan verifikasi publik dan nir-sangkal. AEAD (mis. GCM) menggabungkan kerahasiaan dan integritas dalam satu primitive \citep{sp80038d,bonehshoup}.
+
+\section{Materi}
+\subsection{MAC}
+Konstruksi HMAC, keamanan bergantung pada hash yang mendasari dan kunci rahasia.
+
+\subsection{Tanda Tangan}
+RSA-PSS, DSA, ECDSA; pemilihan parameter dan perlindungan implementasi penting.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Kapan sebaiknya memilih MAC vs tanda tangan digital?
+  \item Jelaskan peran data terkait yang diautentikasi (AAD) pada AEAD.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{sp80038d,bonehshoup}.
+\end{itemize}
+\end{document}

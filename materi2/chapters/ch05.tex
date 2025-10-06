@@ -1,0 +1,27 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Cipher yang Tidak Dapat Dipecahkan (Unbreakable Cipher)}
+\section{Tujuan Pembelajaran}
+Memahami konsep perfect secrecy dan syarat tercapainya pada One-Time Pad (OTP).
+
+\section{Ringkasan Materi}
+OTP mencapai kerahasiaan sempurna ketika kunci acak murni, sepanjang pesan, dan tidak pernah digunakan ulang. Keterbatasan logistik kunci membuat OTP jarang praktis \citep{shannon1949,wikipedia_otp}.
+
+\section{Materi}
+\subsection{Definisi Perfect Secrecy}
+Distribusi ciphertext independen dari plaintext; tidak ada informasi bocor \citep{shannon1949}.
+
+\subsection{Konstruksi OTP}
+Ciphertext \(C = M \oplus K\) dengan kunci \(K\) sepanjang \(M\). Pemakaian ulang kunci membocorkan \(M_1\oplus M_2\).
+
+\section{Latihan}
+\begin{enumerate}
+  \item Tunjukkan bahwa OTP memiliki perfect secrecy di bawah asumsi kunci.
+  \item Demontrasikan kebocoran saat kunci digunakan ulang.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{shannon1949} dan \citep{wikipedia_otp}.
+\end{itemize}
+\end{document}

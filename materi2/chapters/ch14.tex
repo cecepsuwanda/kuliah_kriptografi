@@ -1,0 +1,27 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Fungsi Hash dan Algoritma MD5}
+\section{Tujuan Pembelajaran}
+Memahami sifat hash kriptografis (preimage, second-preimage, collision) dan status keamanan MD5.
+
+\section{Ringkasan Materi}
+Hash kriptografis memetakan pesan ke ringkas berukuran tetap. MD5 kini tidak aman terhadap tabrakan; standar modern merekomendasikan SHA-2/SHA-3 \citep{rfc6151,fips1804,fips202}.
+
+\section{Materi}
+\subsection{Properti Keamanan}
+Ketahanan preimage, second-preimage, dan collision. Peran hash pada tanda tangan, MAC (HMAC), dan integritas data.
+
+\subsection{MD5 dan Status}
+Kelemahan tabrakan praktis; jangan digunakan untuk keamanan baru \citep{rfc6151}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Jelaskan mengapa tabrakan pada MD5 merusak tanda tangan digital yang mengandalkan hash.
+  \item Bandingkan SHA-256 dan SHA3-256.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{rfc6151,fips1804,fips202}.
+\end{itemize}
+\end{document}

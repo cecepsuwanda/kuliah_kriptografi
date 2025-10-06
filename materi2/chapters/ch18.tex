@@ -1,0 +1,27 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{MAC dan Pseudo-Random Generator}
+\section{Tujuan Pembelajaran}
+Memahami peran MAC untuk integritas dan PRG/DRBG untuk keacakan; hubungan PRG-PRF.
+
+\section{Ringkasan Materi}
+MAC (mis. HMAC) memberikan autentikasi pesan berbasis kunci; PRG memperluas benih acak menjadi keystream semu untuk enkripsi alir dan konstruksi kripto lainnya \citep{sp80090a,bellare_rogaway_notes}.
+
+\section{Materi}
+\subsection{MAC}
+Definisi EUF-CMA; HMAC dan sifatnya terhadap hash yang mendasari.
+
+\subsection{PRG/DRBG}
+Konstruksi standar dan persyaratan entropi; antarmuka dan uji kesehatan pada NIST DRBG \citep{sp80090a}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Kapan AEAD lebih tepat daripada kombinasi enkripsi+MAC manual?
+  \item Apa dampak reuse kunci pada stream cipher terhadap keamanan?
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{sp80090a,bellare_rogaway_notes}.
+\end{itemize}
+\end{document}
