@@ -8,17 +8,27 @@ Mahasiswa memahami akar primitif di \(\Zp\), residu kuadratik, simbol Legendre, 
 \section{Akar Primitif di \(\Zp\)}
 Untuk prima \(p\), himpunan \(\Zp^\times\) membentuk grup abelian siklik orde \(p-1\). Sebuah elemen \(g\) disebut \emph{akar primitif} jika \(\langle g\rangle = \Zp^\times\). Keberadaan akar primitif di \(\Zp\) terjamin; perhitungan generator penting untuk kriptografi berbasis grup siklik \citep{hoffstein}.
 
+\paragraph{Algoritma Mencari Generator.} Faktorkan \(p-1=\prod q_i^{e_i}\). Pilih \(g>1\) acak dan cek bahwa \(g^{(p-1)/q_i}\not\equiv 1\pmod p\) untuk semua faktor prima \(q_i\). Jika terpenuhi, \(g\) adalah generator.
+
 \section{Residu Kuadratik dan Simbol Legendre}
 Bilangan \(a\in\Zp\) disebut \emph{residu kuadratik} jika ada \(x\) sehingga \(x^2\equiv a\pmod p\). Simbol Legendre didefinisikan \(\left(\tfrac{a}{p}\right)\in\{-1,0,1\}\) dengan nilai 1 jika residu kuadratik non-nol, 0 jika \(p\mid a\), dan -1 selain itu. Kriteria Euler: \(\left(\tfrac{a}{p}\right)\equiv a^{(p-1)/2}\pmod p\) \citep{hoffstein}.
 
+\paragraph{Hukum Resiprositas Kuadrat (sketsa).} Untuk prima ganjil \(p,q\), \(\left(\tfrac{p}{q}\right)\left(\tfrac{q}{p}\right)=(-1)^{\frac{p-1}{2}\cdot\frac{q-1}{2}}\). Hasil ini mempermudah evaluasi simbol Legendre secara efisien.
+
 \section{Masalah Logaritma Diskrit}
 Diberi \(g\) generator dan \(h\in\langle g\rangle\), masalah mencari \(x\) dengan \(g^x\equiv h\) disebut \emph{logaritma diskrit}. Diyakini sulit pada banyak grup, dan menjadi dasar skema Diffie--Hellman dan ElGamal \citep{diffiehellman,hoffstein}.
+
+\paragraph{Algoritma Klasik.} \emph{Baby-step giant-step} dan \emph{Pollard's rho} menyelesaikan DLP dalam sekitar \(O(\sqrt{p})\) operasi pada \(\Zp^\times\). Untuk grup eliptik, analog serupa berlaku dengan konstanta berbeda.
+
+\paragraph{Keamanan Parameter.} Pemilihan \(p\) sehingga \(p-1\) tidak memiliki faktor kecil besar (mis. \emph{safe prime}) membantu mencegah serangan subgrup kecil; standar ukuran kunci mengikuti \citep{nist_sp_800_131a}.
 
 \section{Latihan}
 \begin{enumerate}
   \item Tentukan apakah \(3\) adalah akar primitif modulo \(p=7\). Jika tidak, temukan satu generator.
   \item Hitung \(\left(\tfrac{5}{11}\right)\) menggunakan Kriteria Euler.
   \item Diberi \(g=2\) modulo \(p=29\) dan \(h=18\), carilah \(x\) sehingga \(2^x\equiv 18\pmod{29}\) dengan pencarian kecil (baby-step).
+  \item Buktikan bahwa jumlah residu kuadratik non-nol di \(\Zp\) adalah \((p-1)/2\).
+  \item Implementasikan Pollard's rho untuk DLP kecil dan uji pada \(\Z_{101}^\times\).
 \end{enumerate}
 
 \end{document}

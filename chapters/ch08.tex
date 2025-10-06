@@ -8,6 +8,8 @@ Mahasiswa memahami LFSR, sandi Vigen\`{e}re, dan sandi alir modern SEAL dan RC4 
 \section{Linear Feedback Shift Register (LFSR)}
 LFSR menghasilkan deret biner melalui umpan balik linear atas \(\mathbb{F}_2\). Banyak dipakai sebagai komponen pembangkit keystream; tetapi lineritas memudahkan kriptoanalisis jika digunakan tanpa pengacakan tambahan \citep{menezes}.
 
+Untuk mengatasi linearitas, skema modern menggabungkan beberapa LFSR dengan fungsi nonlinier atau menggunakan konstruk modern hasil proyek eSTREAM.
+
 \section{Sandi Vigen\`{e}re}
 Sandi klasik polialfabetik menggunakan kunci kata untuk menentukan pergeseran siklik per posisi. Rentan terhadap analisis Kasiski dan indeks koincidensi; tidak aman secara modern \citep{stallings}.
 
@@ -17,11 +19,14 @@ SEAL adalah sandi alir berkecepatan tinggi berbasis fungsi pseudo-acak yang dipe
 \section{RC4}
 RC4 adalah sandi alir terkenal dengan inisialisasi KSA dan PRGA yang menghasilkan keystream. Ditemukan berbagai bias pada keluaran awal sehingga butuh pembuangan byte awal; banyak standar modern tidak lagi merekomendasikan RC4 \citep{rc4,stallings}.
 
+Alternatif modern yang disarankan: ChaCha20-Poly1305, distandardkan untuk protokol Internet \citep{rfc8439}. Portofolio eSTREAM juga merekomendasikan beberapa kandidat untuk perangkat lunak dan perangkat keras \citep{estream}.
+
 \section{Latihan}
 \begin{enumerate}
   \item Jelaskan mengapa LFSR murni tidak cocok sebagai sandi alir modern.
   \item Demonstrasikan enkripsi dan dekripsi singkat dengan sandi Vigen\`{e}re.
   \item Mengapa RC4 tidak direkomendasikan pada protokol modern seperti TLS?
+  \item Implementasikan ChaCha20 secara ringkas dan ujikan melawan test vector standar (rujuk \citep{rfc8439}).
 \end{enumerate}
 
 \end{document}

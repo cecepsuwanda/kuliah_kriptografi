@@ -6,10 +6,12 @@
 Mahasiswa memahami fungsi hash kriptografis, MAC, dan konsep \emph{unconditionally secure authentication code}.
 
 \section{Fungsi Hash}
-Hash kriptografis memetakan pesan ke digest berdimensi tetap dengan sifat tahan tabrakan, tahan pra-citra, dan tahan pra-citra kedua. Banyak skema dibangun di atas hash (tanda tangan, komitmen, integritas berkas) \citep{menezes}.
+Hash kriptografis memetakan pesan ke digest berdimensi tetap dengan sifat tahan tabrakan, tahan pra-citra, dan tahan pra-citra kedua. Banyak skema dibangun di atas hash (tanda tangan, komitmen, integritas berkas) \citep{menezes}. Standar keluarga SHA-2 dan SHA-3 terdokumentasi pada \citep{fips180-4,fips202}.
+
+Fungsi turunan dari SHA-3 (KMAC, cSHAKE) diatur dalam \citep{nist_sp_800_185} yang memberikan fleksibilitas domain-separation dan MAC berbasis sponge.
 
 \section{Message Authentication Code (MAC)}
-MAC memberikan otentikasi dan integritas berbasis kunci rahasia bersama. Contoh konstruksi: HMAC yang menggabungkan fungsi hash dengan kunci rahasia dan memiliki analisis formal luas \citep{katzlindell}.
+MAC memberikan otentikasi dan integritas berbasis kunci rahasia bersama. Contoh konstruksi: HMAC yang menggabungkan fungsi hash dengan kunci rahasia dan memiliki analisis formal luas \citep{katzlindell}. Spesifikasi HMAC terdapat pada \citep{rfc2104}. Untuk blok cipher, CMAC adalah standar autentikasi berbasis sandi blok \citep{nist_sp_800_38b}.
 
 \section{Unconditionally Secure Authentication Code}
 Kode otentikasi bersyarat tak-terikat (unconditional) menjamin keamanan informasi-teoretik tanpa asumsi komputasional, biasanya memerlukan kunci sepanjang pesan atau overhead lebih besar, dan cocok pada skenario khusus \citep{menezes}.
@@ -19,6 +21,7 @@ Kode otentikasi bersyarat tak-terikat (unconditional) menjamin keamanan informas
   \item Jelaskan perbedaan jaminan keamanan MAC vs. tanda tangan digital.
   \item Tunjukkan skema HMAC pada tingkat tinggi dan mengapa tahan terhadap tabrakan hash tertentu.
   \item Berikan contoh skenario di mana kode autentikasi tak-terikat lebih tepat.
+  \item Implementasikan CMAC atas AES dan uji dengan test vector standar \citep{nist_sp_800_38b}.
 \end{enumerate}
 
 \end{document}

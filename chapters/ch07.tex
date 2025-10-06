@@ -8,17 +8,24 @@ Mahasiswa memahami varian DES (iterated DES, DESX), prinsip AES, dan gambaran ID
 \section{Varian DES}
 \textbf{Triple-DES} mengaplikasikan DES tiga kali (mis. EDE) untuk memperpanjang keamanan. \textbf{DESX} menambahkan whitening kunci untuk memperluas ruang kunci efektif. Meskipun lebih aman dari DES tunggal, performanya kalah dari AES \citep{stallings}.
 
+Standar resmi untuk TDEA mendefinisikan parameter kunci dan masa transisi \citep{nist_sp_800_67r2}. Dalam praktik modern, TDEA dibatasi pada interoperabilitas warisan; AES direkomendasikan.
+
 \section{Advanced Encryption Standard (AES)}
 AES (Rijndael) adalah sandi blok 128-bit dengan ukuran kunci 128/192/256-bit. Bukan Feistel, melainkan transformasi putaran: SubBytes, ShiftRows, MixColumns, AddRoundKey yang didefinisikan atas medan hingga \(\mathbb{F}_{2^8}\). AES adalah standar de facto saat ini \citep{nist_aes}.
 
+Sifat desain: S-box berasal dari inversi pada \(\mathbb{F}_{2^8}\) diikuti transformasi afin; MixColumns memberikan difusi melalui perkalian matriks di \(\mathbb{F}_{2^8}\). Implementasi perlu menghindari kebocoran side-channel (cache/timing) melalui teknik seperti tabel konstan, bitslicing, atau AES-NI.
+
 \section{IDEA}
 International Data Encryption Algorithm menggunakan operasi campuran penjumlahan modulo \(2^{16}\), XOR, dan perkalian modulo \(2^{16}+1\). Desain ini menyeimbangkan difusi dan konfusi dengan operasi heterogen \citep{stallings}.
+
+IDEA memiliki hak paten yang berdampak historis pada adopsi, walau kini patennya telah berakhir di banyak yurisdiksi; namun ekosistem modern lebih memusat pada AES.
 
 \section{Latihan}
 \begin{enumerate}
   \item Bandingkan keamanan relatif DES, 3DES, dan AES.
   \item Mengapa AES menggunakan \(\mathbb{F}_{2^8}\) pada operasi S-box?
   \item Beri contoh peran whitening pada DESX.
+  \item Uraikan mitigasi side-channel untuk implementasi AES pada CPU umum.
 \end{enumerate}
 
 \end{document}
