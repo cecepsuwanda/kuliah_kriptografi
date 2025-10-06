@@ -1,0 +1,64 @@
+\documentclass[12pt,a4paper,oneside]{book}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern} % gunakan font scalable agar microtype expansion aman
+\usepackage[indonesian]{babel}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{booktabs,longtable}
+\usepackage{hyperref}
+\usepackage{subfiles}
+\usepackage{csquotes}
+\usepackage{microtype}
+\usepackage{natbib}
+\usepackage{xcolor}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\setlist{nosep}
+
+% Penomoran lingkungan matematis per-bab
+\numberwithin{equation}{chapter}
+\theoremstyle{definition}
+\newtheorem{definition}{Definisi}[chapter]
+\newtheorem{example}{Contoh}[chapter]
+\theoremstyle{plain}
+\newtheorem{theorem}{Teorema}[chapter]
+\newtheorem{lemma}{Lema}[chapter]
+
+% Notasi ring/medan yang sering digunakan
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Zn}{\mathbb{Z}_n}
+\newcommand{\Zp}{\mathbb{Z}_p}
+
+\title{Buku Ajar Kriptografi\\\large Program Studi S1 Matematika\\FMIPA Universitas Bale Bandung}
+\author{Tim Pengajar Kriptografi}
+\date{\today}
+
+\begin{document}
+\frontmatter
+\maketitle
+\tableofcontents
+
+\mainmatter
+% Bab-bab (sesuai RPS)
+\subfile{chapters/ch01}
+\subfile{chapters/ch02}
+\subfile{chapters/ch03}
+\subfile{chapters/ch04}
+\subfile{chapters/ch05}
+\subfile{chapters/ch06}
+\subfile{chapters/ch07}
+\subfile{chapters/ch08}
+\subfile{chapters/ch09}
+\subfile{chapters/ch10}
+\subfile{chapters/ch11}
+\subfile{chapters/ch12}
+\subfile{chapters/ch13}
+\subfile{chapters/ch14}
+
+\backmatter
+\bibliographystyle{plainnat}
+\bibliography{references}
+\end{document}

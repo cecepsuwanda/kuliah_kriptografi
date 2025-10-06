@@ -1,0 +1,53 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Pengantar Kriptografi}
+
+\section{Tujuan Pembelajaran}
+Setelah mempelajari bab ini, mahasiswa mampu:
+\begin{itemize}
+  \item Menjelaskan sejarah singkat dan motivasi kriptografi.
+  \item Mendefinisikan kriptografi dan tujuan keamanannya (kerahasiaan, integritas, keaslian, nir-sangkal).
+  \item Membedakan primitif-primitif dasar dan model ancaman tingkat tinggi.
+  \item Menggambarkan konsep kriptografi konvensional (simetris) secara umum.
+\end{itemize}
+
+\section{Sejarah Singkat}
+Kriptografi telah digunakan sejak zaman kuno, misalnya sandi Caesar pada Romawi dan sandi Vigen\`{e}re pada abad ke-16. Revolusi besar terjadi pada abad ke-20 melalui karya Claude Shannon dan perkembangan mesin Enigma pada Perang Dunia II, diikuti munculnya kriptografi modern berbasis teori kompleksitas komputasi pada tahun 1970-an (Diffie--Hellman dan RSA). Rujukan modern yang komprehensif dapat dilihat pada \citep{stallings,katzlindell,menezes}.
+
+\section{Definisi dan Tujuan Keamanan}
+\begin{definition}[Kriptografi]
+Kriptografi adalah ilmu dan seni merancang mekanisme yang memungkinkan pihak-pihak berkomunikasi dengan aman di hadapan penyerang, dengan tujuan utama seperti kerahasiaan, integritas, keaslian/origin, dan nir-sangkal.
+\end{definition}
+
+Tujuan keamanan umum:
+\begin{itemize}
+  \item \textbf{Kerahasiaan}: hanya pihak berwenang yang mengetahui isi pesan.
+  \item \textbf{Integritas}: perubahan pesan dapat dideteksi.
+  \item \textbf{Otentikasi/Keaslian}: jaminan identitas pihak pengirim/penyusun pesan.
+  \item \textbf{Nir-sangkal}: pengirim tidak dapat menyangkal telah mengirim pesan (umum pada tanda tangan digital).
+\end{itemize}
+
+\section{Model Dasar Sistem Kriptografi}
+Sebuah skema kriptografi tipikal melibatkan pesan asli (plaintext), kunci, algoritma enkripsi menghasilkan ciphertext, serta algoritma dekripsi untuk memulihkan plaintext. Keamanan dinilai terhadap model penyerang (misalnya penyerang yang mengetahui ciphertext saja, atau memiliki akses ke orakel enkripsi/dekripsi) \citep{katzlindell}.
+
+\section{Kriptografi Konvensional (Simetris)}
+Kriptografi simetris menggunakan satu kunci rahasia bersama untuk enkripsi dan dekripsi. Keluarga utama: \emph{sandi blok} (block cipher) dan \emph{sandi alir} (stream cipher). Keunggulan utama adalah efisiensi; kelemahannya adalah pendistribusian kunci rahasia ke semua pihak yang berkomunikasi \citep{stallings}.
+
+\section{Contoh Sederhana: Sandi Geser}
+Misal alfabet Latin dan pergeseran 3 (sandi Caesar). Enkripsi: ganti setiap huruf dengan huruf ke-3 berikutnya secara siklik. Dekripsi: geser balik 3. Sandi klasik ini mudah dipecahkan (misal analisis frekuensi) sehingga tidak aman secara modern.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Terapkan sandi Caesar dengan pergeseran 7 untuk mengenkripsi dan mendekripsi sebuah kalimat. Diskusikan kelemahan utamanya.
+  \item Sebutkan perbedaan tujuan \emph{integritas} dan \emph{otentikasi}. Berikan contoh skenario.
+  \item Uraikan mengapa distribusi kunci adalah masalah utama pada kriptografi simetris.
+\end{enumerate}
+
+\section{Bacaan Lanjutan}
+\begin{itemize}
+  \item \citep{stallings} untuk pengantar menyeluruh sistem klasik dan modern.
+  \item \citep{katzlindell} untuk landasan formal dan definisi keamanan.
+  \item \citep{menezes} sebagai referensi terbuka yang kaya dengan detail teknis.
+\end{itemize}
+
+\end{document}

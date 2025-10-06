@@ -1,0 +1,24 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Fungsi Hash dan Kode Otentikasi Pesan}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa memahami fungsi hash kriptografis, MAC, dan konsep \emph{unconditionally secure authentication code}.
+
+\section{Fungsi Hash}
+Hash kriptografis memetakan pesan ke digest berdimensi tetap dengan sifat tahan tabrakan, tahan pra-citra, dan tahan pra-citra kedua. Banyak skema dibangun di atas hash (tanda tangan, komitmen, integritas berkas) \citep{menezes}.
+
+\section{Message Authentication Code (MAC)}
+MAC memberikan otentikasi dan integritas berbasis kunci rahasia bersama. Contoh konstruksi: HMAC yang menggabungkan fungsi hash dengan kunci rahasia dan memiliki analisis formal luas \citep{katzlindell}.
+
+\section{Unconditionally Secure Authentication Code}
+Kode otentikasi bersyarat tak-terikat (unconditional) menjamin keamanan informasi-teoretik tanpa asumsi komputasional, biasanya memerlukan kunci sepanjang pesan/overhead lebih besar, dan cocok pada skenario khusus \citep{menezes}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Jelaskan perbedaan jaminan keamanan MAC vs. tanda tangan digital.
+  \item Tunjukkan skema HMAC pada tingkat tinggi dan mengapa tahan terhadap tabrakan hash tertentu.
+  \item Berikan contoh skenario di mana kode autentikasi tak-terikat lebih tepat.
+\end{enumerate}
+
+\end{document}

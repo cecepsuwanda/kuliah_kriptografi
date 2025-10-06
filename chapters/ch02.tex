@@ -1,0 +1,32 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Lanskap Primitif Modern: Kunci Publik, Tanda Tangan, Hash, Sertifikat}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa mampu membedakan sistem kunci publik dan privat (simetris), menjelaskan fungsi hash, tanda tangan digital, serta konsep sertifikat digital dan infrastruktur kunci publik (PKI).
+
+\section{Sistem Kunci Publik vs. Kunci Privat}
+\textbf{Kunci privat/simetris}: satu kunci rahasia bersama. Contoh penggunaan: AES dalam mode operasi yang aman. Keunggulan: sangat cepat; kelemahan: distribusi kunci.
+
+\textbf{Kunci publik/asimetris}: pasangan kunci (publik, privat). Publik untuk enkripsi atau verifikasi, privat untuk dekripsi atau penandatanganan. Memudahkan distribusi kunci, tetapi relatif lebih lambat \citep{katzlindell,stallings}.
+
+\section{Fungsi Hash Kriptografis}
+\begin{definition}[Fungsi Hash]
+Pemetaan deterministik dari string panjang ke nilai tetap (digest) dengan sifat tahan tabrakan, tahan pra-citra, dan tahan pra-citra kedua (secara ideal).
+\end{definition}
+Penggunaan: ringkas pesan, membangun MAC dan tanda tangan, verifikasi integritas \citep{menezes}.
+
+\section{Tanda Tangan Digital}
+Skema tanda tangan menjamin keaslian dan nir-sangkal. Pihak penandatangan menggunakan kunci privat untuk menghasilkan tanda tangan atas pesan (sering atas hash pesan); pihak verifikator menggunakan kunci publik untuk memverifikasi \citep{katzlindell}.
+
+\section{Sertifikat Digital dan PKI}
+Sertifikat mengikat identitas dengan kunci publik menggunakan tanda tangan dari \emph{Certificate Authority} (CA). PKI menyediakan prosedur penerbitan, pencabutan, dan validasi sertifikat. Keamanannya bergantung pada kebijakan dan keandalan CA \citep{stallings}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Jelaskan mengapa fungsi hash harus tahan tabrakan. Apa dampaknya pada tanda tangan digital jika tidak?
+  \item Bandingkan model distribusi kunci pada sistem simetris vs. asimetris.
+  \item Berikan contoh penggunaan sertifikat digital pada protokol TLS.
+\end{enumerate}
+
+\end{document}

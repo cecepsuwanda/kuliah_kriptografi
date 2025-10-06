@@ -1,0 +1,29 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Kunci Publik: Fermat Kecil dan RSA}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa memahami konsep sistem kunci publik, peran Teorema Kecil Fermat/Euler, dan konstruksi RSA beserta aspek keamanannya.
+
+\section{Konsep Sistem Kunci Publik}
+Model asimetris menggunakan kunci publik untuk enkripsi dan kunci privat untuk dekripsi. Keuntungan utama: distribusi kunci menjadi sederhana; kelemahan: efisiensi lebih rendah dibanding simetris \citep{katzlindell}.
+
+\section{Teorema Kecil Fermat dan Euler}
+FLT: untuk prima \(p\) dan \(a\not\equiv 0\pmod p\), \(a^{p-1}\equiv 1\pmod p\). Generalisasi: \(a^{\varphi(n)}\equiv 1\pmod n\) jika \(\gcd(a,n)=1\). Identitas ini digunakan dalam pembuktian kebenaran RSA \citep{hoffstein,rosen}.
+
+\section{Skema RSA}
+\textbf{Pembangkit kunci.} Pilih prima besar \(p,q\), hitung \(n=pq\), \(\varphi(n)=(p-1)(q-1)\). Pilih \(e\) koprima dengan \(\varphi(n)\), lalu hitung \(d\equiv e^{-1}\pmod{\varphi(n)}\). Kunci publik: \((n,e)\), kunci privat: \(d\).
+
+\textbf{Enkripsi/Dekripsi.} Enkripsi: \(c\equiv m^e\bmod n\). Dekripsi: \(m\equiv c^d\bmod n\). Benar karena \(ed\equiv 1\pmod{\varphi(n)}\) dan Teorema Euler \citep{rsa}.
+
+\section{Praktik Aman RSA}
+Gunakan padding aman semisal OAEP; hindari eksponen kecil tanpa mitigasi, lindungi terhadap serangan waktu dan side-channel; gunakan CRT untuk percepatan dekripsi dengan hati-hati \citep{katzlindell,menezes}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Bangkitkan contoh kecil RSA dengan \(p=53\), \(q=59\), pilih \(e=17\), hitung \(d\).
+  \item Tunjukkan bahwa dekripsi memulihkan pesan dengan Teorema Euler.
+  \item Jelaskan peran padding OAEP pada keamanan semantik.
+\end{enumerate}
+
+\end{document}

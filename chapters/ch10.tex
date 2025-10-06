@@ -1,0 +1,27 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Tanda Tangan Digital: Konsep, RSA, Ong--Schnorr--Shamir}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa memahami tujuan dan cara kerja tanda tangan digital, skema RSA, serta gambaran skema Ong--Schnorr--Shamir.
+
+\section{Konsep dan Model Keamanan}
+Tanda tangan digital menyediakan otentikasi, integritas, dan nir-sangkal. Keamanan formal: unforgeability under chosen-message attack (UF-CMA). Praktik: menandatangani \emph{hash} pesan, bukan pesan mentah \citep{katzlindell}.
+
+\section{Tanda Tangan RSA}
+Kunci seperti RSA enkripsi. Tanda tangan atas pesan \(m\) biasanya pada digest \(H(m)\): \(\sigma\equiv H(m)^d\bmod n\). Verifikasi: cek \(H(m)\equiv \sigma^e\bmod n\). Gunakan padding dan skema standar seperti RSA-PSS \citep{katzlindell,stallings}.
+
+\section{Ong--Schnorr--Shamir (OSS)}
+OSS adalah keluarga skema tanda tangan awal berbasis gagasan trapdoor, menawarkan efisiensi tertentu namun jarang digunakan dibanding ECDSA/RSA modern. Fokus pembelajaran: struktur umum tanda tangan dan verifikasi batch \citep{stallings}.
+
+\section{Verifikasi Batch}
+Untuk kelas skema tertentu (mis. tanda tangan yang bersifat homomorfik), beberapa tanda tangan dapat diverifikasi sekaligus guna efisiensi. Perlu analisis keamanan untuk mencegah serangan yang mengeksploitasi penggabungan \citep{katzlindell}.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Uraikan perbedaan RSA-PKCS\#1 v1.5, RSA-PSS, dan implikasi keamanannya.
+  \item Mengapa tanda tangan dilakukan atas hash, bukan pesan asli?
+  \item Berikan sketsa bagaimana verifikasi batch dapat menghemat waktu untuk tanda tangan bergaya RSA.
+\end{enumerate}
+
+\end{document}

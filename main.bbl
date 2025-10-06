@@ -1,0 +1,81 @@
+\begin{thebibliography}{13}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Diffie and Hellman(1976)]{diffiehellman}
+Whitfield Diffie and Martin~E. Hellman.
+\newblock New directions in cryptography.
+\newblock \emph{IEEE Transactions on Information Theory}, 22\penalty0
+  (6):\penalty0 644--654, 1976.
+
+\bibitem[Hoffstein et~al.(2014)Hoffstein, Pipher, and Silverman]{hoffstein}
+Jeffrey Hoffstein, Jill Pipher, and Joseph~H. Silverman.
+\newblock \emph{An Introduction to Mathematical Cryptography}.
+\newblock Springer, 2 edition, 2014.
+
+\bibitem[Katz and Lindell(2020)]{katzlindell}
+Jonathan Katz and Yehuda Lindell.
+\newblock \emph{Introduction to Modern Cryptography}.
+\newblock CRC Press, 3 edition, 2020.
+
+\bibitem[Kohl and Neuman(1993)]{kerberos}
+John~T. Kohl and B.~Clifford Neuman.
+\newblock The kerberos network authentication service (v5).
+\newblock RFC 1510, 1993.
+
+\bibitem[Mantin and Shamir(2001)]{rc4}
+Itsik Mantin and Adi Shamir.
+\newblock The indistinguishability of the rc4 stream cipher.
+\newblock In \emph{Proceedings of the International Workshop on Fast Software
+  Encryption}, 2001.
+
+\bibitem[Menezes et~al.(1996)Menezes, van Oorschot, and Vanstone]{menezes}
+Alfred~J. Menezes, Paul~C. van Oorschot, and Scott~A. Vanstone.
+\newblock \emph{Handbook of Applied Cryptography}.
+\newblock CRC Press, 1996.
+\newblock URL \url{https://cacr.uwaterloo.ca/hac/}.
+
+\bibitem[{National Institute of Standards and Technology}(1999)]{nist_des}
+{National Institute of Standards and Technology}.
+\newblock Data encryption standard (des).
+\newblock FIPS 46-3, 1999.
+\newblock URL
+  \url{https://csrc.nist.rip/publications/fips/archive/fips46-3/fips46-3.pdf}.
+
+\bibitem[{National Institute of Standards and Technology}(2001)]{nist_aes}
+{National Institute of Standards and Technology}.
+\newblock Advanced encryption standard (aes).
+\newblock FIPS 197, 2001.
+\newblock URL \url{https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf}.
+
+\bibitem[Rivest et~al.(1978)Rivest, Shamir, and Adleman]{rsa}
+R.~L. Rivest, A.~Shamir, and L.~Adleman.
+\newblock A method for obtaining digital signatures and public-key
+  cryptosystems.
+\newblock \emph{Communications of the ACM}, 21\penalty0 (2):\penalty0 120--126,
+  1978.
+
+\bibitem[Rogaway and Coppersmith(1994)]{seal}
+Phil Rogaway and Don Coppersmith.
+\newblock Seal: A high-speed stream cipher.
+\newblock \emph{RSA Laboratories Bulletin}, 1994.
+
+\bibitem[Rosen(2012)]{rosen}
+Kenneth~H. Rosen.
+\newblock \emph{Discrete Mathematics and Its Applications}.
+\newblock McGraw-Hill, 7 edition, 2012.
+
+\bibitem[Stallings(2016)]{stallings}
+William Stallings.
+\newblock \emph{Cryptography and Network Security: Principles and Practice}.
+\newblock Pearson, 7 edition, 2016.
+
+\bibitem[Zimmermann(1995)]{pgp}
+Philip~R. Zimmermann.
+\newblock Pretty good privacy (pgp), 1995.
+\newblock URL \url{https://www.philzimmermann.com/EN/essays/WhyPGP.html}.
+
+\end{thebibliography}

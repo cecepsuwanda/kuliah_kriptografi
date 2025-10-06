@@ -1,0 +1,24 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Kerberos, PGP, dan Sistem Pembayaran Elektronik}
+
+\section{Tujuan Pembelajaran}
+Mahasiswa memahami peran Kerberos, PGP, dan gambaran sistem pembayaran elektronik universal.
+
+\section{Kerberos}
+Kerberos adalah protokol otentikasi jaringan berbasis tiket yang mengandalkan KDC (AS dan TGS). Prinsip: otentikasi mutual, tiket sementara (TGT), dan sesi kunci sementara untuk layanan \citep{kerberos,stallings}.
+
+\section{Pretty Good Privacy (PGP)}
+PGP menggabungkan kriptografi simetris dan asimetris: enkripsi pesan dengan kunci sesi simetris (mis. AES), lalu kunci sesi dienkripsi dengan kunci publik penerima; juga menyediakan tanda tangan dan manajemen kunci ala \emph{web of trust} \citep{pgp,stallings}.
+
+\section{Sistem Pembayaran Elektronik}
+Gagasan sistem pembayaran elektronik universal mencakup aspek privasi, otentikasi, integritas, dan non-repudiation. Contoh komponen: token, tanda tangan, bukti tanpa pengungkapan penuh, serta infrastruktur sertifikat. Rancang bangun membutuhkan regulasi dan tata kelola tambahan.
+
+\section{Latihan}
+\begin{enumerate}
+  \item Jelaskan alur tiket Kerberos mulai dari AS hingga layanan akhir.
+  \item Uraikan bagaimana PGP menggabungkan kunci simetris dan asimetris.
+  \item Identifikasi tantangan keamanan dan regulasi pada sistem pembayaran elektronik berskala besar.
+\end{enumerate}
+
+\end{document}
