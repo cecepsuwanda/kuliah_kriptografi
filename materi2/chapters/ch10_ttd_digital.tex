@@ -10,7 +10,7 @@ Definisi formal keamanan seperti unforgeability under chosen-message attack (EUF
 \section{Penandatanganan dengan Cara Mengenkripsi Pesan}
 Model naif yang menyamakan tanda tangan dengan enkripsi menggunakan kunci privat tidak mencukupi dan rentan terhadap manipulasi struktur. Skema tanda tangan modern menggunakan padding dan hash untuk mengikat pesan dengan aman. Rancangan harus mencegah serangan substitusi dan replay.
 
-Standar seperti PKCS#1 mendefinisikan skema yang benar untuk RSA signatures yang menghindari kelemahan konstruksi sederhana.
+Standar seperti PKCS#1 mendefinisikan skema yang benar untuk RSA signatures yang menghindari kelemahan konstruksi sederhana \parencite{rfc8017}.
 
 \section{Tanda-tangan Digital dengan Kombinasi Fungsi Hash dan Kriptografi Kunci Publik}
 Skema tanda tangan modern memanfaatkan fungsi hash untuk mengompresi pesan sebelum operasi kunci publik, meningkatkan efisiensi dan keamanan. Kombinasi ini mengurangi kerentanan terhadap serangan struktural dan memastikan kompatibilitas dengan pesan berukuran arbitrer. Penggunaan hash yang aman adalah kunci.

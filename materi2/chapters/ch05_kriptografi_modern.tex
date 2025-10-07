@@ -12,7 +12,7 @@ Enkripsi berbasis XOR dengan keystream adalah komponen inti cipher alir, di mana
 
 Skema yang aman menggunakan nonce dan kunci untuk mencegah reuse, serta konstruksi yang terbukti aman untuk menghasilkan keystream. Standar AEAD mengintegrasikan enkripsi dan autentikasi untuk mitigasi serangan manipulasi \parencite{rfc5116}.
 
-\section{Kategori Chiper untuk data digital}
+\section{Kategori Cipher untuk Data Digital}
 Cipher modern terbagi menjadi cipher alir dan cipher blok, masing-masing dengan keunggulan dan tantangan berbeda. Cipher alir menawarkan latensi rendah dan granularitas bit, sedangkan cipher blok bekerja pada blok tetap dengan mode operasi yang menyediakan fleksibilitas. Pemilihan kategori bergantung pada kebutuhan aplikasi dan lingkungan eksekusi.
 
 Standar seperti AES untuk cipher blok dan ChaCha20 untuk cipher alir digunakan luas karena analisis keamanan yang ekstensif dan kinerja yang baik pada perangkat modern.
@@ -37,7 +37,7 @@ Serangan terhadap cipher alir mencakup serangan korelasi, algebraik, dan state r
 
 Pedoman standar merekomendasikan penggunaan konstruksi AEAD modern untuk mencegah manipulasi dan memastikan integritas, selain kerahasiaan \parencite{rfc5116}.
 
-\section{Chiper Blok}
+\section{Cipher Blok}
 Cipher blok memproses data dalam blok tetap menggunakan struktur seperti jaringan Feistel atau substitusi-permutasi. Desain yang baik mencapai difusi dan konfusi yang kuat, dinilai melalui analisis diferensial dan linear. Keamanan juga ditentukan oleh ukuran blok dan parameter internal.
 
 AES sebagai standar de facto menawarkan keamanan kuat dengan kinerja tinggi pada perangkat keras dan lunak, didukung bukti dan analisis luas \parencite{fips197}.
