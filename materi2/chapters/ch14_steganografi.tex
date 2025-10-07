@@ -1,0 +1,50 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Steganografi}
+
+\section{Sejarah Steganografi}
+Steganografi memfokuskan pada penyembunyian keberadaan pesan dengan menanam informasi ke dalam media pembawa. Sejarahnya panjang, mencakup teknik fisik tradisional hingga metode digital pada citra, audio, dan video. Perkembangan kriptografi dan komputasi memperluas baik teknik maupun deteksi steganalisis.
+
+Kajian sejarah menggarisbawahi tujuan yang berbeda dari kriptografi: bukan menyamarkan isi, melainkan menyembunyikan keberadaan komunikasi.
+
+\section{Konsep dan Terminologi Steganografi}
+Terminologi utama meliputi cover object, stego object, embedding rate, dan payload. Tujuan desain adalah meminimalkan distorsi yang terdeteksi sambil mempertahankan kapasitas yang memadai. Model ancaman mempertimbangkan adversary yang melakukan uji statistik untuk mendeteksi keberadaan pesan.
+
+Kualitas skema dinilai melalui ketaksempurnaan statistik dan ketahanan terhadap deteksi yang canggih.
+
+\section{Kriteria Steganografi yang baik}
+Kriteria meliputi imperceptibility, kapasitas yang memadai, dan robustness terhadap transformasi yang wajar. Trade-off antara kriteria ini harus dikelola sesuai aplikasi. Evaluasi empiris menggunakan dataset standar dan metrik yang disepakati.
+
+Desain yang baik mempertimbangkan model serangan dan kemampuan deteksi modern.
+
+\section{Ranah Penyembunyian Data}
+Ranah umum mencakup domain ruang (spatial) untuk citra, domain frekuensi seperti DCT pada JPEG, dan domain transformasi lain untuk audio/video. Pemilihan ranah memengaruhi kapasitas dan visibilitas distorsi. Teknik embedding disesuaikan dengan karakteristik media.
+
+Pemahaman format file dan proses kompresi penting untuk menjaga imperceptibility setelah pengolahan.
+
+\section{Metode LSB}
+Least Significant Bit (LSB) mengganti bit paling tidak signifikan pada piksel atau sampel, memberikan kapasitas tinggi namun rentan terhadap deteksi statistik. Variasi adaptif mencoba mengurangi jejak statistik dengan memilih lokasi embedding berdasarkan konten. Kekokohan terhadap kompresi lossy terbatas.
+
+Metode LSB menyoroti tantangan menjaga keseimbangan antara kapasitas dan ketakterdeteksian.
+
+\section{Kombinasi Steganografi dan Kriptografi}
+Menggabungkan steganografi dengan kriptografi meningkatkan keamanan dengan melindungi isi sekaligus menyamarkan keberadaannya. Enkripsi dilakukan sebelum embedding untuk mencegah kebocoran informasi jika stego terdeteksi. Kunci embedding terpisah dapat mengatur lokasi penyisipan.
+
+Praktik ini menambah lapisan keamanan namun juga kompleksitas dalam manajemen kunci dan proses.
+
+\section{Steganalisis}
+Steganalisis mengevaluasi media untuk mendeteksi jejak embedding menggunakan uji statistik dan pembelajaran mesin. Fitur tingkat tinggi dan model modern dapat mencapai deteksi yang akurat terhadap banyak teknik klasik. Skema yang aman harus diuji terhadap detektor canggih.
+
+Evaluasi berkelanjutan diperlukan karena teknik deteksi terus berkembang.
+
+\section{Watermarking}
+Watermarking menanamkan informasi kepemilikan atau integritas ke dalam media dengan tujuan bertahan terhadap transformasi dan serangan. Berbeda dengan steganografi, watermarking tidak selalu bertujuan tidak terdeteksi total, tetapi lebih pada robustnes. Aplikasi mencakup hak cipta digital dan pelacakan distribusi.
+
+Desain watermarking memerlukan kompromi antara ketahanan, kualitas media, dan kapasitas payload.
+
+\section{Noiseless Steganography}
+Noiseless steganography berupaya menyisipkan informasi tanpa menambah noise yang terdeteksi secara statistik. Teknik ini sering memanfaatkan struktur redundansi data dan model generatif. Tantangannya adalah menjaga konsistensi statistik sambil mempertahankan kapasitas.
+
+Perkembangan terkini mengeksplorasi pendekatan berbasis pembelajaran mendalam untuk meningkatkan ketakterdeteksian.
+
+\end{document}

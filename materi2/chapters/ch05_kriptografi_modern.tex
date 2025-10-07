@@ -1,0 +1,95 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Kriptografi Modern}
+
+\section{Rangkaian Bit dan Operasinya}
+Kriptografi modern beroperasi pada bit dan blok data, memanfaatkan operasi boolean dan aritmetika modular. Representasi bit memungkinkan desain yang efisien dan analisis mendalam terhadap difusi dan konfusi dalam cipher. Pemahaman operasi dasar ini menjadi landasan untuk menilai implementasi dan optimisasi.
+
+Operasi XOR, rotasi, dan perpindahan bit sering digunakan untuk membangun primitif yang cepat dan sederhana. Kombinasi operasi ini yang tepat membantu mencapai properti keamanan yang diinginkan pada cipher modern.
+
+\section{algoritma enkripsi dengan XOR sederhana}
+Enkripsi berbasis XOR dengan keystream adalah komponen inti cipher alir, di mana keamanan sepenuhnya bergantung pada keacakan keystream. Jika keystream dapat diprediksi atau digunakan berulang, kebocoran terjadi sehingga plainteks dapat dipulihkan. Oleh karena itu, keystream harus dibangkitkan dari sumber yang kuat dan unik per pesan.
+
+Skema yang aman menggunakan nonce dan kunci untuk mencegah reuse, serta konstruksi yang terbukti aman untuk menghasilkan keystream. Standar AEAD mengintegrasikan enkripsi dan autentikasi untuk mitigasi serangan manipulasi \parencite{rfc5116}.
+
+\section{Kategori Cipher untuk Data Digital}
+Cipher modern terbagi menjadi cipher alir dan cipher blok, masing-masing dengan keunggulan dan tantangan berbeda. Cipher alir menawarkan latensi rendah dan granularitas bit, sedangkan cipher blok bekerja pada blok tetap dengan mode operasi yang menyediakan fleksibilitas. Pemilihan kategori bergantung pada kebutuhan aplikasi dan lingkungan eksekusi.
+
+Standar seperti AES untuk cipher blok dan ChaCha20 untuk cipher alir digunakan luas karena analisis keamanan yang ekstensif dan kinerja yang baik pada perangkat modern.
+
+\section{Cipher alir}
+Cipher alir menghasilkan keystream yang dikombinasikan dengan plainteks menggunakan XOR, membutuhkan sumber entropi yang kuat dan parameter unik per pesan. Desain harus mencegah korelasi dan siklus pendek pada generator internal. Implementasi harus menangani inisialisasi dan pemutakhiran keadaan secara aman.
+
+Contoh yang banyak dipakai adalah ChaCha20 dengan Poly1305 sebagai MAC dalam konfigurasi AEAD, yang memberikan keamanan dan kinerja baik pada perangkat lunak modern \parencite{rfc8439}.
+
+\section{Pembangkit kunci alir}
+Pembangkit keystream sering menggunakan register geser dengan umpan balik dan komponen nonlinier untuk menghindari prediktabilitas. Struktur harus dianalisis terhadap serangan korelasi dan algebraik untuk menjamin keamanan. Inisialisasi dengan kunci dan nonce harus dirancang untuk mencegah state recovery.
+
+Literatur terbuka menyediakan analisis konstruksi yang kuat dan pedoman implementasi untuk mencegah kelemahan yang diketahui.
+
+\section{Linear Feedback Shift Register (LFSR)}
+LFSR menyediakan struktur linear efisien yang sering menjadi komponen dalam pembangkit keystream. Karena linearitasnya, LFSR sendiri tidak aman dan memerlukan kombinasi nonlinier untuk menghindari serangan linier. Pemilihan polinom umpan balik menentukan periode dan distribusi keluaran.
+
+Analisis LFSR dan kombinasinya terdokumentasi luas dalam literatur kriptografi dan komunikasi digital \parencite{menezes1996handbook}.
+
+\section{Serangan Terhadap Cipher Alir}
+Serangan terhadap cipher alir mencakup serangan korelasi, algebraik, dan state recovery, yang mengeksploitasi struktur internal pembangkit. Kesalahan implementasi seperti reuse nonce atau kunci membuka peluang serangan praktis yang menghancurkan keamanan. Evaluasi keamanan harus meliputi model data yang realistis dan asumsi penyerang yang kuat.
+
+Pedoman standar merekomendasikan penggunaan konstruksi AEAD modern untuk mencegah manipulasi dan memastikan integritas, selain kerahasiaan \parencite{rfc5116}.
+
+\section{Cipher Blok}
+Cipher blok memproses data dalam blok tetap menggunakan struktur seperti jaringan Feistel atau substitusi-permutasi. Desain yang baik mencapai difusi dan konfusi yang kuat, dinilai melalui analisis diferensial dan linear. Keamanan juga ditentukan oleh ukuran blok dan parameter internal.
+
+AES sebagai standar de facto menawarkan keamanan kuat dengan kinerja tinggi pada perangkat keras dan lunak, didukung bukti dan analisis luas \parencite{fips197}.
+
+\section{Electronic Code Book (ECB)}
+ECB mengenkripsi setiap blok secara independen, mempertahankan kesamaan blok identik sehingga membocorkan pola. Mode ini tidak direkomendasikan untuk data dengan struktur, kecuali pada konteks sangat terbatas atau untuk keperluan determinisme yang dikontrol.
+
+Sebagian besar aplikasi seharusnya menggunakan mode yang menyediakan difusi antarblok dan/atau autentikasi untuk mencegah manipulasi. Referensi dan pedoman terdapat pada publikasi NIST.
+
+\section{Cipher Block Chaining (CBC)}
+CBC menggabungkan blok sebelumnya dengan plainteks saat ini sebelum enkripsi, memberikan difusi yang lebih baik dibanding ECB. Keamanan membutuhkan IV acak tak dapat diprediksi dan mekanisme autentikasi terpisah untuk mencegah serangan padding oracle.
+
+Standar merekomendasikan penggunaan AEAD untuk menghindari kebutuhan akan MAC terpisah dan mitigasi kelas serangan ini \parencite{nist80038d}.
+
+\section{Cipher Feedback (CFB)}
+CFB memperlakukan cipher blok sebagai pembangkit keystream dengan cara memproses blok keluaran untuk XOR dengan plainteks. Mode ini useful untuk aplikasi streaming dengan panjang tidak kelipatan blok. Namun, integritas tetap memerlukan mekanisme autentikasi terpisah.
+
+Pemilihan ukuran segmen memengaruhi latensi dan kinerja, yang harus disesuaikan dengan kebutuhan aplikasi.
+
+\section{Output Feedback (OFB)}
+OFB menghasilkan keystream independen dari plainteks sehingga cocok untuk saluran dengan error. Karena deterministik untuk IV yang sama, IV harus unik mutlak untuk mencegah reuse keystream. OFB tidak menyediakan autentikasi secara bawaan.
+
+Kombinasi dengan MAC seperti HMAC dapat menyediakan integritas, tetapi AEAD sering menjadi pilihan yang lebih sederhana.
+
+\section{Counter Mode}
+CTR mengubah cipher blok menjadi pembangkit keystream dengan mengenkripsi nilai counter yang meningkat. Mode ini sangat paralelis dan memiliki kinerja tinggi, tetapi menuntut nonce/counter unik per kunci. Reuse counter menyebabkan kebocoran fatal melalui XOR dari plainteks.
+
+Dalam praktik, CTR sering digunakan sebagai bagian dari GCM yang juga menyediakan autentikasi, seperti dijelaskan pada \textcite{nist80038d}.
+
+\section{Prinsip-prinsip Perancangan Cipher Blok}
+Prinsip desain meliputi konfusi dan difusi Shannon, jumlah ronde yang memadai, nonlinieritas kuat pada S-box, dan struktur yang menghambat kriptanalisis diferensial dan linear. Evaluasi melibatkan metrik seperti nonlinieritas, uniformitas diferensial, dan campuran linear.
+
+Pendekatan sistematis membantu menyeimbangkan keamanan dan kinerja sambil menghindari jebakan desain yang umum. Diskusi dapat ditemukan pada literatur terbuka.
+
+\subsection{Prinsip Confusion dan Diffusion dari Shannon}
+Konfusi mengaburkan hubungan antara kunci dan cipherteks, sementara difusi menyebarkan pengaruh satu bit ke banyak bit keluaran. Keduanya bekerja bersama untuk mencegah inferensi langsung terhadap kunci dari observasi cipherteks. Struktur berulang memungkinkan akumulasi efek ini sepanjang ronde.
+
+Analisis formal menggunakan teknik statistik dan kombinatorial untuk menilai kekuatan properti tersebut pada desain konkret.
+
+\subsection{Cipher Berulang}
+Cipher berulang menerapkan fungsi ronde berkali-kali dengan subkunci berbeda. Pendekatan ini memudahkan desain modular dan analisis keamanan. Pemilihan jumlah ronde merupakan kompromi antara kinerja dan margin keamanan.
+
+Studi empiris menunjukkan bahwa ronde yang terlalu sedikit membuka peluang serangan yang efektif; oleh karena itu margin keamanan harus konservatif.
+
+\subsection{Jaringan Feistel}
+Jaringan Feistel membagi blok menjadi dua bagian dan menerapkan fungsi ronde pada satu bagian dengan kunci ronde, kemudian menukar bagian. Properti dapat dibalik dengan mudah, sehingga memudahkan implementasi enkripsi dan dekripsi menggunakan fungsi yang sama. Banyak cipher klasik seperti DES menggunakan struktur ini.
+
+Analisis jaringan Feistel menilai properti avalanche dan resistensi terhadap serangan standar untuk memastikan keamanan memadai.
+
+\subsection{Kotak-S}
+S-box menyediakan nonlinieritas melalui substitusi tabel yang dirancang dengan kriteria ketat. Desain yang buruk membuka peluang serangan diferensial dan linear. Evaluasi melibatkan metrik seperti nonlinieritas, bias Walsh, dan uniformitas diferensial.
+
+Standar AES mendokumentasikan konstruksi S-box yang kuat berbasis invers di medan \(\mathbb{F}_{2^8}\) yang diikuti transformasi afine \parencite{fips197}.
+
+\end{document}

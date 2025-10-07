@@ -1,0 +1,35 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Manajemen Kunci}
+
+\section{Pembangkitan Kunci}
+Pembangkitan kunci harus menggunakan CSPRNG yang kuat dan parameter yang sesuai dengan target keamanan. Proses harus menghindari struktur yang memperlemah, misalnya kunci dengan entropi rendah atau pola yang dapat ditebak. Audit berkala dan bukti kualitas randomness dianjurkan.
+
+Standar dan pedoman terbuka menyediakan rekomendasi ukuran kunci dan prosedur pembangkitan yang aman.
+
+\section{Penyebaran Kunci}
+Penyebaran kunci memerlukan kanal aman atau mekanisme kunci publik untuk menghindari penyadapan dan substitusi. Prosedur harus memverifikasi integritas dan autentikasi sumber. Kesalahan pada tahap ini sering kali berakibat kompromi sistem secara keseluruhan.
+
+Penggunaan perangkat keras tepercaya dan protokol yang telah distandardisasi membantu mengurangi risiko.
+
+\section{Penyimpanan Kunci}
+Kunci harus disimpan dalam lingkungan yang dilindungi dari akses tidak sah dan kebocoran, termasuk perlindungan memori dan perangkat keras. Mekanisme seperti HSM atau enclave menyediakan proteksi tambahan. Kebijakan rotasi dan pencatatan akses meningkatkan keamanan operasional.
+
+Prinsip paling sedikit hak akses dan pemisahan tugas harus diterapkan untuk mencegah penyalahgunaan.
+
+\section{Penggunaan Kunci}
+Penggunaan kunci harus mematuhi tujuan yang ditentukan dan kebijakan organisasi. Parameter seperti nonce dan IV harus dikelola dengan benar untuk mencegah reuse. Pustaka kriptografi yang tepercaya dan antarmuka yang aman mengurangi kemungkinan kesalahan pemrograman.
+
+Pengujian dan monitoring membantu mendeteksi anomali yang dapat mengindikasikan penyalahgunaan kunci.
+
+\section{Perubahan Kunci}
+Rotasi kunci berkala mengurangi dampak kompromi dan menyesuaikan dengan perubahan tingkat ancaman. Proses harus memastikan transisi yang mulus tanpa kehilangan data atau interoperabilitas. Dokumentasi dan validasi penting untuk menjaga jejak audit.
+
+Kebijakan rotasi didasarkan pada nilai risiko aset dan eksposur operasional.
+
+\section{Penghancuran Kunci}
+Penghancuran kunci yang aman memastikan bahwa materi kunci tidak dapat dipulihkan setelah masa pakai berakhir. Teknik termasuk overwriting, degaussing, atau penghancuran fisik sesuai konteks media. Proses harus terdokumentasi dan dapat diaudit.
+
+Kepatuhan terhadap standar keamanan informasi memastikan penghentian yang terverifikasi.
+
+\end{document}

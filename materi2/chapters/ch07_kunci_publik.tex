@@ -1,0 +1,60 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Kriptografi Kunci Publik}
+
+\section{Konsep Kriptografi Kunci Publik}
+Kriptografi kunci publik memperkenalkan pasangan kunci asimetris yang memungkinkan distribusi kunci yang skalabel dan layanan tanda tangan digital. Dengan memisahkan kunci untuk enkripsi dan dekripsi, skema ini mengatasi masalah distribusi kunci pada sistem simetri. Keamanan bergantung pada asumsi komputasi seperti faktorisasi atau logaritma diskrit.
+
+Penggunaan kunci publik memfasilitasi protokol yang sebelumnya sulit dicapai, seperti otentikasi tanpa berbagi rahasia. Referensi terbuka menggambarkan landasan formal dan praktiknya \parencite{diffie1976new}.
+
+\section{Sejarah Kriptografi Kunci Publik}
+Gagasan kunci publik dipopulerkan oleh Diffie dan Hellman pada 1976 dan segera diikuti oleh skema RSA pada 1978. Sejarah ini menunjukkan bagaimana kemajuan teoretis dengan cepat diadopsi menjadi standar dan aplikasi nyata. Evolusi selanjutnya memperkenalkan skema berbasis kurva eliptik untuk efisiensi lebih baik.
+
+Sumber primer tersedia secara terbuka dan menjadi bacaan utama untuk memahami motivasi dan desain awal \parencite{diffie1976new,rsa1978}.
+
+\section{Perbandingan Kriptografi Kunci Simetri dan Kriptografi Kunci Publik}
+Kunci simetri unggul dalam kinerja dan kesederhanaan, tetapi menantang pada distribusi kunci luas. Kunci publik mendukung skalabilitas dan layanan lanjutan, tetapi lebih mahal secara komputasi. Sistem nyata sering mengadopsi pendekatan hibrida untuk memanfaatkan kekuatan masing-masing.
+
+Analisis biaya dan risiko harus mempertimbangkan kasus penggunaan spesifik serta infrastruktur yang tersedia.
+
+\section{Aplikasi Kriptografi Kunci Publik}
+Aplikasi mencakup enkripsi kunci publik, tanda tangan digital, dan pertukaran kunci aman untuk sesi simetri. Kerangka PKI memungkinkan verifikasi identitas melalui sertifikat yang ditandatangani otoritas tepercaya. Model kepercayaan harus jelas dan sesuai konteks organisasi.
+
+Contoh implementasi nyata dapat ditemukan pada TLS dan sistem email aman.
+
+\section{Algoritma RSA}
+RSA bergantung pada kesulitan faktorisasi modulus komposit besar dan menggunakan perpangkatan modular untuk enkripsi/dekripsi. Pemilihan parameter yang tepat seperti ukuran kunci dan padding OAEP menentukan keamanan. Implementasi harus tahan kanal samping dan menghindari kerentanan seperti ketidakacakan pada pembangkitan kunci.
+
+Standar dan rekomendasi terbuka memberikan pedoman konfigurasi yang aman untuk berbagai aplikasi.
+
+\section{Pertukaran Kunci Diffie-Hellman}
+Diffie--Hellman memungkinkan dua pihak menyepakati kunci rahasia melalui saluran publik berdasarkan kesulitan logaritma diskrit. Versi eliptiknya (ECDH) menawarkan efisiensi lebih baik dengan keamanan sebanding. Pemilihan grup yang aman sangat penting untuk mencegah serangan terkait struktur.
+
+Panduan standar merekomendasikan parameter terverifikasi dan praktik implementasi yang ketat.
+
+\section{Algoritma ElGamal}
+ElGamal adalah skema enkripsi kunci publik berbasis DLP yang menyediakan kerangka probabilistik untuk keamanan IND-CPA. Variasi dan optimalisasi meningkatkan efisiensi, namun penanganan pesan dan padding harus benar. Analisis keamanan menekankan pentingnya randomness yang kuat.
+
+Skema ini juga mendasari konstruksi tanda tangan digital tertentu.
+
+\section{Algoritma Knapsack}
+Skema knapsack awalnya menarik karena efisiensi, namun banyak varian awal telah dipatahkan melalui reduksi ke struktur yang dapat dipecahkan. Pengalaman ini menekankan pentingnya analisis publik dan kehati-hatian terhadap asumsi yang tidak mapan. Penelitian berlanjut pada skema berbasis masalah kombinatorial lainnya.
+
+Pembelajaran dari knapsack memengaruhi kehati-hatian dalam mengevaluasi skema baru.
+
+\section{Algoritma untuk Perpangkatan Modulo}
+Perpangkatan modular efisien menggunakan teknik seperti square-and-multiply dan Montgomery reduction. Pilihan representasi dan mitigasi kanal samping sangat penting dalam implementasi praktis. Perbedaan antara enkripsi dan penandatanganan memengaruhi parameter dan jalur eksekusi.
+
+Optimasi perangkat keras dan lunak mendukung performa pada kunci besar tanpa mengorbankan keamanan.
+
+\section{Pembangkitan Bilangan Prima}
+Pembangkitan prima aman memerlukan uji primalitas probabilistik dan sumber entropi kuat. Struktur prima harus menghindari pola yang melemahkan keamanan. Proses harus menghasilkan bukti atau indikator kuat terhadap keacakan yang memadai.
+
+Panduan praktik yang baik tersedia luas dalam literatur terbuka.
+
+\section{Kode Program Algoritma RSA}
+Contoh kode sering disertakan dalam literatur untuk ilustrasi, tetapi implementasi produksi harus menggunakan pustaka tepercaya yang diaudit. Kesalahan kecil seperti padding salah atau pengelolaan kunci yang lemah dapat berakibat fatal. Evaluasi keamanan harus memasukkan pengujian dan audit menyeluruh.
+
+Standarisasi antarmuka dan penggunaan API yang benar membantu mengurangi risiko implementasi.
+
+\end{document}

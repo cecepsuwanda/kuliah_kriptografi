@@ -1,0 +1,35 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Fungsi Hash Satu Arah}
+
+\section{Fungsi Hash Satu Arah}
+Fungsi hash satu arah memetakan masukan arbitrer ke keluaran berukuran tetap dengan sifat tahan-preimage, tahan-second-preimage, dan tahan-tabrakan. Sifat-sifat ini memungkinkan aplikasi luas pada verifikasi integritas, komitmen, dan konstruksi autentikasi. Desain modern menghindari kelemahan yang ditemukan pada algoritma lama seperti MD5.
+
+Analisis formal memodelkan keamanan terhadap penyerang yang mampu melakukan query adaptif; standar terbuka menyediakan spesifikasi dan panduan penggunaan yang aman.
+
+\section{Algoritma MD5}
+MD5 adalah fungsi hash yang kini tidak aman karena serangan tabrakan praktis yang terpublikasi. Penggunaan dalam konteks keamanan tidak direkomendasikan dan harus diganti dengan keluarga SHA-2 atau SHA-3. Studi kasus tabrakan mendemonstrasikan risiko integritas.
+
+Meskipun historis penting, MD5 kini terutama menjadi contoh pedagogis mengenai desain yang rentan dan deprecasi algoritma.
+
+\section{Secure Hash Algorithm (SHA)}
+Keluarga SHA-2 (SHA-256/384/512) memberikan keamanan yang kuat dengan performa baik, sementara SHA-1 didepresiasi karena tabrakan praktis. Spesifikasi terbuka memudahkan interoperabilitas dan implementasi yang konsisten. Penggunaan SHA-2 direkomendasikan luas.
+
+Penerapan harus memperhatikan mode penggunaan, padding, dan potensi kanal samping untuk menjaga keamanan.
+
+\section{SHA-3 (Keccak)}
+SHA-3 (Keccak) adalah standar hash berbasis sponge yang menawarkan desain berbeda dari SHA-2 dan ketahanan terhadap serangan yang diketahui. Struktur sponge memberikan fleksibilitas untuk hash dan XOF, serta konstruksi terkait. Analisis keamanan mendukung adopsi luas pada aplikasi baru.
+
+Spesifikasi tersedia secara terbuka dan menyediakan parameterisasi untuk berbagai kebutuhan keamanan \parencite{fips202}.
+
+\section{Message Authentication Code (MAC)}
+MAC menyediakan autentikasi dan integritas pesan berbasis kunci rahasia. Konstruksi populer meliputi HMAC yang dibangun di atas fungsi hash dan CMAC di atas cipher blok. Keamanan menuntut pengelolaan kunci yang tepat dan pemilihan parameter konservatif.
+
+Kesesuaian MAC dengan protokol harus mempertimbangkan kebutuhan anti-replay dan penandatanganan entitas.
+
+\section{Algoritma MAC}
+HMAC menawarkan keamanan yang kuat dengan asumsi hash dasar aman dan banyak distandardisasi; CMAC memberikan alternatif berbasis AES dengan kualitas serupa. Pemilihan algoritma sering ditentukan oleh ketersediaan akselerasi perangkat keras atau pustaka yang telah diaudit. Implementasi harus menghindari kebocoran waktu pada perbandingan tag.
+
+Dokumentasi standar menyediakan panduan interoperabilitas dan parameter yang disarankan.
+
+\end{document}

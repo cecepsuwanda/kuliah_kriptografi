@@ -1,0 +1,60 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Review Beberapa Cipher Alir dan Cipher Blok}
+
+\section{RC4}
+RC4 adalah cipher alir yang pernah digunakan luas, tetapi kini tidak direkomendasikan karena kelemahan bias awal dan serangan praktis. State internal berbasis permutasi byte menghasilkan keystream, namun inisialisasi yang tidak memadai membuka kebocoran statistik. Standar modern menyarankan migrasi ke alternatif seperti ChaCha20.
+
+Analisis bias RC4 menunjukkan bahwa keystream tidak mendekati acak sempurna sehingga memungkinkan pemulihan kunci dalam skenario tertentu. Oleh karena itu, banyak standar telah mendeprikasikannya.
+
+\section{A5}
+Keluarga A5 digunakan pada GSM untuk enkripsi suara dan data, dengan variasi tingkat keamanan yang berbeda. Beberapa varian mengalami serangan yang memungkinkan pemulihan kunci dengan data yang relatif sedikit. Desain berbasis LFSR menyoroti pentingnya nonlinieritas yang kuat.
+
+Kajian publik mengilustrasikan trade-off antara efisiensi dan keamanan pada sistem komunikasi bergerak.
+
+\section{DES}
+DES adalah cipher blok 56-bit yang bersejarah, kini dianggap tidak aman karena ruang kunci kecil dan serangan brute-force yang layak. Struktur Feistel dan S-box DES tetap berpengaruh dalam desain cipher modern. Penggantinya, 3DES, memperpanjang umur DES dengan komposisi berulang.
+
+Standar saat ini merekomendasikan AES sebagai pengganti karena keamanan dan kinerja superior. Lihat \textcite{fips197} untuk detail.
+
+\section{Double DES dan Triple DES}
+Double DES tidak memberikan peningkatan keamanan yang signifikan karena serangan meet-in-the-middle, sedangkan Triple DES memperbaiki kelemahan ini dengan komposisi tiga kali. Namun, kinerja 3DES lebih rendah dibanding AES, dan parameter keamanan efektifnya kini dibatasi dalam standar.
+
+Transisi ke AES direkomendasikan untuk aplikasi baru demi keamanan jangka panjang.
+
+\section{GOST}
+GOST 28147-89 adalah cipher blok yang digunakan di Rusia dengan struktur dan S-box yang berbeda dari DES. Evaluasi publik terbatas di masa awal, namun analisis selanjutnya mengungkap berbagai sifat desain yang menarik. Interoperabilitas global mendorong adopsi AES di banyak sistem.
+
+Kajian perbandingan menekankan pentingnya proses standardisasi dan analisis terbuka.
+
+\section{RC5}
+RC5 adalah cipher blok yang dapat dikonfigurasi jumlah rondenya, ukuran blok, dan ukuran kunci. Desain sederhana berbasis rotasi, XOR, dan penjumlahan menawarkan kinerja baik. Keamanan bergantung pada parameter; ronde yang terlalu sedikit rentan terhadap kriptanalisis.
+
+Pemilihan parameter konservatif diperlukan untuk mencapai keamanan yang memadai dalam praktik.
+
+\section{RC6}
+RC6 memperluas RC5 dengan operasi tambahan untuk meningkatkan keamanan dan kinerja pada platform tertentu. Meskipun kuat, pemilihan AES akhirnya jatuh pada Rijndael karena kombinasi keamanan, kinerja, dan kesederhanaan implementasi.
+
+Studi kandidat AES memberikan pelajaran berharga tentang evaluasi terbuka.
+
+\section{Advanced Encryption Standard (AES)}
+AES adalah standar cipher blok modern yang menggantikan DES dan banyak diadopsi secara global. Desain berbasis SPN dengan S-box dari medan berhingga dan transformasi linier yang kuat memberikan keamanan dan kinerja tinggi. Implementasi perangkat keras dan lunak tersedia luas.
+
+Standar \textcite{fips197} mendokumentasikan spesifikasi dan rasional desain AES yang telah diuji waktu.
+
+\section{Penerapan Kriptografi Simetri dalam Kehidupan Sehari-hari}
+Kriptografi simetri digunakan dalam berbagai aplikasi seperti perbankan elektronik, komunikasi seluler, dan penyimpanan data terenkripsi. Kinerja tinggi dan efisiensi menjadikannya pilihan untuk enkripsi bulk data. Keamanan nyata bergantung pada mode operasi, manajemen kunci, dan integrasi sistem.
+
+Penerapan yang tepat memerlukan kepatuhan terhadap standar dan audit implementasi.
+
+\subsection{Transaksi dengan Mesin ATM}
+Transaksi ATM memanfaatkan enkripsi simetri untuk melindungi PIN dan data sensitif selama transmisi dan penyimpanan. Infrastruktur kunci dan modul keamanan perangkat keras (HSM) mengelola kunci secara aman. Prosedur rotasi dan injeksi kunci yang ketat penting untuk mencegah kompromi.
+
+Standar industri menyediakan pedoman implementasi yang mengikat untuk lembaga keuangan.
+
+\subsection{Komunikasi dengan Telepon Seluler}
+Komunikasi seluler menggunakan cipher simetri untuk melindungi suara dan data melintasi jaringan radio yang tidak dipercaya. Protokol keamanan mengelola autentikasi, perjanjian kunci, dan enkripsi end-to-air. Evolusi generasi jaringan membawa perbaikan kriptografis dan mitigasi kelemahan historis.
+
+Adopsi algoritma modern dan konfigurasi konservatif diperlukan untuk ketahanan jangka panjang.
+
+\end{document}

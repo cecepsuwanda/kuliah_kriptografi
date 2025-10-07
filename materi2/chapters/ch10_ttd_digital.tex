@@ -1,0 +1,30 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Tanda Tangan Digital}
+
+\section{Review Layanan Kriptografi}
+Tanda tangan digital mengimplementasikan layanan otentikasi, integritas, dan nir-sangkal dalam kerangka kunci publik. Dengan mengikat identitas pada pesan melalui kunci privat, pihak ketiga dapat memverifikasi keaslian menggunakan kunci publik. Keamanan bergantung pada asumsi komputasi dan fungsi hash yang kuat.
+
+Definisi formal keamanan seperti unforgeability under chosen-message attack (EUF-CMA) menjadi standar penilaian skema tanda tangan. Implementasi harus memastikan sumber randomness yang kuat untuk menghindari kebocoran kunci.
+
+\section{Penandatanganan dengan Cara Mengenkripsi Pesan}
+Model naif yang menyamakan tanda tangan dengan enkripsi menggunakan kunci privat tidak mencukupi dan rentan terhadap manipulasi struktur. Skema tanda tangan modern menggunakan padding dan hash untuk mengikat pesan dengan aman. Rancangan harus mencegah serangan substitusi dan replay.
+
+Standar seperti PKCS#1 mendefinisikan skema yang benar untuk RSA signatures yang menghindari kelemahan konstruksi sederhana \parencite{rfc8017}.
+
+\section{Tanda-tangan Digital dengan Kombinasi Fungsi Hash dan Kriptografi Kunci Publik}
+Skema tanda tangan modern memanfaatkan fungsi hash untuk mengompresi pesan sebelum operasi kunci publik, meningkatkan efisiensi dan keamanan. Kombinasi ini mengurangi kerentanan terhadap serangan struktural dan memastikan kompatibilitas dengan pesan berukuran arbitrer. Penggunaan hash yang aman adalah kunci.
+
+Pengikatan domain dan pengkodean yang benar diperlukan untuk mencegah ambiguitas dan serangan framing.
+
+\section{Tanda-tangan Digital dengan Fungsi Hash dan Kriptografi Kunci Publik}
+Pendekatan praktis seperti RSA-PSS dan ECDSA menggunakan hash sebagai inti, dengan padding dan pemetaan yang dirancang untuk keamanan formal. Parameter yang salah atau randomness lemah dapat merusak keamanan seluruh sistem. Oleh itu, pedoman standar harus diikuti secara ketat.
+
+Analisis formal dan pengalaman industri mendukung penggunaan skema ini dalam aplikasi luas.
+
+\section{Digital Standard Algorithm (DSA)}
+DSA adalah skema tanda tangan berbasis DLP yang mengandalkan randomness unik per tanda tangan. Kegagalan menjaga nonce unik dapat mengungkap kunci privat, seperti ditunjukkan dalam berbagai insiden nyata. Versi eliptiknya, ECDSA, menawarkan efisiensi lebih baik.
+
+Standar dan praktik terbaik menekankan pentingnya generator randomness yang kuat dan audit implementasi.
+
+\end{document}
