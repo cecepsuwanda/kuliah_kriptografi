@@ -30,12 +30,14 @@ Pemahaman mengenai kongruensi dan residu diperlukan untuk mendesain operasi modu
 \subsection{Pembagi Bersama Terbesar (PBB)}
 PBB antara dua bilangan dapat dihitung secara efisien dengan algoritma Euclid, memberikan landasan untuk menguji koprimalitas. Konsep ini penting dalam konstruksi kunci RSA, di mana pemilihan eksponen publik harus relatif prima terhadap fungsi totient dari modulus. Keterkaitan PBB dengan kombinasi lanjar memungkinkan pembuktian identitas serta konstruksi invers.
 
-Dalam praktik, perhitungan PBB digunakan pada protokol untuk memastikan parameter valid dan mencegah kelemahan struktural. Analisis rinci tersedia pada \textcite{menezes1996handbook}.
+Dalam praktik, perhitungan PBB digunakan pada protokol untuk memastikan parameter valid dan mencegah kelemahan struktural.
+
+Analisis rinci tersedia pada \textcite{menezes1996handbook}.
 
 \subsection{Algoritma Euclidean}
 Algoritma Euclid menghitung PBB dengan proses iteratif berbasis pembagian berulang, yang dapat diperluas untuk menemukan koefisien kombinasi lanjar. Efisiensi algoritma ini menjadikannya komponen fundamental dalam hampir semua implementasi aritmetika modulo. Perluasan ke algoritma Euclid yang diperluas memungkinkan komputasi invers modulo yang kritis untuk RSA dan ECDSA.
 
-Optimasi penerapan algoritma ini pada bilangan besar melibatkan representasi efisien dan aritmetika multipresisi. Penjelasan formal tersedia pada \textcite{menezes1996handbook}.
+Optimasi penerapan algoritma ini pada bilangan besar melibatkan representasi efisien dan aritmetika multipresisi. Penjelasan formal tersedia pada literatur standar \parencite{menezes1996handbook}.
 
 \subsection{Kombinasi Lanjar}
 Identitas Bézout menyatakan bahwa terdapat kombinasi lanjar dari dua bilangan bulat yang menghasilkan PBB-nya. Fakta ini menyediakan konstruksi langsung untuk invers modulo ketika PBB bernilai satu. Dalam kriptografi, kemampuan menghitung kombinasi lanjar secara efisien memfasilitasi banyak primitif.
@@ -50,12 +52,12 @@ Pengujian relatif prima dalam skala besar dilakukan melalui perhitungan PBB yang
 \subsection{Aritmatika Modulo}
 Aritmatika modulo mendefinisikan operasi pada kelas residu yang tertutup dan memiliki sifat-sifat yang dapat dianalisis secara aljabar. Operasi ini mendasari semua komputasi nirsimetri, dari perpangkatan modular hingga operasi pada kurva eliptik. Implementasi yang aman memerlukan kewaspadaan terhadap side-channel seperti timing.
 
-Optimalisasi seperti Montgomery reduction digunakan untuk mempercepat perpangkatan modular pada modulus besar. Penjelasan rinci dapat ditemukan pada \textcite{menezes1996handbook}.
+Optimalisasi seperti Montgomery reduction digunakan untuk mempercepat perpangkatan modular pada modulus besar. Penjelasan rinci dapat ditemukan pada literatur standar \parencite{menezes1996handbook}.
 
 \subsection{Bilangan Prima}
 Bilangan prima adalah blok bangunan bagi banyak sistem kriptografi, khususnya pada RSA dan skema logaritma diskrit. Pengujian primalitas probabilistik seperti Miller–Rabin memungkinkan penentuan prima yang efisien untuk ukuran kunci modern. Distribusi bilangan prima memengaruhi keamanan faktorisasi.
 
-Teknik pembangkitan prima aman mempertimbangkan struktur khusus agar tidak memperkenalkan kelemahan, seperti prima dengan faktor \(p-1\) yang halus. Referensi terbuka tersedia pada \textcite{menezes1996handbook}.
+Teknik pembangkitan prima aman mempertimbangkan struktur khusus agar tidak memperkenalkan kelemahan, seperti prima dengan faktor \(p-1\) yang halus. Referensi terbuka tersedia pada literatur standar \parencite{menezes1996handbook}.
 
 \subsection{Fungsi Totient Euler}
 Fungsi totient Euler \(\varphi(n)\) menghitung jumlah bilangan antara 1 dan \(n\) yang koprima terhadap \(n\), memainkan peran sentral pada teorema Euler. Pada RSA, \(\varphi(n)\) menentukan hubungan antara eksponen publik dan privat. Perhitungan \(\varphi\) untuk modulus komposit setara sulitnya dengan faktorisasi.
@@ -70,7 +72,7 @@ Dalam praktik, penerapan yang aman memerlukan pemilihan basis dan modulus dengan
 \subsection{Akar Primitif dan Logaritma Diskrit}
 Akar primitif adalah generator dari grup siklik modulo bilangan prima, dan logaritma diskrit mendefinisikan masalah komputasi yang sulit pada grup tersebut. Kesulitan DLP mendasari keamanan Diffie--Hellman klasik dan ElGamal. Pemilihan grup yang aman menghindari struktur yang memudahkan serangan index calculus.
 
-Perkembangan modern mencakup grup eliptik yang menawarkan parameter keamanan lebih baik per bit dan ketahanan terhadap beberapa serangan klasik. Pengantar ringkas tersedia pada \textcite{menezes1996handbook,bonehshoup2020}.
+Perkembangan modern mencakup grup eliptik yang menawarkan parameter keamanan lebih baik per bit dan ketahanan terhadap beberapa serangan klasik. Pengantar ringkas tersedia pada literatur standar \parencite{menezes1996handbook,bonehshoup2020}.
 
 \section{Aljabar Abstrak}
 Aljabar abstrak menyediakan kerangka untuk memodelkan struktur aljabar seperti grup, ring, dan medan yang menjadi basis banyak konstruksi kriptografi. Grup menangkap struktur operasi tunggal yang tertutup, sedangkan ring dan medan memperluas ke dua operasi yang kompatibel. Medan berhingga dan medan Galois sangat penting untuk desain cipher blok dan kode-kode koreksi kesalahan.
@@ -105,6 +107,6 @@ Analisis keamanan S-box melibatkan kriteria nonlinieritas dan resistensi diferen
 \subsection{Aritmatika Polinom di dalam Medan Galois}
 Aritmatika polinom memungkinkan konstruksi dan manipulasi elemen medan berhingga, termasuk operasi modulo polinom irreducible. Teknik ini digunakan untuk membangun S-box, LFSR, dan kode koreksi kesalahan.
 
-Efisiensi implementasi sangat bergantung pada representasi dan pilihan polinom; literatur terbuka menyediakan panduan praktis untuk implementasi aman \parencite{menezes1996handbook}.
+Efisiensi implementasi sangat bergantung pada representasi dan pilihan polinom; literatur terbuka menyediakan panduan praktis untuk implementasi aman pada berbagai platform \parencite{menezes1996handbook}.
 
 \end{document}

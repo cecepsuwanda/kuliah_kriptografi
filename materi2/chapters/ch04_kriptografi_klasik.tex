@@ -20,7 +20,7 @@ Metodologi ini mengilustrasikan prinsip umum bahwa redundansi bahasa melemahkan 
 \section{Jenis-jenis Cipher Substitusi}
 Cipher abjad-tunggal menggunakan satu pemetaan tetap untuk seluruh pesan, memudahkan analisis frekuensi. Cipher abjad-banyak memperkenalkan variasi pemetaan sepanjang pesan, menyulitkan analisis tetapi tetap menunjukkan pola yang dapat dieksploitasi. Substitusi homofonik dan poligram menambah kerumitan dengan memetakan satu simbol ke banyak simbol atau unit poligram.
 
-Meskipun lebih kuat dari substitusi sederhana, pendekatan ini masih tidak sebanding dengan cipher modern yang dirancang dengan teori keamanan formal. Penjelasan dan contoh tersedia dalam sumber terbuka \parencite{menezes1996handbook}.
+Meskipun lebih kuat dari substitusi sederhana, pendekatan ini masih tidak sebanding dengan cipher modern yang dirancang dengan teori keamanan formal. Penjelasan dan contoh tersedia dalam literatur standar \parencite{menezes1996handbook}.
 
 \section{Cipher Transposisi}
 Cipher transposisi menyusun ulang posisi karakter tanpa mengubah identitas simbol, menghasilkan keluaran yang mempertahankan histogram tetapi mengubah urutan. Keamanan bergantung pada kerumitan aturan penyusunan ulang dan panjang kunci. Analisis sering memanfaatkan pola periodik yang muncul dari struktur transposisi.
@@ -35,7 +35,9 @@ Praktik historis ini memberikan wawasan tentang prinsip desain yang kelak diform
 \section{Metode Analisis Frekuensi}
 Analisis frekuensi mengeksploitasi distribusi simbol bahasa untuk memecahkan cipher substitusi. Teknik ini mengestimasi pergeseran atau pemetaan dengan mencocokkan histogram cipherteks dengan histogram bahasa sumber. Variasi metode menggunakan n-gram untuk meningkatkan akurasi.
 
-Keterbatasan teknik ini mendorong penggunaan metode polialfabetik dan mekanisme difusi yang menghapus pola statistik. Diskusi rinci tersedia pada \textcite{menezes1996handbook}.
+Keterbatasan teknik ini mendorong penggunaan metode polialfabetik dan mekanisme difusi yang menghapus pola statistik.
+
+Diskusi rinci tersedia pada \textcite{menezes1996handbook}.
 
 \section{Vigenere Cipher}
 Vigenère cipher menggunakan kunci berulang untuk memilih pergeseran yang berbeda pada setiap posisi, sehingga mengurangi pola sederhana. Namun, periodisitas kunci dapat diungkap melalui metode Kasiski atau indeks koinsidensi. Setelah panjang kunci diketahui, pesan dapat dipecahkan sebagai serangkaian Caesar cipher.
@@ -47,10 +49,10 @@ Metode Kasiski mengidentifikasi pengulangan pola dalam cipherteks untuk memperki
 
 Setelah panjang kunci diperoleh, analisis frekuensi per-posisi memungkinkan pemulihan kunci dan plainteks. Ringkasan metode ini tersedia pada \textcite{menezes1996handbook}.
 
-\subsection{Variasi Vigebere Cipher}
+\subsection{Variasi Vigenere Cipher}
 Variasi Vigenère mencakup penggunaan alfabet yang berubah-ubah atau kunci yang tidak berulang untuk mengurangi periodisitas. Meskipun meningkatkan kerumitan, variasi tersebut biasanya masih kalah dari cipher modern. Fokus pendidikan tetap pada pemahaman konsep konfusi dan difusi.
 
-Sumber pengantar membahas kompromi antara kompleksitas dan keamanan dalam pendekatan ini \parencite{menezes1996handbook}.
+Sumber pengantar membahas kompromi antara kompleksitas dan keamanan dalam pendekatan ini pada literatur standar \parencite{menezes1996handbook}.
 
 \section{Playfair Cipher}
 Playfair cipher mengenkripsi digraf, sehingga memutus pola unigram tetapi masih menyisakan struktur yang dapat dianalisis. Matriks kunci 5x5 menentukan substitusi pasangan huruf dengan aturan khusus. Kelemahannya termasuk sensitivitas terhadap struktur bahasa dan keterbatasan ruang kunci.
