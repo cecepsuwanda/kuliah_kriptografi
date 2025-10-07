@@ -1,0 +1,41 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Pengantar Kriptografi}
+
+\section{Definisi dan Terminologi Kriptografi}
+Kriptografi adalah disiplin ilmu yang mempelajari teknik untuk mengamankan informasi dengan mengubahnya menjadi bentuk yang tidak dapat dibaca tanpa pengetahuan tertentu, biasanya berupa kunci. Dalam konteks modern, kriptografi meliputi kerangka formal untuk kerahasiaan, integritas, otentikasi, dan nir-sangkal, serta didasari oleh asumsi komputasional yang ketat. Istilah-istilah kunci yang digunakan mencakup plainteks, cipherteks, enkripsi, dekripsi, kunci simetri dan kunci publik, serta keamanan terukur komputasional dibandingkan keamanan sempurna. Uraian komprehensif yang terbuka tersedia pada \textcite{menezes1996handbook} dan \textcite{bonehshoup2020}.
+
+Kriptografi tidak berdiri sendiri, tetapi berinteraksi erat dengan teori informasi, teori bilangan, dan desain protokol. Perkembangan modern menekankan model serangan yang eksplisit (misalnya chosen-plaintext dan chosen-ciphertext) untuk menurunkan jaminan keamanan yang dapat dibuktikan. Dalam praktik, pemilihan parameter, implementasi tahan-kanal-samping, dan pengelolaan kunci menjadi faktor penentu apakah sifat teoretik tersebut terealisasi. Teks terbuka seperti \textcite{bonehshoup2020} memberikan kerangka formal untuk memahami jaminan ini.
+
+\section{Layanan Kriptografi}
+Layanan kriptografi utama meliputi kerahasiaan, integritas data, otentikasi entitas/pesan, dan nir-sangkal. Kerahasiaan dicapai melalui algoritma enkripsi yang tepat dan mode operasi yang benar; integritas dan otentikasi sering diwujudkan lewat fungsi hash aman, MAC, dan tanda tangan digital. Nir-sangkal menyediakan bukti yang dapat diverifikasi pihak ketiga bahwa suatu entitas melakukan tindakan tertentu, lazimnya dengan tanda tangan digital yang didukung infrastruktur kunci publik.
+
+Pemetaan layanan ke primitif kriptografi tidak selalu satu-ke-satu; misalnya, AEAD (Authenticated Encryption with Associated Data) menggabungkan kerahasiaan dan integritas sekaligus. Kesesuaian layanan dengan kebutuhan aplikasi harus mempertimbangkan model ancaman dan asumsi trust. Ringkasan layanan dan konstruksi yang relevan dapat ditemukan pada \textcite{rfc5116} dan \textcite{nist80038d}.
+
+\section{Sejarah Kriptografi}
+Sejarah kriptografi berawal dari teknik-teknik klasik seperti substitusi dan transposisi yang bertujuan menyamarkan pesan dari pihak yang tidak berwenang. Revolusi terjadi saat Perang Dunia II dengan mesin Enigma dan analisis kriptografi terapan berskala besar. Era modern dimulai pada 1970-an dengan publikasi DES dan terobosan kriptografi kunci publik oleh Diffie, Hellman, dan RSA, yang mengubah paradigma distribusi kunci.
+
+Perkembangan selanjutnya ditandai dengan standarisasi AES, penguatan teori keamanan berbasis bukti, serta ekspansi ke ranah protokol seperti TLS, kerangka PKI, dan kriptografi pasca-kuantum. Sumber sejarah primer terbuka meliputi \textcite{diffie1976new} dan \textcite{rsa1978} serta dokumen standar terbuka seperti \textcite{fips197} untuk AES.
+
+\section{Kriptanalisis}
+Kriptanalisis adalah studi tentang metode memecahkan atau melemahkan sistem kriptografi. Spektrum serangan mencakup analisis frekuensi pada cipher klasik, serangan diferensial dan linear pada cipher blok modern, hingga serangan berbasis side-channel seperti power analysis dan timing attacks. Kekuatan praktis serangan sering kali bergantung pada detail implementasi dan protokol, bukan semata algoritma inti.
+
+Dalam model serangan modern, penyerang mungkin memiliki kemampuan chosen-plaintext atau chosen-ciphertext, sehingga definisi keamanan seperti IND-CPA dan IND-CCA menjadi acuan formal. Referensi mendalam tentang teknik kriptanalisis dapat ditemukan pada \textcite{biham1991differential,kocher1999dpa} dan berbagai survei terbuka.
+
+\section{Kriptografi Simetri dan Kriptografi Nirsimetri}
+Kriptografi simetri menggunakan kunci yang sama untuk enkripsi dan dekripsi, menawarkan kinerja tinggi serta kesederhanaan distribusi kunci pada skala kecil. Algoritma yang umum termasuk cipher blok seperti AES dan cipher alir seperti ChaCha; keamanan bergantung pada struktur internal serta mode operasi yang tepat. Di sisi lain, kriptografi nirsimetri menggunakan pasangan kunci publik-pribadi, memungkinkan fungsi seperti pertukaran kunci, enkripsi kunci publik, dan tanda tangan digital.
+
+Perbedaan mendasar antara keduanya tercermin pada model keamanan, ukuran kunci, dan biaya komputasi. Dalam praktik, sistem nyata biasanya mengombinasikan keduanya dalam skema hibrida: kunci sesi dihasilkan via pertukaran kunci nirsimetri lalu digunakan oleh cipher simetri untuk efisiensi. Lihat \textcite{rfc8446} untuk contoh penerapan pada TLS 1.3.
+
+\section{Fungsi Hash}
+Fungsi hash kriptografis memetakan masukan berdimensi arbitrer ke keluaran berukuran tetap dengan sifat tahan-tabrakan, tahan-preimage, dan tahan-second-preimage. Keluarga SHA-2 dan SHA-3 merupakan standar yang banyak digunakan karena desain yang dianalisis secara luas. Fungsi hash menjadi komponen sentral dalam konstruksi MAC, tanda tangan digital, verifikasi integritas, dan komitmen kriptografis.
+
+Pemilihan fungsi hash harus mempertimbangkan kecepatan, keamanan terhadap serangan diferensial, dan dukungan perangkat keras. Standar dan analisis mutakhir dapat ditemukan pada \textcite{fips1804,fips202} serta tinjauan ringkas seperti \textcite{bertoni2013keccak}.
+
+\section{Kriptografi di Indonesia}
+Ekosistem kriptografi di Indonesia berkembang melalui adopsi standar internasional dan pengembangan kebijakan nasional terkait keamanan informasi. Lembaga pemerintah dan akademia berperan dalam riset, pelatihan, serta standardisasi penerapan teknologi kriptografi pada layanan publik dan industri. Kerangka regulasi dan pedoman teknis mengarahkan praktik terbaik, termasuk pengelolaan kunci, sertifikasi perangkat, dan interoperabilitas.
+
+Kolaborasi lintas institusi dan partisipasi pada forum internasional menjadi kunci untuk mengikuti perkembangan global termasuk kriptografi pasca-kuantum dan keamanan perangkat lunak. Rujukan umum terhadap praktik dan standar dapat ditelusuri melalui publikasi terbuka NIST dan IETF yang diadopsi luas secara global \parencite{nist-sp800-175b,rfc5280}.
+
+\end{document}
+

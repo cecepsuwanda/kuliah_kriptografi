@@ -1,0 +1,35 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Serangan Terhadap Kriptografi}
+
+\section{Serangan}
+Serangan terhadap sistem kriptografi mencakup pendekatan yang menargetkan algoritma inti, protokol, implementasi, serta ekosistem kunci. Klasifikasi umum meliputi serangan kriptanalisis yang mengeksploitasi struktur matematis, brute-force yang mengandalkan pencarian menyeluruh, dan serangan berbasis kanal samping yang memanfaatkan kebocoran fisik. Pemahaman spektrum serangan membantu merumuskan model ancaman yang realistis.
+
+Pemilihan parameter yang tepat, penerapan mode operasi yang benar, dan mitigasi kanal samping adalah langkah kunci untuk memperkuat sistem. Tinjauan konseptual tersedia pada \textcite{menezes1996handbook} dan panduan praktik terbaik terdapat di standar terbuka NIST.
+
+\subsection{Serangan Kriptanalisis}
+Kriptanalisis menganalisis kelemahan struktur algoritma untuk mengurangi kompleksitas pemulihan kunci atau plainteks. Teknik klasik termasuk analisis frekuensi; teknik modern meliputi serangan diferensial dan linear terhadap cipher blok. Keberhasilan serangan sering kali bergantung pada ketersediaan data dan kesesuaian model serangan dengan skenario nyata.
+
+Penelitian seminal tentang kriptanalisis diferensial dan linear memberikan landasan untuk evaluasi cipher modern dan desain yang tahan serangan \parencite{biham1991differential}.
+
+\subsection{Brute-Force Attack dan Analytical Attack}
+Brute-force menyerang dengan menjelajahi ruang kunci secara menyeluruh, sehingga keamanan efektif sangat ditentukan oleh entropi kunci. Analytical attack mencari struktur yang mengurangi kompleksitas pencarian melalui sifat matematis atau statistik. Desain parameter harus memastikan bahwa kompleksitas terendah yang diketahui tetap di luar jangkauan praktis.
+
+Standar ukuran kunci dan pedoman keamanan membantu menentukan tingkat kekuatan yang memadai untuk horizon waktu tertentu. Diskusi dapat ditemukan di sumber terbuka seperti publikasi NIST.
+
+\subsection{Passive Attack dan Active Attack}
+Serangan pasif bertujuan menyadap informasi tanpa mengubah komunikasi, sedangkan serangan aktif memodifikasi atau menyuntikkan pesan untuk memperoleh keuntungan. Model keamanan yang kuat harus mengantisipasi kedua jenis serangan dan menyediakan deteksi serta mitigasi yang tepat.
+
+Protokol modern memasukkan mekanisme otentikasi, integritas, dan anti-replay untuk melawan serangan aktif, sementara enkripsi melindungi dari serangan pasif. Contoh desain dapat dilihat pada spesifikasi TLS \parencite{rfc8446}.
+
+\section{Keamanan Algoritma Kriptografi}
+Keamanan algoritma dinilai berdasarkan bukti reduksi, analisis kriptanalisis publik, serta rekam jejak implementasi. Definisi formal seperti IND-CPA dan IND-CCA menetapkan target yang harus dicapai dalam model serangan tertentu. Evaluasi berkelanjutan oleh komunitas menjadi indikator keandalan suatu algoritma.
+
+Praktik yang baik meliputi penggunaan standar yang diakui dan perpustakaan yang telah diaudit, dengan konfigurasi yang mengikuti rekomendasi terkini. Referensi terbuka mencakup standar NIST dan IETF.
+
+\section{Kompleksitas Serangan}
+Kompleksitas serangan mengukur sumber daya yang dibutuhkan untuk menembus skema, termasuk waktu, memori, dan data. Notasi asimtotik memberikan gambaran tren, tetapi penilaian praktis memerlukan perkiraan biaya perangkat keras dan skala data. Evaluasi juga mempertimbangkan kemajuan algoritmik dan perangkat keras di masa depan.
+
+Analisis kompleksitas harus direvisi secara periodik seiring berkembangnya teknik dan teknologi. Diskusi ringkas tersedia dalam literatur terbuka dan ringkasan standar keamanan kunci oleh NIST.
+
+\end{document}

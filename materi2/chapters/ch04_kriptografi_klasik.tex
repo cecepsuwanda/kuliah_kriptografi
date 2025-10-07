@@ -1,0 +1,80 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Kriptografi Klasik}
+
+\section{Cipher Substitusi}
+Cipher substitusi mengganti setiap simbol plainteks dengan simbol lain menurut aturan yang ditetapkan oleh kunci. Contoh paling sederhana adalah Caesar cipher, yang menggeser alfabet dengan jarak tetap. Struktur statistik bahasa yang tetap terlihat setelah substitusi sederhana menjadikan cipher ini rentan terhadap analisis frekuensi.
+
+Kekuatan cipher substitusi meningkat dengan memperluas ruang kunci atau menggunakan variasi polialfabetik, tetapi tetap inferior terhadap standar modern. Perbandingan sistematis dan analisis historis tersedia dalam sumber terbuka \parencite{menezes1996handbook}.
+
+\subsection{Caesar Cipher}
+Caesar cipher menerapkan pergeseran tetap pada alfabet, sehingga mudah diterapkan namun lemah terhadap analisis frekuensi. Penyerang yang mengamati distribusi huruf dapat menebak pergeseran dengan menghitung kecocokan pola. Karena ruang kuncinya kecil, brute-force juga efektif.
+
+Penggunaan Caesar cipher hanya relevan untuk tujuan edukasi dan demonstrasi konsep dasar. Literatur pengantar kriptografi membahas teknik pemulihan kunci dan variasi sederhana \parencite{menezes1996handbook}.
+
+\subsection{Kriptanalisis Terhadap Caesar Cipher}
+Kriptanalisis terhadap cipher ini memanfaatkan statistik unigram dan bigram untuk mengidentifikasi pergeseran yang paling mungkin. Prosedur ini dapat diotomasi dengan menghitung skor kecocokan frekuensi. Dengan sedikit data, tingkat keberhasilannya sudah tinggi.
+
+Metodologi ini mengilustrasikan prinsip umum bahwa redundansi bahasa melemahkan substitusi sederhana, memotivasi desain polialfabetik dan mekanisme difusi yang lebih baik. Pembahasan dapat ditemukan pada \textcite{menezes1996handbook}.
+
+\section{Jenis-jenis Cipher Substitusi}
+Cipher abjad-tunggal menggunakan satu pemetaan tetap untuk seluruh pesan, memudahkan analisis frekuensi. Cipher abjad-banyak memperkenalkan variasi pemetaan sepanjang pesan, menyulitkan analisis tetapi tetap menunjukkan pola yang dapat dieksploitasi. Substitusi homofonik dan poligram menambah kerumitan dengan memetakan satu simbol ke banyak simbol atau unit poligram.
+
+Meskipun lebih kuat dari substitusi sederhana, pendekatan ini masih tidak sebanding dengan cipher modern yang dirancang dengan teori keamanan formal. Penjelasan dan contoh tersedia dalam sumber terbuka \parencite{menezes1996handbook}.
+
+\section{Cipher Transposisi}
+Cipher transposisi menyusun ulang posisi karakter tanpa mengubah identitas simbol, menghasilkan keluaran yang mempertahankan histogram tetapi mengubah urutan. Keamanan bergantung pada kerumitan aturan penyusunan ulang dan panjang kunci. Analisis sering memanfaatkan pola periodik yang muncul dari struktur transposisi.
+
+Transposisi sering dikombinasikan dengan substitusi untuk meningkatkan kekuatan, namun tetap rentan terhadap serangan yang memanfaatkan statistik tingkat lebih tinggi. Uraian dapat ditemukan pada \textcite{menezes1996handbook}.
+
+\section{Super Enkripsi}
+Super enkripsi menggabungkan beberapa teknik enkripsi, misalnya substitusi diikuti transposisi, untuk meningkatkan keamanan. Kombinasi yang tepat dapat menambah difusi dan konfusi, tetapi tidak menggantikan kebutuhan akan desain modern.
+
+Praktik historis ini memberikan wawasan tentang prinsip desain yang kelak diformalkan pada cipher blok modern. Tinjauan konsep tersedia pada \textcite{menezes1996handbook}.
+
+\section{Metode Analisis Frekuensi}
+Analisis frekuensi mengeksploitasi distribusi simbol bahasa untuk memecahkan cipher substitusi. Teknik ini mengestimasi pergeseran atau pemetaan dengan mencocokkan histogram cipherteks dengan histogram bahasa sumber. Variasi metode menggunakan n-gram untuk meningkatkan akurasi.
+
+Keterbatasan teknik ini mendorong penggunaan metode polialfabetik dan mekanisme difusi yang menghapus pola statistik. Diskusi rinci tersedia pada \textcite{menezes1996handbook}.
+
+\section{Vigenere Cipher}
+Vigenère cipher menggunakan kunci berulang untuk memilih pergeseran yang berbeda pada setiap posisi, sehingga mengurangi pola sederhana. Namun, periodisitas kunci dapat diungkap melalui metode Kasiski atau indeks koinsidensi. Setelah panjang kunci diketahui, pesan dapat dipecahkan sebagai serangkaian Caesar cipher.
+
+Variasi Vigenère memperkenalkan tabel atau alfabet yang dimodifikasi, tetapi inti kelemahan periodisitas tetap ada. Rujukan tersedia di \textcite{menezes1996handbook}.
+
+\subsection{Metode Kasiski untuk menentukan panjang kunci vigenere Cipher}
+Metode Kasiski mengidentifikasi pengulangan pola dalam cipherteks untuk memperkirakan panjang kunci. Dengan menghitung jarak antar pengulangan dan mencari faktor-faktornya, estimasi panjang kunci dapat diperoleh. Pendekatan ini efektif pada teks cukup panjang dengan kunci berulang.
+
+Setelah panjang kunci diperoleh, analisis frekuensi per-posisi memungkinkan pemulihan kunci dan plainteks. Ringkasan metode ini tersedia pada \textcite{menezes1996handbook}.
+
+\subsection{Variasi Vigebere Cipher}
+Variasi Vigenère mencakup penggunaan alfabet yang berubah-ubah atau kunci yang tidak berulang untuk mengurangi periodisitas. Meskipun meningkatkan kerumitan, variasi tersebut biasanya masih kalah dari cipher modern. Fokus pendidikan tetap pada pemahaman konsep konfusi dan difusi.
+
+Sumber pengantar membahas kompromi antara kompleksitas dan keamanan dalam pendekatan ini \parencite{menezes1996handbook}.
+
+\section{Playfair Cipher}
+Playfair cipher mengenkripsi digraf, sehingga memutus pola unigram tetapi masih menyisakan struktur yang dapat dianalisis. Matriks kunci 5x5 menentukan substitusi pasangan huruf dengan aturan khusus. Kelemahannya termasuk sensitivitas terhadap struktur bahasa dan keterbatasan ruang kunci.
+
+Teknik kriptanalisis terhadap Playfair mengeksploitasi statistik digraf dan aturan transformasi. Uraian dapat ditemukan pada \textcite{menezes1996handbook}.
+
+\section{Affine Cipher}
+Affine cipher menerapkan transformasi linear pada indeks huruf modulo ukuran alfabet, menggabungkan skala dan pergeseran. Keamanan lemah karena struktur linear yang mudah dibalik dengan sedikit pasangan plainteks-cipherteks. Ruang kunci terbatas memudahkan brute-force.
+
+Analisis terhadap affine cipher memberikan ilustrasi penting mengenai kelemahan struktur linear dalam kriptografi klasik. Rujukan tersedia pada \textcite{menezes1996handbook}.
+
+\section{Hill Cipher}
+Hill cipher mengoperasikan blok huruf menggunakan matriks invertibel modulo ukuran alfabet, memperkenalkan difusi melalui operasi linear multivariabel. Kelemahan muncul ketika ukuran blok kecil dan data cukup untuk menyelesaikan sistem linear. Keamanan tidak memadai untuk standar modern.
+
+Diskusi Hill cipher membantu memahami pentingnya nonlinieritas pada desain cipher modern. Lihat \textcite{menezes1996handbook}.
+
+\section{Enigma Cipher}
+Mesin Enigma menggunakan rotor untuk menerapkan substitusi yang berubah-ubah per posisi, menghasilkan pola kompleks. Namun, kelemahan desain seperti \emph{no letter encrypts to itself} dan prosedur operasional memungkinkan kriptanalisis yang sukses. Analisis historis menunjukkan pentingnya prosedur keamanan selain kekuatan algoritma.
+
+Sumber terbuka mengenai Enigma dan kriptanalisisnya memberikan wawasan sejarah dan teknik \parencite{menezes1996handbook}.
+
+\section{One-Time Pad}
+One-time pad mencapai keamanan sempurna ketika kunci acak benar-benar seragam, sepanjang pesan, dan digunakan sekali. Tantangan praktis mencakup distribusi dan manajemen kunci dalam skala besar. Karena persyaratan ini, OTP jarang digunakan di luar konteks khusus.
+
+OTP mengilustrasikan batas ideal keamanan dan memotivasi pendekatan yang mencapai keamanan komputasional dengan efisiensi lebih baik. Penjelasan formal tersedia pada \textcite{menezes1996handbook}.
+
+\end{document}

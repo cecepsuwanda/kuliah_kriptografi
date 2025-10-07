@@ -1,0 +1,30 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Sertifikat Digital dan Infrastruktur Kunci Publik}
+
+\section{Sertifikat Digital}
+Sertifikat digital mengikat kunci publik dengan identitas melalui tanda tangan otoritas sertifikat (CA). Struktur sertifikat menyertakan informasi identitas, kunci publik, periode validitas, dan ekstensi kebijakan. Verifikasi melibatkan pengecekan tanda tangan, validitas waktu, dan status pencabutan.
+
+Sertifikat membentuk dasar kepercayaan pada banyak protokol jaringan dan aplikasi perangkat lunak.
+
+\section{X.509}
+Standar X.509 mendefinisikan format sertifikat dan jalur validasi yang digunakan dalam infrastruktur kunci publik modern. Ekstensi seperti KeyUsage dan ExtendedKeyUsage mengontrol tujuan penggunaan sertifikat. Kepatuhan terhadap profil X.509 memastikan interoperabilitas antar implementasi.
+
+Dokumen profil seperti \textcite{rfc5280} menyediakan pedoman rinci untuk penerapan.
+
+\section{Verifikasi Sertifikat Digital}
+Verifikasi mencakup pengecekan rantai ke CA tepercaya, validitas waktu, kebijakan, dan status pencabutan melalui CRL atau OCSP. Kesalahan konfigurasi atau validasi yang lemah membuka peluang serangan man-in-the-middle. Implementasi harus tegas terhadap kesalahan untuk menjaga keamanan.
+
+Pedoman industri menekankan praktik validasi yang kuat dan manajemen trust store yang aman.
+
+\section{Menggunakan Sertifikat Digital untuk Enkripsi Pesan}
+Sertifikat memungkinkan distribusi kunci publik yang autentik sehingga pihak lain dapat mengenkripsi pesan secara aman. Protokol harus memastikan bahwa sertifikat yang digunakan sesuai tujuan dan belum dicabut. Integrasi dengan sistem email atau komunikasi lainnya mengikuti standar yang ditetapkan.
+
+Kebijakan organisasi menentukan siapa yang dapat mengeluarkan dan menggunakan sertifikat untuk berbagai layanan.
+
+\section{Public Key Infrastructure (PKI)}
+PKI adalah ekosistem kebijakan, perangkat lunak, dan entitas yang mengelola siklus hidup kunci publik dan sertifikat. Komponen mencakup CA, Registration Authority, repositori, dan mekanisme pencabutan. Keamanan PKI tidak hanya teknis tetapi juga bergantung pada tata kelola dan proses operasional.
+
+Standar seperti \textcite{rfc5280} mendasarkan interoperabilitas dan kepercayaan sistem yang luas.
+
+\end{document}

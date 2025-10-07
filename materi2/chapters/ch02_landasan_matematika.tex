@@ -1,0 +1,110 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Landasan Matematika}
+
+\section{Teori Informasi}
+Teori informasi menyediakan alat kuantitatif untuk mengukur ketidakpastian dan informasi dalam sinyal, yang relevan untuk menilai keamanan skema kriptografi. Konsep entropi Shannon menangkap rata-rata informasi yang dikandung oleh sumber simbol, sehingga berguna untuk memahami redundansi bahasa alami dan implikasinya pada kriptanalisis klasik. Dalam konteks keamanan sempurna, kerangka Shannon menegaskan kondisi one-time pad sebagai skema yang mencapai kerahasiaan sempurna.
+
+Secara praktis, laju bahasa dan distribusi simbol memengaruhi efektivitas teknik analisis frekuensi terhadap cipher substitusi sederhana. Pada ranah modern, teori informasi juga mendasari batas kunci dan kebocoran informasi dalam protokol komunikasi aman. Tinjauan formal tersedia pada \textcite{menezes1996handbook}.
+
+\subsection{Entropy}
+Entropi mengukur ketidakpastian suatu variabel acak dan didefinisikan sebagai rata-rata informasi diri dari hasil-hasil yang mungkin. Dalam kriptografi, entropi kunci menjadi parameter sentral yang menunjukkan ruang pencarian bagi penyerang brute-force. Entropi yang rendah menandakan prediktabilitas yang tinggi, sehingga mengurangi kekuatan efektif suatu kunci atau sandi.
+
+Estimasi entropi pada sumber dunia nyata harus memperhitungkan korelasi dan struktur; asumsi independensi sering menghasilkan estimasi berlebih. Literatur terbuka membahas berbagai estimator entropi serta konsekuensinya terhadap desain pembangkit bilangan acak dan derivasi kunci \parencite{nist80090c}.
+
+\subsection{Laju Bahasa}
+Laju bahasa menggambarkan derajat redundansi dalam teks alami dan berdampak pada kerentanan cipher klasik terhadap analisis frekuensi. Bahasa dengan redundansi tinggi lebih mudah dianalisis karena pola kemunculan huruf yang khas tetap terpelihara setelah enkripsi substitusi sederhana. Oleh karena itu, teknik kriptanalisis klasik memanfaatkan statistik unigram dan n-gram untuk memulihkan kunci.
+
+Pada sistem modern, pemodelan distribusi pesan masih relevan untuk mendesain skema padding, kompresi sebelum enkripsi, atau mekanisme perlindungan metadata. Diskusi awal tentang laju bahasa dan implikasinya dapat ditelusuri ke literatur teori informasi dasar \parencite{menezes1996handbook}.
+
+\section{Teori Bilangan}
+Teori bilangan menjadi tulang punggung banyak algoritma nirsimetri seperti RSA, Diffie--Hellman, dan ElGamal. Sifat pembagian, PBB, dan kombinasi lanjar penting untuk memahami algoritma Euclid dan perluasannya yang digunakan dalam perhitungan invers modulo. Konsep relatif prima dan aritmetika modulo memungkinkan definisi grup pada kelas residu, yang menjadi dasar analisis keamanan berdasarkan kesulitan faktorisasi dan logaritma diskrit.
+
+Bilangan prima dan fungsi totient Euler memfasilitasi teorema Euler dan Fermat kecil, yang digunakan untuk menaikkan pangkat modulo secara efisien dan aman. Studi tentang akar primitif dan logaritma diskrit menyediakan landasan matematis untuk protokol pertukaran kunci modern. Referensi terbuka yang komprehensif dapat ditemukan pada \textcite{menezes1996handbook,bonehshoup2020}.
+
+\subsection{Sifat Pembagian Pada Bilangan Bulat}
+Sifat pembagian mendefinisikan relasi divisibilitas dan mendasari struktur ideal pada ring bilangan bulat. Teorema dasar aritmetika menjamin faktorisasi unik, yang menjadi kunci analisis banyak algoritma. Pada konteks kriptografi, divisibilitas berkaitan dengan pemilihan modulus dan struktur faktor untuk menjamin keamanan.
+
+Pemahaman mengenai kongruensi dan residu diperlukan untuk mendesain operasi modulo yang benar dan efisien. Sumber terbuka menyediakan bukti dan contoh yang memadai untuk aplikasi dalam kriptografi nirsimetri \parencite{menezes1996handbook}.
+
+\subsection{Pembagi Bersama Terbesar (PBB)}
+PBB antara dua bilangan dapat dihitung secara efisien dengan algoritma Euclid, memberikan landasan untuk menguji koprimalitas. Konsep ini penting dalam konstruksi kunci RSA, di mana pemilihan eksponen publik harus relatif prima terhadap fungsi totient dari modulus. Keterkaitan PBB dengan kombinasi lanjar memungkinkan pembuktian identitas serta konstruksi invers.
+
+Dalam praktik, perhitungan PBB digunakan pada protokol untuk memastikan parameter valid dan mencegah kelemahan struktural. Analisis rinci tersedia pada \textcite{menezes1996handbook}.
+
+\subsection{Algoritma Euclidean}
+Algoritma Euclid menghitung PBB dengan proses iteratif berbasis pembagian berulang, yang dapat diperluas untuk menemukan koefisien kombinasi lanjar. Efisiensi algoritma ini menjadikannya komponen fundamental dalam hampir semua implementasi aritmetika modulo. Perluasan ke algoritma Euclid yang diperluas memungkinkan komputasi invers modulo yang kritis untuk RSA dan ECDSA.
+
+Optimasi penerapan algoritma ini pada bilangan besar melibatkan representasi efisien dan aritmetika multipresisi. Penjelasan formal tersedia pada \textcite{menezes1996handbook}.
+
+\subsection{Kombinasi Lanjar}
+Identitas Bézout menyatakan bahwa terdapat kombinasi lanjar dari dua bilangan bulat yang menghasilkan PBB-nya. Fakta ini menyediakan konstruksi langsung untuk invers modulo ketika PBB bernilai satu. Dalam kriptografi, kemampuan menghitung kombinasi lanjar secara efisien memfasilitasi banyak primitif.
+
+Aplikasi praktis meliputi penyelesaian sistem kongruensi linear dan pembuktian sifat-sifat yang diperlukan dalam protokol kunci publik. Bahasan lengkap dapat ditemukan pada \textcite{menezes1996handbook}.
+
+\subsection{Relatif Prima}
+Relatif prima antara bilangan memastikan keberadaan invers modulo, prasyarat untuk banyak operasi kriptografi. Dalam RSA, pemilihan eksponen publik yang relatif prima terhadap \(\varphi(n)\) menjamin dapat dihitungnya eksponen privat. Dalam skema berbasis grup siklik, koprimalitas berkaitan dengan struktur orde elemen.
+
+Pengujian relatif prima dalam skala besar dilakukan melalui perhitungan PBB yang efisien, yang secara praktis tidak menjadi bottleneck dalam pembangkitan kunci. Rujukan mendalam disediakan oleh \textcite{menezes1996handbook}.
+
+\subsection{Aritmatika Modulo}
+Aritmatika modulo mendefinisikan operasi pada kelas residu yang tertutup dan memiliki sifat-sifat yang dapat dianalisis secara aljabar. Operasi ini mendasari semua komputasi nirsimetri, dari perpangkatan modular hingga operasi pada kurva eliptik. Implementasi yang aman memerlukan kewaspadaan terhadap side-channel seperti timing.
+
+Optimalisasi seperti Montgomery reduction digunakan untuk mempercepat perpangkatan modular pada modulus besar. Penjelasan rinci dapat ditemukan pada \textcite{menezes1996handbook}.
+
+\subsection{Bilangan Prima}
+Bilangan prima adalah blok bangunan bagi banyak sistem kriptografi, khususnya pada RSA dan skema logaritma diskrit. Pengujian primalitas probabilistik seperti Miller–Rabin memungkinkan penentuan prima yang efisien untuk ukuran kunci modern. Distribusi bilangan prima memengaruhi keamanan faktorisasi.
+
+Teknik pembangkitan prima aman mempertimbangkan struktur khusus agar tidak memperkenalkan kelemahan, seperti prima dengan faktor \(p-1\) yang halus. Referensi terbuka tersedia pada \textcite{menezes1996handbook}.
+
+\subsection{Fungsi Totient Euler}
+Fungsi totient Euler \(\varphi(n)\) menghitung jumlah bilangan antara 1 dan \(n\) yang koprima terhadap \(n\), memainkan peran sentral pada teorema Euler. Pada RSA, \(\varphi(n)\) menentukan hubungan antara eksponen publik dan privat. Perhitungan \(\varphi\) untuk modulus komposit setara sulitnya dengan faktorisasi.
+
+Pemilihan parameter yang tepat memastikan bahwa \(\varphi(n)\) tidak diketahui pihak luar dan mencegah serangan aritmetika. Lihat \textcite{menezes1996handbook} untuk detail.
+
+\subsection{Teorema Euler}
+Teorema Euler menyatakan bahwa untuk \(a\) yang koprima dengan \(n\), berlaku \(a^{\varphi(n)} \equiv 1 \pmod{n}\). Hasil ini menggeneralisasi teorema Fermat kecil dan digunakan secara luas dalam rancangan dan analisis algoritma kriptografi. Perpangkatan modular yang efisien dibangun di atas teorema ini dan variasinya.
+
+Dalam praktik, penerapan yang aman memerlukan pemilihan basis dan modulus dengan sifat yang sesuai untuk mencegah kebocoran informasi. Uraian formal ada pada \textcite{menezes1996handbook}.
+
+\subsection{Akar Primitif dan Logaritma Diskrit}
+Akar primitif adalah generator dari grup siklik modulo bilangan prima, dan logaritma diskrit mendefinisikan masalah komputasi yang sulit pada grup tersebut. Kesulitan DLP mendasari keamanan Diffie--Hellman klasik dan ElGamal. Pemilihan grup yang aman menghindari struktur yang memudahkan serangan index calculus.
+
+Perkembangan modern mencakup grup eliptik yang menawarkan parameter keamanan lebih baik per bit dan ketahanan terhadap beberapa serangan klasik. Pengantar ringkas tersedia pada \textcite{menezes1996handbook,bonehshoup2020}.
+
+\section{Aljabar Abstrak}
+Aljabar abstrak menyediakan kerangka untuk memodelkan struktur aljabar seperti grup, ring, dan medan yang menjadi basis banyak konstruksi kriptografi. Grup menangkap struktur operasi tunggal yang tertutup, sedangkan ring dan medan memperluas ke dua operasi yang kompatibel. Medan berhingga dan medan Galois sangat penting untuk desain cipher blok dan kode-kode koreksi kesalahan.
+
+Operasi pada polinom di medan berhingga digunakan dalam konstruksi S-box, LFSR, dan mode operasi tertentu. Referensi yang dapat diakses luas untuk aspek ini dapat ditemukan di \textcite{menezes1996handbook}.
+
+\subsection{Grup}
+Grup adalah himpunan dengan satu operasi biner yang tertutup, asosiatif, memiliki elemen identitas, dan setiap elemen memiliki invers. Dalam kriptografi, grup siklik digunakan untuk membangun masalah komputasi sulit seperti DLP. Struktur grup menentukan keberlakuan teorema yang dimanfaatkan dalam keamanan.
+
+Pemilihan grup yang tepat menghindari orde yang rentan terhadap serangan, misalnya grup dengan faktor-faktor kecil yang memudahkan algoritma pohlig–hellman. Penjelasan lengkap tersedia pada \textcite{menezes1996handbook}.
+
+\subsection{Ring}
+Ring memperkenalkan dua operasi biner dengan sifat distributif, dan muncul dalam aritmetika polinom yang digunakan pada beberapa cipher dan skema kunci publik berbasis kisi. Struktur ring memungkinkan efisiensi komputasi, tetapi juga memerlukan kehati-hatian dalam analisis keamanan.
+
+Skema modern seperti RLWE memanfaatkan ring polinomial dengan modul tertentu untuk mencapai efisiensi sambil mempertahankan asumsi sulit. Tinjauan dasar tersedia pada \textcite{menezes1996handbook}.
+
+\subsection{Medan}
+Medan adalah ring komutatif dengan setiap elemen tak nol memiliki invers, menyediakan ruang aljabar yang kaya untuk konstruksi kriptografi. Medan riil dan kompleks jarang digunakan langsung; yang lebih relevan adalah medan berhingga karena sifat diskritnya.
+
+Operasi dasar pada medan menjadi inti desain S-box dan transformasi linier pada cipher blok modern. Referensi dapat ditemukan pada \textcite{menezes1996handbook}.
+
+\subsection{Medan Berhingga}
+Medan berhingga \(\mathbb{F}_q\) dengan \(q=p^m\) menyediakan struktur yang kompatibel untuk operasi polinom dan vektor. Representasi elemen, pemilihan polinom primitif, dan implementasi operasi efisien menjadi pertimbangan utama dalam desain kriptografi.
+
+Medan berhingga digunakan secara luas pada AES dan LFSR, dengan properti yang dapat dianalisis secara matematis untuk menetapkan keamanan dan difusi. Pengantar yang dapat diakses tersedia pada \textcite{menezes1996handbook}.
+
+\subsection{Medan Galois}
+Medan Galois adalah medan berhingga yang memiliki struktur automorfisme yang dipahami dengan baik, memungkinkan analisis sifat-sifat yang berguna untuk kriptografi. Pada AES, operasi dilakukan pada \(\mathbb{F}_{2^8}\) dengan polinom irreducible tertentu untuk membangun S-box yang aman.
+
+Analisis keamanan S-box melibatkan kriteria nonlinieritas dan resistensi diferensial, yang dapat diformalkan dalam kerangka medan Galois. Rujukan umum dapat ditemukan pada \textcite{menezes1996handbook}.
+
+\subsection{Aritmatika Polinom di dalam Medan Galois}
+Aritmatika polinom memungkinkan konstruksi dan manipulasi elemen medan berhingga, termasuk operasi modulo polinom irreducible. Teknik ini digunakan untuk membangun S-box, LFSR, dan kode koreksi kesalahan.
+
+Efisiensi implementasi sangat bergantung pada representasi dan pilihan polinom; literatur terbuka menyediakan panduan praktis untuk implementasi aman \parencite{menezes1996handbook}.
+
+\end{document}

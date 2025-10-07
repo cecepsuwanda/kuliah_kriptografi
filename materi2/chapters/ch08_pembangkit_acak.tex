@@ -1,0 +1,30 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Pembangkit Bilangan Acak}
+
+\section{Linear Congruential Generator (LCG)}
+LCG menghasilkan deret semu-acak menggunakan relasi linear sederhana modulo bilangan bulat, menawarkan efisiensi tinggi namun kualitas acak yang terbatas. Korelasi dan periode yang relatif pendek membuatnya tidak cocok untuk kriptografi. Analisis spektral menunjukkan struktur yang dapat dieksploitasi.
+
+Untuk aplikasi kriptografi, LCG tidak direkomendasikan dan hanya layak untuk simulasi non-keamanan. Literatur terbuka menyoroti kelemahan fundamentalnya.
+
+\section{Pembangkit Bilangan Acak yang aman untuk kriptografi}
+Pembangkit bilangan acak aman (CSPRNG) dirancang untuk menghasilkan output yang tidak dapat diprediksi bahkan dengan akses ke sebagian keadaan internal. Konstruksi modern menggabungkan entropi dari berbagai sumber dan menggunakan fungsi derivasi yang tahan serangan. Properti keamanan formal mencakup resistance terhadap state compromise dan backtracking.
+
+Standar dan pedoman implementasi tersedia dari NIST dan organisasi lain untuk memastikan kualitas dan keamanan keluaran.
+
+\section{Blum Blum Shub (BBS)}
+BBS adalah CSPRNG berbasis masalah faktorisasi yang menawarkan jaminan teoretis kuat namun relatif lambat. Mekanismenya bergantung pada operasi kuadrat modulo produk dua bilangan prima besar. Keamanannya terkait erat dengan kesulitan mengambil akar kuadrat modulo komposit.
+
+BBS lebih cocok sebagai contoh teoretis daripada generator praktik, tetapi tetap penting dalam pendidikan kriptografi.
+
+\section{CSPRNG Berbasis Algoritma RSA}
+Generator berbasis RSA memanfaatkan sifat perpangkatan modular untuk menghasilkan bit yang sulit diprediksi. Efisiensi lebih rendah dibanding konstruksi berbasis hash atau blok cipher, tetapi menyediakan jaminan berbasis asumsi faktorisasi. Desain harus mempertimbangkan mitigasi kanal samping.
+
+Penggunaan praktis sering terbatas oleh kebutuhan performa tinggi pada aplikasi modern.
+
+\section{CSPRNG Berbasis Chaos}
+Pendekatan berbasis chaos mencoba memanfaatkan dinamika nonlinier untuk menghasilkan deret semu-acak. Namun, banyak proposal kekurangan analisis keamanan formal dan menunjukkan kelemahan ketika dimodelkan secara digital. Penggunaan harus sangat hati-hati dan mengikuti evaluasi komunitas yang ketat.
+
+Konsensus saat ini mendukung penggunaan konstruksi yang telah distandardisasi dan diuji luas.
+
+\end{document}

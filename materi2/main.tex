@@ -1,0 +1,53 @@
+% Main book file for Kriptografi
+\documentclass[12pt,a4paper]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[indonesian]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage{subfiles}
+\usepackage{setspace}
+\onehalfspacing
+
+% Bibliography
+\usepackage[backend=biber,style=authoryear,sorting=nyt]{biblatex}
+\addbibresource{references/references.bib}
+
+% Allow per-chapter compilation
+% Each chapter file can be compiled standalone by setting \jobname
+
+\title{Buku Ajar Kriptografi}
+\author{Program Studi S1 Matematika\\Fakultas Matematika dan IPA\\Universitas Bale Bandung}
+\date{\today}
+
+\begin{document}
+\frontmatter
+\maketitle
+\tableofcontents
+
+\mainmatter
+% Include chapters (also compilable as subfiles)
+\subfile{chapters/ch01_pengantar}
+\subfile{chapters/ch02_landasan_matematika}
+\subfile{chapters/ch03_serangan}
+\subfile{chapters/ch04_kriptografi_klasik}
+\subfile{chapters/ch05_kriptografi_modern}
+\subfile{chapters/ch06_review_cipher}
+\subfile{chapters/ch07_kunci_publik}
+\subfile{chapters/ch08_pembangkit_acak}
+\subfile{chapters/ch09_fungsi_hash}
+\subfile{chapters/ch10_ttd_digital}
+\subfile{chapters/ch11_sertifikat_pki}
+\subfile{chapters/ch12_protokol}
+\subfile{chapters/ch13_manajemen_kunci}
+\subfile{chapters/ch14_steganografi}
+
+\backmatter
+\printbibliography
+
+\end{document}
+
