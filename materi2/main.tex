@@ -16,6 +16,23 @@
 \usepackage{setspace}
 \onehalfspacing
 
+% Extras for figures, tables, and code listings used across chapters
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!60!black}\bfseries,
+  commentstyle=\color{gray!60},
+  stringstyle=\color{green!50!black},
+  showstringspaces=false,
+  frame=single,
+  breaklines=true
+}
+\lstset{style=code}
+
 % Bibliography
 \usepackage[backend=biber,style=authoryear,sorting=nyt]{biblatex}
 \addbibresource{references/references.bib}
