@@ -7,6 +7,7 @@
 \usepackage{microtype}
 \usepackage{geometry}
 \geometry{margin=1in}
+\usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{csquotes}
 \usepackage{subfiles}
@@ -26,7 +27,22 @@
 
 \begin{document}
 \frontmatter
-\maketitle
+
+% --- Custom Cover Page with University Logo ---
+\newcommand{\logopath}{assets/logo_ubb.png} % Place your logo file here (PNG/JPG/PDF)
+\begin{titlepage}
+\centering
+\vspace*{1cm}
+\IfFileExists{\logopath}{\includegraphics[width=4cm]{\logopath}}{\fbox{Logo Universitas Bale Bandung}}
+
+\vspace{1.2cm}
+{\LARGE Buku Ajar Kriptografi\\[0.3cm]}
+{\large Program Studi S1 Matematika\\Fakultas Matematika dan IPA\\Universitas Bale Bandung}
+
+\vfill
+{\large \today}
+\end{titlepage}
+
 \tableofcontents
 
 \mainmatter
