@@ -1,0 +1,168 @@
+\documentclass{book}
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+
+\title{Kriptografi (Rinaldi Munir)}
+\author{Disusun berdasarkan bahan kuliah}
+\date{}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\chapter{Pengantar Kriptografi}
+    \section{Definisi dan Terminologi Kriptografi}
+    \section{Layanan Kriptografi}
+    \section{Sejarah Kriptografi}
+    \section{Kriptanalisis}
+    \section{Kriptografi Simetri dan Kriptografi Nirsimetri}
+    \section{Fungsi Hash}
+    \section{Kriptografi di Indonesia}
+\chapter{Landasan Matematika}
+    \section{Teori Informasi}
+        \subsection{Entropy}
+        \subsection{Laju Bahasa}
+    \section{Teori Bilangan}
+         \subsection{Sifat Pembagian Pada Bilangan Bulat}
+         \subsection{Pembagi Bersama Terbesar (PBB)}
+         \subsection{Algoritma Euclidean}
+         \subsection{Kombinasi Lanjar}
+         \subsection{Relatif Prima}
+         \subsection{Aritmatika Modulo}
+         \subsection{Bilangan Prima}
+         \subsection{Fungsi Totient Euler}
+         \subsection{Teorema Euler}
+         \subsection{Akar Primitif dan Logaritma Diskrit}
+    \section{Aljabar Abstrak}
+         \subsection{Grup}
+         \subsection{Ring}
+         \subsection{Medan}
+         \subsection{Medan Berhingga}
+         \subsection{Medan Galois}
+         \subsection{Aritmatika Polinom di dalam Medan Galois}
+
+\chapter{Serangan Terhadap Kriptografi}
+    \section{Serangan}
+        \subsection{Serangan Kriptanalisis}
+        \subsection{Brute-Force Attack dan Analytical Attack}
+        \subsection{Passive Attack dan Active Attack}
+    \section{Keamanan Algoritma Kriptografi}
+    \section{Kompleksitas Serangan}
+
+\chapter{Kriptografi Klasik}
+    \section{Cipher Substitusi}
+        \subsection{Caesar Cipher}
+        \subsection{Kriptanalisis Terhadap Caesar Cipher}
+    \section{Jenis-jenis Cipher Substitusi}
+         \subsection{Cipher Abjad-Tunggal}
+         \subsection{Cipher Abjad-Banyak}
+         \subsection{Cipher Substitusi Homofonik}
+         \subsection{Cipher Substitusi Poligram}         
+    \section{Cipher Transposisi}
+    \section{Super Enkripsi}
+    \section{Metode Analisis Frekuensi}
+    \section{Vigenere Cipher}
+        \subsection{Metode Kasiski untuk menentukan panjang kunci vigenere Cipher}
+        \subsection{Variasi Vigebere Cipher}
+    \section{Playfair Cipher}
+    \section{Affine Cipher}
+    \section{Hill Cipher}
+    \section{Enigma Cipher}
+    \section{One-Time Pad}
+
+\chapter{Kriptografi Modern}
+    \section{Rangkaian Bit dan Operasinya}
+    \section{algoritma enkripsi dengan XOR sederhana}
+    \section{Kategori Chiper untuk data digital}
+    \section{Cipher alir}
+    \section{Pembangkit kunci alir}
+    \section{Linear Feedback Shift Register (LFSR)}
+    \section(Serangan Terhadap Cipher Alir)
+    \section{Chiper Blok}
+    \section{Electronic Code Book (ECB)}
+    \section{Cipher Block Chaining (CBC)}
+    \section{Cipher Feedback (CFB)}
+    \section{Output Feedback (OFB)}
+    \section{Counter Mode}
+    \section{Prinsip-prinsip Perancangan Cipher Blok}
+        \subsection{Prinsip Confusion dan Diffusion dari Shannon}
+        \subsection{Cipher Berulang}
+        \subsection{Jaringan Feistel}
+        \subsection{Kotak-S}
+\chapter{Review Beberapa Cipher Alir dan Cipher Blok}
+     \section{RC4}
+     \section{A5}
+     \section{DES}
+     \section{Double DES dan Triple DES}
+     \section{GOST}
+     \section{RC5}
+     \section{RC6}
+     \section{Advanced Encryption Standard (AES)}
+     \section{Penerapan Kriptografi Simetri dalam Kehidupan Sehari-hari}
+         \subsection{Transaksi dengan Mesin ATM}
+         \subsection{Komunikasi dengan Telepon Seluler}
+\chapter{Kriptografi Kunci Publik}         
+     \section{Konsep Kriptografi Kunci Publik}
+     \section{Sejarah Kriptografi Kunci Publik}
+     \section{Perbandingan Kriptografi Kunci Simetri dan Kriptografi Kunci Publik}
+     \section{Aplikasi Kriptografi Kunci Publik}
+     \section{Algoritma RSA}
+     \section{Pertukaran Kunci Diffie-Hellman}
+     \section{Algoritma ElGamal}
+     \section{Algoritma Knapsack}
+     \section{Algoritma untuk Perpangkatan Modulo}
+     \section{Pembangkitan Bilangan Prima}
+     \section{Kode Program Algoritma RSA}
+\chapter{Pembangkit Bilangan Acak}
+    \section{Linear Congruential Generator (LCG)}
+    \section{Pembangkit Bilangan Acak yang aman untuk kriptografi}
+    \section{Blum Blum Shub (BBS)}
+    \section{CSPRNG Berbasis Algoritma RSA}
+    \section{CSPRNG Berbasis Chaos}     
+\chapter{Fungsi Hash Satu Arah}
+     \section{Fungsi Hash Satu Arah}
+     \section{Algoritma MD5}
+     \section{Secure Hash Algorithm (SHA)}
+     \section{SHA-3 (Keceak)}
+     \section{Message Authentication Code (MAC)}
+     \section{Algoritma MAC}
+\chapter{Tanda Tangan Digital}
+     \section{Review Layanan Kriptografi}
+     \section{Penandatanganan dengan Cara Mengenkripsi Pesan}
+     \section{Tanda-tangan Digital dengan Kombinasi Fungsi Hash dan Kriptografi Kunci Publik}
+     \section{Tanda-tangan Digital dengan Fungsi Hash dan Kriptografi Kunci Publik}
+     \section{Digital Standard Algorithm (DSA)}
+\chapter{Sertifikat Digital dan Infrastruktur Kunci Publik}
+     \section{Sertifikat Digital}
+     \section{X.509}
+     \section{Verifikasi Sertifikat Digital}
+     \section{Menggunakan Sertifikat Digital untuk Enkripsi Pesan}
+     \section{Public Key Infrastructure (PKI)}
+\chapter{Protokol Kriptografi}
+     \section{Protokol Komunikasi dengan Sistem Kriptografi Simetri}
+     \section{Protokol Komunikasi dengan Sistem Kriptografi Kunci Publik}
+     \section{Protokol untuk Tanda-tangan Digital}
+     \section{Protokol untuk Tanda-tangan Digital Plus Enkripsi}
+     \section{Protokol Pertukaran Kunci Diffie-Hellman}
+     \section{otentikasi}
+     \section{Secure Socket Layer (SSL)}
+\chapter{Manajemen Kunci}
+     \section{Pembangkitan Kunci}
+     \section{Penyebaran Kunci}
+     \section{Penyimpanan Kunci}
+     \section{Penggunaan Kunci}
+     \section{Perubahan Kunci}
+     \section{Penghancuran Kunci}
+\chapter{Steganografi}
+     \section{Sejarah Steganografi}
+     \section{Konsep dan Terminologi Steganografi}
+     \section{Kriteria Steganografi yang baik}
+     \section{Ranah Penyembunyian Data}
+     \section{Metode LSB}
+     \section{Kombinasi Steganografi dan Kriptografi}
+     \section{Steganalisis}
+     \section{Watermarking}
+     \section{Noiseless Steganography}
+
+\end{document}
