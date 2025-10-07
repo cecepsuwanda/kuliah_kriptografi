@@ -27,6 +27,21 @@ Cipher transposisi menyusun ulang posisi karakter tanpa mengubah identitas simbo
 
 Transposisi sering dikombinasikan dengan substitusi untuk meningkatkan kekuatan, namun tetap rentan terhadap serangan yang memanfaatkan statistik tingkat lebih tinggi. Uraian dapat ditemukan pada \textcite{menezes1996handbook}.
 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=0.8cm, >=Latex]
+  \node (k) {Kunci kolom: 3 1 4 2};
+  \matrix (m) [matrix of nodes, nodes in empty cells, nodes={draw, minimum width=0.5cm, minimum height=0.5cm}, below=of k] {
+    P & E & S & A \\
+    N & B & A & R \\
+    A & H & A & S \\
+  };
+  \node[below=1.0cm of m] (o) {Baca per kolom urut kunci: 1,2,3,4};
+\end{tikzpicture}
+\caption{Skema sederhana transposisi kolumnar.}
+\label{fig:transposisi}
+\end{figure}
+
 \section{Super Enkripsi}
 Super enkripsi menggabungkan beberapa teknik enkripsi, misalnya substitusi diikuti transposisi, untuk meningkatkan keamanan. Kombinasi yang tepat dapat menambah difusi dan konfusi, tetapi tidak menggantikan kebutuhan akan desain modern.
 
@@ -48,6 +63,24 @@ Variasi Vigenère memperkenalkan tabel atau alfabet yang dimodifikasi, tetapi in
 Metode Kasiski mengidentifikasi pengulangan pola dalam cipherteks untuk memperkirakan panjang kunci. Dengan menghitung jarak antar pengulangan dan mencari faktor-faktornya, estimasi panjang kunci dapat diperoleh. Pendekatan ini efektif pada teks cukup panjang dengan kunci berulang.
 
 Setelah panjang kunci diperoleh, analisis frekuensi per-posisi memungkinkan pemulihan kunci dan plainteks. Ringkasan metode ini tersedia pada \textcite{menezes1996handbook}.
+
+\begin{table}[h]
+\centering
+\caption{Perbandingan ringkas beberapa cipher klasik}
+\label{tab:klasik}
+\begin{tabular}{lll}
+\toprule
+Cipher & Inti operasi & Catatan keamanan \\
+\midrule
+Caesar & Pergeseran abjad tetap & Ruang kunci kecil, mudah brute-force \\
+Vigenère & Pergeseran polialfabetik & Periodisitas diekspos Kasiski/IoC \parencite{friedman1922ioc} \\
+Transposisi & Penyusunan ulang posisi & Histogram terjaga, pola periodik \\
+Playfair & Substitusi digraf & Rentan analisis digraf \\
+Affine & Transformasi linear modulo & Linearitas mudah dibalik \\
+Hill & Matriks linear per blok & Linear, butuh data cukup \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Variasi Vigenere Cipher}
 Variasi Vigenère mencakup penggunaan alfabet yang berubah-ubah atau kunci yang tidak berulang untuk mengurangi periodisitas. Meskipun meningkatkan kerumitan, variasi tersebut biasanya masih kalah dari cipher modern. Fokus pendidikan tetap pada pemahaman konsep konfusi dan difusi.
@@ -78,5 +111,69 @@ Sumber terbuka mengenai Enigma dan kriptanalisisnya memberikan wawasan sejarah d
 One-time pad mencapai keamanan sempurna ketika kunci acak benar-benar seragam, sepanjang pesan, dan digunakan sekali. Tantangan praktis mencakup distribusi dan manajemen kunci dalam skala besar. Karena persyaratan ini, OTP jarang digunakan di luar konteks khusus.
 
 OTP mengilustrasikan batas ideal keamanan dan memotivasi pendekatan yang mencapai keamanan komputasional dengan efisiensi lebih baik. Penjelasan formal tersedia pada \textcite{menezes1996handbook}.
+
+\subsection{Contoh Kode: Vigenère, Kasiski, dan Index of Coincidence}
+Berikut contoh Python untuk menduga panjang kunci dengan Kasiski dan IoC, serta mendekripsi Vigenère.
+
+\begin{lstlisting}[language=Python, caption={Vigenère: Kasiski dan IoC}, label={lst:vigenere}]
+import re, collections, string
+
+def kasiski(ciphertext: str, min_len: int = 3):
+    repeats = collections.defaultdict(list)
+    text = re.sub('[^A-Za-z]', '', ciphertext.upper())
+    for L in range(min_len, min_len+3):
+        for i in range(len(text) - L + 1):
+            sub = text[i:i+L]
+            for j in range(i+1, len(text) - L + 1):
+                if text[j:j+L] == sub:
+                    repeats[sub].append(j - i)
+    distances = []
+    for dists in repeats.values():
+        distances.extend(dists)
+    return distances
+
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+def guess_key_lengths(distances):
+    from math import gcd as mgcd
+    if not distances:
+        return []
+    g = distances[0]
+    for d in distances[1:]:
+        g = mgcd(g, d)
+    return [g] if g > 1 else []
+
+def index_of_coincidence(text: str):
+    text = re.sub('[^A-Za-z]', '', text.upper())
+    N = len(text)
+    counts = collections.Counter(text)
+    return sum(c*(c-1) for c in counts.values()) / (N*(N-1) or 1)
+
+def vigenere_decrypt(ct: str, key: str) -> str:
+    alphabet = string.ascii_uppercase
+    pt = []
+    k = key.upper()
+    ki = 0
+    for ch in ct.upper():
+        if ch in alphabet:
+            p = (alphabet.index(ch) - alphabet.index(k[ki % len(k)])) % 26
+            pt.append(alphabet[p])
+            ki += 1
+        else:
+            pt.append(ch)
+    return ''.join(pt)
+
+if __name__ == '__main__':
+    ct = 'LXFOPVEFRNHR'  # contoh untuk 'ATTACKATDAWN' dengan kunci 'LEMON'
+    dists = kasiski(ct)
+    print('Kasiski distances:', dists)
+    print('IoC:', index_of_coincidence(ct))
+    print(vigenere_decrypt(ct, 'LEMON'))
+\end{lstlisting}
+
+\noindent Bahan latar tersedia pada \textcite{kasiski-examination,friedman1922ioc,crypto101}.
 
 \end{document}
