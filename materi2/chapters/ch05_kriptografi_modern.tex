@@ -42,6 +42,22 @@ Cipher blok memproses data dalam blok tetap menggunakan struktur seperti jaringa
 
 AES sebagai standar de facto menawarkan keamanan kuat dengan kinerja tinggi pada perangkat keras dan lunak, didukung bukti dan analisis luas \parencite{fips197}.
 
+\begin{table}[h]
+\centering
+\caption{Ringkasan beberapa mode operasi cipher blok}
+\label{tab:modes}
+\begin{tabular}{llll}
+\toprule
+Mode & Difusi antarblok & Keacakan IV/Nonce & Catatan \\
+\midrule
+ECB & Tidak & - & Bocor pola, hindari \\
+CBC & Ya & IV acak & Perlu autentikasi (hindari padding oracle) \parencite{nist80038a} \\
+CTR & - & Nonce/counter unik & Paralelis, butuh keunikan ketat \parencite{nist80038a} \\
+GCM & Ya & Nonce unik & AEAD: kerahasiaan+integritas \parencite{nist80038d} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Electronic Code Book (ECB)}
 ECB mengenkripsi setiap blok secara independen, mempertahankan kesamaan blok identik sehingga membocorkan pola. Mode ini tidak direkomendasikan untuk data dengan struktur, kecuali pada konteks sangat terbatas atau untuk keperluan determinisme yang dikontrol.
 
@@ -86,6 +102,42 @@ Studi empiris menunjukkan bahwa ronde yang terlalu sedikit membuka peluang seran
 Jaringan Feistel membagi blok menjadi dua bagian dan menerapkan fungsi ronde pada satu bagian dengan kunci ronde, kemudian menukar bagian. Properti dapat dibalik dengan mudah, sehingga memudahkan implementasi enkripsi dan dekripsi menggunakan fungsi yang sama. Banyak cipher klasik seperti DES menggunakan struktur ini.
 
 Analisis jaringan Feistel menilai properti avalanche dan resistensi terhadap serangan standar untuk memastikan keamanan memadai.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.0cm, >=Latex]
+  \node (L0) [draw, rounded corners] {$L_0$};
+  \node (R0) [draw, rounded corners, right=2.5cm of L0] {$R_0$};
+  \node (f1) [draw, rounded corners, below=1.2cm of R0, minimum width=1.8cm] {$F(\cdot, K_1)$};
+  \node (xor1) [below=1.2cm of L0] {$\oplus$};
+  \draw[->] (R0) -- (f1);
+  \draw[->] (f1) -- (xor1);
+  \draw (L0) -- (xor1);
+  \node (L1) [draw, rounded corners, below=2.2cm of xor1] {$L_1=R_0$};
+  \node (R1) [draw, rounded corners, below=2.2cm of f1] {$R_1=L_0\oplus F(R_0,K_1)$};
+\end{tikzpicture}
+\caption{Skema satu ronde jaringan Feistel.}
+\label{fig:feistel}
+\end{figure}
+
+\subsection{Contoh Kode: AES-CTR}
+Berikut contoh ringkas enkripsi/dekripsi AES-CTR menggunakan pustaka Python \texttt{cryptography} \parencite{cryptography-symmetric-docs}.
+
+\begin{lstlisting}[language=Python, caption={AES-CTR dengan cryptography}, label={lst:aesctr}]
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+import os
+
+key = os.urandom(32)   # AES-256
+nonce = os.urandom(16) # 128-bit counter initial value
+cipher = Cipher(algorithms.AES(key), modes.CTR(nonce), backend=default_backend())
+encryptor = cipher.encryptor()
+ct = encryptor.update(b"pesan rahasia") + encryptor.finalize()
+
+decryptor = cipher.decryptor()
+pt = decryptor.update(ct) + decryptor.finalize()
+assert pt == b"pesan rahasia"
+\end{lstlisting}
 
 \subsection{Kotak-S}
 S-box menyediakan nonlinieritas melalui substitusi tabel yang dirancang dengan kriteria ketat. Desain yang buruk membuka peluang serangan diferensial dan linear. Evaluasi melibatkan metrik seperti nonlinieritas, bias Walsh, dan uniformitas diferensial.
