@@ -8,9 +8,9 @@ Teori informasi menyediakan alat kuantitatif untuk mengukur ketidakpastian dan i
 Secara praktis, laju bahasa dan distribusi simbol memengaruhi efektivitas teknik analisis frekuensi terhadap cipher substitusi sederhana. Pada ranah modern, teori informasi juga mendasari batas kunci dan kebocoran informasi dalam protokol komunikasi aman. Tinjauan formal tersedia pada \textcite{menezes1996handbook}.
 
 \subsection{Entropy}
-Entropi mengukur ketidakpastian suatu variabel acak dan didefinisikan sebagai rata-rata informasi diri dari hasil-hasil yang mungkin. Dalam kriptografi, entropi kunci menjadi parameter sentral yang menunjukkan ruang pencarian bagi penyerang brute-force. Entropi yang rendah menandakan prediktabilitas yang tinggi, sehingga mengurangi kekuatan efektif suatu kunci atau sandi.
+Entropi Shannon untuk variabel acak diskret \(X\) dengan distribusi \(p(x)\) didefinisikan sebagai \(H(X)= -\sum_x p(x) \log_2 p(x)\) \parencite{shannon1948}. Dalam kriptografi, entropi kunci menunjukkan ukuran ruang pencarian efektif bagi penyerang brute-force. Entropi yang rendah menandakan prediktabilitas yang tinggi, mengurangi kekuatan efektif kunci atau sandi.
 
-Estimasi entropi pada sumber dunia nyata harus memperhitungkan korelasi dan struktur; asumsi independensi sering menghasilkan estimasi berlebih. Literatur terbuka membahas berbagai estimator entropi serta konsekuensinya terhadap desain pembangkit bilangan acak dan derivasi kunci \parencite{nist80090c}.
+Estimasi entropi pada sumber dunia nyata harus memperhitungkan korelasi dan struktur; asumsi independensi sering menghasilkan estimasi berlebih. Lihat juga \textcite{mackay2003itila} untuk pembahasan estimator dan pengaruhnya pada desain sumber entropi dan CSPRNG; standar evaluasi sumber entropi tersedia pada \textcite{nist80090b}.
 
 \subsection{Laju Bahasa}
 Laju bahasa menggambarkan derajat redundansi dalam teks alami dan berdampak pada kerentanan cipher klasik terhadap analisis frekuensi. Bahasa dengan redundansi tinggi lebih mudah dianalisis karena pola kemunculan huruf yang khas tetap terpelihara setelah enkripsi substitusi sederhana. Oleh karena itu, teknik kriptanalisis klasik memanfaatkan statistik unigram dan n-gram untuk memulihkan kunci.
@@ -35,9 +35,25 @@ Dalam praktik, perhitungan PBB digunakan pada protokol untuk memastikan paramete
 Analisis rinci tersedia pada \textcite{menezes1996handbook}.
 
 \subsection{Algoritma Euclidean}
-Algoritma Euclid menghitung PBB dengan proses iteratif berbasis pembagian berulang, yang dapat diperluas untuk menemukan koefisien kombinasi lanjar. Efisiensi algoritma ini menjadikannya komponen fundamental dalam hampir semua implementasi aritmetika modulo. Perluasan ke algoritma Euclid yang diperluas memungkinkan komputasi invers modulo yang kritis untuk RSA dan ECDSA.
+Algoritma Euclid menghitung PBB dengan proses iteratif berbasis pembagian berulang, dan dapat diperluas (extended Euclid) untuk menemukan koefisien kombinasi lanjar serta invers modulo. Efisiensinya menjadikannya komponen fundamental dalam aritmetika modulo. Lihat \textcite{shoup2009number} untuk analisis komputasional.
 
-Optimasi penerapan algoritma ini pada bilangan besar melibatkan representasi efisien dan aritmetika multipresisi. Penjelasan formal tersedia pada literatur standar \parencite{menezes1996handbook}.
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.1cm, >=Latex]
+  \node (start) [draw, rounded corners] {Mulai: (a,b)};
+  \node (check) [below=of start, draw, rounded corners] {b = 0?};
+  \node (done) [right=2.8cm of check, draw, rounded corners] {Selesai: gcd = a};
+  \node (div) [below=of check, draw, rounded corners] {q = a div b, r = a - q b};
+  \node (swap) [below=of div, draw, rounded corners] {a := b, b := r};
+  \draw[->] (start) -- (check);
+  \draw[->] (check) -- node[above]{Ya} (done);
+  \draw[->] (check) -- node[left]{Tidak} (div);
+  \draw[->] (div) -- (swap);
+  \draw[->] (swap) -- (check);
+\end{tikzpicture}
+\caption{Alur algoritma Euclid untuk menghitung PBB \parencite{shoup2009number}.}
+\label{fig:euclid-flow}
+\end{figure}
 
 \subsection{Kombinasi Lanjar}
 Identitas Bézout menyatakan bahwa terdapat kombinasi lanjar dari dua bilangan bulat yang menghasilkan PBB-nya. Fakta ini menyediakan konstruksi langsung untuk invers modulo ketika PBB bernilai satu. Dalam kriptografi, kemampuan menghitung kombinasi lanjar secara efisien memfasilitasi banyak primitif.
@@ -108,5 +124,34 @@ Analisis keamanan S-box melibatkan kriteria nonlinieritas dan resistensi diferen
 Aritmatika polinom memungkinkan konstruksi dan manipulasi elemen medan berhingga, termasuk operasi modulo polinom irreducible. Teknik ini digunakan untuk membangun S-box, LFSR, dan kode koreksi kesalahan.
 
 Efisiensi implementasi sangat bergantung pada representasi dan pilihan polinom; literatur terbuka menyediakan panduan praktis untuk implementasi aman pada berbagai platform \parencite{menezes1996handbook}.
+
+\subsection{Contoh Kode: Algoritma Euclid Terekstensi}
+Berikut implementasi ringkas untuk menghitung PBB dan koefisien Bézout serta invers modulo bila ada.
+
+\begin{lstlisting}[language=Python, caption={Extended Euclid dan invers modulo}, label={lst:eea}]
+from typing import Tuple
+
+def extended_gcd(a: int, b: int) -> Tuple[int, int, int]:
+    old_r, r = a, b
+    old_s, s = 1, 0
+    old_t, t = 0, 1
+    while r != 0:
+        q = old_r // r
+        old_r, r = r, old_r - q * r
+        old_s, s = s, old_s - q * s
+        old_t, t = t, old_t - q * t
+    return old_r, old_s, old_t  # gcd, x, y such that ax + by = gcd
+
+def mod_inverse(a: int, n: int) -> int | None:
+    g, x, _ = extended_gcd(a, n)
+    if g != 1:
+        return None
+    return x % n
+
+if __name__ == "__main__":
+    g, x, y = extended_gcd(240, 46)
+    print(g, x, y)
+    print(mod_inverse(17, 3120))
+\end{lstlisting}
 
 \end{document}
