@@ -7,6 +7,21 @@ Fungsi hash satu arah memetakan masukan arbitrer ke keluaran berukuran tetap den
 
 Analisis formal memodelkan keamanan terhadap penyerang yang mampu melakukan query adaptif; standar terbuka menyediakan spesifikasi dan panduan penggunaan yang aman.
 
+\begin{table}[h]
+\centering
+\caption{Sifat keamanan fungsi hash}
+\label{tab:hash-props}
+\begin{tabular}{ll}
+\toprule
+Sifat & Deskripsi singkat \\
+\midrule
+Preimage-resistant & Sulit menemukan x dari h(x) \\
+Second-preimage & Sulit menemukan x' s.t. h(x')=h(x) \\
+Collision-resistant & Sulit menemukan pasangan (x,x') dengan h(x)=h(x') \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Algoritma MD5}
 MD5 adalah fungsi hash yang kini tidak aman karena serangan tabrakan praktis yang terpublikasi. Penggunaan dalam konteks keamanan tidak direkomendasikan dan harus diganti dengan keluarga SHA-2 atau SHA-3. Studi kasus tabrakan mendemonstrasikan risiko integritas.
 
@@ -22,6 +37,19 @@ SHA-3 (Keccak) adalah standar hash berbasis sponge yang menawarkan desain berbed
 
 Spesifikasi tersedia secara terbuka dan menyediakan parameterisasi untuk berbagai kebutuhan keamanan \parencite{fips202}.
 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.0cm, >=Latex]
+  \node (absorb) [draw, rounded corners] {Absorb (pad, split, XOR)};
+  \node (perm) [draw, rounded corners, right=3.0cm of absorb] {Permutasi f};
+  \node (squeeze) [draw, rounded corners, right=3.0cm of perm] {Squeeze (keluarkan z)};
+  \draw[->] (absorb) -- (perm);
+  \draw[->] (perm) -- (squeeze);
+\end{tikzpicture}
+\caption{Skema tinggi sponge (Keccak) \parencite{fips202,bertoni2013keccak}.}
+\label{fig:sponge}
+\end{figure}
+
 \section{Message Authentication Code (MAC)}
 MAC menyediakan autentikasi dan integritas pesan berbasis kunci rahasia. Konstruksi populer meliputi HMAC yang dibangun di atas fungsi hash dan CMAC di atas cipher blok. Keamanan menuntut pengelolaan kunci yang tepat dan pemilihan parameter konservatif.
 
@@ -31,5 +59,18 @@ Kesesuaian MAC dengan protokol harus mempertimbangkan kebutuhan anti-replay dan 
 HMAC menawarkan keamanan yang kuat dengan asumsi hash dasar aman dan banyak distandardisasi; CMAC memberikan alternatif berbasis AES dengan kualitas serupa. Pemilihan algoritma sering ditentukan oleh ketersediaan akselerasi perangkat keras atau pustaka yang telah diaudit. Implementasi harus menghindari kebocoran waktu pada perbandingan tag.
 
 Dokumentasi standar menyediakan panduan interoperabilitas dan parameter yang disarankan.
+
+\subsection{Contoh Kode: SHA-256 dan HMAC}
+Berikut contoh hash dan HMAC di Python.
+
+\begin{lstlisting}[language=Python, caption={SHA-256 dan HMAC}, label={lst:hash-hmac}]
+import hashlib, hmac
+
+d = hashlib.sha256(b"pesan").hexdigest()
+tag = hmac.new(b"kunci", b"pesan", hashlib.sha256).hexdigest()
+print(d, tag)
+\end{lstlisting}
+
+\noindent Lihat \textcite{rfc2104} untuk HMAC dan \textcite{rfc5869} untuk HKDF; BLAKE2 terdokumentasi pada \textcite{rfc7693}.
 
 \end{document}
