@@ -43,6 +43,16 @@
 
 % Bibliography
 \usepackage[backend=biber,style=authoryear,sorting=nyt]{biblatex}
+% Bibliography localization and formatting tweaks
+\DeclareLanguageMapping{indonesian}{english}
+\ExecuteBibliographyOptions{date=year,urldate=iso}
+\DefineBibliographyStrings{indonesian}{
+  and = {dan},
+  andothers = {dkk.},
+  in = {dalam},
+  pages = {hlm.},
+  urlseen = {diakses}
+}
 \addbibresource{references/references.bib}
 
 % Allow per-chapter compilation
