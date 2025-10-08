@@ -1,0 +1,162 @@
+\babel@toc {indonesian}{}\relax 
+\contentsline {chapter}{\numberline {1}Pengantar Kriptografi}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Definisi dan Terminologi Kriptografi}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Layanan Kriptografi}{1}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Contoh AEAD: AES-GCM}{2}{subsection.1.2.1}%
+\contentsline {section}{\numberline {1.3}Sejarah Kriptografi}{3}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Kriptanalisis}{3}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Kriptografi Simetri dan Kriptografi Nirsimetri}{3}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Fungsi Hash}{4}{section.1.6}%
+\contentsline {section}{\numberline {1.7}Kriptografi di Indonesia}{4}{section.1.7}%
+\contentsline {chapter}{\numberline {2}Landasan Matematika}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Teori Informasi}{5}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Entropy}{5}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Laju Bahasa}{6}{subsection.2.1.2}%
+\contentsline {section}{\numberline {2.2}Teori Bilangan}{6}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Sifat Pembagian Pada Bilangan Bulat}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Pembagi Bersama Terbesar (PBB)}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Algoritma Euclidean}{7}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Kombinasi Lanjar}{7}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}Relatif Prima}{8}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.6}Aritmatika Modulo}{8}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.7}Bilangan Prima}{8}{subsection.2.2.7}%
+\contentsline {subsection}{\numberline {2.2.8}Fungsi Totient Euler}{8}{subsection.2.2.8}%
+\contentsline {subsection}{\numberline {2.2.9}Teorema Euler}{9}{subsection.2.2.9}%
+\contentsline {subsection}{\numberline {2.2.10}Akar Primitif dan Logaritma Diskrit}{9}{subsection.2.2.10}%
+\contentsline {section}{\numberline {2.3}Aljabar Abstrak}{9}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Grup}{9}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Ring}{10}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Medan}{10}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Medan Berhingga}{10}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}Medan Galois}{10}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}Aritmatika Polinom di dalam Medan Galois}{11}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Contoh Kode: Algoritma Euclid Terekstensi}{11}{subsection.2.3.7}%
+\contentsline {chapter}{\numberline {3}Serangan Terhadap Kriptografi}{13}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Serangan}{13}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Serangan Kriptanalisis}{13}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Brute-Force Attack dan Analytical Attack}{13}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}Passive Attack dan Active Attack}{14}{subsection.3.1.3}%
+\contentsline {section}{\numberline {3.2}Keamanan Algoritma Kriptografi}{14}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Kompleksitas Serangan}{14}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Contoh Kode: Brute-Force Caesar Cipher}{15}{subsection.3.3.1}%
+\contentsline {chapter}{\numberline {4}Kriptografi Klasik}{17}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Cipher Substitusi}{17}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Caesar Cipher}{17}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Kriptanalisis Terhadap Caesar Cipher}{17}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Jenis-jenis Cipher Substitusi}{18}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Cipher Transposisi}{18}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Super Enkripsi}{18}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Metode Analisis Frekuensi}{19}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Vigenere Cipher}{19}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Metode Kasiski untuk menentukan panjang kunci vigenere Cipher}{19}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Variasi Vigenere Cipher}{20}{subsection.4.6.2}%
+\contentsline {section}{\numberline {4.7}Playfair Cipher}{20}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Affine Cipher}{20}{section.4.8}%
+\contentsline {section}{\numberline {4.9}Hill Cipher}{21}{section.4.9}%
+\contentsline {section}{\numberline {4.10}Enigma Cipher}{21}{section.4.10}%
+\contentsline {section}{\numberline {4.11}One-Time Pad}{21}{section.4.11}%
+\contentsline {subsection}{\numberline {4.11.1}Contoh Kode: Vigenère, Kasiski, dan Index of Coincidence}{21}{subsection.4.11.1}%
+\contentsline {chapter}{\numberline {5}Kriptografi Modern}{25}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Rangkaian Bit dan Operasinya}{25}{section.5.1}%
+\contentsline {section}{\numberline {5.2}algoritma enkripsi dengan XOR sederhana}{25}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Kategori Cipher untuk Data Digital}{25}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Cipher alir}{26}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Pembangkit kunci alir}{26}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Linear Feedback Shift Register (LFSR)}{26}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Serangan Terhadap Cipher Alir}{26}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Cipher Blok}{27}{section.5.8}%
+\contentsline {section}{\numberline {5.9}Electronic Code Book (ECB)}{27}{section.5.9}%
+\contentsline {section}{\numberline {5.10}Cipher Block Chaining (CBC)}{27}{section.5.10}%
+\contentsline {section}{\numberline {5.11}Cipher Feedback (CFB)}{28}{section.5.11}%
+\contentsline {section}{\numberline {5.12}Output Feedback (OFB)}{28}{section.5.12}%
+\contentsline {section}{\numberline {5.13}Counter Mode}{28}{section.5.13}%
+\contentsline {section}{\numberline {5.14}Prinsip-prinsip Perancangan Cipher Blok}{28}{section.5.14}%
+\contentsline {subsection}{\numberline {5.14.1}Prinsip Confusion dan Diffusion dari Shannon}{28}{subsection.5.14.1}%
+\contentsline {subsection}{\numberline {5.14.2}Cipher Berulang}{29}{subsection.5.14.2}%
+\contentsline {subsection}{\numberline {5.14.3}Jaringan Feistel}{29}{subsection.5.14.3}%
+\contentsline {subsection}{\numberline {5.14.4}Contoh Kode: AES-CTR}{29}{subsection.5.14.4}%
+\contentsline {subsection}{\numberline {5.14.5}Kotak-S}{30}{subsection.5.14.5}%
+\contentsline {chapter}{\numberline {6}Review Beberapa Cipher Alir dan Cipher Blok}{31}{chapter.6}%
+\contentsline {section}{\numberline {6.1}RC4}{31}{section.6.1}%
+\contentsline {section}{\numberline {6.2}A5}{31}{section.6.2}%
+\contentsline {section}{\numberline {6.3}DES}{32}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Double DES dan Triple DES}{32}{section.6.4}%
+\contentsline {section}{\numberline {6.5}GOST}{32}{section.6.5}%
+\contentsline {section}{\numberline {6.6}RC5}{32}{section.6.6}%
+\contentsline {section}{\numberline {6.7}RC6}{32}{section.6.7}%
+\contentsline {section}{\numberline {6.8}Advanced Encryption Standard (AES)}{33}{section.6.8}%
+\contentsline {section}{\numberline {6.9}Penerapan Kriptografi Simetri dalam Kehidupan Sehari-hari}{33}{section.6.9}%
+\contentsline {subsection}{\numberline {6.9.1}Transaksi dengan Mesin ATM}{33}{subsection.6.9.1}%
+\contentsline {subsection}{\numberline {6.9.2}Komunikasi dengan Telepon Seluler}{34}{subsection.6.9.2}%
+\contentsline {subsection}{\numberline {6.9.3}Contoh Kode: ChaCha20-Poly1305 (AEAD)}{34}{subsection.6.9.3}%
+\contentsline {chapter}{\numberline {7}Kriptografi Kunci Publik}{35}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Konsep Kriptografi Kunci Publik}{35}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Sejarah Kriptografi Kunci Publik}{35}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Perbandingan Kriptografi Kunci Simetri dan Publik}{35}{section.7.3}%
+\contentsline {section}{\numberline {7.4}Aplikasi Kriptografi Kunci Publik}{36}{section.7.4}%
+\contentsline {section}{\numberline {7.5}Algoritma RSA}{36}{section.7.5}%
+\contentsline {section}{\numberline {7.6}Pertukaran Kunci Diffie-Hellman}{36}{section.7.6}%
+\contentsline {subsection}{\numberline {7.6.1}Contoh Kode: ECDH X25519}{36}{subsection.7.6.1}%
+\contentsline {section}{\numberline {7.7}Algoritma ElGamal}{37}{section.7.7}%
+\contentsline {section}{\numberline {7.8}Algoritma Knapsack}{37}{section.7.8}%
+\contentsline {section}{\numberline {7.9}Algoritma untuk Perpangkatan Modulo}{38}{section.7.9}%
+\contentsline {section}{\numberline {7.10}Pembangkitan Bilangan Prima}{38}{section.7.10}%
+\contentsline {section}{\numberline {7.11}Kode Program Algoritma RSA}{38}{section.7.11}%
+\contentsline {chapter}{\numberline {8}Pembangkit Bilangan Acak}{39}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Linear Congruential Generator (LCG)}{39}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Pembangkit Bilangan Acak yang aman untuk kriptografi}{39}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Blum Blum Shub (BBS)}{40}{section.8.3}%
+\contentsline {section}{\numberline {8.4}CSPRNG Berbasis Algoritma RSA}{40}{section.8.4}%
+\contentsline {section}{\numberline {8.5}CSPRNG Berbasis Chaos}{40}{section.8.5}%
+\contentsline {subsection}{\numberline {8.5.1}Contoh Kode: Penggunaan secrets di Python}{40}{subsection.8.5.1}%
+\contentsline {chapter}{\numberline {9}Fungsi Hash Satu Arah}{43}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Fungsi Hash Satu Arah}{43}{section.9.1}%
+\contentsline {section}{\numberline {9.2}Algoritma MD5}{43}{section.9.2}%
+\contentsline {section}{\numberline {9.3}Secure Hash Algorithm (SHA)}{44}{section.9.3}%
+\contentsline {section}{\numberline {9.4}SHA-3 (Keccak)}{44}{section.9.4}%
+\contentsline {section}{\numberline {9.5}Message Authentication Code (MAC)}{44}{section.9.5}%
+\contentsline {section}{\numberline {9.6}Algoritma MAC}{44}{section.9.6}%
+\contentsline {subsection}{\numberline {9.6.1}Contoh Kode: SHA-256 dan HMAC}{45}{subsection.9.6.1}%
+\contentsline {chapter}{\numberline {10}Tanda Tangan Digital}{47}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Review Layanan Kriptografi}{47}{section.10.1}%
+\contentsline {section}{\numberline {10.2}Penandatanganan dengan Cara Mengenkripsi Pesan}{47}{section.10.2}%
+\contentsline {section}{\numberline {10.3}Tanda-tangan Digital dengan Kombinasi Fungsi Hash dan Kriptografi Kunci Publik}{47}{section.10.3}%
+\contentsline {section}{\numberline {10.4}Tanda-tangan Digital dengan Fungsi Hash dan Kriptografi Kunci Publik}{48}{section.10.4}%
+\contentsline {section}{\numberline {10.5}Digital Standard Algorithm (DSA)}{48}{section.10.5}%
+\contentsline {subsection}{\numberline {10.5.1}Contoh Kode: Ed25519}{49}{subsection.10.5.1}%
+\contentsline {chapter}{\numberline {11}Sertifikat Digital dan Infrastruktur Kunci Publik}{51}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Sertifikat Digital}{51}{section.11.1}%
+\contentsline {section}{\numberline {11.2}X.509}{51}{section.11.2}%
+\contentsline {section}{\numberline {11.3}Verifikasi Sertifikat Digital}{52}{section.11.3}%
+\contentsline {section}{\numberline {11.4}Menggunakan Sertifikat Digital untuk Enkripsi Pesan}{52}{section.11.4}%
+\contentsline {section}{\numberline {11.5}Public Key Infrastructure (PKI)}{52}{section.11.5}%
+\contentsline {subsection}{\numberline {11.5.1}OCSP, CT, dan ACME}{53}{subsection.11.5.1}%
+\contentsline {subsection}{\numberline {11.5.2}Contoh Kode: Membaca X.509 di Python}{53}{subsection.11.5.2}%
+\contentsline {chapter}{\numberline {12}Protokol Kriptografi}{55}{chapter.12}%
+\contentsline {section}{\numberline {12.1}Protokol Komunikasi dengan Sistem Kriptografi Simetri}{55}{section.12.1}%
+\contentsline {section}{\numberline {12.2}Protokol Komunikasi dengan Sistem Kriptografi Kunci Publik}{55}{section.12.2}%
+\contentsline {section}{\numberline {12.3}Protokol untuk Tanda-tangan Digital}{56}{section.12.3}%
+\contentsline {section}{\numberline {12.4}Protokol untuk Tanda-tangan Digital Plus Enkripsi}{56}{section.12.4}%
+\contentsline {section}{\numberline {12.5}Protokol Pertukaran Kunci Diffie-Hellman}{56}{section.12.5}%
+\contentsline {section}{\numberline {12.6}Otentikasi}{56}{section.12.6}%
+\contentsline {section}{\numberline {12.7}Secure Socket Layer (SSL)}{57}{section.12.7}%
+\contentsline {subsection}{\numberline {12.7.1}Contoh Kode: TLS Client Sederhana}{57}{subsection.12.7.1}%
+\contentsline {chapter}{\numberline {13}Manajemen Kunci}{59}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Pembangkitan Kunci}{59}{section.13.1}%
+\contentsline {section}{\numberline {13.2}Penyebaran Kunci}{59}{section.13.2}%
+\contentsline {section}{\numberline {13.3}Penyimpanan Kunci}{60}{section.13.3}%
+\contentsline {section}{\numberline {13.4}Penggunaan Kunci}{60}{section.13.4}%
+\contentsline {section}{\numberline {13.5}Perubahan Kunci}{60}{section.13.5}%
+\contentsline {section}{\numberline {13.6}Penghancuran Kunci}{60}{section.13.6}%
+\contentsline {subsection}{\numberline {13.6.1}Contoh Kode: HKDF}{60}{subsection.13.6.1}%
+\contentsline {chapter}{\numberline {14}Steganografi}{63}{chapter.14}%
+\contentsline {section}{\numberline {14.1}Sejarah Steganografi}{63}{section.14.1}%
+\contentsline {section}{\numberline {14.2}Konsep dan Terminologi Steganografi}{63}{section.14.2}%
+\contentsline {section}{\numberline {14.3}Kriteria Steganografi yang baik}{63}{section.14.3}%
+\contentsline {section}{\numberline {14.4}Ranah Penyembunyian Data}{64}{section.14.4}%
+\contentsline {section}{\numberline {14.5}Metode LSB}{64}{section.14.5}%
+\contentsline {section}{\numberline {14.6}Kombinasi Steganografi dan Kriptografi}{64}{section.14.6}%
+\contentsline {section}{\numberline {14.7}Steganalisis}{65}{section.14.7}%
+\contentsline {section}{\numberline {14.8}Watermarking}{65}{section.14.8}%
+\contentsline {section}{\numberline {14.9}Noiseless Steganography}{65}{section.14.9}%
+\contentsline {subsection}{\numberline {14.9.1}Contoh Kode: LSB pada citra}{65}{subsection.14.9.1}%

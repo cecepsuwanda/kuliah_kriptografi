@@ -47,8 +47,8 @@ TLS 1.3 mengilustrasikan praktik terbaik dalam perancangan protokol pertukaran k
 \begin{tikzpicture}[node distance=0.8cm, >=Latex]
   \node (c) {Client};
   \node (s) [right=5.5cm of c] {Server};
-  \draw[->] (c) -- node[above]{ClientHello (key_share, SNI)} (s);
-  \draw[->] (s) -- node[below]{ServerHello (key_share), EncryptedExtensions, Certificate, Finished} (c);
+  \draw[->] (c) -- node[above]{ClientHello (key\_share, SNI)} (s);
+  \draw[->] (s) -- node[below]{ServerHello (key\_share), EncryptedExtensions, Certificate, Finished} (c);
   \draw[->] (c) -- node[above]{Finished} (s);
 \end{tikzpicture}
 \caption{Skema ringkas handshake TLS 1.3.}
