@@ -22,9 +22,55 @@ Pendekatan praktis seperti RSA-PSS dan ECDSA menggunakan hash sebagai inti, deng
 
 Analisis formal dan pengalaman industri mendukung penggunaan skema ini dalam aplikasi luas.
 
+\begin{table}[h]
+\centering
+\caption{Ringkasan skema tanda tangan}
+\label{tab:sign-schemes}
+\begin{tabular}{lll}
+\toprule
+Skema & Basis & Catatan \\
+\midrule
+RSA-PSS & Faktorisasi & Padding probabilistik, standar \parencite{rfc8017} \\
+ECDSA & DLP kurva eliptik & Nonce deterministik \parencite{rfc6979} \\
+Ed25519 & EdDSA (Curve25519) & Deterministik, performa baik \parencite{rfc8032} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.1cm, >=Latex]
+  \node (hash) [draw, rounded corners] {Hash pesan};
+  \node (sign) [draw, rounded corners, right=3.2cm of hash] {Tandatangani (sk)};
+  \node (sig) [below=of sign] {signature};
+  \node (verify) [draw, rounded corners, right=3.2cm of sign] {Verifikasi (pk)};
+  \node (ok) [below=of verify] {valid/invalid};
+  \draw[->] (hash) -- (sign);
+  \draw[->] (sign) -- (sig);
+  \draw[->] (sig) -- (verify);
+  \draw[->] (verify) -- (ok);
+\end{tikzpicture}
+\caption{Alur umum tanda tangan digital: hash, tanda tangan, verifikasi.}
+\label{fig:sign-verify}
+\end{figure}
+
 \section{Digital Standard Algorithm (DSA)}
 DSA adalah skema tanda tangan berbasis DLP yang mengandalkan randomness unik per tanda tangan. Kegagalan menjaga nonce unik dapat mengungkap kunci privat, seperti ditunjukkan dalam berbagai insiden nyata. Versi eliptiknya, ECDSA, menawarkan efisiensi lebih baik.
 
 Standar dan praktik terbaik menekankan pentingnya generator randomness yang kuat dan audit implementasi.
+
+\subsection{Contoh Kode: Ed25519}
+Contoh penandatanganan dan verifikasi menggunakan Ed25519 di Python \parencite{cryptography-ed25519-docs}.
+
+\begin{lstlisting}[language=Python, caption={Ed25519 sign/verify}, label={lst:ed25519}]
+from cryptography.hazmat.primitives.asymmetric import ed25519
+
+sk = ed25519.Ed25519PrivateKey.generate()
+pk = sk.public_key()
+
+msg = b"pesan"
+sig = sk.sign(msg)
+pk.verify(sig, msg)
+\end{lstlisting}
 
 \end{document}
