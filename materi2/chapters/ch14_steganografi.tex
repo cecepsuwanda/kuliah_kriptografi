@@ -22,10 +22,36 @@ Ranah umum mencakup domain ruang (spatial) untuk citra, domain frekuensi seperti
 
 Pemahaman format file dan proses kompresi penting untuk menjaga imperceptibility setelah pengolahan.
 
+\begin{table}[h]
+\centering
+\caption{Perbandingan ranah penyisipan}
+\label{tab:steg-domain}
+\begin{tabular}{lll}
+\toprule
+Ranah & Kelebihan & Kekurangan \\
+\midrule
+Spatial (LSB) & Implementasi sederhana & Rentan deteksi/statistik \parencite{lsb-overview} \\
+DCT (JPEG) & Lebih tahan kompresi & Implementasi kompleks \parencite{westfeld2001f5} \\
+Audio/Video & Kapasitas lebih besar & Sinkronisasi sulit \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Metode LSB}
 Least Significant Bit (LSB) mengganti bit paling tidak signifikan pada piksel atau sampel, memberikan kapasitas tinggi namun rentan terhadap deteksi statistik. Variasi adaptif mencoba mengurangi jejak statistik dengan memilih lokasi embedding berdasarkan konten. Kekokohan terhadap kompresi lossy terbatas.
 
 Metode LSB menyoroti tantangan menjaga keseimbangan antara kapasitas dan ketakterdeteksian.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=0.8cm, >=Latex]
+  \node (embed) [draw, rounded corners] {Embed: set LSB piksel};
+  \node (extract) [draw, rounded corners, right=3.2cm of embed] {Extract: baca LSB};
+  \draw[->] (embed) -- (extract);
+\end{tikzpicture}
+\caption{Skema sederhana embed/extract LSB.}
+\label{fig:lsb-flow}
+\end{figure}
 
 \section{Kombinasi Steganografi dan Kriptografi}
 Menggabungkan steganografi dengan kriptografi meningkatkan keamanan dengan melindungi isi sekaligus menyamarkan keberadaannya. Enkripsi dilakukan sebelum embedding untuk mencegah kebocoran informasi jika stego terdeteksi. Kunci embedding terpisah dapat mengatur lokasi penyisipan.
@@ -46,5 +72,44 @@ Desain watermarking memerlukan kompromi antara ketahanan, kualitas media, dan ka
 Noiseless steganography berupaya menyisipkan informasi tanpa menambah noise yang terdeteksi secara statistik. Teknik ini sering memanfaatkan struktur redundansi data dan model generatif. Tantangannya adalah menjaga konsistensi statistik sambil mempertahankan kapasitas.
 
 Perkembangan terkini mengeksplorasi pendekatan berbasis pembelajaran mendalam untuk meningkatkan ketakterdeteksian.
+
+\subsection{Contoh Kode: LSB pada citra}
+Contoh sederhana menyisipkan bit ke LSB kanal biru menggunakan \texttt{Pillow}.
+
+\begin{lstlisting}[language=Python, caption={LSB sederhana}, label={lst:lsb}]
+from PIL import Image
+
+def embed_lsb(img_path: str, bits: bytes, out_path: str):
+    img = Image.open(img_path).convert('RGB')
+    pixels = img.load()
+    w, h = img.size
+    bit_iter = iter(bits)
+    for y in range(h):
+        for x in range(w):
+            try:
+                b = next(bit_iter)
+            except StopIteration:
+                img.save(out_path)
+                return
+            r, g, bl = pixels[x, y]
+            bl = (bl & 0xFE) | (b & 1)
+            pixels[x, y] = (r, g, bl)
+    img.save(out_path)
+
+def extract_lsb(img_path: str, nbits: int) -> bytes:
+    img = Image.open(img_path).convert('RGB')
+    pixels = img.load()
+    w, h = img.size
+    out = bytearray()
+    count = 0
+    for y in range(h):
+        for x in range(w):
+            if count == nbits:
+                return bytes(out)
+            bl = pixels[x, y][2]
+            out.append(bl & 1)
+            count += 1
+    return bytes(out)
+\end{lstlisting}
 
 \end{document}

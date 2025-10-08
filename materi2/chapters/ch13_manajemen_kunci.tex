@@ -7,6 +7,24 @@ Pembangkitan kunci harus menggunakan CSPRNG yang kuat dan parameter yang sesuai 
 
 Standar dan pedoman terbuka menyediakan rekomendasi ukuran kunci dan prosedur pembangkitan yang aman.
 
+\begin{table}[h]
+\centering
+\caption{Tahap siklus hidup kunci dan ringkasannya}
+\label{tab:key-lifecycle}
+\begin{tabular}{ll}
+\toprule
+Tahap & Ringkasan \\
+\midrule
+Generate & CSPRNG, ukuran kunci sesuai \parencite{nist800133,nist80057p1} \\
+Distribute & Kanal aman/PKI \parencite{rfc5280} \\
+Store & Proteksi HSM/enclave \\
+Use & Parameter benar (nonce/IV), audit \\
+Rotate & Sesuai kebijakan risiko \parencite{nist80057p1} \\
+Destroy & Penghapusan terverifikasi \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Penyebaran Kunci}
 Penyebaran kunci memerlukan kanal aman atau mekanisme kunci publik untuk menghindari penyadapan dan substitusi. Prosedur harus memverifikasi integritas dan autentikasi sumber. Kesalahan pada tahap ini sering kali berakibat kompromi sistem secara keseluruhan.
 
@@ -31,5 +49,39 @@ Kebijakan rotasi didasarkan pada nilai risiko aset dan eksposur operasional.
 Penghancuran kunci yang aman memastikan bahwa materi kunci tidak dapat dipulihkan setelah masa pakai berakhir. Teknik termasuk overwriting, degaussing, atau penghancuran fisik sesuai konteks media. Proses harus terdokumentasi dan dapat diaudit.
 
 Kepatuhan terhadap standar keamanan informasi memastikan penghentian yang terverifikasi.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.0cm, >=Latex]
+  \node (gen) [draw, rounded corners] {Generate};
+  \node (dist) [draw, rounded corners, right=2.2cm of gen] {Distribute};
+  \node (store) [draw, rounded corners, right=2.2cm of dist] {Store};
+  \node (use) [draw, rounded corners, below=1.4cm of store] {Use};
+  \node (rotate) [draw, rounded corners, left=2.2cm of use] {Rotate};
+  \node (destroy) [draw, rounded corners, left=2.2cm of rotate] {Destroy};
+  \draw[->] (gen) -- (dist);
+  \draw[->] (dist) -- (store);
+  \draw[->] (store) -- (use);
+  \draw[->] (use) -- (rotate);
+  \draw[->] (rotate) -- (destroy);
+\end{tikzpicture}
+\caption{Siklus hidup kunci menurut pedoman NIST \parencite{nist80057p1}.}
+\label{fig:key-lifecycle}
+\end{figure}
+
+\subsection{Contoh Kode: HKDF}
+Contoh derivasi kunci dengan HKDF sesuai NIST dan dokumentasi pustaka Python \parencite{rfc5869,cryptography-hkdf-docs}.
+
+\begin{lstlisting}[language=Python, caption={HKDF}, label={lst:hkdf}]
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
+
+ikm = b"input keying material"
+salt = b"salt"
+info = b"context"
+hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=salt, info=info, backend=default_backend())
+okm = hkdf.derive(ikm)
+\end{lstlisting}
 
 \end{document}

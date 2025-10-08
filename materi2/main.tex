@@ -11,13 +11,53 @@
 \geometry{margin=1in}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=blue!60!black,
+  urlcolor=blue!60!black,
+  pdfauthor={Program Studi S1 Matematika, FMIPA, Universitas Bale Bandung},
+  pdftitle={Buku Ajar Kriptografi}
+}
 \usepackage{csquotes}
 \usepackage{subfiles}
 \usepackage{setspace}
 \onehalfspacing
+\raggedbottom
+\emergencystretch=2em
+\pretolerance=1000 \tolerance=2000 \hyphenpenalty=5000 \exhyphenpenalty=5000
+\Urlmuskip=0mu plus 1mu
+\def\UrlBreaks{\do\/\do\-\do\_}
+
+% Extras for figures, tables, and code listings used across chapters
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,matrix}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!60!black}\bfseries,
+  commentstyle=\color{gray!60},
+  stringstyle=\color{green!50!black},
+  showstringspaces=false,
+  frame=single,
+  breaklines=true
+}
+\lstset{style=code}
 
 % Bibliography
 \usepackage[backend=biber,style=authoryear,sorting=nyt]{biblatex}
+% Bibliography localization and formatting tweaks
+\DeclareLanguageMapping{indonesian}{english}
+\ExecuteBibliographyOptions{date=year,urldate=iso}
+\DefineBibliographyStrings{indonesian}{
+  and = {dan},
+  andothers = {dkk.},
+  in = {dalam},
+  pages = {hlm.},
+  urlseen = {diakses}
+}
 \addbibresource{references/references.bib}
 
 % Allow per-chapter compilation
@@ -46,6 +86,9 @@
 \end{titlepage}
 
 \tableofcontents
+\listoffigures
+\listoftables
+\lstlistoflistings
 
 \mainmatter
 % Include chapters (also compilable as subfiles)

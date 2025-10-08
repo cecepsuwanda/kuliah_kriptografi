@@ -7,6 +7,23 @@ Sertifikat digital mengikat kunci publik dengan identitas melalui tanda tangan o
 
 Sertifikat membentuk dasar kepercayaan pada banyak protokol jaringan dan aplikasi perangkat lunak.
 
+\begin{table}[h]
+\centering
+\caption{Bidang utama dalam sertifikat X.509}
+\label{tab:x509-fields}
+\begin{tabular}{ll}
+\toprule
+Bidang & Deskripsi \\
+\midrule
+Subject & Identitas pemegang sertifikat \\
+Issuer & CA penerbit \\
+Validity & NotBefore/NotAfter \\
+SubjectPublicKeyInfo & Algoritma dan kunci publik \\
+Extensions & KeyUsage, EKU, SAN, dll. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{X.509}
 Standar X.509 mendefinisikan format sertifikat dan jalur validasi yang digunakan dalam infrastruktur kunci publik modern. Ekstensi seperti KeyUsage dan ExtendedKeyUsage mengontrol tujuan penggunaan sertifikat. Kepatuhan terhadap profil X.509 memastikan interoperabilitas antar implementasi.
 
@@ -17,6 +34,19 @@ Verifikasi mencakup pengecekan rantai ke CA tepercaya, validitas waktu, kebijaka
 
 Pedoman industri menekankan praktik validasi yang kuat dan manajemen trust store yang aman.
 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.0cm, >=Latex]
+  \node (leaf) [draw, rounded corners] {Leaf cert};
+  \node (inter) [draw, rounded corners, above=1.4cm of leaf] {Intermediate CA};
+  \node (root) [draw, rounded corners, above=1.4cm of inter] {Root CA (trust anchor)};
+  \draw[->] (leaf) -- node[right]{signed by} (inter);
+  \draw[->] (inter) -- node[right]{signed by} (root);
+\end{tikzpicture}
+\caption{Rantai kepercayaan: leaf \(\to\) intermediate \(\to\) root.}
+\label{fig:trust-chain}
+\end{figure}
+
 \section{Menggunakan Sertifikat Digital untuk Enkripsi Pesan}
 Sertifikat memungkinkan distribusi kunci publik yang autentik sehingga pihak lain dapat mengenkripsi pesan secara aman. Protokol harus memastikan bahwa sertifikat yang digunakan sesuai tujuan dan belum dicabut. Integrasi dengan sistem email atau komunikasi lainnya mengikuti standar yang ditetapkan.
 
@@ -26,5 +56,21 @@ Kebijakan organisasi menentukan siapa yang dapat mengeluarkan dan menggunakan se
 PKI adalah ekosistem kebijakan, perangkat lunak, dan entitas yang mengelola siklus hidup kunci publik dan sertifikat. Komponen mencakup CA, Registration Authority, repositori, dan mekanisme pencabutan. Keamanan PKI tidak hanya teknis tetapi juga bergantung pada tata kelola dan proses operasional.
 
 Standar seperti \textcite{rfc5280} mendasarkan interoperabilitas dan kepercayaan sistem yang luas.
+
+\subsection{OCSP, CT, dan ACME}
+OCSP menyediakan status pencabutan real-time \parencite{rfc6960}; Certificate Transparency menambah auditabilitas penerbitan \parencite{rfc6962}; dan ACME mengotomatiskan penerbitan sertifikat \parencite{rfc8555}.
+
+\subsection{Contoh Kode: Membaca X.509 di Python}
+Berikut contoh mem-parsing sertifikat X.509 menggunakan pustaka \texttt{cryptography}.
+
+\begin{lstlisting}[language=Python, caption={Parse X.509}, label={lst:x509}]
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+
+with open("cert.pem", "rb") as f:
+    data = f.read()
+cert = x509.load_pem_x509_certificate(data, default_backend())
+print(cert.subject, cert.issuer, cert.not_valid_after)
+\end{lstlisting}
 
 \end{document}

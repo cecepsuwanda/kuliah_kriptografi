@@ -10,7 +10,7 @@ Pemilihan parameter yang tepat, penerapan mode operasi yang benar, dan mitigasi 
 \subsection{Serangan Kriptanalisis}
 Kriptanalisis menganalisis kelemahan struktur algoritma untuk mengurangi kompleksitas pemulihan kunci atau plainteks. Teknik klasik termasuk analisis frekuensi; teknik modern meliputi serangan diferensial dan linear terhadap cipher blok. Keberhasilan serangan sering kali bergantung pada ketersediaan data dan kesesuaian model serangan dengan skenario nyata.
 
-Penelitian seminal tentang kriptanalisis diferensial dan linear memberikan landasan untuk evaluasi cipher modern dan desain yang tahan serangan \parencite{biham1991differential}.
+Penelitian seminal tentang kriptanalisis diferensial dan linear memberikan landasan untuk evaluasi cipher modern dan desain yang tahan serangan \parencite{biham1991differential,matsui1993linear}.
 
 \subsection{Brute-Force Attack dan Analytical Attack}
 Brute-force menyerang dengan menjelajahi ruang kunci secara menyeluruh, sehingga keamanan efektif sangat ditentukan oleh entropi kunci. Analytical attack mencari struktur yang mengurangi kompleksitas pencarian melalui sifat matematis atau statistik. Desain parameter harus memastikan bahwa kompleksitas terendah yang diketahui tetap di luar jangkauan praktis.
@@ -31,5 +31,63 @@ Praktik yang baik meliputi penggunaan standar yang diakui dan perpustakaan yang 
 Kompleksitas serangan mengukur sumber daya yang dibutuhkan untuk menembus skema, termasuk waktu, memori, dan data. Notasi asimtotik memberikan gambaran tren, tetapi penilaian praktis memerlukan perkiraan biaya perangkat keras dan skala data. Evaluasi juga mempertimbangkan kemajuan algoritmik dan perangkat keras di masa depan.
 
 Analisis kompleksitas harus direvisi secara periodik seiring berkembangnya teknik dan teknologi. Diskusi ringkas tersedia dalam literatur terbuka dan ringkasan standar keamanan kunci oleh NIST.
+
+\begin{table}[h]
+\centering
+\caption{Klasifikasi ringkas beberapa serangan dan mitigasi}
+\label{tab:serangan}
+\begin{tabular}{lll}
+\toprule
+Kategori & Contoh & Mitigasi \\
+\midrule
+Kriptanalisis & Linear/diferensial & Desain cipher teruji, parameter aman \\
+Brute-force & Pencarian kunci & Ukuran kunci memadai, rate limiting \\
+Kanal samping & Timing/cache AES \parencite{bernstein2005aes} & Konstanta waktu, masking, blinding \\
+Protokol & Lucky Thirteen \parencite{lucky13} & AEAD modern, verifikasi konstan, random padding \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.4cm, >=Latex]
+  \node (A) [draw, rounded corners] {Alice};
+  \node (B) [right=6cm of A, draw, rounded corners] {Bob};
+  \node (M) [below=1.6cm of $(A)!0.5!(B)$, draw, rounded corners] {Mallory (MITM)};
+  \draw[->] (A) -- node[above]{Kunci publik Bob} (B);
+  \draw[->, dashed] (A) -- node[left]{Intercept} (M);
+  \draw[->, dashed] (M) -- node[left]{Modifikasi} (B);
+  \draw[->] (B) -- node[below]{Balasan} (A);
+  \draw[->, dashed] (B) -- (M);
+  \draw[->, dashed] (M) -- (A);
+\end{tikzpicture}
+\caption{Skema sederhana serangan Man-in-the-Middle (MITM).}
+\label{fig:mitm}
+\end{figure}
+
+\subsection{Contoh Kode: Brute-Force Caesar Cipher}
+Berikut ilustrasi brute-force pada sandi Caesar untuk memulihkan pergeseran dengan eksplorasi seluruh ruang kunci.
+
+\begin{lstlisting}[language=Python, caption={Brute-force Caesar}, label={lst:caesar}]
+import string
+
+def caesar_decrypt(ciphertext: str, shift: int) -> str:
+    alphabet = string.ascii_lowercase
+    result = []
+    for ch in ciphertext.lower():
+        if ch in alphabet:
+            idx = (alphabet.index(ch) - shift) % 26
+            result.append(alphabet[idx])
+        else:
+            result.append(ch)
+    return ''.join(result)
+
+def brute_force(ciphertext: str):
+    for s in range(26):
+        print(s, caesar_decrypt(ciphertext, s))
+
+if __name__ == "__main__":
+    brute_force("khoor zruog")
+\end{lstlisting}
 
 \end{document}

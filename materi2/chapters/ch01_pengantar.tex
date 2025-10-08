@@ -12,6 +12,63 @@ Layanan kriptografi utama meliputi kerahasiaan, integritas data, otentikasi enti
 
 Pemetaan layanan ke primitif kriptografi tidak selalu satu-ke-satu; misalnya, AEAD (Authenticated Encryption with Associated Data) menggabungkan kerahasiaan dan integritas sekaligus. Kesesuaian layanan dengan kebutuhan aplikasi harus mempertimbangkan model ancaman dan asumsi trust. Ringkasan layanan dan konstruksi yang relevan dapat ditemukan pada \textcite{rfc5116} dan \textcite{nist80038d}.
 
+\begin{table}[h]
+\centering
+\caption{Pemetaan layanan ke primitif dan contoh standar}
+\label{tab:layanan-primitif}
+\begin{tabular}{lll}
+\toprule
+Layanan & Primitif & Contoh standar \\
+\midrule
+Kerahasiaan & Cipher blok/alir + mode & AES-GCM \parencite{nist80038d}, ChaCha20-Poly1305 \parencite{rfc8439} \\
+Integritas & Fungsi hash, MAC & SHA-256 \parencite{fips1804}, HMAC \\
+Otentikasi & MAC, tanda tangan digital & RSA-PSS \parencite{rfc8017}, ECDSA \\
+Nir-sangkal & Tanda tangan digital & RSA/ECDSA \parencite{rfc8017} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Contoh AEAD: AES-GCM}
+AEAD menyediakan kerahasiaan sekaligus integritas/asli data terkait (AAD) dalam satu primitf terintegrasi. AES-GCM adalah skema AEAD yang distandardisasi luas dan efisien di perangkat keras dan perangkat lunak \parencite{rfc5116,nist80038d}.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.2cm, >=Latex]
+  \node (pt) [draw, rounded corners, minimum width=2.6cm, minimum height=0.9cm] {Plainteks};
+  \node (aad) [below=of pt, draw, rounded corners, minimum width=2.6cm, minimum height=0.9cm] {AAD};
+  \node (enc) [right=2.8cm of pt, draw, rounded corners, minimum width=3.4cm, minimum height=1.1cm] {AEAD AES-GCM};
+  \node (key) [above=of enc] {Kunci};
+  \node (nonce) [below=of enc] {Nonce/IV};
+  \node (ct) [right=2.8cm of enc, draw, rounded corners, minimum width=2.8cm, minimum height=0.9cm] {Cipherteks};
+  \node (tag) [below=of ct, draw, rounded corners, minimum width=2.8cm, minimum height=0.9cm] {Tag autentikasi};
+  \draw[->] (pt) -- (enc);
+  \draw[->] (aad) -- (enc);
+  \draw[->] (key) -- (enc);
+  \draw[->] (nonce) -- (enc);
+  \draw[->] (enc) -- (ct);
+  \draw[->] (enc) -- (tag);
+\end{tikzpicture}
+\caption{Alur tinggi AEAD AES-GCM \parencite{rfc5116,nist80038d}.}
+\label{fig:aead-gcm}
+\end{figure}
+
+\begin{lstlisting}[language=Python, caption={Contoh enkripsi-dekripsi AES-GCM di Python}, label={lst:aesgcm}]
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import os
+
+key = AESGCM.generate_key(bit_length=256)
+aesgcm = AESGCM(key)
+nonce = os.urandom(12)  # 96-bit IV
+aad = b"header"
+plaintext = b"rahasia"
+
+ciphertext = aesgcm.encrypt(nonce, plaintext, aad)
+recovered = aesgcm.decrypt(nonce, ciphertext, aad)
+assert recovered == plaintext
+\end{lstlisting}
+
+\noindent Contoh diadaptasi dari dokumentasi pustaka \texttt{cryptography} \parencite{cryptography-aesgcm-docs}.
+
 \section{Sejarah Kriptografi}
 Sejarah kriptografi berawal dari teknik-teknik klasik seperti substitusi dan transposisi yang bertujuan menyamarkan pesan dari pihak yang tidak berwenang. Revolusi terjadi saat Perang Dunia II dengan mesin Enigma dan analisis kriptografi terapan berskala besar. Era modern dimulai pada 1970-an dengan publikasi DES dan terobosan kriptografi kunci publik oleh Diffie, Hellman, dan RSA, yang mengubah paradigma distribusi kunci.
 
