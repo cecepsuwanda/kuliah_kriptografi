@@ -5,7 +5,22 @@
 \section{RC4}
 RC4 adalah cipher alir yang pernah digunakan luas, tetapi kini tidak direkomendasikan karena kelemahan bias awal dan serangan praktis. State internal berbasis permutasi byte menghasilkan keystream, namun inisialisasi yang tidak memadai membuka kebocoran statistik. Standar modern menyarankan migrasi ke alternatif seperti ChaCha20.
 
-Analisis bias RC4 menunjukkan bahwa keystream tidak mendekati acak sempurna sehingga memungkinkan pemulihan kunci dalam skenario tertentu. Oleh karena itu, banyak standar telah mendeprikasikannya.
+Analisis bias RC4 menunjukkan bahwa keystream tidak mendekati acak sempurna sehingga memungkinkan pemulihan kunci dalam skenario tertentu. Oleh karena itu, banyak standar telah mendeprikasikannya \parencite{rfc7465,mironov2002rc4}.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=0.9cm, >=Latex]
+  \node (ksa) [draw, rounded corners, minimum width=3cm] {KSA};
+  \node (prga) [draw, rounded corners, right=3.2cm of ksa, minimum width=3cm] {PRGA};
+  \node (S) [below=of ksa] {S[256], i, j};
+  \node (out) [below=of prga] {Byte keystream};
+  \draw[->] (S) -- (ksa);
+  \draw[->] (ksa) -- node[above]{perm. state} (prga);
+  \draw[->] (prga) -- (out);
+\end{tikzpicture}
+\caption{Skema tinggi RC4: KSA (Key Scheduling Algorithm) dan PRGA.}
+\label{fig:rc4}
+\end{figure}
 
 \section{A5}
 Keluarga A5 digunakan pada GSM untuk enkripsi suara dan data, dengan variasi tingkat keamanan yang berbeda. Beberapa varian mengalami serangan yang memungkinkan pemulihan kunci dengan data yang relatif sedikit. Desain berbasis LFSR menyoroti pentingnya nonlinieritas yang kuat.
@@ -42,6 +57,23 @@ AES adalah standar cipher blok modern yang menggantikan DES dan banyak diadopsi 
 
 Standar \textcite{fips197} mendokumentasikan spesifikasi dan rasional desain AES yang telah diuji waktu.
 
+\begin{table}[h]
+\centering
+\caption{Ringkasan status keamanan beberapa cipher}
+\label{tab:review-cipher}
+\begin{tabular}{lll}
+\toprule
+Cipher & Status & Catatan \\
+\midrule
+RC4 & Dilarang & Bias keystream, didepresiasi \parencite{rfc7465} \\
+DES & Tidak aman & Kunci 56-bit, brute-force layak \\
+3DES & Legacy & Batasan penggunaan \parencite{nist800131a} \\
+AES & Direkomendasikan & Standar modern \parencite{fips197} \\
+A5/1 & Rentan & Serangan real-time \parencite{biryukov2000a5} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Penerapan Kriptografi Simetri dalam Kehidupan Sehari-hari}
 Kriptografi simetri digunakan dalam berbagai aplikasi seperti perbankan elektronik, komunikasi seluler, dan penyimpanan data terenkripsi. Kinerja tinggi dan efisiensi menjadikannya pilihan untuk enkripsi bulk data. Keamanan nyata bergantung pada mode operasi, manajemen kunci, dan integrasi sistem.
 
@@ -56,5 +88,22 @@ Standar industri menyediakan pedoman implementasi yang mengikat untuk lembaga ke
 Komunikasi seluler menggunakan cipher simetri untuk melindungi suara dan data melintasi jaringan radio yang tidak dipercaya. Protokol keamanan mengelola autentikasi, perjanjian kunci, dan enkripsi end-to-air. Evolusi generasi jaringan membawa perbaikan kriptografis dan mitigasi kelemahan historis.
 
 Adopsi algoritma modern dan konfigurasi konservatif diperlukan untuk ketahanan jangka panjang.
+
+\subsection{Contoh Kode: ChaCha20-Poly1305 (AEAD)}
+Contoh berikut menggunakan pustaka Python \texttt{cryptography} untuk AEAD yang direkomendasikan di banyak protokol modern \parencite{rfc8439}.
+
+\begin{lstlisting}[language=Python, caption={ChaCha20-Poly1305 AEAD}, label={lst:chacha20}]
+from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
+import os
+
+key = ChaCha20Poly1305.generate_key()
+chacha = ChaCha20Poly1305(key)
+nonce = os.urandom(12)
+aad = b"header"
+pt = b"pesan rahasia"
+ct = chacha.encrypt(nonce, pt, aad)
+rt = chacha.decrypt(nonce, ct, aad)
+assert rt == pt
+\end{lstlisting}
 
 \end{document}
