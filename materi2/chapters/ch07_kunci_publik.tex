@@ -32,6 +32,41 @@ Diffie--Hellman memungkinkan dua pihak menyepakati kunci rahasia melalui saluran
 
 Panduan standar merekomendasikan parameter terverifikasi dan praktik implementasi yang ketat.
 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.3cm, >=Latex]
+  \node (A) [draw, rounded corners] {Alice};
+  \node (B) [draw, rounded corners, right=6cm of A] {Bob};
+  \node (pubA) [below=of A] {$A=g^a$};
+  \node (pubB) [below=of B] {$B=g^b$};
+  \draw[->] (pubA) -- node[above]{\(A\)} (pubB);
+  \draw[->] (pubB) -- node[below]{\(B\)} (pubA);
+  \node (sA) [below=2.2cm of pubA] {$s=B^a=g^{ab}$};
+  \node (sB) [below=2.2cm of pubB] {$s=A^b=g^{ab}$};
+\end{tikzpicture}
+\caption{Skema tinggi Diffie--Hellman klasik. Untuk ECDH, ganti operasi eksponensial dengan perkalian titik pada kurva.}
+\label{fig:dh}
+\end{figure}
+
+\subsection{Contoh Kode: ECDH X25519}
+Berikut contoh pertukaran kunci menggunakan X25519 sesuai \textcite{rfc7748}; gunakan kanal autentikasi untuk mencegah MITM.
+
+\begin{lstlisting}[language=Python, caption={ECDH X25519 di Python}, label={lst:x25519}]
+from cryptography.hazmat.primitives.asymmetric import x25519
+
+alice_private = x25519.X25519PrivateKey.generate()
+bob_private = x25519.X25519PrivateKey.generate()
+
+alice_public = alice_private.public_key()
+bob_public = bob_private.public_key()
+
+alice_shared = alice_private.exchange(bob_public)
+bob_shared = bob_private.exchange(alice_public)
+assert alice_shared == bob_shared
+\end{lstlisting}
+
+\noindent Parameter kurva dan praktik implementasi direkomendasikan pada \textcite{rfc7748,nist80056a}.
+
 \section{Algoritma ElGamal}
 ElGamal adalah skema enkripsi kunci publik berbasis DLP yang menyediakan kerangka probabilistik untuk keamanan IND-CPA. Variasi dan optimalisasi meningkatkan efisiensi, namun penanganan pesan dan padding harus benar. Analisis keamanan menekankan pentingnya randomness yang kuat.
 
