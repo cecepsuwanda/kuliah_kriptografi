@@ -12,6 +12,36 @@ Pembangkit bilangan acak aman (CSPRNG) dirancang untuk menghasilkan output yang 
 
 Standar dan pedoman implementasi tersedia dari NIST dan organisasi lain untuk memastikan kualitas dan keamanan keluaran.
 
+\begin{table}[h]
+\centering
+\caption{Ringkasan TRNG, PRNG, dan CSPRNG}
+\label{tab:rng}
+\begin{tabular}{lll}
+\toprule
+Jenis & Sumber & Catatan \\
+\midrule
+TRNG & Fenomena fisik & Butuh pengkondisi, uji kesehatan \parencite{nist80090b} \\
+PRNG & Deterministik & Tidak cocok untuk keamanan \\
+CSPRNG & Deterministik + seed rahasia & Sesuai SP 800-90A/B/C \parencite{nist80090a,nist80090c} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.0cm, >=Latex]
+  \node (src) [draw, rounded corners] {Sumber entropi};
+  \node (cond) [draw, rounded corners, right=2.6cm of src] {Kondisioner};
+  \node (drbg) [draw, rounded corners, right=2.6cm of cond] {DRBG (Instantiate/Generate/Reseed)};
+  \node (out) [right=2.8cm of drbg] {Bit acak};
+  \draw[->] (src) -- (cond);
+  \draw[->] (cond) -- (drbg);
+  \draw[->] (drbg) -- (out);
+\end{tikzpicture}
+\caption{Arsitektur tinggi: sumber entropi, kondisioner, dan DRBG \parencite{nist80090a,nist80090b,nist80090c}.}
+\label{fig:drbg}
+\end{figure}
+
 \section{Blum Blum Shub (BBS)}
 BBS adalah CSPRNG berbasis masalah faktorisasi yang menawarkan jaminan teoretis kuat namun relatif lambat. Mekanismenya bergantung pada operasi kuadrat modulo produk dua bilangan prima besar. Keamanannya terkait erat dengan kesulitan mengambil akar kuadrat modulo komposit.
 
@@ -26,5 +56,17 @@ Penggunaan praktis sering terbatas oleh kebutuhan performa tinggi pada aplikasi 
 Pendekatan berbasis chaos mencoba memanfaatkan dinamika nonlinier untuk menghasilkan deret semu-acak. Namun, banyak proposal kekurangan analisis keamanan formal dan menunjukkan kelemahan ketika dimodelkan secara digital. Penggunaan harus sangat hati-hati dan mengikuti evaluasi komunitas yang ketat.
 
 Konsensus saat ini mendukung penggunaan konstruksi yang telah distandardisasi dan diuji luas.
+
+\subsection{Contoh Kode: Penggunaan secrets di Python}
+Untuk kebutuhan kriptografi umum, gunakan modul \texttt{secrets} yang memanfaatkan CSPRNG sistem \parencite{rfc4086}.
+
+\begin{lstlisting}[language=Python, caption={Contoh penggunaan secrets}, label={lst:secrets}]
+import secrets
+
+key = secrets.token_bytes(32)
+nonce = secrets.token_bytes(12)
+rand_int = secrets.randbelow(1 << 128)
+print(len(key), len(nonce), rand_int.bit_length())
+\end{lstlisting}
 
 \end{document}
