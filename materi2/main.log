@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2025.10.8)  8 OCT 2025 10:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2025.10.8)  8 OCT 2025 10:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1025,56 +1025,56 @@ Package csquotes Info: Adjusting default style.
 
 
 Package csquotes Warning: No style for language 'indonesian'.
-(csquotes)                Using fallback style on input line 65.
+(csquotes)                Using fallback style on input line 70.
 
 Package csquotes Info: Redefining alias 'default' -> 'fallback'.
 
 Package biblatex Warning: Conflicting options.
 (biblatex)                'urldate=iso' requires 'seconds=true'.
-(biblatex)                Setting 'seconds=true' on input line 65.
+(biblatex)                Setting 'seconds=true' on input line 70.
 
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 65
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 70
 .
 (/usr/share/texmf/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 65.
-LaTeX Font Info:    ... okay on input line 65.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 65.
-LaTeX Font Info:    ... okay on input line 65.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 65.
-LaTeX Font Info:    ... okay on input line 65.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 65.
-LaTeX Font Info:    ... okay on input line 65.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 65.
-LaTeX Font Info:    ... okay on input line 65.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 65.
-LaTeX Font Info:    ... okay on input line 65.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 65.
-LaTeX Font Info:    ... okay on input line 65.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 65.
-LaTeX Font Info:    ... okay on input line 65.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 65.
-LaTeX Font Info:    ... okay on input line 65.
-LaTeX Info: Redefining \microtypecontext on input line 65.
-Package microtype Info: Applying patch `item' on input line 65.
-Package microtype Info: Applying patch `toc' on input line 65.
-Package microtype Info: Applying patch `eqnum' on input line 65.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Info: Redefining \microtypecontext on input line 70.
+Package microtype Info: Applying patch `item' on input line 70.
+Package microtype Info: Applying patch `toc' on input line 70.
+Package microtype Info: Applying patch `eqnum' on input line 70.
 
 
-Package microtype Warning: Unable to apply patch `footnote' on input line 65.
+Package microtype Warning: Unable to apply patch `footnote' on input line 70.
 
-Package microtype Info: Applying patch `verbatim' on input line 65.
-LaTeX Info: Redefining \microtypesetup on input line 65.
+Package microtype Info: Applying patch `verbatim' on input line 70.
+LaTeX Info: Redefining \microtypesetup on input line 70.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 65.
+LaTeX Info: Redefining \showhyphens on input line 70.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -1138,7 +1138,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring ON on input line 65.
+Package hyperref Info: Link coloring ON on input line 70.
 
 (./main.out) (./main.out)
 \@outlinefile=\write5
@@ -1159,8 +1159,8 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'main.bbl' found.
  (./main.bbl)
-Package biblatex Info: Reference section=0 on input line 65.
-Package biblatex Info: Reference segment=0 on input line 65.
+Package biblatex Info: Reference section=0 on input line 70.
+Package biblatex Info: Reference segment=0 on input line 70.
 
 
 [1
@@ -1235,7 +1235,13 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 
 [8
 
-] (./main.lof)
+] (./main.lof
+Underfull \hbox (badness 1199) in paragraph at lines 15--15
+ [][] [][][]\T1/lmr/m/n/12 (+20) Skema ting-gi Diffie--Hellman kla-sik. Un-tuk 
+ECDH, gan-ti ope-ra-si 
+ []
+
+)
 \tf@lof=\write7
 \openout7 = `main.lof'.
 
@@ -1268,6 +1274,12 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ] (./chapters/ch01_pengantar.tex
 Bab 1.
 
+Underfull \hbox (badness 1052) in paragraph at lines 13--14
+\T1/lmr/m/n/12 (+20) dan in-te-gri-tas se-ka-li-gus. Ke-se-su-a-i-an la-yan-an 
+de-ngan ke-bu-tuh-an apli-ka-si ha-rus
+ []
+
+
 
 [1
 
@@ -1296,23 +1308,23 @@ LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10.95> not available
 
 
 [2]
+Underfull \hbox (badness 1014) in paragraph at lines 83--84
+\T1/lmr/m/n/12 (+20) Kriptografi si-me-tri meng-gu-nak-an kun-ci yang sa-ma un-
+tuk enk-ri-psi dan dek-ri-psi,
+ []
+
+
 
 [3]) (./chapters/ch02_landasan_matematika.tex
 
 [4]
 Bab 2.
 
-Underfull \vbox (badness 5533) has occurred while \output is active []
-
-
 
 [5
 
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/
 dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathex.enc}]
-Underfull \vbox (badness 3907) has occurred while \output is active []
-
-
 
 [6]
 
@@ -1354,273 +1366,34 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 ]
 Bab 4.
 
+Underfull \hbox (badness 1038) in paragraph at lines 8--9
+[]\T1/lmr/m/n/12 (+20) Kekuatan ci-pher subs-ti-tu-si me-ning-kat de-ngan mem-p
+er-lu-as ru-ang kun-ci atau
+ []
+
+
 
 [17]
+Underfull \hbox (badness 1817) in paragraph at lines 21--22
+\T1/lmr/m/n/12 (+20) Cipher abjad-tunggal meng-gu-nak-an sa-tu pe-me-ta-an te-t
+ap un-tuk se-lu-ruh pes-an,
+ []
+
+
 
 [18]
-Overfull \hbox (43.295pt too wide) in paragraph at lines 71--83
- [][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-Underfull \vbox (badness 1490) has occurred while \output is active []
-
-
-
-[19]
-Underfull \vbox (badness 2426) has occurred while \output is active []
-
-
-
-[20]
-
-[21]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-[22]) (./chapters/ch05_kriptografi_modern.tex
-
-[23]
-
-[24
-
-]
-Bab 5.
-
-
-[25]
-
-[26]
-Overfull \hbox (482.43654pt too wide) in paragraph at lines 49--59
- [][] 
- []
-
-
-
-[27]
-
-[28]
-Overfull \hbox (31.59837pt too wide) in paragraph at lines 124--125
-\T1/lmr/m/n/12 (-20) Berikut con-toh ring-kas enk-ri-psi-/dek-ri-psi AES-CTR me
-ng-gu-nak-an pus-ta-ka Python \T1/lmtt/m/n/12 cryptography
- []
-
-
-
-[29]) (./chapters/ch06_review_cipher.tex
-
-[30]
-Bab 6.
-
-
-[31
-
-]
-
-[32]
-Overfull \hbox (209.05933pt too wide) in paragraph at lines 64--75
- [][] 
- []
-
-
-
-[33]) (./chapters/ch07_kunci_publik.tex
-
-[34]
-Bab 7.
-
-
-[35
-
-]
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-
-[36]
-
-[37]) (./chapters/ch08_pembangkit_acak.tex
-
-[38]
-Bab 8.
-
-Overfull \hbox (816.55746pt too wide) in paragraph at lines 19--28
- [][] 
- []
-
-
-Overfull \hbox (188.45358pt too wide) in paragraph at lines 40--41
- [][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-
-[39
-
-]
-
-[40]) (./chapters/ch09_fungsi_hash.tex
-
-[41]
-
-[42
-
-]
-Bab 9.
-
-
-[43]
-Overfull \hbox (45.84372pt too wide) in paragraph at lines 48--49
- [][] 
- []
-
-
-
-[44]) (./chapters/ch10_ttd_digital.tex
-
-[45]
-
-[46
-
-]
-Bab 10.
-
-
-[47]
-Overfull \hbox (57.08974pt too wide) in paragraph at lines 29--38
- [][] 
- []
-
-
-
-[48]) (./chapters/ch11_sertifikat_pki.tex
-
-[49]
-
-[50
-
-]
-Bab 11.
-
-
-[51]
-
-[52]) (./chapters/ch12_protokol.tex
-
-[53]
-
-[54
-
-]
-Bab 12.
-
-Overfull \hbox (350.63623pt too wide) in paragraph at lines 19--28
- [][] 
- []
-
-
-
-[55]
-
-[56]) (./chapters/ch13_manajemen_kunci.tex
-
-[57]
-
-[58
-
-]
-Bab 13.
-
-Overfull \hbox (412.95439pt too wide) in paragraph at lines 14--26
- [][] 
- []
-
-
-
-[59]
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-
-[60]) (./chapters/ch14_steganografi.tex
-
-[61]
-
-[62
-
-]
-Bab 14.
-
-Underfull \vbox (badness 1661) has occurred while \output is active []
-
-
-
-[63]
-
-[64]
-
-[65])
-
-[66]
-Package microtype Info: Character `029' is missing
-(microtype)             in font `T1/lmr/m/sc/12'.
-(microtype)             Ignoring protrusion settings for this character.
-
-
-[67
-
-
-]
-
-[68]
-
-[69]
-
-[70]
-
-[71] (./main.aux)
- ***********
-LaTeX2e <2024-11-01> patch level 2
-L3 programming layer <2025-01-18>
- ***********
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 6326277AC994A58C7847B44EB4F1E8A5;30161.
-Package logreq Info: Writing requests to 'main.run.xml'.
-\openout1 = `main.run.xml'.
-
- ) 
+! Missing } inserted.
+<inserted text> 
+                }
+l.71 ...zebox{\textwidth}{!}{\begin{tabular}{lll}}
+                                                   
 Here is how much of TeX's memory you used:
- 36603 strings out of 474658
- 677228 string characters out of 5755527
- 1776023 words of memory out of 5000000
- 58376 multiletter control sequences out of 15000+600000
- 625254 words of font info for 188 fonts, out of 8000000 for 9000
+ 35710 strings out of 474658
+ 661965 string characters out of 5755527
+ 1676005 words of memory out of 5000000
+ 57858 multiletter control sequences out of 15000+600000
+ 617393 words of font info for 141 fonts, out of 8000000 for 9000
  264 hyphenation exceptions out of 8191
  84i,16n,91p,1001b,3355s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/ty
-pe1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts/type1/public/lm/lmex10.pfb></
-usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb></usr/share/texmf/fonts/type1/
-public/lm/lmmi8.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/sha
-re/texmf/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1/public/l
-m/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/f
-onts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmro12.
-pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/
-type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb><
-/usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (85 pages, 519870 bytes).
-PDF statistics:
- 2067 PDF objects out of 2073 (max. 8388607)
- 1916 compressed objects within 20 object streams
- 568 named destinations out of 1000 (max. 500000)
- 35605 words of extra memory for PDF output out of 35830 (max. 10000000)
 
+!  ==> Fatal error occurred, no output PDF file produced!

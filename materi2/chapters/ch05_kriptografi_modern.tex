@@ -46,7 +46,7 @@ AES sebagai standar de facto menawarkan keamanan kuat dengan kinerja tinggi pada
 \centering
 \caption{Ringkasan beberapa mode operasi cipher blok}
 \label{tab:modes}
-\begin{tabular}{llll}
+\resizebox{\textwidth}{!}{\begin{tabular}{llll}}
 \toprule
 Mode & Difusi antarblok & Keacakan IV/Nonce & Catatan \\
 \midrule
@@ -55,7 +55,7 @@ CBC & Ya & IV acak & Perlu autentikasi (hindari padding oracle) \parencite{nist8
 CTR & - & Nonce/counter unik & Paralelis, butuh keunikan ketat \parencite{nist80038a} \\
 GCM & Ya & Nonce unik & AEAD: kerahasiaan+integritas \parencite{nist80038d} \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 \section{Electronic Code Book (ECB)}
