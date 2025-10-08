@@ -12,6 +12,21 @@ Kunci publik memungkinkan negosiasi kunci sesi melalui saluran publik dan otenti
 
 Contoh konkret dapat ditemukan pada protokol TLS modern \parencite{rfc8446}.
 
+\begin{table}[h]
+\centering
+\caption{Ringkasan beberapa protokol}
+\label{tab:protokol}
+\begin{tabular}{lll}
+\toprule
+Protokol & Tujuan & Catatan \\
+\midrule
+TLS 1.3 & Saluran aman & Forward secrecy, AEAD \parencite{rfc8446} \\
+Kerberos & Otentikasi jaringan & Tiket berbasis kunci simetri \parencite{rfc4120} \\
+Signal (X3DH+DR) & Pesan aman end-to-end & Forward secrecy, post-compromise security \parencite{signal-dr,x3dh} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Protokol untuk Tanda-tangan Digital}
 Protokol tanda tangan menyertakan mekanisme pengikatan konteks, penandatanganan data, dan verifikasi oleh pihak penerima. Desain harus mencegah pemutaran ulang dan ambiguitas data yang ditandatangani. Pengelolaan kunci yang baik dan audit menjadi elemen penting.
 
@@ -27,6 +42,19 @@ Protokol Diffie--Hellman memerlukan validasi parameter dan proteksi terhadap ser
 
 TLS 1.3 mengilustrasikan praktik terbaik dalam perancangan protokol pertukaran kunci \parencite{rfc8446}.
 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=0.8cm, >=Latex]
+  \node (c) {Client};
+  \node (s) [right=5.5cm of c] {Server};
+  \draw[->] (c) -- node[above]{ClientHello (key_share, SNI)} (s);
+  \draw[->] (s) -- node[below]{ServerHello (key_share), EncryptedExtensions, Certificate, Finished} (c);
+  \draw[->] (c) -- node[above]{Finished} (s);
+\end{tikzpicture}
+\caption{Skema ringkas handshake TLS 1.3.}
+\label{fig:tls13}
+\end{figure}
+
 \section{Otentikasi}
 Otentikasi memastikan identitas entitas sebelum melanjutkan pertukaran data sensitif. Skema dapat berbasis kata sandi, token, atau kunci publik, masing-masing dengan tantangan keamanan yang khas. Mekanisme harus tahan terhadap phishing, replay, dan brute-force.
 
@@ -36,5 +64,18 @@ Desain sistem sering memanfaatkan multi-faktor untuk meningkatkan jaminan identi
 SSL/TLS menyediakan saluran aman di atas TCP dengan negosiasi kriptografi, autentikasi, dan integritas. Evolusi ke TLS 1.3 menyederhanakan suite kriptografi dan menguatkan keamanan. Implementasi harus selalu mengikuti praktik terbaru dan menonaktifkan versi lama yang rentan.
 
 Spesifikasi \textcite{rfc8446} memberikan rujukan utama untuk penerapan modern.
+
+\subsection{Contoh Kode: TLS Client Sederhana}
+Contoh berikut membuka koneksi TLS menggunakan modul standar Python.
+
+\begin{lstlisting}[language=Python, caption={TLS client}, label={lst:tls-client}]
+import socket, ssl
+
+context = ssl.create_default_context()
+with socket.create_connection(("example.com", 443)) as sock:
+    with context.wrap_socket(sock, server_hostname="example.com") as ssock:
+        ssock.sendall(b"GET / HTTP/1.1\r\nHost: example.com\r\n\r\n")
+        print(ssock.recv(1024))
+\end{lstlisting}
 
 \end{document}
