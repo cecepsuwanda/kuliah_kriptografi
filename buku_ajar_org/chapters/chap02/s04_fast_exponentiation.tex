@@ -1,0 +1,7 @@
+\section{Pangkat Modular (Fast Exponentiation)}
+
+Menghitung $a^b \bmod n$ secara naif dengan mengalikan $a$ sebanyak $b$ kali membutuhkan waktu $O(b)$. \textbf{Square-and-multiply} (atau binary exponentiation) mengurangi kompleksitas menjadi $O(\log b)$.
+
+Algoritma: representasikan $b$ dalam biner. Untuk setiap bit, kuadratkan basis; jika bit 1, kalikan hasil dengan basis. Contoh: $3^{11} \bmod 5$---$11 = 1011_2$---proses: $3^1 \equiv 3$, $3^2 \equiv 4$, $3^4 \equiv 1$, $3^5 \equiv 3$, $3^{10} \equiv 4$, $3^{11} \equiv 2 \pmod{5}$.
+
+Implementasi fast modular exponentiation tersedia di Bab 9 dalam C dan MATLAB.

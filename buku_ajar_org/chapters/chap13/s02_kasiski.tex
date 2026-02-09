@@ -1,0 +1,3 @@
+\section{Kasiski Examination}
+
+Kasiski examination menyerang cipher Vigenère dengan menemukan panjang kunci \cite{trappe2006,schneier1996}. Ide: jika substring plaintext berulang pada jarak kelipatan panjang kunci, substring ciphertext yang sama akan muncul. Cari pengulangan substring dalam ciphertext; jarak antar pengulangan kemungkinan kelipatan panjang kunci. GCD dari jarak-jarak tersebut memberikan estimasi panjang kunci. Setelah panjang kunci diketahui, setiap posisi dapat dianalisis sebagai cipher Caesar terpisah.

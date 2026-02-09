@@ -1,0 +1,44 @@
+\section{Algoritma RSA}
+
+RSA (Rivest--Shamir--Adleman, 1977) adalah algoritma kriptografi asimetris paling luas digunakan \cite{rivest1978,katz2020,menezes1996}. Berdasarkan kesulitan memfaktorkan bilangan besar.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  node distance=1cm,
+  box/.style={rectangle, draw, minimum width=2.2cm, minimum height=0.7cm, align=center, font=\small}
+]
+\node[box, fill=blue!15] (alice) {Alice};
+\node[box, fill=green!15, right=4cm of alice] (bob) {Bob};
+\draw[-Stealth] (alice) -- node[above] {$c = m^e \bmod n$} (bob);
+\node[below=0.3cm of alice, font=\scriptsize] {Kunci publik $(n,e)$};
+\node[below=0.3cm of bob, font=\scriptsize] {Kunci privat $(n,d)$};
+\end{tikzpicture}
+\caption{Alur enkripsi RSA: Alice mengenkripsi dengan kunci publik Bob}
+\label{fig:rsa}
+\end{figure}
+
+\subsection{Generasi Kunci}
+\begin{enumerate}
+\item Pilih dua bilangan prima besar $p$ dan $q$.
+\item Hitung $n = pq$ dan $\phi(n) = (p-1)(q-1)$.
+\item Pilih $e$ dengan $1 < e < \phi(n)$ dan $\gcd(e, \phi(n)) = 1$.
+\item Hitung $d$ sehingga $ed \equiv 1 \pmod{\phi(n)}$ (gunakan Euclid diperluas).
+\item Kunci publik: $(n, e)$. Kunci privat: $(n, d)$.
+\end{enumerate}
+
+\subsection{Enkripsi dan Dekripsi}
+Enkripsi: $c = m^e \bmod n$. Dekripsi: $m = c^d \bmod n = m^{ed} \bmod n = m \pmod{n}$ (berdasarkan Teorema Euler) \cite{rivest1978,katz2020,menezes1996}.
+
+\begin{lstlisting}[style=cstyle,caption={Enkripsi RSA dalam C (simplified)}]
+// Contoh: enkripsi m=3 dengan n=33, e=3
+// c = 3^3 mod 33 = 27
+long long rsa_encrypt(long long m, long long e, long long n) {
+    return mod_pow(m, e, n);  // gunakan fast exponentiation
+}
+long long rsa_decrypt(long long c, long long d, long long n) {
+    return mod_pow(c, d, n);
+}
+\end{lstlisting}
+
+Implementasi lengkap RSA menggunakan fast modular exponentiation tersedia di Bab 14.

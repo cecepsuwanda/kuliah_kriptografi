@@ -1,0 +1,26 @@
+\section{Fungsi Hash}
+
+Fungsi hash kriptografis memetakan input berukuran sembarang ke output berukuran tetap (misalnya 256 bit) \cite{katz2020,menezes1996}. Sifat penting:
+
+\begin{table}[!htbp]
+\centering
+\caption{Sifat fungsi hash kriptografis}
+\label{tab:hash-sifat}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Sifat} & \textbf{Deskripsi} \\
+\midrule
+Preimage resistance & Sulit menemukan $x$ jika diberikan $h(x)$ \\
+Second preimage & Sulit menemukan $x' \neq x$ dengan $h(x') = h(x)$ \\
+Collision resistance & Sulit menemukan $x \neq x'$ dengan $h(x) = h(x')$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\item \textbf{Preimage resistance:} Sulit menemukan $x$ jika diberikan $h(x)$.
+\item \textbf{Second preimage resistance:} Sulit menemukan $x' \neq x$ dengan $h(x') = h(x)$.
+\item \textbf{Collision resistance:} Sulit menemukan $x, x'$ dengan $x \neq x'$ dan $h(x) = h(x')$.
+\end{itemize}
+
+Aplikasi: verifikasi integritas file, penyimpanan kata sandi, tanda tangan digital \cite{katz2020,menezes1996}.

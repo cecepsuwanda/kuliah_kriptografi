@@ -1,0 +1,50 @@
+\section{Implementasi dalam Pascal}
+
+Berikut implementasi Caesar Cipher dalam Pascal.
+
+\begin{lstlisting}[style=pascalstyle,caption={Implementasi Caesar Cipher dalam Pascal}]
+program CaesarCipher;
+
+var
+  plaintext, ciphertext: string;
+  shift, i: integer;
+  c: char;
+
+function caesar_encrypt(s: string; k: integer): string;
+var
+  result: string;
+  i: integer;
+  base: char;
+begin
+  result := '';
+  for i := 1 to length(s) do
+  begin
+    if (s[i] >= 'A') and (s[i] <= 'Z') then
+    begin
+      base := 'A';
+      result := result + chr(ord(base) + (ord(s[i]) - ord(base) + k) mod 26);
+    end
+    else if (s[i] >= 'a') and (s[i] <= 'z') then
+    begin
+      base := 'a';
+      result := result + chr(ord(base) + (ord(s[i]) - ord(base) + k) mod 26);
+    end
+    else
+      result := result + s[i];
+  end;
+  caesar_encrypt := result;
+end;
+
+function caesar_decrypt(s: string; k: integer): string;
+begin
+  caesar_decrypt := caesar_encrypt(s, 26 - k);
+end;
+
+begin
+  plaintext := 'HELLO CRYPTO';
+  shift := 3;
+  ciphertext := caesar_encrypt(plaintext, shift);
+  writeln('Encrypted: ', ciphertext);
+  writeln('Decrypted: ', caesar_decrypt(ciphertext, shift));
+end.
+\end{lstlisting}

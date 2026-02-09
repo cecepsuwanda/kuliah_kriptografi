@@ -1,0 +1,27 @@
+\section{Confidentiality, Integrity, dan Authenticity}
+
+Tiga tujuan utama keamanan informasi dikenal sebagai triad CIA:
+
+\begin{table}[!htbp]
+\centering
+\caption{Triad CIA dan mekanisme kriptografis}
+\label{tab:cia}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.44\textwidth}>{\raggedright\arraybackslash}p{0.32\textwidth}@{}}
+\toprule
+\textbf{Tujuan} & \textbf{Deskripsi} & \textbf{Mekanisme} \\
+\midrule
+Confidentiality & Hanya pihak berwenang yang dapat mengakses & Enkripsi simetris/asimetris \\
+Integrity & Data tidak diubah tanpa sepengetahuan & Fungsi hash, MAC, tanda tangan \\
+Authenticity & Memastikan identitas pengirim & Tanda tangan digital, sertifikat \\
+Non-repudiation & Pengirim tidak dapat menyangkal & Tanda tangan digital \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{enumerate}
+\item \textbf{Confidentiality (Kerahasiaan):} Memastikan informasi hanya dapat diakses oleh pihak yang berwenang. Enkripsi adalah mekanisme utama untuk mencapai kerahasiaan.
+\item \textbf{Integrity (Integritas):} Memastikan informasi tidak diubah oleh pihak yang tidak berwenang. Fungsi hash dan tanda tangan digital digunakan untuk memverifikasi integritas.
+\item \textbf{Authenticity (Keaslian):} Memastikan identitas pengirim dan bahwa pesan benar-benar berasal dari pihak yang mengklaim. Autentikasi dan tanda tangan digital menyediakan keaslian.
+\end{enumerate}
+
+Sering kali ditambahkan \textbf{Non-repudiation (Nirpenyangkalan):} Memastikan pengirim tidak dapat menyangkal telah mengirim pesan. Tanda tangan digital memberikan bukti yang tidak dapat disangkal \cite{stallings2017,ferguson2010}.

@@ -1,0 +1,43 @@
+\babel@toc {indonesian}{}\relax 
+\contentsline {section}{\numberline {1}Identitas Mata Kuliah}{4}{section.1}%
+\contentsline {section}{\numberline {2}Deskripsi Mata Kuliah}{4}{section.2}%
+\contentsline {section}{\numberline {3}Capaian Pembelajaran Lulusan (CPL) yang Relevan}{6}{section.3}%
+\contentsline {section}{\numberline {4}Capaian Pembelajaran Mata Kuliah (CPMK)}{6}{section.4}%
+\contentsline {section}{\numberline {5}Sub-CPMK dan Indikator Kinerja}{6}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Sub-CPMK 1: Prinsip Dasar Kriptografi}{6}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Sub-CPMK 2: Matematika Kriptografi}{6}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Sub-CPMK 3: Algoritma Kriptografi Klasik}{6}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Sub-CPMK 4: Algoritma Kriptografi Modern}{6}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Sub-CPMK 5: Fungsi Hash dan Tanda Tangan Digital}{6}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Sub-CPMK 6: Protokol dan Manajemen Kunci}{7}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Sub-CPMK 7: Kriptanalisis}{7}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}Sub-CPMK 8: Implementasi Pemrograman}{7}{subsection.5.8}%
+\contentsline {section}{\numberline {6}Peta Keterkaitan CPMK terhadap CPL}{7}{section.6}%
+\contentsline {section}{\numberline {7}Bahan Kajian dan Referensi Utama}{7}{section.7}%
+\contentsline {section}{\numberline {8}Rencana Pembelajaran Semester (RPS)}{7}{section.8}%
+\contentsline {section}{\numberline {9}Strategi Pembelajaran OBE}{10}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Project-Based Learning (PBL)}{10}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Problem-Based Learning}{10}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Praktikum/Laboratorium}{10}{subsection.9.3}%
+\contentsline {section}{\numberline {10}Metode Penilaian dan Rubrik}{10}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Komponen Penilaian}{10}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Rubrik Penilaian Praktikum (Skala 1--4)}{11}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Rubrik Penilaian Proyek}{11}{subsection.10.3}%
+\contentsline {section}{\numberline {11}Daftar Topik Kriptografi}{11}{section.11}%
+\contentsline {section}{\numberline {12}Contoh Tugas Proyek dan Studi Kasus}{12}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Tugas Proyek 1: Implementasi Multi-Bahasa}{12}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Tugas Proyek 2: Sistem Enkripsi Hibrida}{12}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}Studi Kasus 1: Keamanan Pesan Instan}{12}{subsection.12.3}%
+\contentsline {subsection}{\numberline {12.4}Studi Kasus 2: Tanda Tangan Dokumen}{12}{subsection.12.4}%
+\contentsline {section}{\numberline {13}Contoh Kode Kriptografi}{13}{section.13}%
+\contentsline {subsection}{\numberline {13.1}MATLAB: Cipher Caesar}{13}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}C: Cipher Caesar}{13}{subsection.13.2}%
+\contentsline {subsection}{\numberline {13.3}C++: Cipher Caesar}{14}{subsection.13.3}%
+\contentsline {subsection}{\numberline {13.4}Pascal: Cipher Caesar}{14}{subsection.13.4}%
+\contentsline {subsection}{\numberline {13.5}MATLAB: Algoritma Euclid Diperluas}{15}{subsection.13.5}%
+\contentsline {subsection}{\numberline {13.6}C: Modular Exponentiation (Fast Power)}{16}{subsection.13.6}%
+\contentsline {section}{\numberline {14}Daftar Referensi}{17}{section.14}%
+\contentsline {subsection}{\numberline {14.1}Buku Utama}{17}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}Buku Pendukung}{17}{subsection.14.2}%
+\contentsline {subsection}{\numberline {14.3}Sumber Online}{17}{subsection.14.3}%
+\contentsline {section}{\numberline {15}Pengesahan}{17}{section.15}%

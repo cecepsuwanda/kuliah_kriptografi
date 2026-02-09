@@ -1,0 +1,34 @@
+\section{Implementasi dalam C++}
+
+Berikut implementasi Caesar Cipher dalam C++.
+
+\begin{lstlisting}[style=cppstyle,caption={Implementasi Caesar Cipher dalam C++}]
+#include <iostream>
+#include <string>
+#include <cctype>
+
+std::string caesar_encrypt(std::string plaintext, int shift) {
+    std::string ciphertext = "";
+    for (char c : plaintext) {
+        if (isalpha(c)) {
+            char base = isupper(c) ? 'A' : 'a';
+            ciphertext += base + (c - base + shift + 26) % 26;
+        } else {
+            ciphertext += c;
+        }
+    }
+    return ciphertext;
+}
+
+std::string caesar_decrypt(std::string ciphertext, int shift) {
+    return caesar_encrypt(ciphertext, 26 - shift);
+}
+
+int main() {
+    std::string msg = "HELLO CRYPTO";
+    std::cout << "Encrypted: " << caesar_encrypt(msg, 3) << std::endl;
+    std::cout << "Decrypted: " << caesar_decrypt(
+        caesar_encrypt(msg, 3), 3) << std::endl;
+    return 0;
+}
+\end{lstlisting}

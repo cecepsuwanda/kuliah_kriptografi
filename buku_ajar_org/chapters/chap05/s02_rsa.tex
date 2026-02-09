@@ -1,0 +1,15 @@
+\section{Algoritma RSA}
+
+RSA (Rivest--Shamir--Adleman, 1977) adalah algoritma kriptografi asimetris paling luas digunakan. Berdasarkan kesulitan memfaktorkan bilangan besar.
+
+\subsection{Generasi Kunci}
+\begin{enumerate}
+\item Pilih dua bilangan prima besar $p$ dan $q$.
+\item Hitung $n = pq$ dan $\phi(n) = (p-1)(q-1)$.
+\item Pilih $e$ dengan $1 < e < \phi(n)$ dan $\gcd(e, \phi(n)) = 1$.
+\item Hitung $d$ sehingga $ed \equiv 1 \pmod{\phi(n)}$ (gunakan Euclid diperluas).
+\item Kunci publik: $(n, e)$. Kunci privat: $(n, d)$.
+\end{enumerate}
+
+\subsection{Enkripsi dan Dekripsi}
+Enkripsi: $c = m^e \bmod n$. Dekripsi: $m = c^d \bmod n = m^{ed} \bmod n = m \pmod{n}$ (berdasarkan Teorema Euler). Implementasi RSA menggunakan fast modular exponentiation.

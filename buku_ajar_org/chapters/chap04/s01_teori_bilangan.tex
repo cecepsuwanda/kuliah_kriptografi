@@ -1,0 +1,10 @@
+\section{Teori Bilangan}
+
+\subsection{Bilangan Prima}
+Bilangan prima adalah bilangan bulat positif yang hanya habis dibagi oleh 1 dan dirinya sendiri. Bilangan prima penting dalam kriptografi karena sulit memfaktorkan bilangan besar menjadi faktor prima \cite{trappe2006,stinson2018,menezes1996}.
+
+\subsection{Teorema Fermat Kecil}
+Jika $p$ prima dan $\gcd(a, p) = 1$, maka $a^{p-1} \equiv 1 \pmod{p}$. Konsekuensi: $a^{-1} \equiv a^{p-2} \pmod{p}$.
+
+\subsection{Fungsi Euler}
+Fungsi Euler $\phi(n)$ menyatakan banyaknya bilangan bulat positif kurang dari $n$ yang relatif prima dengan $n$. Untuk $n = pq$ dengan $p, q$ prima: $\phi(n) = (p-1)(q-1)$. Teorema Euler: jika $\gcd(a, n) = 1$, maka $a^{\phi(n)} \equiv 1 \pmod{n}$ \cite{trappe2006,stinson2018,menezes1996}.

@@ -1,0 +1,9 @@
+\section{Mode Operasi Block Cipher}
+
+Block cipher membutuhkan \textbf{mode operasi} untuk mengenkripsi data yang lebih panjang dari ukuran blok \cite{nistsp80038a,ferguson2010}. Mode yang umum: ECB, CBC, CTR, GCM.
+
+\subsection{ECB (Electronic Codebook)}
+Setiap blok plaintext dienkripsi secara independen. Kelemahan: blok identik menghasilkan ciphertext identik---rentan terhadap analisis pola \cite{nistsp80038a}.
+
+\subsection{CBC (Cipher Block Chaining)}
+Setiap blok plaintext di-XOR dengan ciphertext blok sebelumnya sebelum enkripsi. Memerlukan IV (Initialization Vector) untuk blok pertama. Lebih aman dari ECB karena ciphertext bergantung pada semua blok sebelumnya \cite{nistsp80038a,ferguson2010}.

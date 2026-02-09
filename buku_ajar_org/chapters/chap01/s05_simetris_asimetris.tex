@@ -1,0 +1,46 @@
+\section{Kriptografi Simetris dan Asimetris}
+
+Berdasarkan penggunaan kunci, kriptografi dibagi menjadi dua kategori utama:
+
+\begin{table}[!htbp]
+\centering
+\caption{Perbandingan kriptografi simetris dan asimetris}
+\label{tab:simetris-asimetris}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Aspek} & \textbf{Simetris} & \textbf{Asimetris} \\
+\midrule
+Jumlah kunci & 1 kunci rahasia & 2 kunci (publik + privat) \\
+Enkripsi/Dekripsi & Kunci sama & Kunci berbeda \\
+Contoh & AES, DES, Caesar & RSA, ElGamal \\
+Kecepatan & Cepat & Lebih lambat \\
+Distribusi kunci & Sulit (perlu saluran aman) & Mudah (kunci publik terbuka) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  node distance=1cm,
+  box/.style={rectangle, draw, minimum width=2cm, minimum height=0.7cm, align=center, font=\small}
+]
+\node[box, fill=blue!20] (alice) {Alice};
+\node[box, fill=green!20, right=4cm of alice] (bob) {Bob};
+\node[above=0.5cm of alice, font=\scriptsize] {Kunci K};
+\node[above=0.5cm of bob, font=\scriptsize] {Kunci K};
+\draw[-Stealth, thick] (alice) -- node[above] {ciphertext} (bob);
+\draw[<->, dashed, blue] (alice.north) -- ++(0,0.8) -| (bob.north) node[midway, above, font=\scriptsize] {Kunci rahasia};
+\end{tikzpicture}
+\caption{Kriptografi simetris: satu kunci untuk enkripsi dan dekripsi}
+\label{fig:simetris}
+\end{figure}
+
+\subsection{Kriptografi Simetris}
+Menggunakan \textbf{satu kunci} yang sama untuk enkripsi dan dekripsi \cite{katz2020,trappe2006}. Alice dan Bob harus berbagi kunci rahasia secara aman sebelum berkomunikasi. Contoh: Caesar cipher, AES, DES. Kelebihan: cepat dan efisien. Kelemahan: masalah distribusi kunci---bagaimana mengirim kunci secara aman?
+
+\subsection{Kriptografi Asimetris}
+Menggunakan \textbf{sepasang kunci}: kunci publik (untuk enkripsi) dan kunci privat (untuk dekripsi). Kunci publik dapat didistribusikan secara terbuka; hanya kunci privat yang dijaga rahasia. Contoh: RSA. Kelebihan: tidak perlu saluran aman untuk pertukaran kunci. Kelemahan: lebih lambat dibanding kriptografi simetris \cite{schneier1996}.
+
+\subsection{Kriptografi Hibrida}
+Dalam praktik, sistem modern sering menggabungkan keduanya: kriptografi asimetris untuk pertukaran kunci, lalu kriptografi simetris untuk mengenkripsi data aktual (misalnya TLS/SSL).

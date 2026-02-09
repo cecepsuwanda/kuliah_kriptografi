@@ -1,0 +1,5 @@
+\section{Protokol Diffie-Hellman}
+
+Protokol Diffie-Hellman (1976) memungkinkan dua pihak menetapkan kunci rahasia bersama melalui saluran tidak aman. Berdasarkan masalah diskret logaritma.
+
+Alice dan Bob menyepakati bilangan prima $p$ dan generator $g$. Alice memilih $a$, mengirim $A = g^a \bmod p$. Bob memilih $b$, mengirim $B = g^b \bmod p$. Keduanya menghitung $K = g^{ab} \bmod p$ (Alice: $B^a$, Bob: $A^b$). Eve yang menyadap $A$ dan $B$ tidak dapat menghitung $K$ tanpa menyelesaikan diskret logaritma.

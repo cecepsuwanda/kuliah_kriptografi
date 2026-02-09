@@ -1,0 +1,7 @@
+\section{Mode Operasi Block Cipher}
+
+\subsection{ECB (Electronic Codebook)}
+Setiap blok plaintext dienkripsi secara independen. Kelemahan: blok identik menghasilkan ciphertext identik---rentan terhadap analisis pola.
+
+\subsection{CBC (Cipher Block Chaining)}
+Setiap blok plaintext di-XOR dengan ciphertext blok sebelumnya sebelum enkripsi. Memerlukan IV (Initialization Vector) untuk blok pertama. Lebih aman dari ECB karena ciphertext bergantung pada semua blok sebelumnya.
