@@ -1,0 +1,121 @@
+\section{AES (Advanced Encryption Standard)}
+
+\subsection{Overview}
+
+AES menggantikan DES sebagai standar enkripsi simetris modern. Dipilih melalui kompetisi NIST (1997--2000), pemenangnya Rijndael \cite{nist}. AES menggunakan blok 128 bit dan kunci 128, 192, atau 256 bit. Menurut Wikipedia, AES didasarkan pada desain substitution-permutation network yang efisien baik dalam perangkat lunak maupun perangkat keras.
+
+AES dikembangkan oleh dua kriptografer Belgia, Joan Daemen dan Vincent Rijmen, dari Katholieke Universiteit Leuven. Menurut Wikipedia, Rijndael diumumkan sebagai pemenang kompetisi AES pada Oktober 2000 setelah melalui evaluasi ketat dari 15 kandidat algoritma. Algoritma ini dipilih karena keunggulannya dalam keamanan, efisiensi, fleksibilitas implementasi, dan kesederhanaan desain matematisnya.
+
+\subsection{Struktur AES}
+
+AES bukan Feistel. Setiap round terdiri dari:
+\begin{itemize}
+  \item \textbf{SubBytes}: Substitusi byte dengan S-box
+  \item \textbf{ShiftRows}: Menggeser baris state
+  \item \textbf{MixColumns}: Operasi linear pada kolom
+  \item \textbf{AddRoundKey}: XOR dengan subkey
+\end{itemize}
+
+Jumlah round: 10 (kunci 128 bit), 12 (192 bit), 14 (256 bit).
+
+Struktur AES menggunakan substitution-permutation network yang berbeda dari struktur Feistel DES. Menurut Wikipedia, setiap operasi AES dirancang untuk memberikan kombinasi optimal dari confusion (melalui SubBytes) dan diffusion (melalui ShiftRows dan MixColumns). Operasi ini bekerja pada finite field \(\mathrm{GF}(2^{8})\) yang memastikan sifat matematis yang kuat dan dapat dibuktikan keamanannya.
+
+\subsection{State dan Urutan Round}
+
+AES bekerja pada \textbf{state} 4x4 byte (128 bit). Byte plaintext diisikan kolom demi kolom:
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{cccc}
+    \toprule
+    $b_0$ & $b_4$ & $b_8$ & $b_{12}$ \\
+    $b_1$ & $b_5$ & $b_9$ & $b_{13}$ \\
+    $b_2$ & $b_6$ & $b_{10}$ & $b_{14}$ \\
+    $b_3$ & $b_7$ & $b_{11}$ & $b_{15}$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Representasi state AES (kolom per kolom).}
+\end{table}
+
+Urutan round AES-128 \cite{fips197}:
+\begin{enumerate}
+  \item \textbf{Initial AddRoundKey}
+  \item 9 round: SubBytes $\rightarrow$ ShiftRows $\rightarrow$ MixColumns $\rightarrow$ AddRoundKey
+  \item Final round: SubBytes $\rightarrow$ ShiftRows $\rightarrow$ AddRoundKey (tanpa MixColumns)
+\end{enumerate}
+
+Representasi state AES sangat penting untuk implementasi yang efisien. Menurut Wikipedia, state disusun dalam column-major order yang memungkinkan operasi MixColumns dilakukan secara optimal pada setiap kolom. Struktur 4x4 byte ini juga memfasilitasi implementasi perangkat keras yang efisien dan operasi parallel pada prosesor modern.
+
+\subsection{Operasi Detil AES}
+
+\subsubsection{SubBytes}
+SubBytes melakukan substitusi non-linear pada setiap byte state menggunakan S-box AES yang sama untuk semua round. Menurut Wikipedia, S-box AES dirancang untuk memberikan sifat confusion yang kuat dan resistensi terhadap differential cryptanalysis. S-box ini dibangun menggunakan inversi multiplicative di finite field \(\mathrm{GF}(2^{8})\) diikuti dengan transformasi affine yang dipilih secara hati-hati.
+
+\subsubsection{ShiftRows}
+ShiftRows menggeser setiap baris state dengan jumlah yang berbeda: baris pertama tidak digeser, baris kedua digeser 1 byte ke kiri, baris ketiga digeser 2 byte, dan baris keempat digeser 3 byte. Menurut Wikipedia, operasi ini menyebarkan pengaruh setiap byte ke kolom yang berbeda, menciptakan efek diffusion yang penting untuk keamanan.
+
+\subsubsection{MixColumns}
+MixColumns melakukan operasi linear pada setiap kolom state menggunakan matriks tetap di finite field \(\mathrm{GF}(2^{8})\). Menurut Wikipedia, operasi ini memastikan bahwa perubahan kecil pada input akan menyebabkan perubahan besar pada output, menciptakan sifat avalanche yang sangat penting. MixColumns tidak diterapkan pada round terakhir untuk memfasilitasi implementasi yang simetris untuk enkripsi dan dekripsi.
+
+\subsubsection{AddRoundKey}
+AddRoundKey melakukan XOR antara state dan round key yang sesuai. Menurut Wikipedia, operasi ini adalah satu-satunya operasi dalam AES yang bergantung pada kunci, memastikan bahwa tanpa kunci yang benar, semua operasi lain tidak dapat dibalik. Round key dihasilkan dari key schedule yang kompleks untuk mencegah serangan related-key.
+
+\subsection{Key Schedule AES}
+
+AES-128 menghasilkan 11 round key (44 word). Proses kunci \cite{fips197}:
+\begin{itemize}
+  \item \textbf{RotWord}: rotasi 1 byte.
+  \item \textbf{SubWord}: substitusi S-box.
+  \item \textbf{Rcon}: konstanta round.
+\end{itemize}
+Secara ringkas, untuk setiap word $w_i$:
+\[
+w_i =
+\begin{cases}
+w_{i-4} \oplus \text{SubWord}(\text{RotWord}(w_{i-1})) \oplus \text{Rcon} & i \equiv 0 \pmod{4} \\
+w_{i-4} \oplus w_{i-1} & \text{lainnya}
+\end{cases}
+\]
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{cccc}
+    \toprule
+    Rcon[1] & Rcon[2] & Rcon[3] & Rcon[4] \\
+    \midrule
+    01 & 02 & 04 & 08 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Contoh konstanta Rcon (hex) untuk AES-128.}
+\end{table}
+
+Key schedule AES dirancang untuk mencegah serangan related-key dan weak keys. Menurut Wikipedia, proses ini menghasilkan 44 word untuk AES-128, 52 word untuk AES-192, dan 60 word untuk AES-256, memberikan distribusi kunci yang merata di semua round. Penggunaan Rcon yang berbeda untuk setiap 4 word memastikan bahwa tidak ada pola kunci yang dapat dieksploitasi.
+
+\subsection{Keamanan AES}
+
+AES dianggap aman terhadap serangan known-plaintext dan chosen-plaintext. Implementasi praktis biasanya menggunakan library (misalnya OpenSSL) karena kompleksitas dan risiko kesalahan implementasi manual. Menurut Wikipedia, AES telah melalui evaluasi keamanan ekstensif dan tidak ditemukan kerentanan praktis hingga saat ini.
+
+\begin{catatan}
+Keamanan AES dapat runtuh jika implementasi bocor melalui \textit{side-channel} (timing, cache). Gunakan library yang sudah teruji dan hindari implementasi manual yang tidak \textit{constant-time} \cite{ferguson2010}.
+\end{catatan}
+
+\subsection{Implementasi dan Optimasi}
+
+Implementasi AES dapat dioptimasi untuk berbagai platform dengan teknik yang berbeda. Menurut Wikipedia, implementasi perangkat lunak modern menggunakan tabel lookup (T-tables) untuk menggabungkan SubBytes, ShiftRows, dan MixColumns dalam satu operasi, meningkatkan kecepatan secara signifikan. Implementasi perangkat keras menggunakan sirkuit khusus untuk operasi finite field yang sangat efisien.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lcc}
+    \toprule
+    Metode Implementasi & Kecepatan & Penggunaan Memori \\
+    \midrule
+    Naive & Lambat & Rendah \\
+    T-tables & Cepat & Sedang \\
+    Bitslicing & Sangat Cepat & Tinggi \\
+    Hardware & Paling Cepat & Rendah \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perbandingan metode implementasi AES.}
+\end{table}

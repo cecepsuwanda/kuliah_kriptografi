@@ -1,0 +1,84 @@
+\documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{\setcounter{chapter}{8}}{}
+\begin{document}
+
+\chapter{Kriptanalisis}
+
+\begin{subcpmk}
+  \item Sub-CPMK 7.1: Melakukan frequency analysis dan Kasiski examination pada cipher substitusi
+\end{subcpmk}
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab-09/section-9-1}
+\input{bab-09/section-9-2}
+
+% ============================================================
+% AKTIVITAS PEMBELAJARAN
+% ============================================================
+
+\begin{aktivitas}
+  \item \textbf{Praktikum}: Diberikan ciphertext Caesar (kunci tidak diberitahu), pecahkan dengan frequency analysis.
+  
+  \item \textbf{Praktikum C}: Implementasikan program penghitungan frekuensi huruf dari file ciphertext.
+  
+  \item \textbf{Kasiski}: Diberikan ciphertext Vigenère, gunakan Kasiski untuk menduga panjang kunci, lalu pecahkan dengan frequency analysis per kelompok.
+\end{aktivitas}
+
+% ============================================================
+% LATIHAN DAN REFLEKSI
+% ============================================================
+
+\begin{latihan}
+  \item Mengapa frequency analysis efektif untuk substitusi monoalfabetik tetapi tidak untuk Vigenère tanpa pengetahuan panjang kunci?
+  
+  \item Jelaskan langkah Kasiski examination. Apa informasi yang diperoleh?
+  
+  \item Diberikan ciphertext pendek, mengapa frequency analysis bisa tidak akurat?
+  
+  \item Implementasikan dalam C: fungsi yang menampilkan frekuensi huruf A--Z dari string.
+\end{latihan}
+
+% ============================================================
+% ASESMEN
+% ============================================================
+
+\begin{asesmen}
+\textbf{Tugas Praktikum}: Pecahkan ciphertext yang diberikan (Caesar atau Vigenère). Laporkan metode yang digunakan dan hasilnya.
+\end{asesmen}
+
+% ============================================================
+% CHECKLIST KOMPETENSI
+% ============================================================
+
+\begin{checklist}
+  \item Saya dapat melakukan frequency analysis pada cipher substitusi
+  \item Saya dapat mengimplementasikan penghitungan frekuensi dalam C
+  \item Saya dapat menerapkan Kasiski examination untuk Vigenère
+  \item Saya dapat memecahkan cipher Caesar dan Vigenère dengan kunci tidak diketahui
+\end{checklist}
+
+% ============================================================
+% RANGKUMAN
+% ============================================================
+
+\begin{rangkuman}
+Bab ini membahas kriptanalisis cipher klasik: frequency analysis untuk substitusi monoalfabetik dan Caesar, serta Kasiski examination untuk Vigenère.
+
+\textbf{Poin Kunci:}
+\begin{itemize}
+  \item Frequency analysis memanfaatkan pola frekuensi huruf dalam bahasa
+  \item Kasiski menemukan panjang kunci dari pengulangan dalam ciphertext
+  \item Setelah panjang kunci diketahui, Vigenère dapat dipecah per posisi
+\end{itemize}
+
+\textbf{Kata Kunci}: \crypt{Frequency Analysis}, \crypt{Kasiski}, \crypt{Kriptanalisis}
+\end{rangkuman}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+\end{document}

@@ -12,10 +12,11 @@ Layanan kriptografi utama meliputi kerahasiaan, integritas data, otentikasi enti
 
 Pemetaan layanan ke primitif kriptografi tidak selalu satu-ke-satu; misalnya, AEAD (Authenticated Encryption with Associated Data) menggabungkan kerahasiaan dan integritas sekaligus. Kesesuaian layanan dengan kebutuhan aplikasi harus mempertimbangkan model ancaman dan asumsi trust. Ringkasan layanan dan konstruksi yang relevan dapat ditemukan pada \textcite{rfc5116} dan \textcite{nist80038d}.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Pemetaan layanan ke primitif dan contoh standar}
 \label{tab:layanan-primitif}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lll}
 \toprule
 Layanan & Primitif & Contoh standar \\
@@ -25,14 +26,16 @@ Integritas & Fungsi hash, MAC & SHA-256 \parencite{fips1804}, HMAC \\
 Otentikasi & MAC, tanda tangan digital & RSA-PSS \parencite{rfc8017}, ECDSA \\
 Nir-sangkal & Tanda tangan digital & RSA/ECDSA \parencite{rfc8017} \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \subsection{Contoh AEAD: AES-GCM}
 AEAD menyediakan kerahasiaan sekaligus integritas/asli data terkait (AAD) dalam satu primitf terintegrasi. AES-GCM adalah skema AEAD yang distandardisasi luas dan efisien di perangkat keras dan perangkat lunak \parencite{rfc5116,nist80038d}.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[node distance=1.2cm, >=Latex]
   \node (pt) [draw, rounded corners, minimum width=2.6cm, minimum height=0.9cm] {Plainteks};
   \node (aad) [below=of pt, draw, rounded corners, minimum width=2.6cm, minimum height=0.9cm] {AAD};
@@ -47,7 +50,8 @@ AEAD menyediakan kerahasiaan sekaligus integritas/asli data terkait (AAD) dalam 
   \draw[->] (nonce) -- (enc);
   \draw[->] (enc) -- (ct);
   \draw[->] (enc) -- (tag);
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Alur tinggi AEAD AES-GCM \parencite{rfc5116,nist80038d}.}
 \label{fig:aead-gcm}
 \end{figure}

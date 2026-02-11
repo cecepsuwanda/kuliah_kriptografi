@@ -1,0 +1,16 @@
+\section{Frequency Analysis}
+
+\subsection{Prinsip}
+
+Dalam bahasa alami, setiap huruf memiliki frekuensi kemunculan yang khas. Untuk bahasa Inggris (contoh): E $\approx$ 12\%, T $\approx$ 9\%, A $\approx$ 8\%, O $\approx$ 7\%, I $\approx$ 7\%, N $\approx$ 7\%, S $\approx$ 6\%, ...
+
+Untuk cipher substitusi monoalfabetik (termasuk Caesar), pemetaan huruf bersifat satu-satu. Huruf yang paling sering dalam ciphertext kemungkinan besar memetakan ke E, T, atau A. Dengan mencoba korespondensi dan memeriksa kemungkinan kata, penyerang dapat memecahkan cipher.
+
+\subsection{Langkah Praktis}
+
+\begin{enumerate}
+  \item Hitung frekuensi setiap huruf dalam ciphertext
+  \item Urutkan dari yang paling sering
+  \item Coba pemetaan: huruf paling sering $\to$ E, kedua $\to$ T, dsb.
+  \item Sesuaikan berdasarkan konteks (kata yang mungkin, bigram, trigram)
+\end{enumerate}

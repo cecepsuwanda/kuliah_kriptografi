@@ -1,0 +1,98 @@
+\section{Teori Bilangan: Prima dan Fermat--Euler}
+
+\subsection{Bilangan Prima}
+
+Bilangan prima adalah bilangan bulat $p > 1$ yang hanya habis dibagi oleh 1 dan dirinya sendiri. Bilangan prima penting dalam kriptografi karena menjadi dasar pembangkitan kunci RSA \cite{shoup2009}.
+
+Bilangan prima membentuk fondasi keamanan dalam banyak algoritma kriptografi modern, terutama RSA yang secara fundamental bergantung pada sifat unik dari bilangan prima. Menurut GeeksforGeeks, sistem kriptografi sering mengandalkan kesulitan faktorisasi bilangan komposit besar menjadi faktor prima-faktornya. Sifat ini menciptakan masalah satu arah di mana mengalikan dua bilangan prima besar mudah, tetapi memfaktorkan hasilnya kembali menjadi sangat sulit secara komputasional.
+
+Dalam praktik, RSA dan Diffie-Hellman menggunakan bilangan prima yang sangat besar (ratusan atau ribuan digit) untuk memastikan keamanan. Generasi bilangan prima ini memerlukan algoritma uji primalitas yang efisien seperti Miller-Rabin yang dapat memverifikasi primalitas dengan probabilitas tinggi tanpa harus melakukan faktorisasi penuh. Ketersediaan bilangan prima yang aman dan acak sangat penting untuk keamanan jangka panjang sistem kriptografi kunci publik.
+
+\subsection{Uji Primalitas}
+
+\textbf{Uji pembagian (trial division)}: Cek apakah $n$ habis dibagi oleh bilangan prima $\leq \sqrt{n}$. Metode ini sederhana tetapi lambat untuk bilangan besar.
+
+\textbf{Sieve of Eratosthenes}: Membangun daftar prima hingga batas $N$ dengan mencoret kelipatan bilangan. Cocok untuk menghasilkan daftar prima kecil-menengah \cite{stein2008}.
+
+\textbf{Miller-Rabin}: Uji probabilistik yang sangat cepat untuk bilangan besar. Dengan beberapa basis acak, peluang salah (bilangan komposit terdeteksi sebagai prima) menjadi sangat kecil \cite{shoup2009}.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{3.5cm}>{\raggedright\arraybackslash}p{4.5cm}>{\raggedright\arraybackslash}p{4.5cm}}
+    \toprule
+    Metode & Ide Utama & Kegunaan \\
+    \midrule
+    Trial division & Bagi hingga $\sqrt{n}$ & Bilangan kecil, verifikasi sederhana \\
+    Sieve of Eratosthenes & Eliminasi kelipatan & Daftar prima sampai batas $N$ \\
+    Miller-Rabin & Uji probabilistik modular & Bilangan besar (RSA) \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perbandingan ringkas uji primalitas.}
+\end{table}
+
+Menurut GeeksforGeeks, uji primalitas probabilistik seperti Miller-Rabin sangat penting untuk protokol kriptografi yang sering memerlukan generasi bilangan prima besar. Algoritma ini bekerja dengan sangat cepat dan dapat memverifikasi primalitas dengan probabilitas kesalahan yang dapat diabaikan, membuatnya ideal untuk aplikasi kriptografi dunia nyata. Efisiensi ini sangat penting karena generasi kunci RSA yang aman memerlukan penemuan bilangan prima besar secara berulang.
+
+Pemilihan metode uji primalitas tergantung pada ukuran bilangan dan kebutuhan aplikasi. Untuk bilangan kecil, trial division atau sieve of Eratosthenes mungkin sudah cukup, tetapi untuk bilangan besar yang digunakan dalam kriptografi modern, Miller-Rabin atau uji primalitas probabilistik lainnya menjadi satu-satunya pilihan praktis. Trade-off antara kecepatan dan kepastian menjadi pertimbangan penting dalam desain sistem kriptografi.
+
+\subsection{Teorema Fermat Kecil dan Bilangan Carmichael}
+
+\textbf{Teorema Fermat Kecil}: Jika $p$ prima dan $\gcd(a, p) = 1$, maka:
+\[
+a^{p-1} \equiv 1 \pmod{p}
+\]
+
+\textbf{Catatan penting}: Ada bilangan komposit yang lolos uji Fermat untuk banyak basis $a$, disebut bilangan Carmichael. Contoh klasik adalah $561 = 3 \cdot 11 \cdot 17$ \cite{rosulek2021}.
+
+Teorema Fermat Kecil menyediakan dasar matematis untuk banyak protokol kriptografi dan algoritma uji primalitas. Dalam konteks keamanan, bilangan Carmichael menimbulkan tantangan khusus karena dapat menipu uji primalitas sederhana yang hanya mengandalkan Teorema Fermat Kecil. Keberadaan bilangan-bilangan ini menunjukkan mengapa uji primalitas yang lebih canggih seperti Miller-Rabin diperlukan untuk aplikasi kriptografi yang andal.
+
+Pemahaman tentang bilangan Carmichael sangat penting dalam desain sistem kriptografi karena mereka merupakan contoh counter-intuitif di mana sifat yang berlaku untuk bilangan prima juga berlaku untuk beberapa bilangan komposit. Pengetahuan ini membantu kriptografer untuk menghindari kelemahan dalam implementasi uji primalitas dan memastikan bahwa hanya bilangan prima sejati yang digunakan dalam generasi kunci.
+
+\subsection{Fungsi Euler \texorpdfstring{$\varphi(n)$}{phi(n)}}
+
+\textbf{Fungsi Euler $\varphi(n)$}: Banyaknya bilangan bulat $1 \leq k \leq n$ yang relatif prima dengan $n$. Untuk $n$ dengan faktorisasi prima:
+\[
+\varphi(n) = n \prod_{p \mid n} \left(1 - \frac{1}{p}\right)
+\]
+Khusus untuk $n = p^k$, berlaku $\varphi(p^k) = p^k - p^{k-1}$ \cite{stanford_numbertheory}.
+
+Untuk $n = p \cdot q$ dengan $p, q$ prima: $\varphi(n) = (p-1)(q-1)$.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{cc}
+    \toprule
+    $n$ & $\varphi(n)$ \\
+    \midrule
+    1 & 1 \\
+    2 & 1 \\
+    3 & 2 \\
+    4 & 2 \\
+    5 & 4 \\
+    6 & 2 \\
+    7 & 6 \\
+    8 & 4 \\
+    9 & 6 \\
+    10 & 4 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Nilai $\varphi(n)$ untuk $n=1$ sampai $10$.}
+\end{table}
+
+Fungsi Euler Totient $\varphi(n)$ sangat fundamental dalam kriptografi kunci publik, terutama RSA, di mana ia menentukan ukuran grup perkalian modular dan jumlah kunci privat yang mungkin. Menurut sifat $\varphi(n) = (p-1)(q-1)$ untuk $n = p \cdot q$, kita dapat melihat bagaimana pengetahuan tentang faktorisasi $n$ langsung memberikan informasi tentang $\varphi(n)$. Ini adalah alasan mengapa keamanan RSA bergantung pada kesulitan memfaktorkan $n$.
+
+Dalam implementasi RSA, $\varphi(n)$ digunakan untuk menghitung invers modular dari eksponen publik untuk mendapatkan kunci privat. Hubungan antara $\varphi(n)$ dan keamanan RSA sangat erat: jika penyerang dapat menghitung $\varphi(n)$, mereka dapat dengan mudah memecahkan sistem. Oleh karena itu, keamanan RSA secara langsung terkait dengan kesulitan menghitung $\varphi(n)$ tanpa mengetahui faktorisasi prima dari $n$.
+
+\subsection{Teorema Euler}
+
+Jika $\gcd(a, n) = 1$, maka:
+\[
+a^{\varphi(n)} \equiv 1 \pmod{n}
+\]
+
+Teorema Euler menjadi dasar matematis untuk RSA: $a^{k \cdot \varphi(n) + 1} \equiv a \pmod{n}$.
+
+Teorema Euler menggeneralisasi Teorema Fermat Kecil dan membentuk landasan matematis untuk operasi kriptografi kunci publik. Dalam RSA, teorema ini menjamin bahwa $m^{e \cdot d} \equiv m \pmod{n}$ ketika $e \cdot d \equiv 1 \pmod{\varphi(n)}$, yang merupakan prinsip dasar enkripsi dan dekripsi RSA. Sifat ini memastikan bahwa operasi dekripsi benar-benar membalikkan operasi enkripsi ketika kunci yang tepat digunakan.
+
+Penting untuk dicatat bahwa Teorema Euler hanya berlaku ketika $\gcd(a, n) = 1$, yang dalam konteks RSA berarti bahwa pesan harus relatif prima dengan modulus. Dalam praktik, ini biasanya tidak menjadi masalah karena modulus $n$ adalah produk dari dua bilangan prima besar dan pesan umumnya jauh lebih kecil dari $n$, membuat probabilitas bahwa $\gcd(m, n) \neq 1$ sangat kecil. Namun, implementasi yang robust harus memeriksa kondisi ini untuk memastikan operasi dekripsi bekerja dengan benar.

@@ -1,0 +1,26 @@
+\section{Analisis Kelemahan Cipher Klasik}
+
+\subsection{Frequency Analysis}
+
+Dalam bahasa Inggris, frekuensi huruf kira-kira: E (12\%), T (9\%), A (8\%), ... Dengan ciphertext panjang, huruf yang paling sering dalam ciphertext kemungkinan memetakan ke E, T, atau A. Pendekatan ini efektif untuk Caesar dan substitusi monoalfabetik.
+
+\subsection{Kasiski Examination}
+
+Untuk Vigenère, jika plaintext memiliki pola berulang dan kunci pendek, pola tersebut akan muncul dalam ciphertext dengan jarak kelipatan panjang kunci. Kasiski examination mencari pola berulang, mengukur jarak antar kemunculan, dan menduga panjang kunci dari gcd jarak-jarak tersebut. Setelah panjang kunci diketahui, setiap posisi dapat dianalisis seperti Caesar cipher terpisah.
+
+\subsection{Ringkasan Serangan Spesifik}
+
+\begin{itemize}
+  \item \textbf{Caesar}: brute force (25 kunci) dan frequency analysis.
+  \item \textbf{Monoalfabetik}: frequency analysis dan pola digraph/trigraph.
+  \item \textbf{Affine}: brute force pada pasangan $(a,b)$, karena $a$ hanya 12 nilai valid.
+  \item \textbf{Vigenere}: Kasiski dan Index of Coincidence untuk menebak panjang kunci.
+  \item \textbf{Playfair}: analisis frekuensi digraph, terutama jika ciphertext panjang.
+  \item \textbf{Hill}: known-plaintext attack, karena sistem linier dapat diselesaikan dengan aljabar linear.
+  \item \textbf{Transposisi}: anagramming dan analisis struktur, terutama bila format pesan diketahui.
+\end{itemize}
+\cite{dummit_classical}
+
+\begin{konsep}
+Cipher klasik tidak aman untuk penggunaan modern. Mereka diajarkan untuk memahami evolusi kriptografi dan dasar kriptanalisis. Algoritma modern (AES, RSA) dirancang untuk menahan serangan yang canggih.
+\end{konsep}

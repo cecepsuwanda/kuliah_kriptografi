@@ -32,7 +32,7 @@ Kompleksitas serangan mengukur sumber daya yang dibutuhkan untuk menembus skema,
 
 Analisis kompleksitas harus direvisi secara periodik seiring berkembangnya teknik dan teknologi. Diskusi ringkas tersedia dalam literatur terbuka dan ringkasan standar keamanan kunci oleh NIST.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Klasifikasi ringkas beberapa serangan dan mitigasi}
 \label{tab:serangan}
@@ -48,8 +48,9 @@ Protokol & Lucky Thirteen \parencite{lucky13} & AEAD modern, verifikasi konstan,
 \end{tabular}
 \end{table}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[node distance=1.4cm, >=Latex]
   \node (A) [draw, rounded corners] {Alice};
   \node (B) [right=6cm of A, draw, rounded corners] {Bob};
@@ -60,7 +61,8 @@ Protokol & Lucky Thirteen \parencite{lucky13} & AEAD modern, verifikasi konstan,
   \draw[->] (B) -- node[below]{Balasan} (A);
   \draw[->, dashed] (B) -- (M);
   \draw[->, dashed] (M) -- (A);
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Skema sederhana serangan Man-in-the-Middle (MITM).}
 \label{fig:mitm}
 \end{figure}

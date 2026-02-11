@@ -1,0 +1,84 @@
+\documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{\setcounter{chapter}{7}}{}
+\begin{document}
+
+\chapter{Protokol dan Manajemen Kunci}
+
+\begin{subcpmk}
+  \item Sub-CPMK 6.1: Menganalisis protokol Diffie-Hellman dan siklus hidup manajemen kunci
+\end{subcpmk}
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab-08/section-8-1}
+\input{bab-08/section-8-2}
+
+% ============================================================
+% AKTIVITAS PEMBELAJARAN
+% ============================================================
+
+\begin{aktivitas}
+  \item \textbf{Analisis}: Jalankan protokol Diffie-Hellman secara manual dengan $p=23$, $g=5$, $a=6$, $b=15$. Verifikasi bahwa Alice dan Bob memperoleh $K$ yang sama.
+  
+  \item \textbf{Studi Kasus}: Analisis bagaimana HTTPS (TLS) melindungi transaksi e-commerce.
+  
+  \item \textbf{Diskusi}: Apa risiko jika kunci privat tidak disimpan dengan aman?
+\end{aktivitas}
+
+% ============================================================
+% LATIHAN DAN REFLEKSI
+% ============================================================
+
+\begin{latihan}
+  \item Jelaskan langkah protokol Diffie-Hellman. Mengapa Eve tidak dapat memperoleh $K$?
+  
+  \item Sebutkan fase-fase dalam siklus hidup kunci.
+  
+  \item Bagaimana TLS menggabungkan kriptografi simetris dan asimetris?
+  
+  \item Apa peran sertifikat digital dalam TLS?
+\end{latihan}
+
+% ============================================================
+% ASESMEN
+% ============================================================
+
+\begin{asesmen}
+Jelaskan dalam essay: (a) Mengapa Diffie-Hellman aman terhadap eavesdropping? (b) Apa yang terjadi jika kunci tidak dirotasi?
+\end{asesmen}
+
+% ============================================================
+% CHECKLIST KOMPETENSI
+% ============================================================
+
+\begin{checklist}
+  \item Saya dapat menjelaskan protokol Diffie-Hellman
+  \item Saya dapat menganalisis siklus hidup manajemen kunci
+  \item Saya memahami peran TLS dalam keamanan komunikasi
+  \item Saya dapat menjelaskan tantangan distribusi kunci
+\end{checklist}
+
+% ============================================================
+% RANGKUMAN
+% ============================================================
+
+\begin{rangkuman}
+Bab ini membahas protokol Diffie-Hellman untuk pertukaran kunci, TLS untuk keamanan transport, serta manajemen kunci (siklus hidup, distribusi).
+
+\textbf{Poin Kunci:}
+\begin{itemize}
+  \item Diffie-Hellman: pertukaran kunci aman tanpa pertukaran rahasia
+  \item TLS: negosiasi, autentikasi, pertukaran kunci, enkripsi data
+  \item Manajemen kunci: generasi, distribusi, penyimpanan, rotasi, pencabutan
+\end{itemize}
+
+\textbf{Kata Kunci}: \crypt{Diffie-Hellman}, \crypt{TLS}, \crypt{Manajemen Kunci}, \crypt{Sertifikat}
+\end{rangkuman}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+\end{document}

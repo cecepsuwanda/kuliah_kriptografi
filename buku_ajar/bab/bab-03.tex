@@ -1,0 +1,136 @@
+\documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{\setcounter{chapter}{2}}{}
+\begin{document}
+
+\chapter{Matematika Kriptografi}
+
+\begin{subcpmk}
+  \item Sub-CPMK 2.1: Menghitung operasi aritmetika modular dan mengimplementasikan algoritma Euclid diperluas dalam C
+  \item Sub-CPMK 2.2: Menentukan bilangan prima, uji primalitas, dan menghitung pangkat modular (fast exponentiation) dalam C
+\end{subcpmk}
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab-03/section-3-1}
+\input{bab-03/section-3-2}
+\input{bab-03/section-3-3}
+\input{bab-03/section-3-4}
+\input{bab-03/section-3-5}
+
+% ============================================================
+% AKTIVITAS PEMBELAJARAN
+% ============================================================
+
+\begin{aktivitas}
+  \item \textbf{Praktikum C}: Implementasikan fungsi \code{extended\_gcd} dan \code{mod\_inverse}. Uji dengan berbagai pasangan $(a, m)$.
+  
+  \item \textbf{Praktikum C}: Implementasikan \code{mod\_pow} untuk fast exponentiation. Bandingkan waktu eksekusi dengan pendekatan naif untuk $a^{1000000} \bmod n$.
+  
+  \item \textbf{Latihan Numerik}: Hitung secara manual: $17^{-1} \pmod{26}$, $5^{100} \bmod 13$.
+  
+  \item \textbf{Algoritma}: Jelaskan mengapa invers modular hanya ada jika $\gcd(a, n) = 1$. Berikan contoh bilangan yang tidak memiliki invers modulo 10.
+\end{aktivitas}
+
+% ============================================================
+% LATIHAN DAN REFLEKSI
+% ============================================================
+
+\begin{latihan}
+  \item Hitung: $ (23 + 47) \bmod 11 $, $ (23 \cdot 47) \bmod 11 $.
+  
+  \item Tentukan invers modular dari 7 modulo 26. Gunakan algoritma Euclid diperluas.
+  
+  \item Jelaskan teorema Fermat kecil dan teorema Euler. Kapan masing-masing berlaku?
+  
+  \item Hitung $3^{644} \bmod 645$ menggunakan fast exponentiation.
+  
+  \item Implementasikan dalam C: fungsi yang mengecek apakah $n$ relatif prima dengan $m$ (yaitu $\gcd(n, m) = 1$).
+  
+  \item \textbf{Refleksi}: Bagaimana keterkaitan matematika kriptografi (modular, Euclid, Fermat) dengan algoritma RSA?
+\end{latihan}
+
+% ============================================================
+% ASESMEN
+% ============================================================
+
+\begin{asesmen}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 2.1, 2.2}
+
+\textbf{A. Pilihan Ganda}
+
+\begin{enumerate}
+  \item Invers modular dari $a$ modulo $n$ hanya ada jika:
+  \begin{enumerate}
+    \item $a > n$
+    \item $\gcd(a, n) = 1$
+    \item $a$ prima
+    \item $n$ prima
+  \end{enumerate}
+  
+  \item Algoritma fast exponentiation untuk menghitung $a^b \bmod n$ memiliki kompleksitas waktu:
+  \begin{enumerate}
+    \item $O(b)$
+    \item $O(\log b)$
+    \item $O(n)$
+    \item $O(a)$
+  \end{enumerate}
+  
+  \item Untuk $n = p \cdot q$ dengan $p, q$ prima, $\varphi(n)$ sama dengan:
+  \begin{enumerate}
+    \item $p + q$
+    \item $p \cdot q$
+    \item $(p-1)(q-1)$
+    \item $p - q$
+  \end{enumerate}
+\end{enumerate}
+
+\textbf{B. Essay dan Coding}
+
+\begin{enumerate}
+  \item Jelaskan algoritma Euclid diperluas dan kegunaannya dalam kriptografi.
+  
+  \item Implementasikan dalam C: \code{mod\_inverse(a, m)} yang mengembalikan $-1$ jika invers tidak ada.
+\end{enumerate}
+
+\textbf{Rubrik Penilaian}: Lihat Lampiran A
+\end{asesmen}
+
+% ============================================================
+% CHECKLIST KOMPETENSI
+% ============================================================
+
+\begin{checklist}
+  \item Saya dapat melakukan operasi aritmetika modular (penjumlahan, perkalian, invers)
+  \item Saya dapat mengimplementasikan algoritma Euclid diperluas dalam C
+  \item Saya dapat mengimplementasikan mod inverse dalam C
+  \item Saya memahami teorema Fermat dan Euler
+  \item Saya dapat mengimplementasikan fast modular exponentiation dalam C
+  \item Saya memahami peran matematika kriptografi dalam algoritma RSA
+\end{checklist}
+
+% ============================================================
+% RANGKUMAN
+% ============================================================
+
+\begin{rangkuman}
+Bab ini membahas fondasi matematika kriptografi: aritmetika modular, algoritma Euclid dan Euclid diperluas, teori bilangan (prima, teorema Fermat dan Euler), serta fast modular exponentiation. Semua konsep ini menjadi dasar untuk memahami dan mengimplementasikan RSA.
+
+\textbf{Poin Kunci:}
+\begin{itemize}
+  \item Kongruensi modular: $a \equiv b \pmod{n}$ jika $n \mid (a-b)$
+  \item Invers modular hanya ada jika $\gcd(a, n) = 1$
+  \item Euclid diperluas: menghitung $\gcd$ sekaligus koefisien Bézout
+  \item Fast exponentiation: $O(\log b)$ untuk menghitung $a^b \bmod n$
+  \item $\varphi(n) = (p-1)(q-1)$ untuk $n = pq$
+\end{itemize}
+
+\textbf{Kata Kunci}: \crypt{Aritmetika Modular}, \crypt{Kongruensi}, \crypt{Algoritma Euclid}, \crypt{Invers Modular}, \crypt{Fast Exponentiation}, \crypt{Fungsi Euler}
+\end{rangkuman}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+\end{document}

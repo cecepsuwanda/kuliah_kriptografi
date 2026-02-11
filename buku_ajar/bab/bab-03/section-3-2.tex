@@ -1,0 +1,112 @@
+\section{Algoritma Euclid dan Euclid Diperluas}
+
+\subsection{Algoritma Euclid}
+
+Algoritma Euclid menghitung $\gcd(a, b)$ secara efisien:
+\[
+\gcd(a, b) = \gcd(b, a \bmod b) \quad \text{sampai } b = 0
+\]
+
+\begin{contoh}
+$\gcd(48, 18) = \gcd(18, 12) = \gcd(12, 6) = \gcd(6, 0) = 6$.
+\end{contoh}
+
+Algoritma Euclid merupakan salah satu algoritma tertua dan paling fundamental dalam matematika, yang tetap relevan hingga hari ini dalam aplikasi kriptografi modern. Menurut Sookocheff, algoritma ini menghitung GCD tanpa bergantung pada faktorisasi dengan berulang kali menerapkan identitas $\gcd(a,b) = \gcd(b, a \mod b)$. Pendekatan ini sangat efisien karena jumlah langkah tumbuh secara logaritmik dengan ukuran bilangan, membuatnya ideal untuk bilangan besar yang umum dalam kriptografi.
+
+Dalam konteks kriptografi, algoritma Euclid sangat penting karena kemampuannya untuk menentukan apakah dua bilangan relatif prima (GCD = 1), yang merupakan syarat untuk keberadaan invers modular. Tanpa algoritma Euclid yang efisien, operasi fundamental seperti generasi kunci RSA dan perhitungan invers modular akan menjadi tidak praktis untuk implementasi dunia nyata. Algoritma ini juga membentuk dasar untuk Extended Euclidean Algorithm yang bahkan lebih penting dalam aplikasi kriptografi.
+
+\subsection{Jejak Langkah Euclid}
+
+Algoritma Euclid dapat ditelusuri dengan tabel pembagian berulang. Kompleksitasnya $O(\log \min(a, b))$ \cite{shoup2009}.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{ccccc}
+    \toprule
+    Langkah & $a$ & $b$ & $q=\lfloor a/b \rfloor$ & $r=a \bmod b$ \\
+    \midrule
+    1 & 252 & 198 & 1 & 54 \\
+    2 & 198 & 54 & 3 & 36 \\
+    3 & 54 & 36 & 1 & 18 \\
+    4 & 36 & 18 & 2 & 0 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Jejak langkah Euclid untuk $\gcd(252, 198)=18$.}
+\end{table}
+
+Kompleksitas logaritmik dari algoritma Euclid membuatnya sangat efisien bahkan untuk bilangan dengan ratusan atau ribuan digit yang umum dalam kriptografi modern. Menurut Sookocheff, faktorisasi prima berfungsi dengan baik untuk bilangan kecil, tetapi kriptografi berurusan dengan bilangan yang sangat besar dan menemukan faktor prima untuk bilangan tersebut essentially tidak mungkin dengan algoritma yang diketahui. Algoritma Euclid menyediakan alternatif yang jauh lebih efisien untuk menghitung GCD tanpa memerlukan faktorisasi.
+
+Implementasi algoritma Euclid dalam kode juga sangat sederhana dan elegan, seperti yang ditunjukkan dalam pseudocode Python `def gcd(a, b): while b: a, b = b, a%b return a`. Kemudahan implementasi ini, dikombinasikan dengan efisiensi komputasional, membuat algoritma Euclid menjadi pilihan utama untuk aplikasi kriptografi yang memerlukan perhitungan GCD yang andal dan cepat. Algoritma ini juga dapat dengan mudah diimplementasikan dalam hardware untuk optimasi lebih lanjut.
+
+\subsection{Algoritma Euclid Diperluas (Extended Euclidean)}
+
+Menghitung $\gcd(a, b)$ sekaligus koefisien $x, y$ sehingga:
+\[
+ax + by = \gcd(a, b)
+\]
+
+Jika $\gcd(a, n) = 1$, maka nilai $x$ yang diperoleh (mod $n$) adalah invers modular dari $a$ modulo $n$.
+
+\begin{itemize}
+  \item Jalankan Euclid untuk mendapatkan deret sisa $r_i$.
+  \item Lakukan substitusi balik (back-substitution) untuk menulis $\gcd(a, b)$ sebagai kombinasi linear $ax + by$.
+  \item Ambil koefisien $x$ sebagai kandidat invers $a^{-1} \pmod{b}$.
+\end{itemize}
+
+\begin{contoh}
+Cari invers $35^{-1} \pmod{64}$. Euclid:
+\[
+64 = 1 \cdot 35 + 29,\quad
+35 = 1 \cdot 29 + 6,\quad
+29 = 4 \cdot 6 + 5,\quad
+6 = 1 \cdot 5 + 1
+\]
+Substitusi balik menghasilkan:
+\[
+1 = 11 \cdot 35 - 6 \cdot 64
+\]
+Jadi $35^{-1} \equiv 11 \pmod{64}$.
+\end{contoh}
+
+Extended Euclidean Algorithm sangat penting dalam kriptografi kunci publik karena menyediakan metode sistematis untuk menghitung invers modular yang diperlukan untuk generasi kunci. Menurut Sookocheff, algoritma ini tidak hanya menemukan GCD tetapi juga mengekspresikan GCD tersebut sebagai kombinasi linear dari bilangan input, yang memberikan kita cara untuk menghitung invers modular. Koefisien yang dihitung selama proses ini sangat penting karena mereka merupakan kunci privat dalam sistem RSA.
+
+Proses substitusi balik (back-substitution) mungkin terlihat abstrak, tetapi hasilnya sangat penting dalam praktik: memberikan kita cara untuk menghitung invers modular. Menurut Sookocheff, "ini mungkin terlihat abstrak, tetapi hasilnya sangat penting dalam praktik: memberikan kita cara untuk menghitung invers modular, yang sangat penting untuk kriptografi kunci publik." Tanpa Extended Euclidean Algorithm, implementasi praktis RSA dan protokol kriptografi kunci publik lainnya akan menjadi sangat tidak efisien.
+
+\subsection{Implementasi dalam C}
+
+\begin{lstlisting}[style=cstyle, caption={Algoritma Euclid Diperluas dalam C}]
+#include <stdio.h>
+
+long long extended_gcd(long long a, long long b,
+                      long long *x, long long *y) {
+    if (b == 0) {
+        *x = 1;
+        *y = 0;
+        return a;
+    }
+    long long x1, y1;
+    long long g = extended_gcd(b, a % b, &x1, &y1);
+    *x = y1;
+    *y = x1 - (a / b) * y1;
+    return g;
+}
+
+long long mod_inverse(long long a, long long m) {
+    long long x, y;
+    long long g = extended_gcd((a % m + m) % m, m, &x, &y);
+    if (g != 1) return -1;  /* tidak ada invers */
+    return (x % m + m) % m;
+}
+
+int main() {
+    long long a = 3, m = 10;
+    long long inv = mod_inverse(a, m);
+    printf("3^(-1) mod 10 = %lld\n", inv);  /* Output: 7 */
+    return 0;
+}
+\end{lstlisting}
+
+Implementasi C dari Extended Euclidean Algorithm menunjukkan bagaimana konsep matematika abstrak dapat diterjemahkan ke dalam kode praktis yang efisien. Fungsi \code{extended\_gcd} menggunakan rekursi untuk mengimplementasikan algoritma secara elegan, sementara fungsi \code{mod\_inverse} menyediakan interface tingkat tinggi untuk menghitung invers modular dengan penanganan error yang tepat. Implementasi ini sangat penting dalam aplikasi kriptografi dunia nyata di mana performa dan keandalan adalah krusial.
+
+Dalam implementasi praktis, penanganan kasus edge sangat penting, seperti ketika GCD tidak sama dengan 1 (tidak ada invers) atau saat bekerja dengan bilangan negatif. Kode di atas menangani kasus ini dengan normalisasi input \code{(a \% m + m) \% m} dan mengembalikan -1 ketika invers tidak ada. Pendekatan yang robust ini memastikan bahwa implementasi kriptografi akan berperilaku prediktab dan aman dalam semua kondisi input yang mungkin.

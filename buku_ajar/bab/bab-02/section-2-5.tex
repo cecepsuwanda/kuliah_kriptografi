@@ -1,0 +1,33 @@
+\section{Peta Konsep dan Struktur Materi}
+
+Berikut bagan hubungan antar konsep utama dalam mata kuliah Kriptografi:
+
+\begin{center}
+\begin{tikzpicture}[node distance=1cm and 1.5cm]
+  \node[draw, rounded corners, fill=blue!10] (landasan) {Landasan Teori};
+  \node[draw, rounded corners, fill=green!10, below left=1.5cm and 0.5cm of landasan] (math) {Matematika};
+  \node[draw, rounded corners, fill=green!10, below=of landasan] (klasik) {Cipher Klasik};
+  \node[draw, rounded corners, fill=green!10, below right=1.5cm and 0.5cm of landasan] (modern) {Cipher Modern};
+  \node[draw, rounded corners, fill=orange!10, below=of math] (hash) {Hash};
+  \node[draw, rounded corners, fill=orange!10, below=of modern] (protokol) {Protokol};
+  \node[draw, rounded corners, fill=red!10, below=of klasik] (kriptanalisis) {Kriptanalisis};
+  
+  \draw[->] (landasan) -- (math);
+  \draw[->] (landasan) -- (klasik);
+  \draw[->] (landasan) -- (modern);
+  \draw[->] (math) -- (modern);
+  \draw[->] (math) -- (hash);
+  \draw[->] (klasik) -- (kriptanalisis);
+  \draw[->] (modern) -- (protokol);
+\end{tikzpicture}
+\end{center}
+
+Struktur kurikulum kriptografi ini dirancang dengan pendekatan spiral di mana konsep-konsep fundamental diperkenalkan secara bertahap dan semakin kompleks. Landasan teori berfungsi sebagai akar yang memperkenalkan konsep keamanan informasi, model komunikasi aman, dan perbedaan antara kriptografi simetris dan asimetris. Pemahaman yang kuat tentang landasan ini sangat penting karena akan menjadi kerangka kerja kognitif untuk mengintegrasikan konsep-konsep lebih lanjut yang akan dipelajari dalam bab-bab selanjutnya.
+
+\textbf{Alur pembelajaran}: Landasan teori $\to$ Matematika kriptografi (prasyarat RSA) $\to$ Cipher klasik (dasar, mudah diimplementasi) $\to$ Cipher modern (DES, AES, RSA) $\to$ Fungsi hash dan protokol $\to$ Kriptanalisis (analisis kelemahan).
+
+Matematika kriptografi membentuk jembatan krusial antara teori dan implementasi praktis, menyediakan alat-alat seperti aritmetika modular, algoritma Euclid, dan fast exponentiation yang diperlukan untuk memahami dan mengimplementasikan RSA dan cipher modern lainnya. Cipher klasik seperti Caesar dan Vigenère dipilih sebagai titik awal implementasi karena kesederhanaannya yang memungkinkan mahasiswa fokus pada konsep enkripsi/dekripsi tanpa terbebani oleh kompleksitas matematika. Pendekatan ini membangun kepercayaan diri mahasiswa dalam implementasi kode sebelum beralih ke algoritma yang lebih kompleks.
+
+Cipher modern mengintegrasikan semua konsep sebelumnya menjadi algoritma yang kuat dan efisien seperti DES, AES, dan RSA yang secara luas digunakan dalam industri. Fungsi hash dan protokol memperluas aplikasi kriptografi dari sekadar enkripsi pesan ke sistem keamanan komprehensif yang mencakup integritas data, autentikasi, dan manajemen kunci. Kriptanalisis sebagai bab penutup memberikan perspektif keamanan dengan mengajarkan mahasiswa untuk berpikir seperti penyerang, memahami kelemahan sistem, dan merancang cipher yang lebih kuat.
+
+Pendekatan kurikulum ini memastikan mahasiswa mengembangkan pemahaman holistik tentang kriptografi dari perspektif teoretis, implementasi, dan keamanan. Setiap bab dirancang untuk mengintegrasikan Sub-CPMK yang spesifik dengan aktivitas pembelajaran yang relevan, latihan praktis, dan asesmen komprehensif. Alur pembelajaran yang sistematis ini mempersiapkan mahasiswa tidak hanya untuk menguasai materi ujian tetapi juga untuk mengaplikasikan pengetahuan kriptografi dalam skenario dunia nyata dan karir di bidang keamanan siber.

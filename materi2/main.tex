@@ -20,6 +20,7 @@
   pdftitle={Buku Ajar Kriptografi}
 }
 \usepackage{csquotes}
+\DeclareQuoteStyle{indonesian}{``}{''}{`}{'}
 \usepackage{subfiles}
 \usepackage{setspace}
 \onehalfspacing
@@ -50,7 +51,7 @@
 \usepackage[backend=biber,style=authoryear,sorting=nyt]{biblatex}
 % Bibliography localization and formatting tweaks
 \DeclareLanguageMapping{indonesian}{english}
-\ExecuteBibliographyOptions{date=year,urldate=iso}
+\ExecuteBibliographyOptions{date=year,urldate=iso,seconds=true}
 \DefineBibliographyStrings{indonesian}{
   and = {dan},
   andothers = {dkk.},

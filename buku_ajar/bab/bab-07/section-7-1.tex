@@ -1,0 +1,42 @@
+\section{Sifat Fungsi Hash Kriptografis}
+
+Fungsi hash memetakan input dengan panjang sembarang ke output dengan panjang tetap (misalnya 256 bit). Fungsi hash kriptografis harus memenuhi sifat-sifat keamanan fundamental untuk mencegah berbagai jenis serangan. Menurut Wikipedia, fungsi hash modern dirancang untuk berperilaku seperti fungsi acak sambil tetap deterministik, menciptakan keseimbangan yang sangat penting untuk keamanan kriptografi.
+
+Fungsi hash kriptografis berevolusi dari checksum sederhana menjadi fungsi keamanan yang kompleks. Menurut Wikipedia, evolusi ini didorong oleh kebutuhan akan keamanan yang lebih kuat terhadap berbagai serangan, termasuk collision attacks dan preimage attacks. Konstruksi Merkle-Damgård yang dikembangkan secara independen oleh Ralph Merkle dan Ivan Damgård pada akhir tahun 1970-an menjadi fondasi bagi sebagian besar fungsi hash modern.
+
+Fungsi hash kriptografis harus memenuhi:
+\begin{itemize}
+  \item \textbf{Preimage resistance}: Dari $h(x)$, sulit mencari $x$
+  \item \textbf{Second preimage resistance}: Dari $x$, sulit mencari $x' \neq x$ dengan $h(x') = h(x)$
+  \item \textbf{Collision resistance}: Sulit mencari pasangan $(x, x')$ dengan $x \neq x'$ dan $h(x) = h(x')$
+\end{itemize}
+
+Ketiga sifat keamanan ini sangat fundamental untuk keamanan fungsi hash. Menurut Wikipedia, preimage resistance mencegah penyerang membalikkan hash untuk menemukan input asli, sedangkan collision resistance mencegah penyerang membuat dua input berbeda yang menghasilkan hash yang sama. Sifat-sifat ini membentuk dasar untuk banyak aplikasi keamanan digital.
+
+\textbf{Penggunaan}: Integritas data (checksum), penyimpanan password (hash + salt), tanda tangan digital (hash pesan lalu tanda tangan hash). Menurut sumber keamanan, fungsi hash memiliki peran yang sangat luas dalam infrastruktur keamanan modern, dari verifikasi integritas file hingga pembangkitan tanda tangan digital yang efisien.
+
+Aplikasi hash sangat kritis dalam keamanan digital modern. Menurut Wikipedia, hash digunakan dalam blockchain untuk memastikan integritas transaksi, dalam sistem password untuk menyimpan hash password dengan salt, dan dalam tanda tangan digital untuk efisiensi verifikasi. Tanpa fungsi hash yang kuat, banyak sistem keamanan modern tidak akan berfungsi dengan aman.
+
+\subsection{Konstruksi Merkle-Damgård}
+
+Konstruksi Merkle-Damgård adalah metode fundamental untuk membangun fungsi hash collision-resistant. Menurut Wikipedia, konstruksi ini menggunakan fungsi kompresi satu arah yang collision-resistant dan membangun struktur pohon (Merkle tree) untuk menggabungkan hash dari blok-blok data. Konstruksi ini menjadi dasar untuk banyak fungsi hash modern seperti MD5, SHA-1, dan SHA-2.
+
+Konstruksi Merkle-Damgård memungkinkan pembangunan fungsi hash yang dapat dibuktikan keamanannya secara matematis. Menurut sumber keamanan, dengan menggunakan fungsi kompresi yang terbukti collision-resistant dan struktur Merkle tree yang efisien, kita dapat membuat fungsi hash yang keamanannya dapat dianalisis secara teoretis. Namun, konstruksi ini juga memiliki keterbatasan yang harus dipahami.
+
+\subsection{Avalanche Effect}
+
+Efek avalanche adalah sifat penting di mana perubahan kecil pada input menyebabkan perubahan besar pada output. Menurut Wikipedia, fungsi hash yang baik harus menunjukkan efek avalanche yang kuat, di mana setiap bit input mempengaruhi kira-kira setengah bit output. Sifat ini sangat penting untuk mencegah serangan yang mencoba memanfaatkan korelasi input-output.
+
+Efek avalanche menjadi salah satu metrik penting untuk mengevaluasi kualitas fungsi hash. Menurut sumber keamanan, fungsi hash yang dirancang dengan baik akan menunjukkan perubahan yang tidak dapat diprediksi ketika input berubah sedikit saja. Sifat ini membantu mencegah serangan differential cryptanalysis dan memastikan bahwa fungsi hash berperilaku seperti fungsi acak sesuai yang diinginkan.
+
+\subsection{Derajat Kesulitan dan Keamanan}
+
+Keamanan fungsi hash diukur berdasarkan kesulitan untuk melakukan serangan tertentu. Menurut Wikipedia, untuk fungsi hash dengan output n-bit, serangan brute force memerlukan $O(2^{n/2})$ operasi, sedangkan birthday attack memerlukan $O(2^{n/2})$ operasi untuk menemukan collision. Derajat kesulitan ini membantu dalam memilih ukuran hash yang sesuai dengan kebutuhan keamanan.
+
+Birthday attack menjadi batasan praktis untuk keamanan fungsi hash. Menurut Wikipedia, dengan fungsi hash 160-bit, collision dapat ditemukan dengan sekitar $2^{80}$ operasi (sekitar $1.2 \times 10^{24}$), yang membuatnya rentan terhadap serangan dengan sumber daya komputasi yang besar. Oleh karena itu, fungsi hash modern menggunakan output 256-bit atau lebih untuk keamanan jangka panjang.
+
+\subsection{Standard Hash Modern}
+
+SHA-2 (Secure Hash Algorithm 2) adalah standar hash yang paling banyak digunakan saat ini. Menurut Wikipedia, SHA-2 menghasilkan hash 256-bit dan dirancang untuk mengatasi kelemahan keamanan yang ditemukan pada pendahulunya SHA-1. SHA-2 adalah bagian dari keluarga SHA (SHA-224, SHA-256, SHA-384, SHA-512) yang menyediakan berbagai pilihan ukuran output.
+
+SHA-2 menggunakan konstruksi Merkle-Damgård dengan fungsi kompresi yang dirancang secara hati-hati. Menurut sumber keamanan, SHA-2 telah melalui evaluasi keamanan ekstensif dan tidak ditemukan kerentanan praktis hingga saat ini. Namun, seperti semua fungsi hash, SHA-2 harus digunakan dengan hati-hati dalam implementasi dan harus dikombinasikan dengan teknik keamanan lain seperti HMAC untuk autentikasi.

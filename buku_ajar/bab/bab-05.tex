@@ -1,0 +1,87 @@
+\documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{\setcounter{chapter}{4}}{}
+\begin{document}
+
+\chapter{Block Cipher dan Kriptografi Simetris}
+
+\begin{subcpmk}
+  \item Sub-CPMK 4.1: Menjelaskan struktur AES dan DES serta mode operasi block cipher (ECB, CBC)
+\end{subcpmk}
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab-05/section-5-1}
+\input{bab-05/section-5-2}
+\input{bab-05/section-5-3}
+
+% ============================================================
+% AKTIVITAS PEMBELAJARAN
+% ============================================================
+
+\begin{aktivitas}
+  \item \textbf{Studi Literatur}: Bandingkan struktur Feistel (DES) dengan struktur AES. Apa perbedaan utama?
+  
+  \item \textbf{Praktikum}: Gunakan OpenSSL atau library C untuk mengenkripsi file dengan AES-CBC. Amati peran IV.
+  
+  \item \textbf{Analisis}: Mengapa ECB tidak aman? Cari contoh visual (gambar terenkripsi ECB vs CBC).
+\end{aktivitas}
+
+% ============================================================
+% LATIHAN DAN REFLEKSI
+% ============================================================
+
+\begin{latihan}
+  \item Jelaskan struktur Feistel. Mengapa dekripsi Feistel mirip dengan enkripsi?
+  
+  \item Sebutkan 4 operasi dalam satu round AES.
+  
+  \item Jelaskan perbedaan ECB dan CBC. Mengapa CBC lebih aman?
+  
+  \item Apa fungsi IV dalam mode CBC?
+\end{latihan}
+
+% ============================================================
+% ASESMEN
+% ============================================================
+
+\begin{asesmen}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 4.1}
+
+Jelaskan dalam bentuk essay: (a) Mengapa DES tidak lagi aman? (b) Apa keunggulan AES dibanding DES? (c) Kapan mode ECB masih dapat digunakan?
+\end{asesmen}
+
+% ============================================================
+% CHECKLIST KOMPETENSI
+% ============================================================
+
+\begin{checklist}
+  \item Saya dapat menjelaskan struktur DES (Feistel)
+  \item Saya dapat menjelaskan struktur AES (SubBytes, ShiftRows, MixColumns, AddRoundKey)
+  \item Saya dapat membedakan mode ECB, CBC, CFB, OFB
+  \item Saya memahami peran IV dalam mode CBC
+\end{checklist}
+
+% ============================================================
+% RANGKUMAN
+% ============================================================
+
+\begin{rangkuman}
+Bab ini membahas block cipher DES dan AES, serta mode operasi ECB, CBC, CFB, OFB. AES adalah standar modern untuk enkripsi simetris.
+
+\textbf{Poin Kunci:}
+\begin{itemize}
+  \item DES: Feistel, 64-bit block, 56-bit key; tidak aman untuk aplikasi baru
+  \item AES: blok 128 bit, kunci 128/192/256 bit; standar NIST
+  \item Mode operasi: ECB (lemah), CBC/CFB/OFB (lebih aman dengan IV)
+\end{itemize}
+
+\textbf{Kata Kunci}: \crypt{Block Cipher}, \crypt{DES}, \crypt{AES}, \crypt{Feistel}, \crypt{ECB}, \crypt{CBC}
+\end{rangkuman}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+\end{document}

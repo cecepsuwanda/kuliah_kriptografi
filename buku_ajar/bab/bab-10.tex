@@ -1,0 +1,44 @@
+\documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{\setcounter{chapter}{9}}{}
+\begin{document}
+
+\chapter{Evaluasi, Refleksi, dan Integrasi Kompetensi}
+
+Bab ini berisi asesmen komprehensif untuk mengukur pencapaian seluruh CPMK yang telah dipelajari sepanjang mata kuliah Kriptografi.
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab-10/section-10-1}
+\input{bab-10/section-10-2}
+\input{bab-10/section-10-3}
+\input{bab-10/section-10-4}
+
+% ============================================================
+% RANGKUMAN PERJALANAN PEMBELAJARAN
+% ============================================================
+
+\begin{rangkuman}
+Selamat! Anda telah menyelesaikan perjalanan pembelajaran Kriptografi. Dari landasan teori hingga implementasi dalam C, Anda telah membangun fondasi dalam keamanan informasi.
+
+\textbf{Apa yang Telah Anda Pelajari}:
+\begin{itemize}
+  \item Landasan teori kriptografi (confidentiality, integrity, authenticity)
+  \item Matematika kriptografi (modular, Euclid, fast exponentiation)
+  \item Algoritma klasik (Caesar, Vigenère) dan implementasi C
+  \item Block cipher (DES, AES) dan mode operasi
+  \item Kriptografi asimetris (RSA) dan implementasi C
+  \item Fungsi hash dan tanda tangan digital
+  \item Protokol Diffie-Hellman dan manajemen kunci
+  \item Kriptanalisis (frequency analysis, Kasiski)
+\end{itemize}
+
+\textbf{Langkah Selanjutnya}: Terus praktik implementasi dalam C, eksplorasi OpenSSL, dan ikuti perkembangan standar kriptografi.
+\end{rangkuman}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+\end{document}

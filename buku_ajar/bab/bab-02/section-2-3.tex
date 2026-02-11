@@ -1,0 +1,39 @@
+\section{Confidentiality, Integrity, dan Authenticity}
+
+\begin{konsep}
+Tiga pilar keamanan informasi yang didukung oleh kriptografi:
+\end{konsep}
+
+\subsection{Confidentiality (Kerahasiaan)}
+
+Memastikan bahwa informasi hanya dapat diakses oleh pihak yang berwenang. Plaintext tidak boleh terbaca oleh Eve meskipun dia memiliki ciphertext.
+
+\textbf{Cara mencapai}: Enkripsi dengan kunci yang hanya diketahui oleh Alice dan Bob.
+
+Confidentiality merupakan fondasi keamanan informasi yang memastikan data sensitif tidak jatuh ke tangan yang salah. Menurut Fortinet, untuk mencapai confidentiality, akses ke informasi harus dikontrol untuk mencegah pembagian data tidak sah, baik disengaja maupun tidak disengaja. Komponen kunci dalam menjaga confidentiality adalah memastikan orang tanpa otorisasi yang tepat dicegah untuk mengakses aset penting bisnis, sementara mereka yang membutuhkan akses memiliki hak yang diperlukan.
+
+Implementasi confidentiality yang efektif memerlukan kombinasi teknis dan kebijakan yang komprehensif, termasuk enkripsi data, kontrol akses yang ketat, dan autentikasi multi-faktor. Ancaman terhadap confidentiality dapat berasal dari serangan siber yang canggih hingga kesalahan manusia sederhana seperti berbagi kredensial atau kegagalan mengenkripsi komunikasi. Perlindungan confidentiality sangat penting dalam berbagai sektor seperti keuangan, kesehatan, dan pemerintahan di mana kebocoran data dapat memiliki konsekuensi yang parah.
+
+\subsection{Integrity (Keutuhan)}
+
+Memastikan bahwa informasi tidak diubah selama transmisi. Bob harus yakin bahwa pesan yang diterima sama persis dengan yang dikirim Alice.
+
+\textbf{Cara mencapai}: Fungsi hash, Message Authentication Code (MAC), atau tanda tangan digital.
+
+Integrity memastikan data tetap tepercaya dan bebas dari perusakan selama siklus hidupnya, dari penciptaan hingga konsumsi. Menurut Fortinet, integrity data hanya terjaga jika data tersebut autentik, akurat, dan andal, yang berarti setiap perubahan tidak sah terhadap data harus terdeteksi dan dicegah. Pelanggaran integrity dapat memiliki dampak serius seperti keputusan bisnis yang salah berdasarkan data yang telah dimanipulasi atau kehilangan kepercayaan dari pelanggan.
+
+Teknologi seperti fungsi hash kriptografi, tanda tangan digital, dan Message Authentication Codes (MAC) menyediakan mekanisme untuk mendeteksi perubahan data dan memverifikasi bahwa data berasal dari sumber yang sah. Non-repudiation, kemampuan untuk membuktikan bahwa suatu tindakan tidak dapat disangkal, merupakan aspek penting dari integrity yang memastikan pengirim tidak dapat menyangkal telah mengirim pesan dan penerima tidak dapat menyangkal telah menerimanya. Implementasi integrity yang kuat sangat penting untuk transaksi keuangan, catatan medis, dan dokumen hukum.
+
+\subsection{Authenticity (Keaslian)}
+
+Memastikan bahwa pengirim pesan benar-benar adalah pihak yang mengklaim. Bob harus yakin bahwa pesan memang berasal dari Alice, bukan dari Eve yang berpura-pura.
+
+\textbf{Cara mencapai}: Tanda tangan digital, sertifikat digital, protokol autentikasi.
+
+Authenticity membuktikan identitas entitas dalam komunikasi digital, memastikan bahwa pesan benar-benar berasal dari sumber yang diklaim dan tidak dari peniru. Dalam dunia digital di mana identitas dapat dengan mudah dipalsukan, authenticity menjadi krusial untuk mencegah serangan seperti phishing, spoofing, dan man-in-the-middle attacks. Sertifikat digital yang dikeluarkan oleh Certificate Authorities (CA) tepercaya menyediakan infrastruktur untuk verifikasi identitas dalam skala global.
+
+Tanda tangan digital menggabungkan enkripsi dan fungsi hash untuk menciptakan bukti matematis tentang asal dan integritas pesan yang tidak dapat dipalsukan. Protokol autentikasi yang kuat memastikan hanya pengguna yang sah yang dapat mengakses sistem dan sumber daya, melindungi terhadap akses tidak sah yang dapat mengompromikan keamanan keseluruhan. Authenticity yang efektif sangat penting dalam e-commerce, perbankan online, dan komunikasi pemerintahan di mana kepercayaan terhadap identitas pihak yang berkomunikasi adalah fundamental.
+
+\begin{contoh}
+Dalam pembayaran online: confidentiality melindungi data kartu kredit; integrity memastikan jumlah transaksi tidak diubah; authenticity memastikan pembayaran berasal dari pemilik kartu yang sah.
+\end{contoh}

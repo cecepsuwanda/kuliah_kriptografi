@@ -1,0 +1,60 @@
+\section{Tanda Tangan Digital Berbasis RSA}
+
+\subsection{Konsep dan Matematika}
+
+Tanda tangan digital memastikan keaslian dan integritas pesan. Alice menandatangani pesan $m$ dengan kunci privatnya. Bob memverifikasi dengan kunci publik Alice. Menurut Wikipedia, tanda tangan digital merupakan salah satu aplikasi paling penting dari kriptografi asimetris, memungkinkan verifikasi otomatis dan non-repudiasi dalam transaksi digital.
+
+Tanda tangan digital RSA secara matematis menggunakan operasi modular yang sama dengan enkripsi RSA. Menurut Wikipedia, untuk membuat tanda tangan, Alice menghitung hash pesan $h = H(m)$, kemudian mengenkripsi hash tersebut dengan kunci privatnya: $s = h^d \bmod n$. Verifikasi dilakukan dengan mendekripsi tanda tangan menggunakan kunci publik dan membandingkan dengan hash ulang: $h' = s^e \bmod n$.
+
+\subsection{Skema RSA-Based}
+
+Alice menghitung $h = H(m)$ (hash pesan), lalu $s = h^d \bmod n$ dengan kunci privat $(d, n)$. Tanda tangan: $s$. Menurut Wikipedia, skema ini disebut "RSA with Appendix" karena menandatangani hash pesan daripada pesan langsung. Ini memungkinkan tanda tangan yang lebih pendek dan efisien untuk pesan besar.
+
+Bob memverifikasi: menghitung $h' = s^e \bmod n$ dengan kunci publik $(e, n)$, lalu $h = H(m)$. Jika $h' = h$, tanda tangan valid. Menurut sumber keamanan, verifikasi ini berhasil karena sifat matematika RSA: $(h^d)^e \equiv h^{ed} \equiv h \pmod{n}$ jika $h = H(m)$ dan $m$ relatif prima terhadap $n$.
+
+\subsection{Standar PKCS dan Padding}
+
+PKCS~\#1 mendefinisikan format dan padding yang aman untuk tanda tangan RSA. Menurut Wikipedia, standar ini dikembangkan oleh RSA Laboratories dan menjadi referensi implementasi tanda tangan digital di seluruh dunia. PKCS~\#1 v1.5 mendefinisikan \texttt{RSASSA-PKCS1-v1\_5} (legacy) dan \texttt{RSASSA-PKCS1-v1\_5} dengan appendix (EMSA).
+
+PKCS~\#1 v2.0 memperkenalkan skema yang lebih modern: RSAES-OAEP untuk enkripsi dan RSASSA-PSS untuk tanda tangan. Menurut Wikipedia, OAEP (Optimal Asymmetric Encryption Padding) menggunakan Mask Generation Function (MGF1) untuk menciptakan padding yang semirandom dan aman terhadap serangan chosen-ciphertext. PSS (Probabilistic Signature Scheme) menggunakan salt acak untuk mencegah serangan terhadap skema tanda tangan deterministik.
+
+\subsection{Implementasi Praktis dengan OpenSSL}
+
+Untuk implementasi tanda tangan digital yang aman, gunakan library OpenSSL dengan EVP API. Menurut Wikipedia, OpenSSL menyediakan implementasi RSA yang telah dioptimasi dan diuji secara ekstensif untuk berbagai skema PKCS. Hindari implementasi manual dari operasi RSA tingkat rendah.
+
+\begin{lstlisting}[style=cstyle]
+// Contoh implementasi tanda tangan dengan OpenSSL
+EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
+EVP_PKEY_sign_init(ctx);
+EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PSS_PADDING);
+EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256());
+EVP_PKEY_sign(ctx, signature, &siglen, message, message_len);
+\end{lstlisting}
+
+OpenSSL EVP API menyediakan interface tingkat tinggi yang aman dan konsisten. Menurut dokumentasi OpenSSL, API ini secara otomatis menggunakan constant-time operations, padding yang aman (PSS), dan validasi input yang komprehensif. Penggunaan EVP sangat direkomendasikan untuk aplikasi produksi karena mengurangi risiko implementasi yang salah.
+
+\subsection{Keamanan Implementasi}
+
+Implementasi tanda tangan digital yang aman harus memperhatikan berbagai aspek:
+\begin{itemize}
+  \item \textbf{Random Number Generation}: Gunakan CSRNG untuk kunci dan salt.
+  \item \textbf{Hash Function}: Gunakan hash yang kuat (SHA-256 atau lebih).
+  \item \textbf{Padding}: Selalu gunakan padding yang aman (OAEP, PSS).
+  \item \textbf{Side-Channel Protection}: Implementasi constant-time operations.
+  \item \textbf{Key Management}: Lindungi kunci privat dengan sangat hati-hati.
+\end{itemize}
+
+Keamanan implementasi tanda tangan digital sangat bergantung pada keamanan kunci privat. Menurut sumber keamanan, jika kunci privat RSA dikompromikan, semua tanda tangan yang dibuat dengan kunci tersebut dapat dipalsukan. Oleh karena itu, perlindungan kunci privat menggunakan Hardware Security Modules (HSM) atau secure enclaves sangat penting untuk aplikasi keamanan tinggi.
+
+\subsection{Aplikasi dan Use Cases}
+
+Tanda tangan digital RSA digunakan secara luas dalam berbagai aplikasi:
+\begin{itemize}
+  \item \textbf{Email Security}: S/MIME untuk email yang ditandatangani.
+  \item \textbf{Code Signing}: Menandatangani software dan driver untuk verifikasi integritas.
+  \item \textbf{Document Signing}: PDF dan dokumen digital yang ditandatangani.
+  \item \textbf{Financial Transactions}: Transaksi perbankan dan pembayaran online.
+  \item \textbf{Blockchain}: Transaksi cryptocurrency dan smart contracts.
+\end{itemize}
+
+Tanda tangan digital menjadi fondasi bagi banyak sistem keamanan modern. Menurut Wikipedia, penggunaan tanda tangan digital memungkinkan otomatisasi proses verifikasi yang sebelumnya memerlukan intervensi manual. Dalam blockchain, tanda tangan digunakan untuk membuktikan kepemilikan transaksi tanpa memerlukan otoritas terpusat.

@@ -1,0 +1,47 @@
+\section{Pengantar Kriptografi}
+
+\subsection{Definisi dan Sejarah}
+
+Kriptografi berasal dari bahasa Yunani: \textit{kryptos} (tersembunyi) dan \textit{graphia} (menulis). Secara umum, \crypt{kriptografi} adalah ilmu dan seni untuk mengamankan informasi dengan mengubah pesan yang dapat dibaca (\crypt{plaintext}) menjadi bentuk yang tidak dapat dibaca tanpa kunci (\crypt{ciphertext}) \cite{schneier1996}.
+
+Sejarah kriptografi dimulai sejak zaman kuno:
+\begin{itemize}
+  \item \textbf{Antik}: Scytale (Sparta), cipher substitusi sederhana
+  \item \textbf{Abad Pertengahan}: Cipher Vigenère (abad ke-16)
+  \item \textbf{Perang Dunia II}: Mesin Enigma (Jerman), pemecahan oleh Inggris
+  \item \textbf{Era Modern}: DES (1977), RSA (1977), AES (2001)
+\end{itemize}
+
+Bukti earliest penggunaan kriptografi ditemukan dalam hieroglif non-standar yang diukir di dinding makam dari Kerajaan Lama Mesir sekitar 1900 SM. Menurut Wikipedia, tablet tanah liat dari Mesopotamia sekitar 1500 SM jelas dimaksudkan untuk melindungi informasi—satu tablet ditemukan mengenkripsi resep pematung untuk glasir keramik yang nilainya secara komersial. Para sarjana Ibrani menggunakan cipher substitusi monoalfabetik sederhana seperti Atbash cipher sekitar 600-500 SM, menunjukkan bahwa kebutuhan akan komunikasi rahasia telah ada sejak ribuan tahun lalu.
+
+Evolusi kriptografi modern dimulai setelah Perang Dunia II dengan kemajuan signifikan dalam studi kriptografi, terutama pengenalan cipher kunci asimetris (kadang disebut cipher kunci publik). Menurut Wikipedia, cipher ini menggunakan dua kunci yang terkait secara matematis untuk enkripsi pesan yang sama, dan beberapa algoritma mengizinkan publikasi salah satu kunci karena sangat sulit menentukan satu kunci hanya dari pengetahuan kunci lainnya. Perkembangan internet untuk tujuan komersial pada tahun 1990-an menuntut standar enkripsi yang luas, yang pada akhirnya mengarah pada penggantian DES dengan AES melalui kompetisi publik yang diorganisir oleh NIST.
+
+\subsection{Terminologi Dasar}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|l|>{\raggedright\arraybackslash}p{8cm}|}
+\hline
+\textbf{Istilah} & \textbf{Definisi} \\
+\hline
+Plaintext & Pesan asli sebelum enkripsi \\
+\hline
+Ciphertext & Pesan terenkripsi, tidak dapat dibaca tanpa kunci \\
+\hline
+Cipher & Algoritma atau skema untuk enkripsi dan dekripsi \\
+\hline
+Key (Kunci) & Nilai rahasia yang mengontrol operasi enkripsi/dekripsi \\
+\hline
+Enkripsi & Proses mengubah plaintext menjadi ciphertext \\
+\hline
+Dekripsi & Proses mengubah ciphertext kembali ke plaintext \\
+\hline
+Kriptanalisis & Studi untuk memecahkan cipher tanpa mengetahui kunci \\
+\hline
+\end{tabular}
+\caption{Terminologi Dasar Kriptografi}
+\end{table}
+
+\begin{konsep}
+Dalam model dasar kriptografi, Alice mengirim pesan kepada Bob. Eve (eavesdropper) mencoba mencuri dengar. Enkripsi memastikan Eve tidak dapat memahami isi pesan meskipun berhasil menangkap ciphertext.
+\end{konsep}

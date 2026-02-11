@@ -1,0 +1,19 @@
+\section{Kasiski Examination}
+
+\subsection{Prinsip}
+
+Cipher Vigenère menggunakan kunci berulang. Jika plaintext mengandung pengulangan (misalnya "THE" muncul dua kali dengan jarak kelipatan panjang kunci), ciphertext juga akan memiliki pola berulang. Jarak antar pola berulang adalah kelipatan panjang kunci.
+
+\subsection{Langkah}
+
+\begin{enumerate}
+  \item Cari urutan 3--4 karakter yang berulang dalam ciphertext
+  \item Catat jarak antar kemunculan
+  \item Faktor persekutuan dari jarak-jarak tersebut kemungkinan adalah panjang kunci
+  \item Setelah panjang kunci $L$ diketahui, bagi ciphertext menjadi $L$ kelompok (posisi 1, $L+1$, $2L+1$, ...; posisi 2, $L+2$, ...; dst.)
+  \item Setiap kelompok berperilaku seperti Caesar cipher. Lakukan frequency analysis pada setiap kelompok untuk memperoleh subkunci
+\end{enumerate}
+
+\subsection{Praktikum}
+
+Implementasikan dalam C: (a) penghitungan frekuensi huruf; (b) pencarian pengulangan untuk Kasiski. Gunakan ciphertext dari Vigenère dengan kunci yang diketahui untuk validasi.

@@ -1,0 +1,52 @@
+# LaTeX Build Artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.lol
+*.bbl
+*.blg
+*.bcf
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+*.xdv
+*.run.xml
+*.idx
+*.ilg
+*.ind
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+*.xdy
+
+# Output PDF (dapat di-generate ulang dari .tex)
+*.pdf
+
+# Output folder dari compile_main.bat dan compile_bab.bat
+output/
+
+# Temporary / Backup
+*.tmp
+*~
+*.bak
+*.swp
+*.swo
+
+# Windows
+Thumbs.db
+Desktop.ini
+*.lnk
+
+# IDE / Editor
+.vscode/
+.idea/

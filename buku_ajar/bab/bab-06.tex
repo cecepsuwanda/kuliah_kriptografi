@@ -1,0 +1,106 @@
+\documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{\setcounter{chapter}{5}}{}
+\begin{document}
+
+\chapter{Kriptografi Asimetris dan RSA}
+
+\begin{subcpmk}
+  \item Sub-CPMK 4.2: Mengimplementasikan algoritma RSA dalam bahasa C (dengan bilangan kecil atau library)
+\end{subcpmk}
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab-06/section-6-1}
+\input{bab-06/section-6-2}
+\input{bab-06/section-6-3}
+
+% ============================================================
+% AKTIVITAS PEMBELAJARAN
+% ============================================================
+
+\begin{aktivitas}
+  \item \textbf{Praktikum C}: Implementasikan pembangkitan kunci RSA (p, q kecil), hitung $d$ dengan \code{mod\_inverse}.
+  
+  \item \textbf{Praktikum}: Gunakan OpenSSL untuk generate key pair RSA dan enkripsi/dekripsi file.
+  
+  \item \textbf{Analisis}: Mengapa $e=65537$ sering dipilih? Apa dampaknya terhadap keamanan?
+  
+  \item \textbf{Diskusi}: Bandingkan OAEP (enkripsi) dan PSS (tanda tangan). Jelaskan mengapa padding acak diperlukan.
+  
+  \item \textbf{Studi Kasus}: Rancang skema hybrid (KEM-DEM) untuk mengenkripsi file besar. Jelaskan alur kunci dan data.
+\end{aktivitas}
+
+% ============================================================
+% LATIHAN DAN REFLEKSI
+% ============================================================
+
+\begin{latihan}
+  \item Dengan $p=3$, $q=11$, $e=3$: hitung $n$, $\varphi(n)$, $d$, lalu enkripsi $m=5$.
+  
+  \item Jelaskan mengapa $m^{ed} \equiv m \pmod{n}$ untuk RSA.
+  
+  \item Apa yang terjadi jika $p$ atau $q$ tidak prima?
+  
+  \item Berapa ukuran kunci RSA minimal yang direkomendasikan saat ini?
+  
+  \item Jelaskan perbedaan $\varphi(n)$ dan $\lambda(n)$ serta dampaknya pada perhitungan $d$.
+  
+  \item Uraikan langkah-langkah hybrid encryption (KEM-DEM) dan sebutkan keuntungannya.
+  
+  \item Mengapa padding oracle berbahaya? Sebutkan mitigasi praktisnya.
+\end{latihan}
+
+% ============================================================
+% ASESMEN
+% ============================================================
+
+\begin{asesmen}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 4.2}
+
+\begin{enumerate}
+  \item Implementasikan dalam C: program yang menerima $p$, $q$, $e$, dan plaintext $m$, lalu menampilkan ciphertext dan hasil dekripsi. Validasi bahwa dekripsi menghasilkan $m$.
+  \item Jelaskan perbedaan RSA-OAEP dan RSASSA-PSS serta konteks penggunaannya.
+  \item Buat diagram alur sederhana untuk skema hybrid RSA + AES (KEM-DEM).
+\end{enumerate}
+\end{asesmen}
+
+% ============================================================
+% CHECKLIST KOMPETENSI
+% ============================================================
+
+\begin{checklist}
+  \item Saya dapat menjelaskan langkah pembangkitan kunci RSA
+  \item Saya dapat menghitung enkripsi dan dekripsi RSA secara manual
+  \item Saya dapat mengimplementasikan RSA dengan bilangan kecil dalam C
+  \item Saya memahami dasar keamanan RSA (faktorisasi)
+  \item Saya dapat membedakan OAEP (enkripsi) dan PSS (tanda tangan)
+  \item Saya memahami alur hybrid encryption (KEM-DEM)
+  \item Saya memahami mitigasi dasar serangan padding oracle dan side-channel
+\end{checklist}
+
+% ============================================================
+% RANGKUMAN
+% ============================================================
+
+\begin{rangkuman}
+Bab ini membahas kriptografi asimetris dan algoritma RSA: pembangkitan kunci, enkripsi, dekripsi, padding modern, hybrid encryption, serta implementasi C.
+
+\textbf{Poin Kunci:}
+\begin{itemize}
+  \item RSA: $n=pq$, $\varphi(n)=(p-1)(q-1)$, $ed \equiv 1 \pmod{\varphi(n)}$
+  \item Enkripsi: $c = m^e \bmod n$; Dekripsi: $m = c^d \bmod n$
+  \item OAEP direkomendasikan untuk enkripsi, PSS untuk tanda tangan
+  \item Skema hybrid (KEM-DEM) memakai RSA untuk kunci dan AES untuk data
+  \item Keamanan bergantung pada kesulitan memfaktorkan $n$ dan kualitas implementasi
+\end{itemize}
+
+\textbf{Kata Kunci}: \crypt{RSA}, \crypt{OAEP}, \crypt{PSS}, \crypt{Hybrid Encryption}, \crypt{KEM-DEM}, \crypt{CRT}, \crypt{Kunci Publik}
+\end{rangkuman}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+\end{document}

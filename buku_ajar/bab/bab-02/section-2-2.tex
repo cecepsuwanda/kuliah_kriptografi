@@ -1,0 +1,42 @@
+\section{Model Komunikasi Aman dan Ancaman}
+
+\subsection{Model Komunikasi Kriptografi}
+
+Model standar melibatkan:
+\begin{itemize}
+  \item \textbf{Alice (Pengirim)}: Mengirim plaintext, melakukan enkripsi
+  \item \textbf{Bob (Penerima)}: Menerima ciphertext, melakukan dekripsi
+  \item \textbf{Eve (Penyerang)}: Mencoba mencuri dengar (eavesdropping) atau memodifikasi pesan
+  \item \textbf{Kanal}: Saluran komunikasi (internet, udara, jaringan) yang mungkin tidak aman
+\end{itemize}
+
+Tujuan kriptografi adalah memastikan komunikasi aman meskipun kanal tidak terpercaya. Model komunikasi ini mencerminkan skenario dunia nyata di mana informasi sensitif harus ditransmisikan melalui jaringan publik yang rentan terhadap intervensi pihak ketiga. Dalam implementasi praktis, Alice dan Bob dapat merepresentasikan berbagai entitas seperti pengguna dan server, dua sistem dalam jaringan korporat, atau bahkan proses yang berkomunikasi dalam satu sistem komputer.
+
+\subsection{Ancaman Keamanan}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{|l|p{6cm}|}
+\hline
+\textbf{Ancaman} & \textbf{Deskripsi} \\
+\hline
+Interception & Eve mencuri dengar pesan tanpa diketahui \\
+\hline
+Modification & Eve mengubah isi pesan dalam perjalanan \\
+\hline
+Fabrication & Eve membuat pesan palsu seolah dari Alice \\
+\hline
+Replay & Eve merekam pesan dan mengirim ulang di waktu lain \\
+\hline
+Masquerade & Eve berpura-pura sebagai pihak lain \\
+\hline
+\end{tabular}
+\caption{Jenis Ancaman Keamanan}
+\end{table}
+
+Ancaman keamanan dapat diklasifikasikan berdasarkan dampaknya terhadap tiga pilar keamanan informasi yang fundamental. Menurut Fortinet, confidentiality melibatkan upaya organisasi untuk memastikan data tetap rahasia atau pribadi dengan mengontrol akses untuk mencegah pembagian data tidak sah. Ancaman terhadap confidentiality dapat berupa serangan langsung untuk mendapatkan akses ke sistem atau teknik seperti man-in-the-middle attacks di mana penyerang memposisikan diri dalam aliran informasi untuk mencegat data.
+
+Integrity memastikan data tepercaya dan bebas dari perusakan, di mana data harus autentik, akurat, dan andal. Menurut Fortinet, pelanggaran integrity sering kali dilakukan secara sengaja di mana penyerang dapat mengubah konfigurasi file untuk mengizinkan akses tidak sah atau mengubah log sistem untuk menyembunyikan serangan.
+
+Untuk mengatasi ancaman tersebut, kriptografi menyediakan mekanisme yang menjadi fokus bab ini: \textbf{confidentiality} (kerahasiaan), \textbf{integrity} (keutuhan), dan \textbf{authenticity} (keaslian). Ketiga pilar ini bekerja bersama untuk menciptakan sistem keamanan yang komprehensif dan berlapis, di mana setiap mekanisme mendukung yang lain untuk menciptakan pertahanan yang kokoh terhadap berbagai jenis serangan. Implementasi yang tepat dari ketiga aspek ini memastikan komunikasi digital tetap aman, andal, dan terpercaya dalam era konektivitas global.

@@ -1,0 +1,57 @@
+\section{Kriptografi Simetris dan Asimetris}
+
+\subsection{Kriptografi Simetris (Secret-Key)}
+
+Menggunakan \textbf{satu kunci} yang sama untuk enkripsi dan dekripsi. Kunci harus dijaga kerahasiaannya dan dibagikan secara aman antara Alice dan Bob.
+
+\begin{itemize}
+  \item \textbf{Contoh}: Caesar, Vigenère, DES, AES
+  \item \textbf{Kelebihan}: Cepat, efisien untuk data besar
+  \item \textbf{Kekurangan}: Masalah distribusi kunci---bagaimana Alice dan Bob berbagi kunci tanpa Eve tahu?
+\end{itemize}
+
+Kriptografi simetris menawarkan keunggulan kecepatan yang signifikan dibandingkan dengan kriptografi asimetris karena menggunakan kunci yang jauh lebih pendek dan hanya satu kunci untuk proses enkripsi dan dekripsi. Menurut Keyfactor, kecepatan ini membuat kriptografi simetris ideal untuk aplikasi di mana performa adalah prioritas utama, seperti enkripsi data dalam jumlah besar atau komunikasi real-time. Namun, risiko utama simetris terletak pada transmisi kunci di mana setiap pembagian kunci membawa risiko intersepsi oleh pihak ketiga yang tidak diinginkan.
+
+Implementasi kriptografi simetris secara luas digunakan dalam perbankan untuk mengenkripsi informasi kartu kredit atau data pribadi lainnya yang diperlukan untuk transaksi. Selain itu, kriptografi simetris juga umum digunakan untuk enkripsi data yang disimpan di perangkat ketika data tidak sedang ditransfer, memberikan perlindungan yang efisien untuk data diam. Algoritma seperti AES (Advanced Encryption Standard) telah menjadi standar industri untuk enkripsi simetris karena kombinasi keamanan dan performanya yang excellent.
+
+\subsection{Kriptografi Asimetris (Public-Key)}
+
+Menggunakan \textbf{pasangan kunci}: kunci publik (dapat dibagikan) dan kunci privat (rahasia).
+
+\begin{itemize}
+  \item \textbf{Contoh}: RSA, ElGamal
+  \item \textbf{Kelebihan}: Tidak perlu pertukaran kunci rahasia di kanal terbuka
+  \item \textbf{Kekurangan}: Lebih lambat dibanding simetris, membutuhkan operasi matematika berat
+\end{itemize}
+
+Kriptografi asimetris menawarkan keamanan yang superior karena menggunakan dua kunci berbeda—kunci publik yang hanya digunakan untuk enkripsi pesan dan aman untuk dimiliki siapa pun, serta kunci privat untuk dekripsi yang tidak perlu dibagikan. Menurut Keyfactor, karena kunci privat tidak pernah dibagikan, ini membantu memastikan hanya penerima yang dimaksud yang dapat mendekripsi pesan terenkripsi dan menciptakan tanda tangan digital yang tidak dapat dipalsukan. Keamanan ini membuat asimetris ideal untuk aplikasi di mana verifikasi identitas diperlukan.
+
+Penggunaan umum kriptografi asimetris termasuk tanda tangan digital untuk mengkonfirmasi identitas seseorang yang menandatangani dokumen dan blockchain untuk mengkonfirmasi identitas guna mengotorisasi transaksi cryptocurrency. Public Key Infrastructure (PKI) juga menggunakan kriptografi asimetris untuk mengelola kunci enkripsi melalui penerbitan dan manajemen sertifikat digital. Meskipun lebih lambat, keamanan yang ditawarkan membuat asimetris sangat penting untuk aplikasi di mana identitas dan kepercayaan adalah prioritas utama.
+
+\subsection{Perbandingan}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Aspek} & \textbf{Simetris} & \textbf{Asimetris} \\
+\hline
+Jumlah kunci & 1 (rahasia) & 2 (publik + privat) \\
+\hline
+Kecepatan & Cepat & Lebih lambat \\
+\hline
+Distribusi kunci & Sulit & Lebih mudah \\
+\hline
+Penggunaan umum & Enkripsi data besar & Pertukaran kunci, tanda tangan \\
+\hline
+\end{tabular}
+\caption{Perbandingan Kriptografi Simetris dan Asimetris}
+\end{table}
+
+\begin{catatan}
+Dalam praktik, sistem modern sering menggunakan \textbf{enkripsi hibrida}: menggunakan asimetris untuk pertukaran kunci, lalu simetris untuk enkripsi data (misalnya TLS/SSL).
+\end{catatan}
+
+Pendekatan hibrida menggabungkan keunggulan kedua jenis kriptografi untuk menciptakan sistem yang aman dan efisien secara bersamaan. Menurut Keyfactor, sebagian besar implementasi hibrida menggunakan kriptografi simetris untuk mengenkripsi sebagian besar informasi dan kemudian menggunakan kriptografi asimetris untuk mengenkripsi kunci enkripsi/dekripsi simetris. SSL/TLS adalah contoh klasik di mana kriptografi asimetris digunakan untuk mengenkripsi kunci enkripsi simetris sekali pakai, yang kemudian digunakan untuk mengenkripsi/mendekripsi konten sesi browsing internet.
+
+Sistem chat mobile juga menggunakan pendekatan hibrida dengan kriptografi asimetris untuk memverifikasi identitas peserta di awal percakapan dan kemudian kriptografi simetris untuk mengenkripsi konten percakapan yang berkelanjutan. Kombinasi ini memastikan keamanan identitas dan kecepatan komunikasi, menjadikannya solusi ideal untuk aplikasi komunikasi modern yang membutuhkan kedua aspek tersebut.

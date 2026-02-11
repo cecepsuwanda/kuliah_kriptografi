@@ -1,0 +1,135 @@
+\documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{\setcounter{chapter}{1}}{}
+\begin{document}
+
+\chapter{Landasan Teori dan Konsep Dasar Kriptografi}
+
+\begin{subcpmk}
+  \item Sub-CPMK 1.1: Menjelaskan model komunikasi aman dan ancaman keamanan informasi
+  \item Sub-CPMK 1.2: Mendefinisikan confidentiality, integrity, dan authenticity
+  \item Sub-CPMK 1.3: Membedakan kriptografi simetris dan asimetris
+\end{subcpmk}
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab-02/section-2-1}
+\input{bab-02/section-2-2}
+\input{bab-02/section-2-3}
+\input{bab-02/section-2-4}
+\input{bab-02/section-2-5}
+
+% ============================================================
+% AKTIVITAS PEMBELAJARAN
+% ============================================================
+
+\begin{aktivitas}
+  \item \textbf{Diskusi Kelompok}: Identifikasi 5 aplikasi sehari-hari yang menggunakan kriptografi (misalnya: WhatsApp, perbankan online, e-commerce). Jelaskan ancaman apa yang dilindungi masing-masing.
+  
+  \item \textbf{Analisis Kasus}: Diberikan skenario: Eve mencuri ciphertext dari komunikasi Alice dan Bob. Apa yang bisa dan tidak bisa dilakukan Eve? Jelaskan peran confidentiality, integrity, dan authenticity.
+  
+  \item \textbf{Perbandingan}: Buat tabel perbandingan antara kriptografi simetris dan asimetris untuk penggunaannya dalam: enkripsi file, pertukaran kunci, tanda tangan digital.
+  
+  \item \textbf{Mind Mapping}: Buat mind map yang menghubungkan confidentiality, integrity, authenticity dengan mekanisme kriptografi yang mendukungnya.
+\end{aktivitas}
+
+% ============================================================
+% LATIHAN DAN REFLEKSI
+% ============================================================
+
+\begin{latihan}
+  \item Jelaskan definisi plaintext, ciphertext, cipher, dan key! Berikan contoh konkret.
+  
+  \item Sebutkan dan jelaskan tiga pilar keamanan informasi (confidentiality, integrity, authenticity)! Berikan contoh ancaman yang melanggar masing-masing.
+  
+  \item Apa perbedaan utama antara kriptografi simetris dan asimetris? Kapan masing-masing lebih cocok digunakan?
+  
+  \item Jelaskan model komunikasi kriptografi (Alice, Bob, Eve). Apa peran masing-masing?
+  
+  \item Berikan 3 contoh ancaman keamanan dan jelaskan bagaimana kriptografi dapat mengatasinya.
+  
+  \item \textbf{Refleksi}: Bagaimana pemahaman Anda tentang keamanan informasi sebelum dan sesudah mempelajari bab ini?
+\end{latihan}
+
+% ============================================================
+% ASESMEN
+% ============================================================
+
+\begin{asesmen}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 1.1, 1.2, 1.3}
+
+\textbf{A. Pilihan Ganda}
+
+\begin{enumerate}
+  \item Manakah yang BUKAN merupakan pilar keamanan informasi?
+  \begin{enumerate}
+    \item Confidentiality
+    \item Integrity
+    \item Complexity
+    \item Authenticity
+  \end{enumerate}
+  
+  \item Dalam kriptografi simetris, jumlah kunci yang digunakan adalah:
+  \begin{enumerate}
+    \item Satu kunci untuk enkripsi dan dekripsi
+    \item Dua kunci berbeda
+    \item Tidak ada kunci
+    \item Kunci publik saja
+  \end{enumerate}
+  
+  \item Fungsi utama enkripsi adalah untuk mencapai:
+  \begin{enumerate}
+    \item Integritas
+    \item Kerahasiaan (confidentiality)
+    \item Keaslian
+    \item Ketersediaan
+  \end{enumerate}
+\end{enumerate}
+
+\textbf{B. Essay}
+
+\begin{enumerate}
+  \item Jelaskan dengan kata-kata Anda sendiri apa yang dimaksud dengan kriptografi dan berikan 2 contoh penggunaannya dalam kehidupan nyata.
+  
+  \item Bandingkan kriptografi simetris dan asimetris. Mana yang lebih cocok untuk enkripsi file besar dan mengapa?
+\end{enumerate}
+
+\textbf{Rubrik Penilaian}: Lihat Lampiran A
+\end{asesmen}
+
+% ============================================================
+% CHECKLIST KOMPETENSI
+% ============================================================
+
+\begin{checklist}
+  \item Saya dapat menjelaskan terminologi dasar kriptografi (plaintext, ciphertext, cipher, key)
+  \item Saya dapat menjelaskan model komunikasi aman dan ancaman keamanan
+  \item Saya dapat mendefinisikan confidentiality, integrity, dan authenticity
+  \item Saya dapat membedakan kriptografi simetris dan asimetris
+  \item Saya dapat memberikan contoh penggunaan masing-masing jenis kriptografi
+\end{checklist}
+
+% ============================================================
+% RANGKUMAN
+% ============================================================
+
+\begin{rangkuman}
+Bab ini membahas landasan teori kriptografi, termasuk definisi, sejarah, terminologi, model komunikasi aman, ancaman keamanan, tiga pilar keamanan informasi, serta perbedaan kriptografi simetris dan asimetris.
+
+\textbf{Poin Kunci:}
+\begin{itemize}
+  \item Kriptografi mengamankan informasi melalui enkripsi dan dekripsi
+  \item Tiga pilar: Confidentiality, Integrity, Authenticity
+  \item Simetris: satu kunci, cepat; Asimetris: pasangan kunci, handal untuk distribusi
+  \item Pemahaman landasan teori adalah fondasi untuk mempelajari algoritma kriptografi
+\end{itemize}
+
+\textbf{Kata Kunci}: \crypt{Kriptografi}, \crypt{Plaintext}, \crypt{Ciphertext}, \crypt{Enkripsi}, \crypt{Dekripsi}, \crypt{Confidentiality}, \crypt{Integrity}, \crypt{Authenticity}
+\end{rangkuman}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+\end{document}

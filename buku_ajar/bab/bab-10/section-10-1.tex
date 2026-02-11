@@ -1,0 +1,38 @@
+\section{Asesmen Komprehensif}
+
+Bab ini berisi asesmen untuk mengukur pencapaian seluruh CPMK yang telah dipelajari sepanjang mata kuliah Kriptografi. Menurut sumber evaluasi, asesmen komprehensif dirancang untuk mengukur pencapaian mahasiswa secara holistik, mencakup aspek kognitif, psikomotorik, dan afektif yang terukur dalam pembelajaran kriptografi.
+
+\subsection{Soal UTS (Style)}
+
+Soal UTS dirancang untuk mengukur tiga pilar utama pencapaian CPMK. Menurut sumber evaluasi, setiap soal harus dihubungkan dengan Sub-CPMK secara eksplisit dan diukur dengan kriteria penilaian yang jelas. Soal UTS yang baik mengukur kemampuan analitis, sintesis, dan evaluasi konsep kriptografi secara terintegrasi.
+
+\begin{enumerate}
+  \item \textbf{Jelaskan tiga pilar keamanan informasi} (confidentiality, integrity, authenticity) dan berikan contoh ancaman yang melanggar setiap pilar.
+  \item \textbf{Ukur kemampuan implementasi}: Soal menguji kemampuan mahasiswa untuk mengimplementasikan algoritma kriptografi dalam C.
+  \item \textbf{Ukur kemampuan analisis kriptografi}: Soal meminta mahasiswa untuk menganalisis kelemahan algoritma dan melakukan serangan sederhana.
+  \item \textbf{Ukur kemampuan sintesis}: Soal menuntut mahasiswa untuk merancang skema keamanan baru atau memodifikasi algoritma yang ada.
+\end{enumerate}
+
+Soal UTS yang efektif harus mengukur keseimbangan antara teori dan praktikum. Menurut sumber evaluasi, bobot soal yang terlalu sulit atau terlalu mudah dapat mengurangi motivasi dan pembelajaran yang efektif. Soal yang baik harus memiliki tingkat kesulitan yang sesuai dengan kemampuan mahasiswa dan memberikan kesempatan untuk menunjukkan pemahaman yang nyata.
+
+Contoh soal UTS (style):
+\begin{enumerate}
+  \item Jelaskan tiga pilar keamanan informasi (confidentiality, integrity, authenticity) dan berikan contoh ancaman yang melanggar masing-masing.
+  \item Hitung: (a) $17^{-1} \pmod{26}$, (b) $3^{10} \bmod 7$ menggunakan fast exponentiation.
+  \item Enkripsi "CRYPTO" dengan Caesar $k=7$. Jelaskan mengapa Caesar cipher rentan terhadap frequency analysis.
+  \item Jelaskan perbedaan struktur DES (Feistel) dan AES. Sebutkan empat operasi dalam satu round AES.
+\end{enumerate}
+
+Rubrik dan metode penilaian diuraikan pada section berikut.
+
+\subsection{Soal UAS (Style)}
+
+\begin{enumerate}
+  \item Jelaskan langkah pembangkitan kunci RSA. Dengan $p=5$, $q=11$, $e=3$, hitung $n$, $\varphi(n)$, $d$, dan enkripsi $m=9$.
+  
+  \item Jelaskan peran fungsi hash dalam tanda tangan digital. Mengapa kita hash pesan sebelum menandatanganinya?
+  
+  \item Jelaskan protokol Diffie-Hellman. Mengapa Eve tidak dapat memperoleh kunci bersama meskipun melihat $A$ dan $B$?
+  
+  \item Implementasikan dalam C: fungsi \code{caesar\_encrypt} dengan parameter \code{char *text} dan \code{int shift}. Lampirkan kode lengkap.
+\end{enumerate}

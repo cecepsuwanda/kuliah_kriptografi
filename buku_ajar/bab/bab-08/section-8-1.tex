@@ -1,0 +1,35 @@
+\section{Protokol Diffie-Hellman dan TLS}
+
+\subsection{Protokol Pertukaran Kunci Diffie-Hellman}
+
+Diffie-Hellman adalah protokol pertukaran kunci yang revolusioner, memungkinkan dua pihak yang belum pernah bertemu untuk menyepakati kunci rahasia melalui kanal publik yang tidak aman. Menurut Wikipedia, protokol ini dipublikasikan oleh Whitfield Diffie dan Martin Hellman pada tahun 1976 dalam makalah "New Directions in Cryptography", yang membuka era baru dalam kriptografi kunci publik modern.
+
+Protokol Diffie-Hellman bekerja dengan memanfaatkan sifat-sifat matematika dari grup siklik hingga. Menurut Wikipedia, keamanan protokol ini bergantung pada kesulitan untuk menghitung diskrit logaritma modular dalam grup siklik, yang dianggap sangat sulit tanpa adanya komputer kuantum. Analogi warna yang sering digunakan untuk menjelaskan protokol ini menunjukkan bagaimana dua warna rahasia dapat dikombinasikan secara publik untuk menghasilkan warna bersama tanpa mengungkapkan warna asli masing-masing.
+
+Alice dan Bob dapat menyepakati kunci rahasia melalui kanal yang tidak aman. Parameter publik: bilangan prima $p$ dan generator $g$ dapat dibagikan secara publik tanpa membocorkan kunci privat. Menurut sumber keamanan, parameter ini harus dipilih dengan hati-hati dan generator yang kuat harus digunakan untuk mencegah serangan terhadap parameter yang lemah atau prediksi.
+
+\begin{enumerate}
+  \item Alice memilih $a$ rahasia, mengirim $A = g^a \bmod p$ ke Bob
+  \item Bob memilih $b$ rahasia, mengirim $B = g^b \bmod p$ ke Alice
+  \item Alice menghitung $K = B^a \bmod p$
+  \item Bob menghitung $K = A^b \bmod p$
+  \item Keduanya memperoleh $K$ yang sama
+\end{enumerate}
+
+Proses pertukaran kunci Diffie-Hellman sangat elegan secara matematis. Menurut Wikipedia, kedua pihak menghitung kunci bersama yang sama tanpa pernah bertukar kunci rahasia, memanfaatkan sifat komutatif grup siklik dan eksponensial modular. Protokol ini menjadi fondasi bagi banyak protokol keamanan modern, termasuk TLS yang digunakan secara luas di internet.
+
+\subsection{TLS (Transport Layer Security)}
+
+TLS (sebelumnya SSL) mengamankan komunikasi di internet (HTTPS) \cite{stallings2017}. Protokol TLS menggabungkan pertukaran kunci Diffie-Hellman dengan enkripsi simetris untuk data, menciptakan protokol keamanan hibrid yang sangat kuat. Menurut Wikipedia, TLS berkembang dari SSL versi 2.0 pada tahun 1995 dan menjadi standar industri untuk komunikasi aman di internet.
+
+TLS menggabungkan berbagai komponen keamanan dalam satu protokol terpadu. Menurut Wikipedia, protokol ini menggunakan cipher suite yang dapat dinegosiasi, autentikasi sertifikat digital, dan protokol handshake yang kompleks untuk memastikan keamanan end-to-end. TLS mendukung berbagai algoritma kriptografi modern termasuk AES-GCM untuk enkripsi data dan berbagai algoritma tanda tangan untuk autentikasi.
+
+\begin{itemize}
+  \item \textbf{Negosiasi cipher suite}: Server dan klien menegosiasi algoritma yang didukung.
+  \item \textbf{Autentikasi server}: Server membuktikan identitas dengan sertifikat digital.
+  \item \textbf{Pertukaran kunci}: Diffie-Hellman atau RSA untuk pertukaran kunci sesi.
+  \item \textbf{Enkripsi data}: AES-GCM atau ChaCha20-Poly1305 untuk data.
+  \item \textbf{Integritas}: HMAC atau AEAD untuk memastikan integritas data.
+\end{itemize}
+
+TLS menjadi fondasi bagi keamanan internet modern. Menurut sumber keamanan, protokol ini telah melalui banyak evolusi dari SSL 1.0 hingga TLS 1.3, dengan penambahan fitur keamanan seperti forward secrecy dan perfect forward secrecy. Implementasi TLS yang benar sangat kritis karena kesalahan kecil dapat membocorkan data sensitif atau membuka celah keamanan yang serius.

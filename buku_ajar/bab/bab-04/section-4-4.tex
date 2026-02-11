@@ -1,0 +1,54 @@
+\section{Cipher Transposisi}
+
+Cipher transposisi tidak mengganti huruf, tetapi \textbf{mengubah urutan} karakter. Plaintext disusun dalam pola tertentu (grid/rel), lalu dibaca ulang menurut urutan berbeda \cite{sandilands_classical}.
+
+\subsection{Rail Fence (Zigzag)}
+
+Plaintext ditulis zigzag pada beberapa baris (rail), lalu dibaca per baris.
+\begin{contoh}
+Plaintext: HELLOWORLD, 3 rail.
+\begin{verbatim}
+H   L   O
+ E L W R D
+  L   O
+\end{verbatim}
+Ciphertext: HLOELWRDLO
+\end{contoh}
+
+\subsection{Columnar Transposition}
+
+Plaintext ditulis ke dalam tabel berdasarkan panjang kunci, lalu kolom dibaca sesuai urutan kunci.
+\begin{contoh}
+Plaintext: ATTACKATDAWN, kunci: 3-1-4-2 (panjang 4).
+\[
+\begin{array}{cccc}
+A & T & T & A \\
+C & K & A & T \\
+D & A & W & N \\
+\end{array}
+\]
+Urutan baca kolom: 2, 4, 1, 3 $\Rightarrow$ TAAN | ATN | ACD | TAW.
+\end{contoh}
+
+\subsection{Implementasi Columnar dalam C (Ringkas)}
+
+\begin{lstlisting}[style=cstyle, caption={Columnar Transposition (enkripsi) dalam C}]
+#include <stdio.h>
+#include <string.h>
+
+void columnar_encrypt(const char *pt, int *key, int klen, char *ct) {
+    int len = strlen(pt);
+    int rows = (len + klen - 1) / klen;
+    int i, r, c, idx = 0;
+    for (i = 0; i < klen; i++) {
+        int col = key[i];
+        for (r = 0; r < rows; r++) {
+            c = r * klen + col;
+            if (c < len) ct[idx++] = pt[c];
+        }
+    }
+    ct[idx] = '\0';
+}
+\end{lstlisting}
+
+Cipher transposisi relatif lemah terhadap analisis jika ukuran blok kecil. Kombinasi dengan substitusi (misalnya DES) meningkatkan keamanan.

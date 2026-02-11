@@ -1,0 +1,86 @@
+\documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{\setcounter{chapter}{6}}{}
+\begin{document}
+
+\chapter{Fungsi Hash dan Tanda Tangan Digital}
+
+\begin{subcpmk}
+  \item Sub-CPMK 5.1: Menjelaskan sifat fungsi hash kriptografis dan mengimplementasikan SHA/MD5 untuk integritas data
+  \item Sub-CPMK 5.2: Merancang tanda tangan digital berbasis RSA
+\end{subcpmk}
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab-07/section-7-1}
+\input{bab-07/section-7-2}
+\input{bab-07/section-7-3}
+
+% ============================================================
+% AKTIVITAS PEMBELAJARAN
+% ============================================================
+
+\begin{aktivitas}
+  \item \textbf{Praktikum}: Gunakan OpenSSL untuk menghitung SHA-256 dari file. Bandingkan hash sebelum dan setelah mengubah satu byte.
+  
+  \item \textbf{Merancang}: Buat skema tanda tangan digital sederhana dengan RSA dan SHA-256 (paparkan langkah dalam pseudocode).
+  
+  \item \textbf{Analisis}: Mengapa MD5 tidak aman untuk keamanan kriptografis?
+\end{aktivitas}
+
+% ============================================================
+% LATIHAN DAN REFLEKSI
+% ============================================================
+
+\begin{latihan}
+  \item Jelaskan ketiga sifat fungsi hash kriptografis.
+  
+  \item Apa perbedaan penggunaan hash untuk integritas vs penyimpanan password?
+  
+  \item Jelaskan alur tanda tangan digital dan verifikasi dengan RSA.
+  
+  \item Mengapa kita hash pesan sebelum menandatanganinya, bukan menandatangani pesan langsung?
+\end{latihan}
+
+% ============================================================
+% ASESMEN
+% ============================================================
+
+\begin{asesmen}
+Jelaskan dalam essay: (a) Peran fungsi hash dalam tanda tangan digital. (b) Mengapa SHA-256 lebih direkomendasikan daripada MD5?
+\end{asesmen}
+
+% ============================================================
+% CHECKLIST KOMPETENSI
+% ============================================================
+
+\begin{checklist}
+  \item Saya dapat menjelaskan sifat fungsi hash kriptografis
+  \item Saya dapat menggunakan SHA untuk memeriksa integritas data
+  \item Saya dapat merancang skema tanda tangan digital berbasis RSA
+  \item Saya memahami peran hash dalam tanda tangan digital
+\end{checklist}
+
+% ============================================================
+% RANGKUMAN
+% ============================================================
+
+\begin{rangkuman}
+Bab ini membahas fungsi hash (SHA, MD5), integritas data, dan tanda tangan digital berbasis RSA.
+
+\textbf{Poin Kunci:}
+\begin{itemize}
+  \item Hash: preimage, second preimage, collision resistance
+  \item SHA-256 aman; MD5 tidak untuk keamanan
+  \item Tanda tangan: sign hash dengan kunci privat; verifikasi dengan kunci publik
+\end{itemize}
+
+\textbf{Kata Kunci}: \crypt{Fungsi Hash}, \crypt{SHA}, \crypt{Integritas}, \crypt{Tanda Tangan Digital}
+\end{rangkuman}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+\end{document}

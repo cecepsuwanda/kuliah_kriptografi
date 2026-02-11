@@ -1,0 +1,95 @@
+\section{Pangkat Modular (Fast Exponentiation)}
+
+Menghitung $a^b \bmod n$ secara naif dengan mengalikan $a$ sebanyak $b$ kali sangat tidak efisien untuk $b$ besar. Algoritma \textbf{square-and-multiply} (atau binary exponentiation) menyelesaikan dalam $O(\log b)$ operasi.
+
+Pangkat modular merupakan operasi fundamental dalam kriptografi modern, terutama RSA di mana enkripsi dan dekripsi melibatkan perhitungan $m^e \bmod n$ dan $c^d \bmod n$ dengan eksponen yang sangat besar. Menurut penelitian kriptografi, tanpa algoritma yang efisien seperti square-and-multiply, operasi RSA akan menjadi tidak praktis untuk implementasi dunia nyata. Algoritma ini mengurangi kompleksitas dari linear menjadi logaritmik, membuat perhitungan dengan eksponen ribuan digit menjadi feasible.
+
+Dalam implementasi praktis, efisiensi pangkat modular sangat penting untuk performa aplikasi kriptografi, terutama pada perangkat dengan sumber daya terbatas seperti smartphone atau embedded systems. Algoritma square-and-multiply tidak hanya mengurangi jumlah operasi tetapi juga membantu mencegah overflow dengan melakukan operasi modular setiap langkah. Optimasi ini sangat penting untuk keamanan dan keandalan sistem kriptografi yang digunakan secara luas.
+
+\subsection{Algoritma}
+
+Gunakan representasi biner dari eksponen $b$. Untuk setiap bit, kuadratkan hasil; jika bit bernilai 1, kalikan hasil dengan basis $a$. Variasi ini dikenal sebagai \textit{square-and-multiply} dan bekerja dalam $O(\log b)$ \cite{shoup2009}.
+
+Langkah ringkas (pemrosesan bit dari MSB ke LSB):
+\begin{enumerate}
+  \item Inisialisasi $result = 1$, $base = a \bmod n$.
+  \item Untuk setiap bit $b_i$ (dari kiri ke kanan): $result = result^2 \bmod n$.
+  \item Jika $b_i = 1$, lakukan $result = (result \cdot base) \bmod n$.
+\end{enumerate}
+
+\begin{contoh}
+Menghitung $3^{11} \bmod 5$: $11 = 1011_2$. 
+$3^1 \equiv 3$, $3^2 \equiv 4$, $3^4 \equiv 1$, $3^8 \equiv 1$. 
+$3^{11} = 3^8 \cdot 3^2 \cdot 3^1 \equiv 1 \cdot 4 \cdot 3 = 12 \equiv 2 \pmod{5}$.
+\end{contoh}
+
+Algoritma square-and-multiply sangat elegan karena mengubah masalah eksponensiasi menjadi ser operasi kuadrat dan perkalian yang dapat dihitung secara modular setiap langkah. Setiap bit dari eksponen diproses secara berurutan, di mana operasi kuadrat selalu dilakukan dan operasi perkalian hanya dilakukan ketika bit tersebut bernilai 1. Pendekatan ini memastikan bahwa jumlah operasi selalu proporsional dengan jumlah bit dalam eksponen, bukan dengan nilai eksponen itu sendiri.
+
+Dalam implementasi kriptografi, pemrosesan bit dari Most Significant Bit (MSB) ke Least Significant Bit (LSB) atau sebaliknya dapat mempengaruhi efisiensi cache pada prosesor modern. Beberapa implementasi mengoptimasi urutan pemrosesan bit untuk memaksimalkan lokalitas referensi memori, yang sangat penting untuk aplikasi kriptografi high-performance yang memproses banyak operasi pangkat modular per detik.
+
+\subsection{Jejak Biner (Contoh Langkah Demi Langkah)}
+
+Misal $a=7$, $b=13 = 1101_2$, $n=33$:
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{cccc}
+    \toprule
+    Bit $b_i$ & $result^2 \bmod n$ & Kalikan jika $b_i=1$ & $result$ \\
+    \midrule
+    1 & $1^2 \equiv 1$ & $1 \cdot 7$ & 7 \\
+    1 & $7^2 \equiv 16$ & $16 \cdot 7$ & 13 \\
+    0 & $13^2 \equiv 4$ & -- & 4 \\
+    1 & $4^2 \equiv 16$ & $16 \cdot 7$ & 13 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Jejak perhitungan $7^{13} \bmod 33 = 13$.}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lcc}
+    \toprule
+    Metode & Perkalian Modular (perkiraan) & Kompleksitas \\
+    \midrule
+    Naif & $b-1$ & $O(b)$ \\
+    Square-and-multiply & $\leq 2\lfloor \log_2 b \rfloor$ & $O(\log b)$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perbandingan jumlah operasi perkalian modular.}
+\end{table}
+
+Dari tabel perbandingan, terlihat jelas betapa signifikan peningkatan efisiensi yang ditawarkan oleh algoritma square-and-multiply dibandingkan dengan pendekatan naif. Untuk eksponen dengan 1024 bit (umum dalam RSA), pendekatan naif akan memerlukan lebih dari $10^{300}$ operasi perkalian, yang sama sekali tidak mungkin dihitung dalam waktu wajar. Sebaliknya, square-and-multiply hanya memerlukan sekitar 2048 operasi, yang dapat dihitung dalam milidetik pada komputer modern.
+
+Peningkatan efisiensi ini tidak hanya penting untuk performa tetapi juga untuk keamanan. Dalam implementasi kriptografi, operasi yang lebih cepat berarti waktu exposure terhadap side-channel attacks lebih singkat, yang dapat meningkatkan keamanan secara keseluruhan. Selain itu, efisiensi komputasional memungkinkan penggunaan kunci yang lebih besar dan modulus yang lebih aman tanpa mengorbankan performa sistem.
+
+\subsection{Implementasi dalam C}
+
+\begin{lstlisting}[style=cstyle, caption={Fast Modular Exponentiation dalam C}]
+#include <stdio.h>
+
+long long mod_pow(long long base, long long exp, long long mod) {
+    long long result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 == 1)
+            result = (result * base) % mod;
+        exp = exp / 2;
+        base = (base * base) % mod;
+    }
+    return result;
+}
+
+int main() {
+    printf("2^10 mod 1000 = %lld\n", mod_pow(2, 10, 1000));
+    printf("3^644 mod 645 = %lld\n", mod_pow(3, 644, 645));
+    return 0;
+}
+\end{lstlisting}
+
+Implementasi C dari fast modular exponentiation menunjukkan bagaimana algoritma matematis yang elegan dapat diterjemahkan menjadi kode yang ringkas dan efisien. Fungsi \texttt{mod\_pow} menggunakan loop while yang memproses setiap bit dari eksponen secara berurutan, dengan operasi kuadrat yang selalu dilakukan dan operasi perkalian bersyarat. Pendekatan ini memastikan kompleksitas $O(\log b)$ yang optimal dan konsisten untuk semua ukuran input.
+
+Dalam implementasi produksi, fungsi seperti ini sering dioptimasi lebih lanjut dengan menggunakan assembly language atau instruksi SIMD untuk mempercepat operasi modular pada arsitektur prosesor tertentu. Beberapa implementasi juga menggunakan representasi basis yang berbeda seperti Montgomery multiplication untuk mengurangi jumlah operasi modular yang mahal. Optimasi-optimasi ini sangat penting untuk aplikasi kriptografi high-performance seperti TLS/SSL libraries yang harus menangani ribuan operasi RSA per detik.
+
+Algoritma ini sangat penting untuk RSA, di mana enkripsi dan dekripsi melibatkan $m^e \bmod n$ dan $c^d \bmod n$ dengan eksponen yang sangat besar. Tanpa fast modular exponentiation, implementasi RSA akan menjadi tidak praktis untuk penggunaan sehari-hari dalam secure communications, e-commerce, dan aplikasi keuangan digital. Efisiensi algoritma ini secara langsung berkontribusi pada keamanan dan kegunaan kriptografi modern dalam masyarakat.
