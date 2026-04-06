@@ -2,7 +2,7 @@
 
 \subsection{Definisi dan Sejarah}
 
-Kriptografi berasal dari bahasa Yunani: \textit{kryptos} (tersembunyi) dan \textit{graphia} (menulis). Secara umum, \crypt{kriptografi} adalah ilmu dan seni untuk mengamankan informasi dengan mengubah pesan yang dapat dibaca (\crypt{plaintext}) menjadi bentuk yang tidak dapat dibaca tanpa kunci (\crypt{ciphertext}) \cite{schneier1996}.
+Kriptografi berasal dari bahasa Yunani: \textit{kryptos} (tersembunyi) dan \textit{graphia} (menulis). Secara umum, \crypt{kriptografi} adalah ilmu dan seni untuk mengamankan informasi dengan mengubah pesan yang dapat dibaca (\crypt{plaintext}) menjadi bentuk yang tidak dapat dibaca tanpa kunci (\crypt{ciphertext}) \cite{schneier1996,stallings2017}.
 
 Sejarah kriptografi dimulai sejak zaman kuno:
 \begin{itemize}
@@ -15,6 +15,19 @@ Sejarah kriptografi dimulai sejak zaman kuno:
 Bukti earliest penggunaan kriptografi ditemukan dalam hieroglif non-standar yang diukir di dinding makam dari Kerajaan Lama Mesir sekitar 1900 SM. Menurut Wikipedia, tablet tanah liat dari Mesopotamia sekitar 1500 SM jelas dimaksudkan untuk melindungi informasi—satu tablet ditemukan mengenkripsi resep pematung untuk glasir keramik yang nilainya secara komersial. Para sarjana Ibrani menggunakan cipher substitusi monoalfabetik sederhana seperti Atbash cipher sekitar 600-500 SM, menunjukkan bahwa kebutuhan akan komunikasi rahasia telah ada sejak ribuan tahun lalu.
 
 Evolusi kriptografi modern dimulai setelah Perang Dunia II dengan kemajuan signifikan dalam studi kriptografi, terutama pengenalan cipher kunci asimetris (kadang disebut cipher kunci publik). Menurut Wikipedia, cipher ini menggunakan dua kunci yang terkait secara matematis untuk enkripsi pesan yang sama, dan beberapa algoritma mengizinkan publikasi salah satu kunci karena sangat sulit menentukan satu kunci hanya dari pengetahuan kunci lainnya. Perkembangan internet untuk tujuan komersial pada tahun 1990-an menuntut standar enkripsi yang luas, yang pada akhirnya mengarah pada penggantian DES dengan AES melalui kompetisi publik yang diorganisir oleh NIST.
+
+\subsection{Mengapa Matematika Penting dalam Kriptografi?}
+
+Sebelum kita melangkah lebih jauh, penting untuk memahami bahwa \textbf{keamanan kriptografi modern dibangun di atas fondasi matematika yang kokoh}. Setiap algoritma yang akan kita pelajari—mulai dari cipher klasik seperti Caesar hingga RSA modern—mengandalkan prinsip-prinsip matematika untuk keamanannya.
+
+\begin{itemize}
+  \item \textbf{Caesar cipher} menggunakan \textbf{aritmetika modular} sederhana
+  \item \textbf{Vigenère cipher} menerapkan operasi modular berulang
+  \item \textbf{RSA} mengandalkan \textbf{teori bilangan} (faktorisasi prima)
+  \item \textbf{AES} menggunakan \textbf{aljabar abstrak} (Galois Field)
+\end{itemize}
+
+Dalam Bab III, kita akan mempelajari matematika ini secara mendalam. Setiap konsep matematika yang kita pelajari akan langsung kita terapkan dalam cipher yang akan kita implementasikan dalam Bab IV. Pendekatan ini memastikan Anda tidak hanya memahami "bagaimana" suatu cipher bekerja, tetapi juga "mengapa" cipher tersebut aman (atau tidak aman).
 
 \subsection{Terminologi Dasar}
 
@@ -45,3 +58,14 @@ Kriptanalisis & Studi untuk memecahkan cipher tanpa mengetahui kunci \\
 \begin{konsep}
 Dalam model dasar kriptografi, Alice mengirim pesan kepada Bob. Eve (eavesdropper) mencoba mencuri dengar. Enkripsi memastikan Eve tidak dapat memahami isi pesan meskipun berhasil menangkap ciphertext.
 \end{konsep}
+
+\subsection{Koneksi ke Bab Berikutnya}
+
+Konsep dasar yang kita pelajari dalam bab ini akan menjadi lensa melalui mana kita memahami topik-topik lanjutan:
+\begin{itemize}
+  \item \textbf{Layanan keamanan} akan menjadi kriteria untuk mengevaluasi keamanan cipher
+  \item \textbf{Model komunikasi} akan membantu kita memahami protokol modern
+  \item \textbf{Terminologi} akan konsisten digunakan sepanjang buku
+\end{itemize}
+
+Setelah memahami konsep dasar ini, kita akan siap untuk mempelajari matematika yang membuat semua ini bekerja di Bab III.

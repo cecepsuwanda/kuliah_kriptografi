@@ -5,16 +5,19 @@
 \chapter{Fungsi Hash dan Tanda Tangan Digital}
 
 \begin{subcpmk}
-  \item Sub-CPMK 5.1: Menjelaskan sifat fungsi hash kriptografis dan mengimplementasikan SHA/MD5 untuk integritas data
-  \item Sub-CPMK 5.2: Merancang tanda tangan digital berbasis RSA
+  \item Sub-CPMK 5.1: Mengimplementasikan fungsi hash (MD5, SHA) dan menjelaskan konsep collision
+  \item Sub-CPMK 5.2: Menerapkan skema tanda tangan digital (DSA, RSA-Sig) dan memahami struktur sertifikat digital (X.509)
 \end{subcpmk}
 
 % ============================================================
 % MATERI POKOK
 % ============================================================
 \input{bab-07/section-7-1}
+\input{bab-07/section-7-1a-contoh-hash}
 \input{bab-07/section-7-2}
+\input{bab-07/section-7-2a}
 \input{bab-07/section-7-3}
+\input{bab-07/section-7-4}
 
 % ============================================================
 % AKTIVITAS PEMBELAJARAN
@@ -23,9 +26,11 @@
 \begin{aktivitas}
   \item \textbf{Praktikum}: Gunakan OpenSSL untuk menghitung SHA-256 dari file. Bandingkan hash sebelum dan setelah mengubah satu byte.
   
+  \item \textbf{MAC/HMAC}: Hitung HMAC-SHA256 untuk pesan dengan kunci tertentu. Jelaskan perbedaan dengan hash biasa.
+  
   \item \textbf{Merancang}: Buat skema tanda tangan digital sederhana dengan RSA dan SHA-256 (paparkan langkah dalam pseudocode).
   
-  \item \textbf{Analisis}: Mengapa MD5 tidak aman untuk keamanan kriptografis?
+  \item \textbf{Analisis}: Jelaskan Birthday Paradox dan dampaknya pada ukuran hash. Mengapa MD5 tidak aman?
 \end{aktivitas}
 
 % ============================================================
@@ -33,13 +38,17 @@
 % ============================================================
 
 \begin{latihan}
-  \item Jelaskan ketiga sifat fungsi hash kriptografis.
+  \item Jelaskan ketiga sifat fungsi hash (preimage, second preimage, collision resistance).
   
-  \item Apa perbedaan penggunaan hash untuk integritas vs penyimpanan password?
+  \item Apa perbedaan hash, MAC, dan HMAC? Kapan masing-masing digunakan?
   
-  \item Jelaskan alur tanda tangan digital dan verifikasi dengan RSA.
+  \item Jelaskan Birthday Paradox dan mengapa hash 256-bit memiliki keamanan collision sekitar $2^{128}$.
   
-  \item Mengapa kita hash pesan sebelum menandatanganinya, bukan menandatangani pesan langsung?
+  \item Jelaskan alur tanda tangan digital RSA (RSASSA-PSS) dan verifikasi.
+  
+  \item Bedakan DSA dan RSA-Sig. Masalah matematika apa yang mendasari masing-masing?
+  
+  \item Mengapa kita hash pesan sebelum menandatanganinya?
 \end{latihan}
 
 % ============================================================
@@ -47,7 +56,20 @@
 % ============================================================
 
 \begin{asesmen}
-Jelaskan dalam essay: (a) Peran fungsi hash dalam tanda tangan digital. (b) Mengapa SHA-256 lebih direkomendasikan daripada MD5?
+\textbf{Instrumen Penilaian untuk Sub-CPMK 5.1, 5.2}
+
+\textbf{A. Essay}
+
+\begin{enumerate}
+  \item Jelaskan peran fungsi hash dalam tanda tangan digital.
+  \item Mengapa SHA-256 lebih direkomendasikan daripada MD5? Apa implikasi Birthday Paradox?
+  \item Bedakan MAC dan hash. Mengapa HMAC digunakan untuk autentikasi?
+  \item Jelaskan struktur sertifikat X.509 dan chain of trust.
+\end{enumerate}
+
+\textbf{B. Implementasi}
+
+Implementasikan dalam C/Python: hitung SHA-256 dan HMAC-SHA256 untuk string input. Gunakan OpenSSL atau library serupa.
 \end{asesmen}
 
 % ============================================================
@@ -55,10 +77,11 @@ Jelaskan dalam essay: (a) Peran fungsi hash dalam tanda tangan digital. (b) Meng
 % ============================================================
 
 \begin{checklist}
-  \item Saya dapat menjelaskan sifat fungsi hash kriptografis
-  \item Saya dapat menggunakan SHA untuk memeriksa integritas data
-  \item Saya dapat merancang skema tanda tangan digital berbasis RSA
-  \item Saya memahami peran hash dalam tanda tangan digital
+  \item Saya dapat menjelaskan sifat fungsi hash (preimage, second preimage, collision)
+  \item Saya memahami Birthday Paradox dan dampaknya pada ukuran hash
+  \item Saya dapat menggunakan SHA untuk integritas data dan memahami MAC/HMAC
+  \item Saya dapat merancang tanda tangan digital berbasis RSA (RSASSA-PSS)
+  \item Saya memahami DSA dan struktur sertifikat X.509
 \end{checklist}
 
 % ============================================================
@@ -66,17 +89,55 @@ Jelaskan dalam essay: (a) Peran fungsi hash dalam tanda tangan digital. (b) Meng
 % ============================================================
 
 \begin{rangkuman}
-Bab ini membahas fungsi hash (SHA, MD5), integritas data, dan tanda tangan digital berbasis RSA.
+Bab ini membahas fungsi hash (MD5, SHA-1/256/3), MAC/HMAC, dan tanda tangan digital (RSA-Sig, DSA, ECDSA). Fungsi hash menyediakan integrity, MAC menyediakan integrity+authenticity, dan tanda tangan digital menyediakan non-repudiation.
 
 \textbf{Poin Kunci:}
 \begin{itemize}
-  \item Hash: preimage, second preimage, collision resistance
-  \item SHA-256 aman; MD5 tidak untuk keamanan
-  \item Tanda tangan: sign hash dengan kunci privat; verifikasi dengan kunci publik
+  \item Fungsi hash: one-way, collision resistance, fixed output
+  \item MAC: $MAC_k(m) = H(k \| m)$ untuk integrity dan authenticity
+  \item Tanda tangan digital: $Sig = Sign_{priv}(H(m))$, verifikasi dengan kunci publik
+  \item Sertifikat X.509: membungkus kunci publik dengan identitas
 \end{itemize}
 
-\textbf{Kata Kunci}: \crypt{Fungsi Hash}, \crypt{SHA}, \crypt{Integritas}, \crypt{Tanda Tangan Digital}
+\textbf{Kata Kunci}: \crypt{Fungsi Hash}, \crypt{SHA-256}, \crypt{MAC}, \crypt{HMAC}, \crypt{Tanda Tangan Digital}, \crypt{RSA-Sig}, \crypt{DSA}, \crypt{Sertifikat Digital}
 \end{rangkuman}
+
+% ============================================================
+% Persiapan untuk Bab Berikutnya
+% ============================================================
+
+\begin{transition}
+Setelah mempelajari komponen keamanan individual, kita siap untuk memasuki \textbf{Bab VIII: Protokol Keamanan dan Manajemen Kunci}.
+
+Dalam Bab VIII, kita akan melihat bagaimana semua komponen yang telah dipelajari digabungkan dalam protokol praktis:
+\begin{itemize}
+  \item \textbf{TLS/SSL}: Protokol keamanan internet yang menggabungkan semua konsep
+  \item \textbf{PKI}: Infrastruktur untuk distribusi dan verifikasi kunci publik
+  \item \textbf{Manajemen Kunci}: Generasi, distribusi, rotasi, dan revokasi kunci
+  \item \textbf{RNG}: Generator bilangan acak untuk keamanan kriptografi
+\end{itemize}
+
+\textbf{Integrasi Semua Komponen Sebelumnya}:
+\begin{itemize}
+  \item \textbf{Bab II}: Layanan keamanan — TLS menyediakan semua 4 layanan
+  \item \textbf{Bab III}: Matematika — semua operasi dalam protokol
+  \item \textbf{Bab IV-V}: Cipher — AES untuk enkripsi data
+  \item \textbf{Bab VI}: Kunci publik — RSA untuk pertukaran kunci dan sertifikat
+  \item \textbf{Bab VII}: Hash dan MAC — integrity dan authenticity
+\end{itemize}
+
+\textbf{TLS sebagai Sistem Lengkap}:
+\begin{enumerate}
+  \item \textbf{Handshake}: Pertukaran kunci menggunakan RSA atau DH
+  \item \textbf{Certificates}: Verifikasi identitas server (dan client)
+  \item \textbf{Cipher Suite}: Pilihan algoritma (AES-GCM, SHA-256, dll)
+  \item \textbf{Data Protection}: Enkripsi dan MAC untuk semua komunikasi
+\end{enumerate}
+
+\textbf{Preview}: Di Bab VIII, kita akan memahami bagaimana HTTPS bekerja — dari handshake awal hingga enkripsi data aplikasi. Kita akan melihat bagaimana sertifikat digital memverifikasi identitas website, bagaimana kunci sesi dihasilkan secara aman, dan bagaimana semua komponen kriptografi bekerja sama untuk menciptakan komunikasi yang aman di internet.
+
+Setelah Bab VIII, Anda akan mengerti bagaimana teori kriptografi diimplementasikan dalam sistem nyata dan siap untuk memahami analisis keamanan di Bab IX serta evaluasi komprehensif di Bab X.
+\end{transition}
 
 \ifSubfilesClassLoaded{
   \renewcommand{\bibname}{Daftar Pustaka}

@@ -4,7 +4,7 @@
 
 Dalam cipher substitusi monoalfabetik, setiap huruf dipetakan ke huruf lain secara satu-satu. Pemetaan berupa permutasi alfabet 26 huruf. Caesar cipher adalah kasus khusus dengan pergeseran tetap.
 
-\textbf{Cipher Affine}: $E_{a,b}(x) = (ax + b) \bmod 26$, dengan $\gcd(a, 26) = 1$ agar dekripsi mungkin (invers $a$ modulo 26 ada) \cite{sandilands_classical}.
+\textbf{Cipher Affine}: $E_{a,b}(x) = (ax + b) \bmod 26$, dengan $\gcd(a, 26) = 1$ agar dekripsi mungkin (invers $a$ modulo 26 ada) \cite{stallings2017}.
 
 \subsection{Contoh Pemetaan Substitusi}
 
@@ -38,9 +38,7 @@ Sebagai contoh, gunakan alfabet sandi berikut:
 Dengan tabel di atas, plaintext HELLO menjadi ciphertext: H$\to$I, E$\to$T, L$\to$S, L$\to$S, O$\to$G sehingga hasilnya ITSSG.
 \end{contoh}
 
-Cipher substitusi monoalfabetik mewakili evolusi alami dari cipher substitusi sederhana seperti Caesar ke sistem yang lebih kompleks dan aman. Menurut IBM, cipher substitusi monoalfabetik yang hanya menggunakan satu alfabet sangat rentan terhadap analisis frekuensi, terutama jika kunci pendek dan pesan panjang. Kerentanan ini mendorong pengembangan cipher polialfabetik seperti Vigenère yang menggunakan multiple alfabet untuk menghilangkan pola frekuensi.
-
-Pemetaan substitusi yang sistematis memungkinkan penciptaan 26! kemungkinan kunci yang berbeda, jauh lebih banyak dari Caesar cipher. Namun, peningkatan kompleksitas juga meningkatkan kesulitan dalam mengingat kunci dan melakukan enkripsi/dekripsi secara manual. Trade-off antara keamanan dan usability menjadi pertimbangan penting dalam desain sistem cipher, di mana cipher yang terlalu kompleks mungkin tidak praktis untuk penggunaan sehari-hari.
+Cipher substitusi monoalfabetik sangat rentan terhadap analisis frekuensi \cite{stallings2017}. Ada 26! kemungkinan kunci, jauh lebih banyak dari Caesar, tetapi frequency analysis tetap efektif karena pola huruf alami terpelihara.
 
 \subsection{Cipher Affine}
 
@@ -60,9 +58,7 @@ E(15) = (5 \cdot 15 + 8) \bmod 26 = 83 \bmod 26 = 5 \Rightarrow F
 \]
 \end{contoh}
 
-Cipher Affine menggabungkan keamanan tambahan dibandingkan Caesar cipher dengan menambahkan parameter perkalian $a$ yang membuat hubungan non-linear antara plaintext dan ciphertext. Menurut penelitian kriptografi klasik, Affine cipher secara signifikan mengurangi kerentanan terhadap serangan frekuensi sederhana karena pola substitusi menjadi lebih sulit diprediksi. Namun, cipher ini masih rentan terhadap teknik kriptanalisis yang lebih canggih.
-
-Penting untuk dicatat bahwa tidak semua nilai $a$ dan $b$ menghasilkan cipher yang valid, hanya yang memenuhi syarat $\gcd(a, 26) = 1$. Pembatasan ini memastikan bahwa fungsi enkripsi dapat dibalikkan secara unik untuk setiap ciphertext, yang merupakan syarat fundamental untuk setiap sistem enkripsi yang praktis. Dalam implementasi, validasi parameter ini sangat penting untuk mencegah penggunaan kunci yang tidak valid yang dapat menyebabkan kegagalan dekripsi.
+Affine cipher menambahkan parameter perkalian $a$ sehingga substitusi lebih kompleks daripada Caesar. Hanya $a$ dengan $\gcd(a, 26) = 1$ yang valid; ada 12 nilai $a$ memenuhi syarat \cite{trappe2006}. Cipher ini tetap rentan terhadap kriptanalisis.
 
 \subsection{Implementasi Affine dalam C}
 

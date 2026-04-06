@@ -1,0 +1,171 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    pdfborder={0 0 0}
+}
+\title{Ujian Akhir Semester – Kriptografi}
+\date{}
+\begin{document}
+\maketitle
+
+\section*{Petunjuk}
+\begin{itemize}
+    \item Pilih jawaban terbaik untuk setiap soal.
+    \item Lingkari huruf pilihan Anda (A, B, C, atau D).
+    \item Semua soal bernilai sama.
+\end{itemize}
+
+\section*{Soal Pilihan Ganda}
+\begin{enumerate}[label=\textbf{Soal \arabic*.}, leftmargin=*, itemsep=1.5em]
+
+\item \textbf{True Random Number Generator (TRNG) vs. Pseudo‑Random Number Generator (PRNG)}. Manakah pernyataan yang \textbf{benar}?
+\begin{enumerate}[label=\Alph*.]
+    \item TRNG menghasilkan urutan deterministik dari seed.
+    \item PRNG dapat menghasilkan bit yang tidak dapat diprediksi tanpa mengetahui seed.
+    \item TRNG biasanya lebih lambat tetapi tidak dapat diprediksi.
+    \item PRNG selalu aman untuk menghasilkan kunci kriptografi.
+\end{enumerate}
+
+\item Linear Congruential Generator (LCG) tidak cocok untuk kriptografi karena:
+\begin{enumerate}[label=\Alph*.]
+    \item Memiliki periode tak terbatas.
+    \item Pola output dapat dipulihkan dari sedikit nilai output.
+    \item Menggunakan operasi modular yang mahal.
+    \item Membutuhkan sumber entropi tinggi.
+\end{enumerate}
+
+\item Pada \textit{Blum‑Blum‑Shub} (BBS) CSPRNG, keamanan utama bergantung pada:
+\begin{enumerate}[label=\Alph*.]
+    \item Kesulitan faktorisasi bilangan komposit $n = p q$.
+    \item Kesulitan menghitung logaritma diskrit.
+    \item Kualitas generator \texttt{rand()} standar.
+    \item Kecepatan iterasi modular.
+\end{enumerate}
+
+\item Steganografi LSB pada gambar beresolusi $640\times480$ berwarna (24‑bit). Kapasitas maksimum pesan (dalam bit) yang dapat disembunyikan adalah:
+\begin{enumerate}[label=\Alph*.]
+    \item $640 \times 480 = 307\,200$ bit
+    \item $640 \times 480 \times 3 = 921\,600$ bit
+    \item $640 \times 480 \times 2 = 614\,400$ bit
+    \item $640 \times 480 \times 4 = 1\,228\,800$ bit
+\end{enumerate}
+
+\item Teknik \textit{steganalysis} yang paling umum untuk mendeteksi penyisipan LSB pada gambar adalah:
+\begin{enumerate}[label=\Alph*.]
+    \item Analisis frekuensi warna RGB.
+    \item Pengujian statistik distribusi bit LSB (chi‑square).
+    \item Pencarian pola berulang pada header file.
+    \item Penerapan transformasi Fourier.
+\end{enumerate}
+
+\item Algoritma kuantum yang mengancam keamanan RSA dan ECC adalah:
+\begin{enumerate}[label=\Alph*.]
+    \item Algoritma Grover.
+    \item Algoritma Shor.
+    \item Algoritma Simon.
+    \item Algoritma Deutsch‑Jozsa.
+\end{enumerate}
+
+\item Post‑Quantum Cryptography (PQC) dibagi menjadi lima kategori utama. Manakah yang \textbf{bukan} termasuk dalam kategori tersebut?
+\begin{enumerate}[label=\Alph*.]
+    \item Lattice‑based cryptography
+    \item Hash‑based signatures
+    \item Code‑based cryptography
+    \item Symmetric‑key cryptography
+\end{enumerate}
+
+\item Keamanan \textbf{lattice‑based cryptography} biasanya didasarkan pada kesulitan:
+\begin{enumerate}[label=\Alph*.]
+    \item Faktor prima besar.
+    \item Shortest Vector Problem (SVP) pada lattice.
+    \item Diskret logarithm pada kurva eliptik.
+    \item Decoding kode linear umum.
+\end{enumerate}
+
+\item Pada problem \textit{Learning With Errors} (LWE) yang digunakan dalam protokol pertukaran kunci, apa yang diketahui oleh penyerang?
+\begin{enumerate}[label=\Alph*.]
+    \item Matriks publik $A$ dan vektor $b = A s + e$.
+    \item Hanya matriks $A$.
+    \item Hanya vektor $b$.
+    \item Rahasia $s$ secara langsung.
+\end{enumerate}
+
+\item Kyber, salah satu finalist NIST PQC, menggunakan transformasi apa untuk perkalian polinomial?
+\begin{enumerate}[label=\Alph*.]
+    \item Fast Fourier Transform (FFT)
+    \item Number Theoretic Transform (NTT)
+    \item Karatsuba multiplication
+    \item Montgomery reduction
+\end{enumerate}
+
+\item Pada \textbf{Lamport One‑Time Signature}, keamanan kunci privat dan publik dicapai dengan:
+\begin{enumerate}[label=\Alph*.]
+    \item Enkripsi RSA.
+    \item Hashing nilai acak dengan SHA‑256.
+    \item Eksponensiasi modular.
+    \item Penggunaan fungsi PRF.
+\end{enumerate}
+
+\item XMSS (Extended Merkle Signature Scheme) mengandalkan struktur data apa untuk menghasilkan jalur otentikasi?
+\begin{enumerate}[label=\Alph*.]
+    \item Daftar berantai.
+    \item Pohon Merkle.
+    \item Graf berarah.
+    \item Tabel hash.
+\end{enumerate}
+
+\item Keamanan \textbf{McEliece Cryptosystem} bergantung pada kesulitan:
+\begin{enumerate}[label=\Alph*.]
+    \item Faktorisasi bilangan komposit.
+    \item Decoding kode linear umum (General Decoding Problem).
+    \item Discrete logarithm pada kurva eliptik.
+    \item Menemukan akar kubik modulo prima.
+\end{enumerate}
+
+\item Dalam skenario \textit{Hybrid TLS 1.3} yang menggabungkan ECDHE dengan Kyber, langkah pertama yang dilakukan oleh client adalah:
+\begin{enumerate}[label=\Alph*.]
+    \item Mengirim \texttt{ClientHello} berisi \texttt{KeyShare} ECDHE saja.
+    \item Mengirim \texttt{ClientHello} berisi \texttt{KeyShare} Kyber saja.
+    \item Mengirim \texttt{ClientHello} berisi \texttt{KeyShare} ECDHE \textbf{dan} paket Kyber.
+    \item Menunggu \texttt{ServerHello} sebelum mengirim apapun.
+\end{enumerate}
+
+\item Menurut roadmap migrasi ke post‑quantum yang disarankan, jangka waktu mana yang paling tepat untuk memulai evaluasi algoritma PQC?
+\begin{enumerate}[label=\Alph*.]
+    \item 2024–2026
+    \item 2026–2030
+    \item 2030–2035
+    \item 2035–2040
+\end{enumerate}
+
+\end{enumerate}
+
+\newpage
+\section*{Kunci Jawaban}
+\begin{enumerate}[label=\textbf{Soal \arabic*.}]
+    \item C
+    \item B
+    \item A
+    \item B
+    \item B
+    \item B
+    \item D
+    \item D
+    \item B
+    \item A
+    \item B
+    \item B
+    \item B
+    \item B
+    \item C
+    \item A
+\end{enumerate}
+
+\end{document}

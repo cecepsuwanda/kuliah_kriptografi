@@ -18,6 +18,7 @@
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{multirow}
+\usepackage{caption}
 \usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -216,6 +217,17 @@
   \vspace{0.5cm}
   \noindent\colorbox{gray!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{
     \textbf{\large Rangkuman}
+  }}
+  \vspace{0.3cm}
+}{
+  \vspace{0.5cm}
+}
+
+% --- Environment untuk Transisi ke Bab Berikutnya ---
+\newenvironment{transition}{
+  \vspace{0.5cm}
+  \noindent\colorbox{cyan!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{
+    \textbf{\large Persiapan untuk Bab Berikutnya}
   }}
   \vspace{0.3cm}
 }{

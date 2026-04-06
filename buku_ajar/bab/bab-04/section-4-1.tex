@@ -1,5 +1,18 @@
 \section{Caesar Cipher}
 
+\subsection{Dari Teori ke Praktik: Modular Arithmetic dalam Aksi}
+
+Dalam Bab III, kita mempelajari aritmetika modular sebagai fondasi matematika kriptografi. Sekarang, kita akan melihat penerapan pertama dan paling sederhana dari konsep ini: \textbf{Caesar Cipher}.
+
+Caesar cipher adalah contoh sempurna bagaimana matematika abstrak menjadi alat praktis:
+\begin{itemize}
+  \item \textbf{Teori (Bab III)}: $a \equiv b \pmod{n}$, operasi modular
+  \item \textbf{Praktik (Bab IV)}: $E_k(x) = (x + k) \bmod 26$
+  \item \textbf{Implementasi}: Kode C yang menerapkan operasi ini
+\end{itemize}
+
+Ini adalah langkah pertama dari teori ke aplikasi—sebuah pola yang akan terus kita lihat dalam cipher yang lebih kompleks.
+
 \subsection{Konsep}
 
 Caesar cipher adalah cipher substitusi paling sederhana: setiap huruf digeser sejumlah $k$ posisi dalam alfabet (0--25). Enkripsi:
@@ -17,13 +30,38 @@ Huruf A=0, B=1, ..., Z=25. Dengan $k=3$: A$\to$D, B$\to$E, ..., Z$\to$C.
 Plaintext: HELLO, $k=3$. H$\to$K, E$\to$H, L$\to$O, L$\to$O, O$\to$R. Ciphertext: KHOOR.
 \end{contoh}
 
-Caesar cipher dinamai dari Julius Caesar, yang menurut sejarahwan Romawi Suetonius menggunakan cipher ini dengan shift tiga posisi untuk melindungi pesan militer yang signifikan. Menurut Wikipedia, Caesar menggunakan sistem ini untuk komunikasi penting selama Perang Saudara Sipil Romawi, di mana keamanan informasi sangat krusial untuk keberhasilan militer. Cipher ini tidak hanya menunjukkan kecerdasan militer Romawi tetapi juga membentuk fondasi untuk teknik enkripsi yang lebih kompleks.
+Caesar cipher dinamai dari Julius Caesar yang menurut sejarahwan menggunakan cipher ini dengan shift tiga posisi untuk melindungi pesan militer \cite{stallings2017}. Cipher ini membentuk fondasi untuk teknik substitusi dan analisis frekuensi.
 
-Meskipun Caesar cipher dianggap sangat lemah oleh standar keamanan modern, cipher ini tetap memiliki nilai edukasi dan historis yang penting. Menurut penelitian kriptografi, Caesar cipher menawarkan hampir tidak ada keamanan standar hari ini dan terutama bertahan sebagai alat edukasi dan keingintipan historis. Namun, pemahaman tentang Caesar cipher sangat penting sebagai langkah pertama dalam memahami konsep substitusi dan analisis frekuensi yang menjadi dasar untuk memahami cipher yang lebih kompleks.
+\subsection{Koneksi ke Matematika Bab III}
+
+Mari kita lihat bagaimana Caesar cipher langsung menerapkan konsep dari Bab III:
+
+\textbf{1. Aritmetika Modular}: 
+\begin{itemize}
+  \item Operasi enkripsi: $(x + k) \bmod 26$ menggunakan modular arithmetic
+  \item Operasi dekripsi: $(y - k) \bmod 26$ juga modular arithmetic
+  \item Modulus 26 karena ada 26 huruf dalam alfabet Inggris
+\end{itemize}
+
+\textbf{2. Invers Modular}:
+\begin{itemize}
+  \item Dekripsi adalah "invers" dari enkripsi
+  \item $(x + k - k) \bmod 26 = x \bmod 26$ — dekripsi berhasil
+  \item Ini adalah contoh sederhana dari konsep invers yang akan penting dalam cipher lebih kompleks
+\end{itemize}
+
+\textbf{3. Representasi $\mathbb{Z}_{26}$}:
+\begin{itemize}
+  \item Huruf diubah menjadi angka 0-25 (elemen $\mathbb{Z}_{26}$)
+  \item Operasi dilakukan dalam $\mathbb{Z}_{26}$
+  \item Hasil dikonversi kembali ke huruf
+\end{itemize}
+
+Meskipun Caesar cipher sangat lemah oleh standar modern, cipher ini memiliki nilai edukasi yang penting. Ruang kunci hanya 25 membuatnya rentan brute force \cite{schneier1996}. Pemahaman Caesar cipher menjadi langkah pertama untuk memahami cipher substitusi dan kriptanalisis dasar.
 
 \subsection{Pemetaan Huruf dan Ruang Kunci}
 
-Caesar cipher memiliki $25$ kunci efektif (shift 1--25), karena $k=0$ atau $k=26$ menghasilkan teks asli. Pemetaan huruf bisa ditulis sebagai tabel (contoh shift $k=3$) \cite{saylor_classical}:
+Caesar cipher memiliki $25$ kunci efektif (shift 1--25), karena $k=0$ atau $k=26$ menghasilkan teks asli. Pemetaan huruf bisa ditulis sebagai tabel (contoh shift $k=3$) \cite{stallings2017}:
 \begin{table}[htbp]
   \centering
   \small
@@ -48,11 +86,9 @@ Caesar cipher memiliki $25$ kunci efektif (shift 1--25), karena $k=0$ atau $k=26
   \caption{Ilustrasi pergeseran Caesar (contoh terbatas A--H).}
 \end{figure}
 
-Pemetaan huruf sistematis sangat penting untuk implementasi Caesar cipher yang efisien dan bebas error. Dalam praktik, tabel lookup jauh lebih cepat daripada menghitung pergeseran secara matematis untuk setiap karakter, terutama pada sistem dengan sumber daya terbatas. Pendekatan tabel juga memudahkan debugging dan verifikasi kebenaran implementasi, karena setiap pergeseran dapat dengan mudah dicek secara visual.
+Pemetaan huruf sistematis penting untuk implementasi yang efisien. Ruang kunci yang terbatas (25 kemungkinan) membuat Caesar rentan terhadap brute force \cite{trappe2006}.
 
-Ruang kunci yang terbatas (hanya 25 kemungkinan) merupakan kelemahan keamanan utama Caesar cipher. Menurut Wikipedia, ruang kunci yang kecil membuat cipher rentan terhadap serangan brute force, di mana penyerang dapat mencoba semua kemungkinan kunci dalam waktu yang wajar. Kerentanan ini menunjukkan mengapa Caesar cipher tidak cocok untuk aplikasi keamanan modern, tetapi tetap menjadi contoh yang sangat baik untuk pengajaran konsep enkripsi dasar.
-
-\subsection{Brute Force}
+\subsection{Brute Force dan Analisis Keamanan}
 
 Karena ruang kunci kecil, semua kemungkinan $k$ dapat dicoba. Misal ciphertext KHOOR:
 \begin{table}[htbp]
@@ -72,9 +108,16 @@ Karena ruang kunci kecil, semua kemungkinan $k$ dapat dicoba. Misal ciphertext K
   \caption{Brute force sederhana untuk Caesar.}
 \end{table}
 
-Serangan brute force terhadap Caesar cipher sangat efektif karena ruang kunci yang sangat terbatas. Menurut Wikipedia, bahkan selama Perang Saudara Sipil, cipher Caesar digunakan oleh pihak lawan yang dapat memecahkan pesan-pesan penting dengan mencoba semua kemungkinan shift. Sejarah menunjukkan bahwa kelemahan ini telah dimanfaatkan secara efektif dalam konflik militer, yang menjadi pelajaran penting tentang mengapa keamanan tidak boleh hanya bergantung pada kerumitan algoritma.
+Brute force terhadap Caesar sangat efektif karena ruang kunci kecil \cite{stallings2017}. Demonstrasi brute force berharga untuk memahami mengapa cipher klasik lemah dan mengapa teknik modern diperlukan.
 
-Dalam konteks pendidikan kriptografi, brute force demonstration sangat berharga karena memberikan pemahaman konkret tentang mengapa cipher klasik lemah dan mengapa teknik modern diperlukan. Mahasiswa dapat melihat langsung bagaimana serangan otomatis dapat mengungkap pesan yang dienkripsi dengan kunci lemah, memberikan motivasi kuat untuk mempelajari teknik keamanan yang lebih canggih. Pengalaman langsung ini sangat efektif untuk membangun intuisi tentang keamanan kriptografi.
+\textbf{Pelajaran untuk Cipher Modern}:
+\begin{itemize}
+  \item \textbf{Ruang kunci harus besar}: Caesar hanya memiliki 25 kemungkinan
+  \item \textbf{Struktur harus kompleks}: Caesar hanya substitusi sederhana
+  \item \textbf{Statistik harus tersembunyi}: Caesar mempertahankan frekuensi huruf
+\end{itemize}
+
+Ini adalah awal dari perjalanan kita memahami mengapa cipher modern seperti AES dirancang jauh lebih kompleks.
 
 \subsection{Implementasi dalam C}
 
@@ -108,5 +151,12 @@ int main() {
 \end{lstlisting}
 
 Implementasi Caesar cipher dalam C menunjukkan bagaimana konsep matematika sederhana dapat diterjemahkan menjadi kode praktis yang fungsional. Fungsi ini menggunakan pendekatan tabel implisit dengan mengkonversi karakter ke indeks numerik (0-25) sebelum melakukan operasi modular. Implementasi ini juga menangani karakter non-alfabet dengan membiarkannya tidak berubah, yang merupakan praktik baik dalam aplikasi nyata.
+
+\textbf{Koneksi ke Implementasi Lanjutan}:
+\begin{itemize}
+  \item Pola implementasi ini akan kita lihat lagi dalam cipher yang lebih kompleks
+  \item Teknik modular arithmetic akan digunakan dalam Vigenère, Affine, dan Hill cipher
+  \item Prinsip enkripsi/dekripsi invers akan menjadi fundamental dalam semua cipher
+\end{itemize}
 
 Dalam implementasi produksi, fungsi seperti ini sering dioptimasi dengan menggunakan lookup table untuk pergeseran huruf daripada menghitung operasi modular untuk setiap karakter. Optimasi ini sangat penting untuk aplikasi yang memproses volume teks besar, seperti enkripsi file atau streaming data. Selain itu, implementasi yang robust harus menangani berbagai encoding karakter (ASCII, UTF-8) dan kasus edge seperti input kosong atau karakter tidak valid.

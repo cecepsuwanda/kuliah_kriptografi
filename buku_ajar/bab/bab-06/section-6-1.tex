@@ -1,22 +1,56 @@
 \section{Konsep Kriptografi Asimetris dan Kunci Publik}
 
-Dalam kriptografi asimetris, setiap pihak memiliki \textbf{pasangan kunci}: kunci publik (dapat dibagikan) dan kunci privat (rahasia). Enkripsi dengan kunci publik hanya dapat didekripsi dengan kunci privat yang sesuai. Sistem ini merevolusi cara komunikasi aman dengan menghilangkan kebutuhan untuk berbagi kunci rahasia melalui kanal yang aman.
+\subsection{Solusi untuk Masalah Fundamental Kriptografi Simetris}
 
-Kriptografi asimetris pertama kali dipublikasikan oleh Whitfield Diffie dan Martin Hellman pada tahun 1976, yang membuka era baru dalam keamanan komunikasi digital. Menurut Wikipedia, konsep ini sangat revolusioner karena memungkinkan dua pihak yang belum pernah bertemu untuk berkomunikasi secara aman melalui jaringan publik. Ide dasar ini kemudian diimplementasikan secara praktis oleh Rivest, Shamir, dan Adleman dalam algoritma RSA yang menjadi fondasi kriptografi modern.
+Dalam Bab V, kita mempelajari kriptografi simetris modern yang sangat aman dan efisien. Namun, kriptografi simetris memiliki masalah fundamental yang belum terpecahkan:
 
-\textbf{Skema dasar}: Alice mempublikasikan kunci publik. Bob mengenkripsi pesan dengan kunci publik Alice. Hanya Alice (yang memiliki kunci privat) yang dapat mendekripsi. Sistem ini bekerja berdasarkan fungsi satu arah (one-way function) yang mudah dihitung dalam satu arah tetapi sangat sulit dibalikkan tanpa informasi rahasia.
+\textbf{Masalah Distribusi Kunci}: Bagaimana Alice dan Bob berbagi kunci rahasia secara aman?
+\begin{itemize}
+  \item \textbf{Caesar (Bab IV)}: Kunci sederhana, tapi harus disepakati secara manual
+  \item \textbf{AES (Bab V)}: Kunci kompleks, tapi masalah distribusi tetap sama
+  \item \textbf{Solusi}: Kriptografi kunci publik — tidak perlu kunci rahasia awal!
+\end{itemize}
 
-\textbf{Manfaat}: Tidak perlu pertukaran kunci rahasia di kanal terbuka. Kunci publik dapat didistribusikan melalui direktori atau sertifikat. Menurut sumber keamanan, kemampuan untuk mendistribusikan kunci publik secara terbuka memungkinkan skala komunikasi aman yang sangat besar, seperti yang terlihat dalam internet modern dengan jutaan transaksi per hari.
+\textbf{Masalah Autentikasi}: Bagaimana memastikan pesan benar-benar dari Alice?
+\begin{itemize}
+  \item \textbf{Simetris}: Siapa pun yang memiliki kunci dapat mengirim pesan
+  \item \textbf{Asimetris}: Hanya Alice dengan kunci privat bisa menandatangani
+\end{itemize}
 
-\textbf{Keterbatasan}: Lebih lambat dibanding simetris. Umumnya digunakan untuk pertukaran kunci atau tanda tangan, bukan enkripsi data besar. Menurut Wikipedia, operasi matematika yang diperlukan untuk RSA (eksponensial modular) jauh lebih lambat dibandingkan operasi simetris seperti AES, sehingga penggunaan RSA untuk enkripsi data besar secara langsung tidak praktis.
+Dalam kriptografi asimetris, setiap pihak memiliki \textbf{pasangan kunci}: kunci publik (dapat dibagikan) dan kunci privat (rahasia). Enkripsi dengan kunci publik hanya dapat didekripsi dengan kunci privat yang sesuai \cite{stallings2017}.
+
+Kriptografi asimetris dipublikasikan oleh Diffie dan Hellman (1976); RSA oleh Rivest, Shamir, Adleman (1977) \cite{menezes1996}. Skema dasar: Alice mempublikasikan kunci publik; Bob mengenkripsi pesan dengan kunci publik Alice; hanya Alice yang dapat mendekripsi. Sistem bekerja berdasarkan fungsi satu arah yang mudah dihitung tetapi sulit dibalik tanpa informasi rahasia.
+
+\textbf{Manfaat}: Tidak perlu pertukaran kunci rahasia di kanal terbuka. \textbf{Keterbatasan}: Lebih lambat dibanding simetris; umumnya untuk pertukaran kunci atau tanda tangan, bukan enkripsi data besar \cite{stallings2017}.
+
+\subsection{Masalah Matematika yang Mendasari}
+
+Keamanan kriptografi kunci publik bergantung pada \textbf{masalah komputasi yang sulit}:
+
+\textbf{Faktorisasi bilangan bulat}: Diberikan $n = p \cdot q$ (prima), hitung $p$ dan $q$. Untuk $n$ besar (ribuan bit), tidak ada algoritma efisien yang dikenal. RSA bergantung pada masalah ini \cite{shoup2009}.
+
+\textbf{Logaritma diskrit}: Diberikan $g$, $h$, dan modulus prima $p$, cari $x$ sehingga $g^x \equiv h \pmod{p}$. Sulit secara komputasional. Diffie-Hellman dan ElGamal bergantung pada masalah ini \cite{stallings2017}.
+
+\textbf{Elliptic Curve Discrete Logarithm (ECDLP)}: Versi log diskrit pada kurva eliptik; keamanan setara dengan ukuran kunci lebih pendek dibanding RSA/DH klasik.
+
+\textbf{Koneksi ke Matematika Bab III}:
+\begin{itemize}
+  \item \textbf{Teori Bilangan}: Prima, faktorisasi, $\varphi(n)$ — dasar keamanan RSA
+  \item \textbf{Aritmetika Modular}: Operasi dalam $\mathbb{Z}_n^*$ untuk RSA dan DH
+  \item \textbf{Algoritma Euclid}: Invers modular untuk kunci privat RSA
+  \item \textbf{Fast Exponentiation}: Enkripsi/dekripsi yang efisien
+\end{itemize}
 
 \subsection{RSA untuk Enkripsi dan Tanda Tangan}
 
-RSA dapat dipakai untuk \textbf{enkripsi} (gunakan kunci publik penerima) maupun \textbf{tanda tangan digital} (gunakan kunci privat pengirim). Keduanya memakai operasi modular yang sama, tetapi \textbf{tujuan dan padding} berbeda. Untuk enkripsi, skema yang direkomendasikan adalah RSAES-OAEP; untuk tanda tangan, skema yang direkomendasikan adalah RSASSA-PSS \cite{rfc8017}.
+RSA dapat dipakai untuk \textbf{enkripsi} (kunci publik penerima) maupun \textbf{tanda tangan digital} (kunci privat pengirim). Untuk enkripsi: RSAES-OAEP; untuk tanda tangan: RSASSA-PSS \cite{rfc8017}. RSA lebih sering untuk key transport dan signature; enkripsi data besar memakai skema hybrid.
 
-RSA dikembangkan oleh Ron Rivest, Adi Shamir, dan Leonard Adleman di MIT pada tahun 1977. Menurut Wikipedia, algoritma ini ditemukan setelah percobaan panjang selama satu tahun, dengan Rivest menghabiskan semalaman untuk memformalkan ide setelah tidak bisa tidur. Nama RSA berasal dari inisial nama belakang ketiga penemu dalam urutan yang sama seperti publikasi ilmiah mereka.
-
-Secara praktik, RSA lebih sering digunakan untuk \textbf{key transport} (mengamankan kunci simetris) dan \textbf{signature}. Enkripsi data besar langsung dengan RSA tidak efisien dan dibatasi ukuran pesan, sehingga skema hybrid jauh lebih umum di sistem nyata. Menurut sumber keamanan, RSA dengan padding yang tepat (seperti OAEP) dapat membuktikan keamanannya secara matematis, tetapi implementasi yang salah dapat menyebabkan kerentanan yang serius.
+\textbf{Hubungan dengan Cipher Sebelumnya}:
+\begin{itemize}
+  \item \textbf{Caesar}: $E(x) = (x + k) \bmod 26$ — operasi sederhana, kunci pendek
+  \item \textbf{AES}: Operasi kompleks dalam $\mathrm{GF}(2^8)$, kunci panjang
+  \item \textbf{RSA}: $c = m^e \bmod n$ — operasi modular dengan eksponen besar, keamanan dari matematika
+\end{itemize}
 
 \subsection{Hybrid Encryption dan KEM-DEM}
 
@@ -28,8 +62,6 @@ Karena RSA lambat, praktik umum adalah \textbf{hybrid encryption}: RSA hanya dip
   \item Kirimkan $(C_K, C)$ kepada penerima.
 \end{enumerate}
 Penerima mendekripsi $C_K$ untuk memperoleh $K_s$, lalu mendekripsi $C$ dengan AES.
-
-Hybrid encryption menjadi standar industri karena menggabungkan keunggulan kedua jenis kriptografi. Menurut sumber keamanan, KEM-DEM menyediakan keamanan yang dapat dibuktikan (provable security) dengan efisiensi operasional yang tinggi. Pendekatan ini memungkinkan enkripsi data berukuran besar dengan kecepatan AES sambil mempertahankan keamanan kunci publik RSA untuk pertukaran kunci.
 
 \begin{figure}[htbp]
   \centering
@@ -48,20 +80,21 @@ Hybrid encryption menjadi standar industri karena menggabungkan keunggulan kedua
   \caption{Skema hybrid: RSA untuk kunci, AES untuk data.}
 \end{figure}
 
+\textbf{Integrasi Semua Konsep Sebelumnya}:
+\begin{itemize}
+  \item \textbf{Bab II}: Layanan keamanan — RSA menyediakan confidentiality\\ dan non-repudiation
+  \item \textbf{Bab III}: Matematika — semua operasi RSA menggunakan konsep dari Bab III
+  \item \textbf{Bab IV-V}: Cipher — RSA menggabungkan prinsip enkripsi dengan matematika kompleks
+\end{itemize}
+
 \subsection{PKI dan Sertifikat}
 
-Distribusi kunci publik membutuhkan \textbf{kepercayaan}. Dalam praktik, kunci publik dibungkus dalam sertifikat digital (PKI) agar identitas pemilik kunci dapat diverifikasi. Ini mencegah serangan \textit{man-in-the-middle} saat pertukaran kunci publik. Menurut Wikipedia, Public Key Infrastructure (PKI) menjadi fondasi untuk keamanan internet modern, memungkinkan verifikasi otomatis identitas digital.
+Distribusi kunci publik membutuhkan \textbf{kepercayaan}. Kunci publik dibungkus dalam sertifikat digital (PKI) agar identitas pemilik diverifikasi \cite{stallings2017}. Validasi dasar: verifikasi rantai sertifikat sampai CA tepercaya, cek masa berlaku dan revocation (CRL/OCSP). Tanpa validasi, serangan man-in-the-middle dapat menyisipkan kunci palsu.
 
-PKI terdiri dari hierarki Certificate Authorities (CA) yang menerbitkan sertifikat digital setelah memverifikasi identitas pemohon. Menurut sumber keamanan, sertifikat mengandung kunci publik, informasi identitas, dan tanda tangan CA yang membuktikan keaslian. Sistem ini memungkinkan komunikasi aman antar pihak yang belum pernah bertemu, dengan kepercayaan yang didelegasikan melalui CA yang terpercaya.
-
-\subsection{Validasi Kunci Publik dan Model Kepercayaan}
-
-Saat menerima kunci publik (sertifikat), lakukan validasi dasar berikut:
+\textbf{Koneksi ke Layanan Keamanan (Bab II)}:
 \begin{itemize}
-  \item Verifikasi rantai sertifikat sampai CA yang dipercaya.
-  \item Cek masa berlaku, revocation (CRL/OCSP), dan penggunaan kunci (key usage).
-  \item Pastikan identitas di sertifikat sesuai konteks (mis. domain atau identitas pengguna).
+  \item \textbf{Confidentiality}: Enkripsi dengan kunci publik
+  \item \textbf{Integrity}: Tanda tangan digital dengan hash
+  \item \textbf{Authenticity}: Sertifikat digital dari CA
+  \item \textbf{Non-repudiation}: Tanda tangan yang tidak dapat disangkal
 \end{itemize}
-Tanpa validasi ini, enkripsi atau tanda tangan dapat mudah disusupi oleh kunci publik palsu.
-
-Validasi sertifikat adalah langkah kritis dalam keamanan kriptografi asimetris. Menurut sumber keamanan, serangan man-in-the-middle berhasil ketika penyerang dapat menyisipkan kunci publik palsu yang dianggap sah oleh penerima. Proses validasi yang ketat, termasuk pemeriksaan Certificate Revocation Lists (CRL) dan Online Certificate Status Protocol (OCSP), sangat penting untuk mencegah penggunaan sertifikat yang telah dicabut.

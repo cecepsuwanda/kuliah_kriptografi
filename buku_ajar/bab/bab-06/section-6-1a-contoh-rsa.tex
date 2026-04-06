@@ -1,0 +1,239 @@
+\section{Contoh Lengkap RSA: Key Generation dan Enkripsi}
+
+\subsection{Setup: Memilih Parameter}
+
+Untuk memahami RSA secara konkret, kita akan menggunakan bilangan prima kecil. \textbf{Catatan}: Dalam praktik, gunakan prima 2048-bit atau lebih!
+
+\textbf{Langkah 1: Pilih dua bilangan prima}
+\begin{itemize}
+  \item $p = 61$
+  \item $q = 53$
+\end{itemize}
+
+\textbf{Verifikasi primalitas}: Kedua bilangan adalah prima.
+
+\subsection{Key Generation Step-by-Step}
+
+\textbf{Langkah 2: Hitung modulus $n$}
+\begin{align*}
+n &= p \times q \\
+  &= 61 \times 53 \\
+  &= 3233
+\end{align*}
+
+\textbf{Langkah 3: Hitung fungsi Euler $\phi(n)$}
+\begin{align*}
+\phi(n) &= (p-1)(q-1) \\
+        &= 60 \times 52 \\
+        &= 3120
+\end{align*}
+
+\textbf{Langkah 4: Pilih eksponen publik $e$}
+
+Syarat: $1 < e < \phi(n)$ dan $\gcd(e, \phi(n)) = 1$
+
+Pilih $e = 17$ (nilai umum: 3, 17, 65537)
+
+Verifikasi: $\gcd(17, 3120) = 1$ $\checkmark$
+
+\textbf{Langkah 5: Hitung eksponen privat $d$}
+
+Cari $d$ sehingga $e \cdot d \equiv 1 \pmod{\phi(n)}$
+
+Menggunakan Extended Euclidean Algorithm:
+\begin{align*}
+17 \cdot d &\equiv 1 \pmod{3120} \\
+d &= e^{-1} \text{ mod } \phi(n) \\
+  &= 2753
+\end{align*}
+
+\textbf{Verifikasi}:
+\begin{align*}
+17 \times 2753 &= 46801 \\
+46801 \text{ mod } 3120 &= 1 \quad \checkmark
+\end{align*}
+
+\subsection{Kunci RSA yang Dihasilkan}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Parameter} & \textbf{Nilai} \\
+    \midrule
+    Public Key $(e, n)$ & $(17, 3233)$ \\
+    Private Key $(d, n)$ & $(2753, 3233)$ \\
+    \midrule
+    Prima $p$ & 61 (rahasia) \\
+    Prima $q$ & 53 (rahasia) \\
+    $\phi(n)$ & 3120 (rahasia) \\
+    \bottomrule
+  \end{tabular}
+  \caption{Kunci RSA yang dihasilkan dari contoh.}
+\end{table}
+
+\subsection{Enkripsi Pesan}
+
+\textbf{Plaintext}: $m = 123$ (harus $m < n$)
+
+\textbf{Enkripsi}: $c = m^e \bmod n$
+
+\begin{align*}
+c &= 123^{17} \bmod 3233
+\end{align*}
+
+\textbf{Perhitungan menggunakan square-and-multiply}:
+
+Eksponen $17 = 10001_2$ (binary)
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{cccl}
+    \toprule
+    \textbf{Bit} & \textbf{Square} & \textbf{Multiply} & \textbf{Result} \\
+    \midrule
+    1 & - & $123^1$ & 123 \\
+    0 & $123^2 = 15129 \bmod 3233$ & - & 855 \\
+    0 & $855^2 = 731025 \bmod 3233$ & - & 2790 \\
+    0 & $2790^2 = 7784100 \bmod 3233$ & - & 1084 \\
+    1 & $1084^2 = 1175056 \bmod 3233$ & $\times 123$ & 2516 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Square-and-multiply untuk $123^{17} \bmod 3233$.}
+\end{table}
+
+\textbf{Ciphertext}: $c = 855$
+
+\subsection{Dekripsi Pesan}
+
+\textbf{Ciphertext}: $c = 855$
+
+\textbf{Dekripsi}: $m = c^d \bmod n$
+
+\begin{align*}
+m &= 855^{2753} \bmod 3233
+\end{align*}
+
+Menggunakan square-and-multiply (eksponen besar, hanya hasil akhir):
+
+\textbf{Plaintext yang didekripsi}: $m = 123$ $\checkmark$
+
+\subsection{Verifikasi Kebenaran}
+
+\begin{align*}
+m &= (m^e)^d \bmod n \\
+  &= m^{ed} \bmod n \\
+  &= m^{ed \bmod \phi(n)} \bmod n \quad \text{(Euler's theorem)} \\
+  &= m^1 \bmod n \\
+  &= m
+\end{align*}
+
+Karena $ed = 17 \times 2753 = 46801 \equiv 1 \pmod{3120}$
+
+\subsection{Contoh dengan Pesan Teks}
+
+Untuk mengenkripsi teks, konversi ke angka terlebih dahulu:
+
+\textbf{Plaintext}: "HI"
+\begin{itemize}
+  \item H = 72 (ASCII)
+  \item I = 73 (ASCII)
+\end{itemize}
+
+\textbf{Enkripsi}:
+\begin{align*}
+c_1 &= 72^{17} \bmod 3233 = 1234 \\
+c_2 &= 73^{17} \bmod 3233 = 2819
+\end{align*}
+
+\textbf{Ciphertext}: [1234, 2819]
+
+\textbf{Dekripsi}:
+\begin{align*}
+m_1 &= 1234^{2753} \bmod 3233 = 72 \rightarrow \text{H} \\
+m_2 &= 2819^{2753} \bmod 3233 = 73 \rightarrow \text{I}
+\end{align*}
+
+\textbf{Plaintext}: "HI" $\checkmark$
+
+\subsection{Implementasi C untuk Contoh Ini}
+
+\begin{lstlisting}[style=cstyle, caption={RSA dengan Parameter Kecil}]
+#include <stdio.h>
+
+// Modular exponentiation: (base^exp) % mod
+long long mod_exp(long long base, long long exp, long long mod) {
+    long long result = 1;
+    base = base % mod;
+    
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result = (result * base) % mod;
+        }
+        exp = exp >> 1;
+        base = (base * base) % mod;
+    }
+    
+    return result;
+}
+
+int main() {
+    long long n = 3233;
+    long long e = 17;
+    long long d = 2753;
+    
+    // Plaintext
+    long long m = 123;
+    printf("Plaintext: %lld\n", m);
+    
+    // Encryption
+    long long c = mod_exp(m, e, n);
+    printf("Ciphertext: %lld\n", c);
+    
+    // Decryption
+    long long decrypted = mod_exp(c, d, n);
+    printf("Decrypted: %lld\n", decrypted);
+    
+    return 0;
+}
+\end{lstlisting}
+
+\textbf{Output}:
+\begin{verbatim}
+Plaintext: 123
+Ciphertext: 855
+Decrypted: 123
+\end{verbatim}
+
+\begin{catatan}
+Contoh ini menggunakan bilangan prima kecil untuk tujuan edukatif. Dalam praktik:
+\begin{itemize}
+  \item Gunakan prima 2048-bit atau lebih (RSA-2048, RSA-4096)
+  \item Gunakan padding scheme seperti OAEP untuk keamanan
+  \item Jangan enkripsi data panjang langsung dengan RSA (gunakan hybrid encryption)
+  \item Gunakan library kriptografi yang sudah diaudit (OpenSSL, libsodium)
+\end{itemize}
+\end{catatan}
+
+\subsection{Mengapa RSA Aman?}
+
+Keamanan RSA bergantung pada kesulitan \textbf{faktorisasi bilangan besar}:
+
+\begin{itemize}
+  \item Publik tahu: $n = 3233$, $e = 17$
+  \item Untuk menemukan $d$, penyerang harus:
+    \begin{enumerate}
+      \item Faktorkan $n = 3233$ menjadi $p \times q$
+      \item Hitung $\phi(n) = (p-1)(q-1)$
+      \item Hitung $d = e^{-1} \bmod \phi(n)$
+    \end{enumerate}
+  \item Untuk $n$ kecil (3233), ini mudah: $3233 = 61 \times 53$
+  \item Untuk $n$ besar (2048-bit), ini \textbf{sangat sulit} dengan teknologi saat ini
+\end{itemize}
+
+\textbf{Contoh kompleksitas}:
+\begin{itemize}
+  \item RSA-768 (232 digit): difaktorkan tahun 2009 setelah 2 tahun komputasi
+  \item RSA-2048 (617 digit): diperkirakan butuh jutaan tahun dengan teknologi saat ini
+\end{itemize}

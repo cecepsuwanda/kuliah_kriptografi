@@ -6,7 +6,16 @@ Dalam bahasa Inggris, frekuensi huruf kira-kira: E (12\%), T (9\%), A (8\%), ...
 
 \subsection{Kasiski Examination}
 
-Untuk Vigenère, jika plaintext memiliki pola berulang dan kunci pendek, pola tersebut akan muncul dalam ciphertext dengan jarak kelipatan panjang kunci. Kasiski examination mencari pola berulang, mengukur jarak antar kemunculan, dan menduga panjang kunci dari gcd jarak-jarak tersebut. Setelah panjang kunci diketahui, setiap posisi dapat dianalisis seperti Caesar cipher terpisah.
+Untuk Vigenère, jika plaintext memiliki pola berulang (misal THE) dan kunci pendek, pola tersebut akan muncul dalam ciphertext dengan jarak kelipatan panjang kunci. Kasiski examination \cite{stallings2017}:
+\begin{enumerate}
+  \item Cari n-gram berulang (2--4 huruf) dalam ciphertext.
+  \item Ukur jarak antar kemunculan; jarak tersebut sering merupakan kelipatan panjang kunci.
+  \item Ambil $\gcd$ dari beberapa jarak untuk menduga panjang kunci $m$.
+  \item Pisahkan ciphertext menjadi $m$ aliran (posisi $i$, $i+m$, $i+2m$, \ldots); setiap aliran bersifat seperti Caesar.
+  \item Lakukan frequency analysis pada setiap aliran untuk memulihkan huruf kunci.
+\end{enumerate}
+
+\textbf{Index of Coincidence} dapat digunakan untuk memperkirakan panjang kunci: jika $m$ benar, index of coincidence tiap aliran mendekati nilai bahasa asli; jika salah, mendekati nilai acak.
 
 \subsection{Ringkasan Serangan Spesifik}
 
@@ -19,7 +28,7 @@ Untuk Vigenère, jika plaintext memiliki pola berulang dan kunci pendek, pola te
   \item \textbf{Hill}: known-plaintext attack, karena sistem linier dapat diselesaikan dengan aljabar linear.
   \item \textbf{Transposisi}: anagramming dan analisis struktur, terutama bila format pesan diketahui.
 \end{itemize}
-\cite{dummit_classical}
+\cite{stallings2017,menezes1996}
 
 \begin{konsep}
 Cipher klasik tidak aman untuk penggunaan modern. Mereka diajarkan untuk memahami evolusi kriptografi dan dasar kriptanalisis. Algoritma modern (AES, RSA) dirancang untuk menahan serangan yang canggih.

@@ -55,3 +55,16 @@ Dalam praktik, sistem modern sering menggunakan \textbf{enkripsi hibrida}: mengg
 Pendekatan hibrida menggabungkan keunggulan kedua jenis kriptografi untuk menciptakan sistem yang aman dan efisien secara bersamaan. Menurut Keyfactor, sebagian besar implementasi hibrida menggunakan kriptografi simetris untuk mengenkripsi sebagian besar informasi dan kemudian menggunakan kriptografi asimetris untuk mengenkripsi kunci enkripsi/dekripsi simetris. SSL/TLS adalah contoh klasik di mana kriptografi asimetris digunakan untuk mengenkripsi kunci enkripsi simetris sekali pakai, yang kemudian digunakan untuk mengenkripsi/mendekripsi konten sesi browsing internet.
 
 Sistem chat mobile juga menggunakan pendekatan hibrida dengan kriptografi asimetris untuk memverifikasi identitas peserta di awal percakapan dan kemudian kriptografi simetris untuk mengenkripsi konten percakapan yang berkelanjutan. Kombinasi ini memastikan keamanan identitas dan kecepatan komunikasi, menjadikannya solusi ideal untuk aplikasi komunikasi modern yang membutuhkan kedua aspek tersebut.
+
+\subsection{Preview: Dari Teori ke Implementasi}
+
+Setelah memahami perbedaan kriptografi simetris dan asimetris, Anda mungkin bertanya: "Bagaimana semua ini bekerja dalam praktik?" Dalam bab-bab berikutnya, kita akan membangun pemahaman ini langkah demi langkah:
+
+\begin{enumerate}
+  \item \textbf{Bab III}: Kita akan mempelajari matematika yang menjadi fondasi semua cipher ini
+  \item \textbf{Bab IV}: Kita akan mengimplementasikan cipher simetris klasik (Caesar, Vigenère) menggunakan bahasa C
+  \item \textbf{Bab V}: Kita akan melihat bagaimana prinsip yang sama diterapkan dalam cipher modern (AES)
+  \item \textbf{Bab VI}: Kita akan mengimplementasikan kriptografi asimetris (RSA)
+\end{enumerate}
+
+Setiap langkah akan membangun di atas yang sebelumnya, memastikan Anda memahami tidak hanya "bagaimana" tetapi juga "mengapa" setiap desain bekerja.

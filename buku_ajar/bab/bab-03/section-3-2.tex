@@ -1,5 +1,18 @@
 \section{Algoritma Euclid dan Euclid Diperluas}
 
+\subsection{Mengapa Algoritma Euclid Penting dalam Kriptografi}
+
+Dalam section sebelumnya, kita belajar tentang invers modular—konsep fundamental untuk cipher seperti Affine dan RSA. Pertanyaan penting: "Bagaimana kita menghitung invers modular secara efisien?" Jawabannya adalah \textbf{Algoritma Euclid Diperluas}.
+
+Algoritma ini sangat penting karena:
+\begin{itemize}
+  \item \textbf{Affine Cipher}: Memerlukan invers modular dari koefisien $a$ dalam $E(x) = ax + b \bmod 26$
+  \item \textbf{RSA}: Memerlukan invers modular untuk menghitung kunci privat $d = e^{-1} \bmod \varphi(n)$
+  \item \textbf{Hill Cipher}: Memerlukan invers matriks modular untuk dekripsi
+\end{itemize}
+
+Tanpa algoritma Euclid yang efisien, cipher ini tidak praktis untuk implementasi dunia nyata.
+
 \subsection{Algoritma Euclid}
 
 Algoritma Euclid menghitung $\gcd(a, b)$ secara efisien:
@@ -11,7 +24,7 @@ Algoritma Euclid menghitung $\gcd(a, b)$ secara efisien:
 $\gcd(48, 18) = \gcd(18, 12) = \gcd(12, 6) = \gcd(6, 0) = 6$.
 \end{contoh}
 
-Algoritma Euclid merupakan salah satu algoritma tertua dan paling fundamental dalam matematika, yang tetap relevan hingga hari ini dalam aplikasi kriptografi modern. Menurut Sookocheff, algoritma ini menghitung GCD tanpa bergantung pada faktorisasi dengan berulang kali menerapkan identitas $\gcd(a,b) = \gcd(b, a \mod b)$. Pendekatan ini sangat efisien karena jumlah langkah tumbuh secara logaritmik dengan ukuran bilangan, membuatnya ideal untuk bilangan besar yang umum dalam kriptografi.
+Algoritma Euclid merupakan salah satu algoritma tertua dan paling fundamental dalam matematika \cite{shoup2009}. Algoritma ini menghitung GCD tanpa bergantung pada faktorisasi dengan berulang kali menerapkan identitas $\gcd(a,b) = \gcd(b, a \bmod b)$. Jumlah langkah tumbuh secara logaritmik dengan ukuran bilangan, membuatnya ideal untuk bilangan besar dalam kriptografi.
 
 Dalam konteks kriptografi, algoritma Euclid sangat penting karena kemampuannya untuk menentukan apakah dua bilangan relatif prima (GCD = 1), yang merupakan syarat untuk keberadaan invers modular. Tanpa algoritma Euclid yang efisien, operasi fundamental seperti generasi kunci RSA dan perhitungan invers modular akan menjadi tidak praktis untuk implementasi dunia nyata. Algoritma ini juga membentuk dasar untuk Extended Euclidean Algorithm yang bahkan lebih penting dalam aplikasi kriptografi.
 
@@ -35,7 +48,7 @@ Algoritma Euclid dapat ditelusuri dengan tabel pembagian berulang. Kompleksitasn
   \caption{Jejak langkah Euclid untuk $\gcd(252, 198)=18$.}
 \end{table}
 
-Kompleksitas logaritmik dari algoritma Euclid membuatnya sangat efisien bahkan untuk bilangan dengan ratusan atau ribuan digit yang umum dalam kriptografi modern. Menurut Sookocheff, faktorisasi prima berfungsi dengan baik untuk bilangan kecil, tetapi kriptografi berurusan dengan bilangan yang sangat besar dan menemukan faktor prima untuk bilangan tersebut essentially tidak mungkin dengan algoritma yang diketahui. Algoritma Euclid menyediakan alternatif yang jauh lebih efisien untuk menghitung GCD tanpa memerlukan faktorisasi.
+Kompleksitas logaritmik membuat algoritma Euclid efisien bahkan untuk bilangan ratusan digit \cite{trappe2006}. Faktorisasi prima tidak praktis untuk bilangan besar; algoritma Euclid menghitung GCD tanpa memerlukan faktorisasi.
 
 Implementasi algoritma Euclid dalam kode juga sangat sederhana dan elegan, seperti yang ditunjukkan dalam pseudocode Python `def gcd(a, b): while b: a, b = b, a%b return a`. Kemudahan implementasi ini, dikombinasikan dengan efisiensi komputasional, membuat algoritma Euclid menjadi pilihan utama untuk aplikasi kriptografi yang memerlukan perhitungan GCD yang andal dan cepat. Algoritma ini juga dapat dengan mudah diimplementasikan dalam hardware untuk optimasi lebih lanjut.
 
@@ -55,23 +68,72 @@ Jika $\gcd(a, n) = 1$, maka nilai $x$ yang diperoleh (mod $n$) adalah invers mod
 \end{itemize}
 
 \begin{contoh}
-Cari invers $35^{-1} \pmod{64}$. Euclid:
-\[
-64 = 1 \cdot 35 + 29,\quad
-35 = 1 \cdot 29 + 6,\quad
-29 = 4 \cdot 6 + 5,\quad
-6 = 1 \cdot 5 + 1
-\]
-Substitusi balik menghasilkan:
-\[
-1 = 11 \cdot 35 - 6 \cdot 64
-\]
-Jadi $35^{-1} \equiv 11 \pmod{64}$.
+Cari invers $35^{-1} \pmod{64}$. Kita gunakan tabel Extended Euclidean Algorithm untuk melacak koefisien $x$ dan $y$ sehingga $ax + by = r$.
+
+Target: $35x + 64y = 1$. Kita mencari $x$.
+
+\begin{center}
+  \small
+  \begin{tabular}{ccccccc}
+    \toprule
+    Step & $q$ & $r$ & $x$ & $y$ & $a$ & $b$ \\
+    \midrule
+    Init & - & - & 1 & 0 & 35 & 64 \\
+    Init & - & - & 0 & 1 & 64 & 35 \\
+    1 & 0 & 35 & 1 & 0 & 35 & 64 \\
+    \multicolumn{7}{c}{\textit{Komputasi berjalan...}} \\
+  \end{tabular}
+  \captionof{table}{Jejak langkah Extended Euclid untuk $35^{-1} \pmod{64}$.}
+\end{center}
+
+\textbf{Metode Substitusi Balik (Back-Substitution)}:
+\begin{align*}
+64 &= 1 \cdot 35 + 29 & \Rightarrow 29 &= 64 - 1 \cdot 35 \\
+35 &= 1 \cdot 29 + 6  & \Rightarrow 6 &= 35 - 1 \cdot 29 \\
+29 &= 4 \cdot 6 + 5   & \Rightarrow 5 &= 29 - 4 \cdot 6 \\
+6  &= 1 \cdot 5 + 1   & \Rightarrow 1 &= 6 - 1 \cdot 5
+\end{align*}
+
+Substitusi mundur dari 1:
+\begin{align*}
+1 &= 6 - 1 \cdot 5 \\
+  &= 6 - 1 \cdot (29 - 4 \cdot 6) \\
+  &= 1 \cdot 6 - 1 \cdot 29 + 4 \cdot 6 \\
+  &= 5 \cdot 6 - 1 \cdot 29 \\
+  &= 5 \cdot (35 - 1 \cdot 29) - 1 \cdot 29 \\
+  &= 5 \cdot 35 - 5 \cdot 29 - 1 \cdot 29 \\
+  &= 5 \cdot 35 - 6 \cdot 29 \\
+  &= 5 \cdot 35 - 6 \cdot (64 - 1 \cdot 35) \\
+  &= 5 \cdot 35 - 6 \cdot 64 + 6 \cdot 35 \\
+  &= \mathbf{11} \cdot 35 - 6 \cdot 64
+\end{align*}
+
+Persamaan akhir: $11 \cdot 35 + (-6) \cdot 64 = 1$.
+Maka $35^{-1} \equiv 11 \pmod{64}$.
 \end{contoh}
 
-Extended Euclidean Algorithm sangat penting dalam kriptografi kunci publik karena menyediakan metode sistematis untuk menghitung invers modular yang diperlukan untuk generasi kunci. Menurut Sookocheff, algoritma ini tidak hanya menemukan GCD tetapi juga mengekspresikan GCD tersebut sebagai kombinasi linear dari bilangan input, yang memberikan kita cara untuk menghitung invers modular. Koefisien yang dihitung selama proses ini sangat penting karena mereka merupakan kunci privat dalam sistem RSA.
+Extended Euclidean Algorithm sangat penting dalam kriptografi kunci publik \cite{stallings2017}. Algoritma ini tidak hanya menemukan GCD tetapi juga mengekspresikan GCD sebagai kombinasi linear $ax + by = \gcd(a,b)$, yang memberikan invers modular $a^{-1} \pmod{b}$ bila $\gcd(a,b)=1$. Koefisien yang dihitung digunakan untuk generasi kunci privat RSA. Tanpa algoritma ini, implementasi praktis RSA akan tidak efisien.
 
-Proses substitusi balik (back-substitution) mungkin terlihat abstrak, tetapi hasilnya sangat penting dalam praktik: memberikan kita cara untuk menghitung invers modular. Menurut Sookocheff, "ini mungkin terlihat abstrak, tetapi hasilnya sangat penting dalam praktik: memberikan kita cara untuk menghitung invers modular, yang sangat penting untuk kriptografi kunci publik." Tanpa Extended Euclidean Algorithm, implementasi praktis RSA dan protokol kriptografi kunci publik lainnya akan menjadi sangat tidak efisien.
+\subsection{Aplikasi dalam Affine Cipher}
+
+Sebagai preview ke Bab IV, mari kita lihat bagaimana Extended Euclidean Algorithm digunakan dalam Affine Cipher:
+
+\textbf{Affine Cipher}: $E(x) = (ax + b) \bmod 26$
+
+Untuk dekripsi, kita perlu invers modular dari $a$:
+\[
+D(y) = a^{-1}(y - b) \bmod 26
+\]
+
+Contoh: Dengan $E(x) = 5x + 3 \bmod 26$:
+\begin{itemize}
+  \item Kita perlu $5^{-1} \bmod 26$
+  \item Menggunakan Extended Euclid: $5 \cdot 21 - 4 \cdot 26 = 1$
+  \item Jadi $5^{-1} \equiv 21 \bmod 26$
+  \item Dekripsi: $D(y) = 21(y - 3) \bmod 26$
+\end{itemize}
+
+Tanpa Extended Euclidean Algorithm, mencari invers $5^{-1} \bmod 26$ dengan brute force akan sangat tidak efisien, terutama untuk modulus yang besar seperti dalam RSA.
 
 \subsection{Implementasi dalam C}
 

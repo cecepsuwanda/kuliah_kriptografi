@@ -1,0 +1,52 @@
+\section{Aljabar Abstrak untuk Kriptografi}
+
+\subsection{Grup, Ring, dan Field}
+
+Struktur aljabar abstrak memberikan kerangka formal untuk operasi dalam kriptografi \cite{stallings2017}. Konsep-konsep dasar meliputi:
+
+\textbf{Grup} $(G, \cdot)$: Himpunan $G$ dengan operasi biner $\cdot$ yang tertutup, asosiatif, memiliki elemen identitas $e$, dan setiap elemen memiliki invers. Contoh: $(\mathbb{Z}_n^*, \cdot)$ adalah grup perkalian modular untuk bilangan yang koprima dengan $n$.
+
+\textbf{Ring} $(R, +, \cdot)$: Himpunan dengan dua operasi; $(R,+)$ grup Abelian, operasi $\cdot$ asosiatif, dan berlaku distributif. Contoh: $\mathbb{Z}_n$ dengan penjumlahan dan perkalian modulo $n$.
+
+\textbf{Field} $(F, +, \cdot)$: Ring komutatif dengan elemen satuan di mana setiap elemen tak-nol memiliki invers perkalian. Contoh: $\mathbb{Z}_p$ untuk $p$ prima; juga $\mathrm{GF}(2^n)$ yang digunakan dalam AES \cite{menezes1996,fips197}.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{4.5cm}>{\raggedright\arraybackslash}p{4.5cm}}
+    \toprule
+    Struktur & Sifat Utama & Contoh Kriptografi \\
+    \midrule
+    Grup & Tertutup, asosiatif, identitas, invers & $\mathbb{Z}_n^*$, kurva eliptik \\
+    Ring & Grup +, perkalian, distributif & $\mathbb{Z}_n$, polinom \\
+    Field & Ring + invers perkalian & $\mathbb{Z}_p$, $\mathrm{GF}(2^n)$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Struktur aljabar abstrak dalam kriptografi.}
+\end{table}
+
+Pemahaman grup dan field penting untuk memahami kurva eliptik dan cipher blok berbasis Galois Field. Operasi dalam AES, misalnya, didefinisikan atas $\mathrm{GF}(2^8)$ \cite{fips197}.
+
+\subsection{Galois Field \texorpdfstring{$\mathrm{GF}(2^n)$}{GF(2n)}}
+
+\textbf{Galois Field} (atau Finite Field) $\mathrm{GF}(p^n)$ adalah field dengan tepat $p^n$ elemen. Untuk kriptografi simetris, $\mathrm{GF}(2^n)$ paling sering digunakan karena sesuai dengan operasi bit \cite{trappe2006}.
+
+Konstruksi $\mathrm{GF}(2^n)$ memakai polinom atas $\mathbb{Z}_2$. Setiap elemen adalah polinom derajat $< n$ dengan koefisien di $\{0,1\}$. Penjumlahan: XOR bit demi bit. Perkalian: perkalian polinom modulo polinom irreducible derajat $n$ atas $\mathbb{Z}_2$.
+
+Contoh $\mathrm{GF}(2^8)$ (untuk AES): Elemen adalah byte. Penjumlahan = XOR. Perkalian didefinisikan modulo polinom $m(x) = x^8 + x^4 + x^3 + x + 1$ \cite{fips197}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[node distance=0.8cm, scale=0.9]
+    \node[draw, rounded corners] (gf) {$\mathrm{GF}(2^n)$};
+    \node[draw, below left=of gf] (add) {Penjumlahan: XOR};
+    \node[draw, below right=of gf] (mul) {Perkalian: polinom mod $m(x)$};
+    \draw[->] (gf) -- (add);
+    \draw[->] (gf) -- (mul);
+    \node[below=0.4cm of add, font=\small] {Operasi bit};
+    \node[below=0.4cm of mul, font=\small] {AES MixColumns};
+  \end{tikzpicture}
+  \caption{Operasi dasar di $\mathrm{GF}(2^n)$.}
+\end{figure}
+
+AES menggunakan $\mathrm{GF}(2^8)$ untuk operasi S-box dan MixColumns \cite{fips197}. Pemahaman aritmetika polinom atas $\mathbb{Z}_2$ dan polinom irreducible membantu memahami desain dan analisis cipher blok.

@@ -1,0 +1,159 @@
+\section{Teori Informasi Shannon}
+
+\subsection{Entropi sebagai Ukuran Ketidakpastian}
+
+Claude Shannon dalam paper "A Mathematical Theory of Communication" (1948) memperkenalkan konsep \textbf{entropi} sebagai ukuran matematis untuk ketidakpastian atau informasi \cite{shannon1948}. Entropi menjadi fondasi teoretis untuk memahami keamanan kriptografi.
+
+\textbf{Definisi Entropi}: Untuk sumber informasi $X$ dengan alfabet $\mathcal{X}$ dan distribusi probabilitas $p(x)$, entropi $H(X)$ didefinisikan sebagai:
+\[
+H(X) = -\sum_{x \in \mathcal{X}} p(x) \log_2 p(x) \text{ bit}
+\]
+
+Entropi mengukur rata-rata informasi per simbol yang dihasilkan oleh sumber. Semakin tinggi entropi, semakin tidak terprediksi sumber tersebut.
+
+\begin{contoh}
+Untuk alfabet Inggris 26 huruf dengan distribusi seragam:
+\[
+H(X) = -\sum_{i=1}^{26} \frac{1}{26} \log_2 \frac{1}{26} = \log_2 26 \approx 4.7 \text{ bit/huruf}
+\]
+
+Untuk alfabet dengan distribusi tidak seragam (seperti bahasa Inggris sebenarnya), entropi lebih rendah karena beberapa huruf lebih sering muncul.
+\end{contoh}
+
+\subsection{Laju Bahasa dan Redundansi}
+
+\textbf{Laju Bahasa} (language rate) adalah entropi per simbol dalam bahasa alami. Bahasa Inggris memiliki laju bahasa sekitar 1.5 bit/huruf, jauh lebih rendah dari entropi maksimum 4.7 bit/huruf \cite{shannon1951}.
+
+\textbf{Redundansi} $R$ didefinisikan sebagai:
+\[
+R = 1 - \frac{H_{\text{actual}}}{H_{\text{maximum}}}
+\]
+
+Untuk bahasa Inggris:
+\[
+R = 1 - \frac{1.5}{4.7} \approx 0.68 \text{ (68\% redundansi)}
+\]
+
+Redundansi ini adalah alasan mengapa \textbf{frequency analysis} dapat memecahkan cipher substitusi sederhana.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lcc}
+    \toprule
+    Sumber & Entropi Maksimum & Entropi Aktual \\
+    \midrule
+    Alfabet seragam (26 huruf) & 4.7 bit & 4.7 bit \\
+    Bahasa Inggris & 4.7 bit & 1.5 bit \\
+    Binary seragam & 1.0 bit & 1.0 bit \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perbandingan entropi maksimum vs aktual.}
+\end{table}
+
+\subsection{Unicity Distance}
+
+\textbf{Unicity distance} adalah panjang ciphertext minimum di mana hanya ada satu plaintext yang masuk akal yang dapat menghasilkan ciphertext tersebut \cite{shannon1949}. Ini adalah ukuran penting untuk keamanan cipher.
+
+Untuk cipher dengan kunci $K$ dan plaintext $P$, unicity distance $U$ didefinisikan sebagai:
+\[
+U = \frac{H(K)}{D}
+\]
+dimana $H(K)$ adalah entropi kunci dan $D$ adalah redundansi per simbol.
+
+\begin{contoh}
+Untuk Caesar cipher:
+\begin{itemize}
+  \item Ruang kunci: 25 kemungkinan
+  \item $H(K) = \log_2 25 \approx 4.64$ bit
+  \item Redundansi bahasa Inggris: $D = 4.7 - 1.5 = 3.2$ bit/huruf
+  \item $U = \frac{4.64}{3.2} \approx 1.45$ huruf
+\end{itemize}
+
+Ini berarti hanya perlu 2 huruf ciphertext untuk memecahkan Caesar cipher secara unik!
+\end{contoh}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lcc}
+    \toprule
+    Cipher & Ukuran Kunci & Unicity Distance \\
+    \midrule
+    Caesar (25 kunci) & 4.64 bit & 2 huruf \\
+    Vigenère (26$^k$ kunci) & $k \cdot 4.7$ bit & $1.5k$ huruf \\
+    DES (56-bit kunci) & 56 bit & 17.5 huruf \\
+    AES-128 (128-bit kunci) & 128 bit & 40 huruf \\
+    \bottomrule
+  \end{tabular}
+  \caption{Unicity distance untuk berbagai cipher.}
+\end{table}
+
+\subsection{Implikasi untuk Keamanan Kriptografi}
+
+Teori informasi Shannon memberikan wawasan fundamental tentang keamanan kriptografi:
+
+\begin{enumerate}
+  \item \textbf{Kerentanan Frequency Analysis}: Redundansi tinggi dalam bahasa alami membuat cipher substitusi rentan terhadap frequency analysis.
+  
+  \item \textbf{Kebutuhan Kunci yang Cukup}: Unicity distance menunjukkan bahwa cipher dengan kunci pendek tidak aman untuk pesan panjang.
+  
+  \item \textbf{Diffusion dan Confusion}: Shannon mengusulkan dua properti untuk cipher yang aman:
+  \begin{itemize}
+    \item \textbf{Confusion}: Menyembunyikan hubungan antara kunci dan ciphertext
+    \item \textbf{Diffusion}: Menyebar pengaruh satu plaintext bit ke banyak ciphertext bits
+  \end{itemize}
+  
+  \item \textbf{Perfect Secrecy}: One-Time Pad mencapai perfect secrecy karena $H(K) \geq H(P)$.
+\end{enumerate}
+
+\subsection{Perfect Secrecy dan One-Time Pad}
+
+\textbf{Perfect secrecy} terjadi ketika ciphertext tidak memberikan informasi apapun tentang plaintext. Shannon membuktikan bahwa perfect secrecy hanya mungkin jika:
+\[
+H(K) \geq H(P)
+\]
+
+One-Time Pad memenuhi syarat ini karena:
+\begin{itemize}
+  \item Kunci acak dengan panjang sama dengan plaintext
+  \item Kunci hanya digunakan sekali
+  \item $H(K) = n$ bit untuk plaintext $n$ bit
+  \item $H(P) \leq n$ bit
+\end{itemize}
+
+\begin{contoh}
+Dengan plaintext 8-bit (ASCII 'A' = 65 = 01000001) dan kunci acak 8-bit:
+\begin{itemize}
+  \item Plaintext: 01000001
+  \item Kunci: 11010010 (acak)
+  \item Ciphertext: 10010011 (XOR)
+\end{itemize}
+Setiap kunci yang mungkin (256 kemungkinan) menghasilkan ciphertext yang berbeda, sehingga ciphertext tidak memberikan informasi tentang plaintext.
+\end{contoh}
+
+\subsection{Distance of Uniqueness dalam Praktik}
+
+Unicity distance memiliki implikasi praktis penting:
+
+\begin{itemize}
+  \item \textbf{DES}: $U \approx 17.5$ huruf, sangat rentan terhadap known-plaintext attack
+  \item \textbf{AES-128}: $U \approx 40$ huruf, lebih aman untuk pesan pendek
+  \item \textbf{RSA 2048-bit}: $U \approx 640$ huruf, sangat aman untuk pesan praktis
+\end{itemize}
+
+\begin{catatan}
+Unicity distance adalah batas teoretis minimum. Dalam praktik, serangan sering berhasil dengan ciphertext yang lebih pendek karena informasi tambahan (struktur bahasa, format pesan, dll) dapat membantu penyerang.
+\end{catatan}
+
+\subsection{Koneksi ke Bab-Bab Berikutnya}
+
+Konsep teori informasi ini akan menjadi dasar untuk:
+\begin{itemize}
+  \item \textbf{Bab III}: Memahami mengapa matematika penting untuk keamanan
+  \item \textbf{Bab IV}: Analisis kelemahan cipher klasik menggunakan frequency analysis
+  \item \textbf{Bab V}: Desain cipher modern dengan diffusion dan confusion
+  \item \textbf{Bab VI}: Pemilihan ukuran kunci yang aman berdasarkan unicity distance
+\end{itemize}
+
+Pemahaman teori informasi memberikan kerangka matematis untuk mengevaluasi keamanan cipher dan merancang sistem kriptografi yang lebih kuat.

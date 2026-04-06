@@ -2,7 +2,7 @@
 
 Menghitung $a^b \bmod n$ secara naif dengan mengalikan $a$ sebanyak $b$ kali sangat tidak efisien untuk $b$ besar. Algoritma \textbf{square-and-multiply} (atau binary exponentiation) menyelesaikan dalam $O(\log b)$ operasi.
 
-Pangkat modular merupakan operasi fundamental dalam kriptografi modern, terutama RSA di mana enkripsi dan dekripsi melibatkan perhitungan $m^e \bmod n$ dan $c^d \bmod n$ dengan eksponen yang sangat besar. Menurut penelitian kriptografi, tanpa algoritma yang efisien seperti square-and-multiply, operasi RSA akan menjadi tidak praktis untuk implementasi dunia nyata. Algoritma ini mengurangi kompleksitas dari linear menjadi logaritmik, membuat perhitungan dengan eksponen ribuan digit menjadi feasible.
+Pangkat modular merupakan operasi fundamental dalam kriptografi modern, terutama RSA \cite{stallings2017}. Tanpa algoritma yang efisien seperti square-and-multiply, operasi RSA akan menjadi tidak praktis. Algoritma ini mengurangi kompleksitas dari linear menjadi logaritmik, membuat perhitungan dengan eksponen ribuan digit menjadi feasible.
 
 Dalam implementasi praktis, efisiensi pangkat modular sangat penting untuk performa aplikasi kriptografi, terutama pada perangkat dengan sumber daya terbatas seperti smartphone atau embedded systems. Algoritma square-and-multiply tidak hanya mengurangi jumlah operasi tetapi juga membantu mencegah overflow dengan melakukan operasi modular setiap langkah. Optimasi ini sangat penting untuk keamanan dan keandalan sistem kriptografi yang digunakan secara luas.
 
@@ -23,7 +23,7 @@ $3^1 \equiv 3$, $3^2 \equiv 4$, $3^4 \equiv 1$, $3^8 \equiv 1$.
 $3^{11} = 3^8 \cdot 3^2 \cdot 3^1 \equiv 1 \cdot 4 \cdot 3 = 12 \equiv 2 \pmod{5}$.
 \end{contoh}
 
-Algoritma square-and-multiply sangat elegan karena mengubah masalah eksponensiasi menjadi ser operasi kuadrat dan perkalian yang dapat dihitung secara modular setiap langkah. Setiap bit dari eksponen diproses secara berurutan, di mana operasi kuadrat selalu dilakukan dan operasi perkalian hanya dilakukan ketika bit tersebut bernilai 1. Pendekatan ini memastikan bahwa jumlah operasi selalu proporsional dengan jumlah bit dalam eksponen, bukan dengan nilai eksponen itu sendiri.
+Algoritma square-and-multiply sangat elegan karena mengubah masalah eksponensiasi menjadi serangkaian operasi kuadrat dan perkalian yang dapat dihitung secara modular setiap langkah. Setiap bit dari eksponen diproses secara berurutan, di mana operasi kuadrat selalu dilakukan dan operasi perkalian hanya dilakukan ketika bit tersebut bernilai 1. Pendekatan ini memastikan bahwa jumlah operasi selalu proporsional dengan jumlah bit dalam eksponen, bukan dengan nilai eksponen itu sendiri.
 
 Dalam implementasi kriptografi, pemrosesan bit dari Most Significant Bit (MSB) ke Least Significant Bit (LSB) atau sebaliknya dapat mempengaruhi efisiensi cache pada prosesor modern. Beberapa implementasi mengoptimasi urutan pemrosesan bit untuk memaksimalkan lokalitas referensi memori, yang sangat penting untuk aplikasi kriptografi high-performance yang memproses banyak operasi pangkat modular per detik.
 

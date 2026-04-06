@@ -1,21 +1,101 @@
 \section{Ikhtisar Materi per Bab}
 
-Struktur kurikulum kriptografi ini dirancang secara sistematis untuk membangun pemahaman dari konsep dasar hingga aplikasi lanjutan. Setiap bab mengintegrasikan teori matematis, implementasi praktis, dan analisis keamanan untuk memberikan pembelajaran yang komprehensif dan berorientasi aplikasi.
+Struktur kurikulum kriptografi dirancang sistematis dari konsep dasar hingga aplikasi modern, dengan tiap bab mengintegrasikan teori, implementasi, dan analisis keamanan. Setiap bab dibangun di atas fondasi bab sebelumnya, menciptakan alur pembelajaran yang kohesif.
 
+\subsection{Fondasi Konseptual (Bab II-III)}
 \begin{enumerate}
-  \item \textbf{Bab II}: Pengantar kriptografi, model keamanan, ancaman, confidentiality, integrity, authenticity, kriptografi simetris vs asimetris
-  \item \textbf{Bab III}: Aritmetika modular, algoritma Euclid, teori bilangan, fast exponentiation, implementasi C
-  \item \textbf{Bab IV}: Cipher Caesar, substitusi monoalfabetik, Vigenère, kelemahan cipher klasik, implementasi C
-  \item \textbf{Bab V}: Block cipher, DES, AES, mode operasi ECB, CBC, CFB, OFB
-  \item \textbf{Bab VI}: Kriptografi asimetris, RSA, pembangkitan kunci, enkripsi/dekripsi, implementasi C
-  \item \textbf{Bab VII}: Fungsi hash (SHA, MD5), integritas data, tanda tangan digital
-  \item \textbf{Bab VIII}: Protokol Diffie-Hellman, TLS dasar, manajemen kunci
-  \item \textbf{Bab IX}: Kriptanalisis, frequency analysis, Kasiski examination
-  \item \textbf{Bab X}: Evaluasi komprehensif dan rubrik penilaian. Tinjauan pencapaian serta rekomendasi tindak lanjut.
+  \setcounter{enumi}{1}
+  \item \textbf{Bab II}: Pengantar kriptografi, layanan keamanan, ancaman, terminologi, serta simetris vs asimetris
+  \begin{itemize}
+    \item Menjawab: "Mengapa kita perlu kriptografi?"
+    \item Membangun pemahaman tentang landscape keamanan informasi
+    \item Menyiapkan konteks untuk kebutuhan matematika
+  \end{itemize}
+  \item \textbf{Bab III}: Aritmetika modular, Euclid, teori bilangan, fast exponentiation, implementasi C
+  \begin{itemize}
+    \item Menjawab: "Bagaimana matematika membuat kriptografi mungkin?"
+    \item Setiap konsep matematika langsung diaplikasikan dalam Bab IV
+    \item Fondasi untuk algoritma modern di Bab V-VII
+  \end{itemize}
 \end{enumerate}
 
-Perjalanan pembelajaran dimulai dengan fondasi teoretis yang kuat pada Bab II dan III, memberikan pemahaman tentang prinsip-prinsip dasar keamanan informasi dan alat matematika yang diperlukan. Bab IV dan V memperkenalkan implementasi praktis mulai dari cipher klasik hingga block cipher modern, membangun keterampilan pemrograman dan analisis secara bertahap. Pendekatan ini memastikan mahasiswa memiliki dasar yang kokoh sebelum beralih ke konsep yang lebih kompleks.
+\subsection{Aplikasi dan Implementasi (Bab IV-VII)}
+\begin{enumerate}
+  \setcounter{enumi}{3}
+  \item \textbf{Bab IV}: Cipher klasik (Caesar, Vigenère, substitusi), kriptanalisis dasar, implementasi C
+  \begin{itemize}
+    \item Penerapan langsung matematika Bab III
+    \item Memperkenalkan konsep enkripsi/dekripsi sederhana
+    \item Menunjukkan kelemahan yang memotivasi algoritma modern
+  \end{itemize}
+  \item \textbf{Bab V}: Stream/block cipher, DES, AES, dan mode operasi (ECB, CBC, CFB, OFB, CTR)
+  \begin{itemize}
+    \item Evolusi dari cipher klasik ke modern
+    \item Matematika Bab III diterapkan dalam desain AES
+    \item Konsep mode operasi untuk aplikasi dunia nyata
+  \end{itemize}
+  \item \textbf{Bab VI}: Kriptografi kunci publik, RSA, pertukaran kunci, implementasi C
+  \begin{itemize}
+    \item Teori bilangan prima dari Bab III menjadi dasar keamanan RSA
+    \item Menjawab masalah distribusi kunci dari kriptografi simetris
+  \end{itemize}
+  \item \textbf{Bab VII}: Fungsi hash, MAC, integritas data, tanda tangan digital
+  \begin{itemize}
+    \item Melengkapi layanan keamanan dari Bab II
+    \item Mengintegrasikan konsep dari Bab V-VI
+  \end{itemize}
+\end{enumerate}
 
-Bab VI hingga VIII membahas teknologi kriptografi modern yang secara luas digunakan dalam industri, termasuk RSA, fungsi hash, dan protokol pertukaran kunci. Materi-materi ini dirancang untuk menghubungkan konsep akademis dengan aplikasi dunia nyata yang ditemui dalam sistem keamanan digital. Bab IX menambahkan perspektif keamanan dengan mempelajari teknik kriptanalisis, memberikan pemahaman holistik tentang kekuatan dan kelemahan sistem enkripsi.
+\subsection{Integrasi dan Analisis (Bab VIII-X)}
+\begin{enumerate}
+  \setcounter{enumi}{7}
+  \item \textbf{Bab VIII}: RNG, protokol (TLS/SSH/PGP dasar), manajemen kunci dan PKI
+  \begin{itemize}
+    \item Menggabungkan semua konsep sebelumnya dalam protokol nyata
+    \item Menunjukkan bagaimana komponen kriptografi bekerja bersama
+  \end{itemize}
+  \item \textbf{Bab IX}: Kriptanalisis (frequency analysis, Kasiski) sebagai pendalaman keamanan
+  \begin{itemize}
+    \item Menerapkan statistik dan probabilitas untuk memecahkan cipher
+    \item Memperdalam pemahaman tentang mengapa suatu cipher aman atau tidak
+  \end{itemize}
+  \item \textbf{Bab X}: Evaluasi komprehensif, refleksi, dan integrasi kompetensi
+  \begin{itemize}
+    \item Mengintegrasikan seluruh materi dalam studi kasus komprehensif
+    \item Memvalidasi pencapaian semua Sub-CPMK
+  \end{itemize}
+  \item \textbf{Bab XI (tambahan)}: Steganografi dan watermarking
+\end{enumerate}
 
-Bab penutup (X) mengintegrasikan semua pengetahuan yang telah dipelajari melalui evaluasi komprehensif dan refleksi diri. Bab ini dirancang untuk mengukur pencapaian kompetensi secara keseluruhan dan memberikan rekomendasi pengembangan lebih lanjut bagi mahasiswa. Struktur kurikulum ini memastikan lulusan memiliki pemahaman mendalam tentang kriptografi dari perspektif teoretis, praktis, dan keamanan, mempersiapkan mereka untuk karir di bidang keamanan siber.
+\subsection{Bagaimana Bab-Bab Terhubung}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=0.8, transform shape, nodes={align=center}]
+    % Nodes
+    \node[draw, rounded corners, fill=blue!10] (b2) at (0,4) {Bab II\\Konsep Dasar};
+    \node[draw, rounded corners, fill=green!10] (b3) at (3,4) {Bab III\\Matematika};
+    \node[draw, rounded corners, fill=orange!10] (b4) at (6,4) {Bab IV\\Cipher Klasik};
+    \node[draw, rounded corners, fill=orange!10] (b5) at (9,4) {Bab V\\Cipher Modern};
+    \node[draw, rounded corners, fill=red!10] (b6) at (0,2) {Bab VI\\Kunci Publik};
+    \node[draw, rounded corners, fill=red!10] (b7) at (3,2) {Bab VII\\Hash \& MAC};
+    \node[draw, rounded corners, fill=purple!10] (b8) at (6,2) {Bab VIII\\Protokol};
+    \node[draw, rounded corners, fill=purple!10] (b9) at (9,2) {Bab IX\\Kriptanalisis};
+    \node[draw, rounded corners, fill=gray!10] (b10) at (4.5,0) {Bab X\\Evaluasi};
+    
+    % Arrows
+    \draw[->, thick] (b2) -- (b3);
+    \draw[->, thick] (b3) -- (b4);
+    \draw[->, thick] (b4) -- (b5);
+    \draw[->, thick] (b5) -- (b6);
+    \draw[->, thick] (b6) -- (b7);
+    \draw[->, thick] (b7) -- (b8);
+    \draw[->, thick] (b8) -- (b9);
+    \draw[->, thick] (b9) -- (b10);
+    \draw[->, thick, dashed] (b3) -- (b6);
+    \draw[->, thick, dashed] (b5) -- (b8);
+  \end{tikzpicture}
+  \caption{Keterkaitan antar bab: fondasi ke aplikasi ke integrasi.}
+\end{figure}
+
+Alur ini memastikan mahasiswa membangun fondasi matematis terlebih dahulu, lalu beralih ke implementasi algoritma, protokol, serta analisis keamanan. Setiap transisi dirancang untuk menjawab pertanyaan "mengapa topik ini penting?" dengan menghubungkan ke materi sebelumnya dan mempersiapkan untuk materi berikutnya. Bab penutup mengintegrasikan keseluruhan capaian untuk menilai kompetensi secara menyeluruh dan memandu langkah belajar lanjutan.

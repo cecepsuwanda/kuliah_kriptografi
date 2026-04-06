@@ -1,40 +1,58 @@
 \section{Keterkaitan Buku Ajar dan RPS OBE}
 
-Buku ajar ini dirancang dengan ketat mengikuti Rencana Pembelajaran Semester (RPS) Mata Kuliah Kriptografi yang berbasis \textbf{Outcome-Based Education (OBE)}. Setiap bab dipetakan secara eksplisit ke Capaian Pembelajaran Mata Kuliah (CPMK) dan Sub-CPMK yang tercantum dalam silabus.
+Buku ajar ini dirancang mengikuti Rencana Pembelajaran Semester (RPS) berbasis \textbf{OBE} (Outcome-Based Education). Dalam OBE, seluruh komponen pembelajaran disusun mengacu pada hasil (outcomes) yang harus dicapai mahasiswa; tidak ada satu metode mengajar yang diwajibkan, selama metode tersebut membantu mencapai outcome yang ditetapkan \cite{obe_wikipedia}.
 
-Outcome-Based Education (OBE) merupakan pendekatan kurikulum yang berfokus pada hasil pembelajaran (learning outcomes) yang harus dicapai mahasiswa, bukan sekadar materi yang diajarkan oleh dosen. Menurut Wikipedia, OBE mengorganisir seluruh sistem pendidikan menuju apa yang dianggap esensial bagi pembelajar untuk berhasil dilakukan di akhir pengalaman belajar mereka. Pendekatan ini memberikan kejelasan tentang harapan pencapaian dan fleksibilitas dalam metode instruksional, memungkinkan dosen untuk menggunakan berbagai teknik pengajaran dan asesmen yang sesuai dengan kebutuhan mahasiswa.
-
-Implementasi OBE dalam kriptografi memastikan setiap kompetensi yang dipelajari dapat diukur dan diverifikasi melalui asesmen yang terstruktur. Model pembelajaran berbasis outcome ini memungkinkan perbandingan standar kompetensi antar institusi dan memfasilitasi transisi mahasiswa ke dunia kerja dengan bukti pencapaian kompetensi yang jelas. Mahasiswa menjadi lebih terlibat dan bertanggung jawab atas pembelajaran mereka sementara dosen berperan sebagai fasilitator yang mengarahkan pencapaian kompetensi yang telah ditetapkan.
+Keterkaitan dengan RPS diwujudkan melalui pemetaan bab ke CPMK dan Sub-CPMK, sehingga materi, aktivitas, latihan, dan asesmen memiliki arah kompetensi yang jelas. Tabel berikut menunjukkan keterkaitan bab dengan Sub-CPMK sesuai silabus, termasuk rencana penambahan bab untuk topik steganografi.
 
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{|c|c|p{7cm}|}
+\begin{tabular}{|c|c|>{\raggedright\arraybackslash}p{7cm}|}
 \hline
 \textbf{Bab} & \textbf{Sub-CPMK} & \textbf{Materi Terkait} \\
 \hline
-I & -- & Orientasi dan panduan belajar \\
+I & -- & Orientasi, tujuan buku, dan panduan belajar \\
 \hline
-II & 1.1, 1.2, 1.3 & Landasan teori, model keamanan, simetris vs asimetris \\
+II & 1.1, 1.2, 1.3 & Layanan keamanan, terminologi, teori informasi, dasar kriptografi \\
 \hline
-III & 2.1, 2.2 & Matematika kriptografi, Euclid, fast exponentiation \\
+III & 1.3 & Aritmetika modular, Euclid, teori bilangan, fast exponentiation \\
 \hline
-IV & 3.1, 3.2 & Caesar, Vigenère, substitusi, implementasi C \\
+IV & 2.1 & Cipher klasik, kriptanalisis dasar, implementasi C \\
 \hline
-V & 4.1 & DES, AES, mode operasi block cipher \\
+V & 3.1, 3.2, 3.3 & Stream/block cipher, DES/AES, mode operasi \\
 \hline
-VI & 4.2 & RSA, implementasi C \\
+VI & 4.1, 4.2 & Kunci publik, RSA, pertukaran kunci, implementasi C \\
 \hline
-VII & 5.1, 5.2 & Fungsi hash, tanda tangan digital \\
+VII & 5.1, 5.2 & Hash, MAC, tanda tangan digital \\
 \hline
-VIII & 6.1 & Protokol Diffie-Hellman, manajemen kunci \\
+VIII & 6.1 & RNG, protokol, manajemen kunci, TLS/PKI dasar \\
 \hline
-IX & 7.1 & Kriptanalisis, frequency analysis, Kasiski \\
+IX & 2.1 (pendalaman) & Kriptanalisis: frequency analysis dan Kasiski \\
 \hline
-X & 8.1, semua & Evaluasi, refleksi, integrasi kompetensi \\
+X & -- & Evaluasi, refleksi, dan integrasi kompetensi \\
+\hline
+XI (tambahan) & 7.1 & Steganografi dan watermarking \\
 \hline
 \end{tabular}
-\caption{Petakan Bab ke Sub-CPMK}
+\caption{Pemetaan Bab ke Sub-CPMK}
 \end{table}
 
-Pendekatan OBE menekankan bahwa setiap aktivitas pembelajaran---materi, latihan, praktikum, dan asesmen---harus diarahkan untuk mencapai kompetensi yang terukur. Dengan demikian, mahasiswa dapat memantau kemajuan mereka secara mandiri melalui checklist pencapaian yang disediakan di setiap bab.
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[node distance=1.2cm]
+    \node[draw, rounded corners, fill=blue!5, inner sep=4pt] (cpl) {CPL};
+    \node[draw, rounded corners, fill=blue!5, inner sep=4pt, below=of cpl] (cpmk) {CPMK};
+    \node[draw, rounded corners, fill=blue!5, inner sep=4pt, below=of cpmk] (subcpmk) {Sub-CPMK};
+    \node[draw, rounded corners, fill=green!5, inner sep=4pt, below=of subcpmk] (aktivitas) {Aktivitas \& Materi};
+    \node[draw, rounded corners, fill=orange!5, inner sep=4pt, below=of aktivitas] (asesmen) {Asesmen};
+    \node[draw, rounded corners, fill=gray!10, inner sep=4pt, below=of asesmen] (bukti) {Bukti Pencapaian};
+    \draw[arrow] (cpl) -- (cpmk);
+    \draw[arrow] (cpmk) -- (subcpmk);
+    \draw[arrow] (subcpmk) -- (aktivitas);
+    \draw[arrow] (aktivitas) -- (asesmen);
+    \draw[arrow] (asesmen) -- (bukti);
+  \end{tikzpicture}
+  \caption{Alur keterkaitan CPL, CPMK, Sub-CPMK, aktivitas, dan asesmen.}
+\end{figure}
+
+Dengan pemetaan ini, setiap aktivitas pembelajaran berfungsi sebagai bukti pencapaian outcome yang terukur. Mahasiswa dapat memantau kemajuan belajar melalui indikator dan checklist kompetensi yang disediakan pada setiap bab.

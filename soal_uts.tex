@@ -1,0 +1,141 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    pdfborder={0 0 0}
+}
+\title{Ujian Tengah Semester – Kriptografi}
+\date{}
+\begin{document}
+\maketitle
+
+\section*{Petunjuk}
+\begin{itemize}
+    \item Pilih jawaban terbaik untuk setiap soal.
+    \item Lingkari huruf pilihan Anda (A, B, C, atau D).
+    \item Nilai tiap soal sama besar.
+\end{itemize}
+
+\section*{Soal Pilihan Ganda}
+\begin{enumerate}[label=\textbf{Soal \arabic*.}, leftmargin=*, itemsep=1.5em]
+    \item Prinsip dasar kriptografi mencakup tiga tujuan utama keamanan informasi. Manakah dari pilihan berikut yang \textbf{bukan} merupakan salah satu tujuan tersebut?
+    \begin{enumerate}[label=\Alph*.]
+        \item Kerahasiaan (Confidentiality)
+        \item Integritas (Integrity)
+        \item Otentikasi (Authenticity)
+        \item Skalabilitas (Scalability)
+    \end{enumerate}
+
+    \item Pada cipher klasik Caesar, setiap huruf pada plaintext digeser dengan nilai tetap $k$. Jika $k = 5$ dan huruf ``Z'' dienkripsi, apa huruf cipher yang dihasilkan (gunakan alfabet Inggris 26 huruf)?
+    \begin{enumerate}[label=\Alph*.]
+        \item E
+        \item D
+        \item F
+        \item A
+    \end{enumerate}
+
+    \item Aritmetika modular merupakan fondasi banyak algoritma kriptografi. Nilai $7^{23}\bmod 5$ adalah:
+    \begin{enumerate}[label=\Alph*.]
+        \item 2
+        \item 3
+        \item 1
+        \item 0
+    \end{enumerate}
+
+    \item Manakah pernyataan berikut yang paling tepat mengenai RSA?
+    \begin{enumerate}[label=\Alph*.]
+        \item Keamanan RSA bergantung pada kesulitan faktorisasi bilangan komposit besar.
+        \item RSA menggunakan fungsi hash kriptografis sebagai kunci publik.
+        \item RSA tidak memerlukan operasi modular.
+        \item RSA hanya dapat mengenkripsi pesan dengan panjang maksimum 128 bit.
+    \end{enumerate}
+
+    \item Dalam algoritma Vigenère, kunci yang dipilih harus:
+    \begin{enumerate}[label=\Alph*.]
+        \item Selalu berupa satu huruf.
+        \item Memiliki panjang yang sama dengan plaintext.
+        \item Tidak mengulang pola apa pun.
+        \item Menggunakan huruf kapital saja.
+    \end{enumerate}
+
+    \item Salah satu sifat grup siklik yang penting untuk AES adalah:
+    \begin{enumerate}[label=\Alph*.]
+        \item Semua elemen memiliki invers.
+        \item Operasi grup tidak komutatif.
+        \item Hanya ada satu elemen identitas.
+        \item Setiap elemen dapat dihasilkan dari pangkat satu generator.
+    \end{enumerate}
+
+    \item Pada proses \textit{key expansion} AES-128, berapa banyak kata (word) yang dihasilkan untuk seluruh ronde?
+    \begin{enumerate}[label=\Alph*.]
+        \item 44
+        \item 60
+        \item 128
+        \item 32
+    \end{enumerate}
+
+    \item Probabilitas dan statistik banyak dipakai dalam kriptanalisis. Manakah contoh paling tepat penggunaannya?
+    \begin{enumerate}[label=\Alph*.]
+        \item Menghitung nilai hash.
+        \item Mengestimasi distribusi ciphertext untuk serangan frekuensi.
+        \item Membuat kunci publik untuk RSA.
+        \item Menggenerasikan nomor acak dalam algoritma DES.
+    \end{enumerate}
+
+    \item Pada analisis keamanan cipher klasik, serangan \textit{known‑plaintext} berarti:
+    \begin{enumerate}[label=\Alph*.]
+        \item Penyerang hanya mengetahui ciphertext.
+        \item Penyerang mengetahui sebagian plaintext dan ciphertext yang bersesuaian.
+        \item Penyerang dapat memilih plaintext yang akan dienkripsi.
+        \item Penyerang memiliki akses ke kunci privat.
+    \end{enumerate}
+
+    \item Algoritma \texttt{modular exponentiation} yang efisien biasanya menggunakan teknik:
+    \begin{enumerate}[label=\Alph*.]
+        \item Karatsuba multiplication
+        \item Square‑and‑multiply
+        \item Fast Fourier Transform
+        \item Euclidean algorithm
+    \end{enumerate}
+
+    \item Dalam konteks kriptografi modern, standar AES menggunakan blok berukuran:
+    \begin{enumerate}[label=\Alph*.]
+        \item 64 bit
+        \item 128 bit
+        \item 256 bit
+        \item 512 bit
+    \end{enumerate}
+
+    \item Manakah pernyataan berikut yang paling tepat tentang hubungan antara kriptografi dan CPMK/CPL pada silabus mata kuliah?
+    \begin{enumerate}[label=\Alph*.]
+        \item Kriptografi hanya terkait dengan CPMK “Pemrograman C”.
+        \item Setiap kompetensi (CPL) harus dapat diukur melalui suatu learning outcome kriptografi.
+        \item CPMK dan CPL tidak mempengaruhi penyusunan soal ujian.
+        \item Hanya topik matematika bilangan yang relevan dengan CPL.
+    \end{enumerate}
+\end{enumerate}
+
+\newpage
+\section*{Kunci Jawaban}
+\begin{enumerate}[label=\textbf{Soal \arabic*.}]
+    \item D
+    \item A
+    \item A
+    \item A
+    \item B
+    \item D
+    \item A
+    \item B
+    \item B
+    \item B
+    \item B
+    \item B
+\end{enumerate}
+
+\end{document}

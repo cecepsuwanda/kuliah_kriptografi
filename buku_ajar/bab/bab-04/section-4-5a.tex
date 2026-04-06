@@ -1,0 +1,39 @@
+\section{One-Time Pad (OTP)}
+
+\subsection{Konsep}
+
+One-Time Pad adalah cipher yang menggunakan kunci acak (random) dengan panjang sama dengan plaintext. Setiap bit/karakter plaintext di-XOR atau dijumlahkan modulo dengan bit/karakter kunci yang sesuai. Kunci hanya digunakan sekali (one-time) \cite{katz2020,stallings2017}.
+
+\[
+c_i = p_i \oplus k_i \quad \text{(XOR)} \quad \text{atau} \quad c_i = (p_i + k_i) \bmod 26
+\]
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}p{3.2cm}p{9.2cm}@{}}
+    \toprule
+    Sifat & Deskripsi \\
+    \midrule
+    Keamanan teoretis & Jika kunci benar-benar acak dan dipakai sekali, OTP membuktikan \textit{perfect secrecy} (Shannon) \\
+    Kelemahan praktis & Kunci harus sepanjang pesan; distribusi kunci sulit \\
+    Penggunaan & Protokol rahasia tingkat tinggi (misal diplomatic), vernam cipher \\
+    \bottomrule
+  \end{tabular}
+  \caption{Sifat One-Time Pad.}
+\end{table}
+
+OTP memberikan keamanan sempurna dalam arti teori informasi: ciphertext tidak membocorkan informasi tentang plaintext jika kunci benar-benar acak \cite{rosulek2021}. Namun, pembangkitan dan distribusi kunci yang sepanjang pesan membuat OTP tidak praktis untuk kebanyakan aplikasi. OTP diajarkan sebagai pembanding ideal terhadap cipher klasik lain yang dapat dipecahkan.
+
+\subsection{Contoh Ringkas}
+
+Plaintext: HELLO (7,4,11,11,14). Kunci acak: XMCKL (23,12,2,10,11). Enkripsi mod 26:
+\begin{align*}
+7+23=4 \to E,\quad 4+12=16 \to Q,\quad 11+2=13 \to N,\\
+11+10=21 \to V,\quad 14+11=25 \to Z
+\end{align*}
+Ciphertext: EQNVZ. Dekripsi: kurangi kunci mod 26.
+
+\begin{catatan}
+Menggunakan kunci berulang atau kunci yang dapat diprediksi menghancurkan keamanan OTP. OTP aman \textbf{hanya} jika kunci acak dan dipakai sekali.
+\end{catatan}

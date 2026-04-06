@@ -5,8 +5,8 @@
 \chapter{Matematika Kriptografi}
 
 \begin{subcpmk}
-  \item Sub-CPMK 2.1: Menghitung operasi aritmetika modular dan mengimplementasikan algoritma Euclid diperluas dalam C
-  \item Sub-CPMK 2.2: Menentukan bilangan prima, uji primalitas, dan menghitung pangkat modular (fast exponentiation) dalam C
+  \item Sub-CPMK 1.3: Menerapkan teori bilangan (aritmetika modular, prima, Euclid) dan aljabar abstrak (grup, ring, field, Galois Field) dalam kriptografi
+  \item Mampu menghitung operasi modular, algoritma Euclid diperluas, invers modular, dan fast exponentiation dalam C
 \end{subcpmk}
 
 % ============================================================
@@ -15,6 +15,7 @@
 \input{bab-03/section-3-1}
 \input{bab-03/section-3-2}
 \input{bab-03/section-3-3}
+\input{bab-03/section-3-3a}
 \input{bab-03/section-3-4}
 \input{bab-03/section-3-5}
 
@@ -30,6 +31,8 @@
   \item \textbf{Latihan Numerik}: Hitung secara manual: $17^{-1} \pmod{26}$, $5^{100} \bmod 13$.
   
   \item \textbf{Algoritma}: Jelaskan mengapa invers modular hanya ada jika $\gcd(a, n) = 1$. Berikan contoh bilangan yang tidak memiliki invers modulo 10.
+  
+  \item \textbf{Aljabar Abstrak}: Bedakan grup, ring, dan field. Berikan contoh masing-masing yang relevan untuk kriptografi. Jelaskan mengapa AES menggunakan $\mathrm{GF}(2^8)$.
 \end{aktivitas}
 
 % ============================================================
@@ -47,7 +50,9 @@
   
   \item Implementasikan dalam C: fungsi yang mengecek apakah $n$ relatif prima dengan $m$ (yaitu $\gcd(n, m) = 1$).
   
-  \item \textbf{Refleksi}: Bagaimana keterkaitan matematika kriptografi (modular, Euclid, Fermat) dengan algoritma RSA?
+  \item Jelaskan peran grup, ring, dan field dalam kriptografi. Mengapa $\mathrm{GF}(2^n)$ cocok untuk cipher blok?
+  
+  \item \textbf{Refleksi}: Bagaimana keterkaitan matematika kriptografi (modular, Euclid, Fermat, CRT, aljabar abstrak) dengan algoritma RSA dan AES?
 \end{latihan}
 
 % ============================================================
@@ -55,7 +60,7 @@
 % ============================================================
 
 \begin{asesmen}
-\textbf{Instrumen Penilaian untuk Sub-CPMK 2.1, 2.2}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 1.3}
 
 \textbf{A. Pilihan Ganda}
 
@@ -104,9 +109,10 @@
   \item Saya dapat melakukan operasi aritmetika modular (penjumlahan, perkalian, invers)
   \item Saya dapat mengimplementasikan algoritma Euclid diperluas dalam C
   \item Saya dapat mengimplementasikan mod inverse dalam C
-  \item Saya memahami teorema Fermat dan Euler
+  \item Saya memahami teorema Fermat, Euler, dan Chinese Remainder Theorem
   \item Saya dapat mengimplementasikan fast modular exponentiation dalam C
-  \item Saya memahami peran matematika kriptografi dalam algoritma RSA
+  \item Saya memahami grup, ring, field, dan Galois Field $\mathrm{GF}(2^n)$ dalam kriptografi
+  \item Saya memahami peran matematika kriptografi dalam algoritma RSA dan AES
 \end{checklist}
 
 % ============================================================
@@ -114,19 +120,48 @@
 % ============================================================
 
 \begin{rangkuman}
-Bab ini membahas fondasi matematika kriptografi: aritmetika modular, algoritma Euclid dan Euclid diperluas, teori bilangan (prima, teorema Fermat dan Euler), serta fast modular exponentiation. Semua konsep ini menjadi dasar untuk memahami dan mengimplementasikan RSA.
+Bab ini membahas fondasi matematika kriptografi: aritmetika modular, algoritma Euclid dan Euclid diperluas, teori bilangan (prima, teorema Fermat dan Euler, CRT), aljabar abstrak (grup, ring, field, Galois Field $\mathrm{GF}(2^n)$), serta fast modular exponentiation. Konsep teori bilangan menjadi dasar RSA; konsep field menjadi dasar AES.
 
 \textbf{Poin Kunci:}
 \begin{itemize}
   \item Kongruensi modular: $a \equiv b \pmod{n}$ jika $n \mid (a-b)$
   \item Invers modular hanya ada jika $\gcd(a, n) = 1$
   \item Euclid diperluas: menghitung $\gcd$ sekaligus koefisien Bézout
+    \item Chinese Remainder Theorem: menyelesaikan sistem kongruensi
+  \item Grup, ring, field; $\mathrm{GF}(2^n)$ untuk operasi bit (misal AES)
   \item Fast exponentiation: $O(\log b)$ untuk menghitung $a^b \bmod n$
   \item $\varphi(n) = (p-1)(q-1)$ untuk $n = pq$
 \end{itemize}
 
-\textbf{Kata Kunci}: \crypt{Aritmetika Modular}, \crypt{Kongruensi}, \crypt{Algoritma Euclid}, \crypt{Invers Modular}, \crypt{Fast Exponentiation}, \crypt{Fungsi Euler}
+{\raggedright \textbf{Kata Kunci}: \crypt{Aritmetika Modular}, \crypt{Kongruensi}, \crypt{Algoritma Euclid}, \crypt{Invers Modular}, \crypt{Chinese Remainder Theorem}, \crypt{Galois Field}, \crypt{Fast Exponentiation}, \crypt{Fungsi Euler}\par}
 \end{rangkuman}
+
+% ============================================================
+% Persiapan untuk Bab Berikutnya
+% ============================================================
+\begin{transition}
+Setelah mempelajari fondasi matematika kriptografi, kita siap untuk memasuki \textbf{Bab IV: Algoritma Kriptografi Klasik}.
+
+Dalam Bab IV, kita akan menerapkan semua matematika yang telah dipelajari:
+\begin{itemize}
+  \item \textbf{Caesar Cipher}: Menggunakan aritmetika modular sederhana $(x + k) \bmod 26$
+  \item \textbf{Vigenère Cipher}: Aplikasi modular arithmetic berulang
+  \item \textbf{Affine Cipher}: Memerlukan invers modular dari koefisien
+  \item \textbf{Hill Cipher}: Menggunakan aljabar linear dan invers matriks modular
+  \item \textbf{Playfair Cipher}: Operasi modular pada pasangan huruf (digraph)
+\end{itemize}
+
+Setiap cipher akan kita:
+\begin{enumerate}
+  \item \textbf{Analisis matematisnya}: Mengapa cipher bekerja (atau tidak bekerja)?
+  \item \textbf{Implementasikan dalam C}: Terapkan konsep matematika ke kode praktis
+  \item \textbf{Kriptanalisis}: Pelajari mengapa cipher klasik tidak aman
+\end{enumerate}
+
+Pendekatan ini memastikan Anda tidak hanya memahami teori, tetapi juga melihat langsung bagaimana matematika diaplikasikan dalam implementasi nyata. Setelah menguasai cipher klasik, Anda akan siap untuk algoritma modern seperti AES dan RSA yang menggunakan prinsip matematika yang sama namun dengan kompleksitas yang jauh lebih tinggi.
+
+\textbf{Preview}: Di Bab IV, kita akan mulai dengan Caesar cipher—penerapan paling sederhana dari modular arithmetic—sebelum bergerak ke cipher yang lebih kompleks yang menggabungkan multiple konsep matematika dari Bab III.
+\end{transition}
 
 \ifSubfilesClassLoaded{
   \renewcommand{\bibname}{Daftar Pustaka}

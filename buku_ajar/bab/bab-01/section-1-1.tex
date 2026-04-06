@@ -1,24 +1,51 @@
 \section{Tujuan Buku Ajar}
 
-Buku ajar ini dirancang sebagai panduan komprehensif untuk menguasai \crypt{Kriptografi} dalam konteks Programme Studi Matematika S1 \cite{stinson2018}. Fokus utama buku ini adalah pada pemahaman matematis, konsep teoretis, dan implementasi algoritma kriptografi menggunakan bahasa pemrograman C. Tujuan spesifik buku ini adalah:
+Buku ajar ini disusun sebagai panduan komprehensif untuk mempelajari \crypt{Kriptografi} di Program Studi Matematika, dengan penekanan pada landasan matematika, penalaran algoritmik, dan implementasi praktis menggunakan bahasa C. Susunan materi mengikuti alur dari konsep dasar hingga aplikasi modern agar mahasiswa membangun pemahaman yang bertahap dan konsisten dengan silabus mata kuliah.
 
+Dalam kerangka OBE, tujuan buku ajar diterjemahkan ke dalam \textit{learning outcomes} yang menjelaskan apa yang akan dikuasai dan dapat dilakukan mahasiswa setelah menyelesaikan tiap bab. Learning outcomes dirumuskan secara terukur agar aktivitas, latihan, dan asesmen dapat menguji pencapaian secara jelas \cite{adelaide_learning_outcomes,stanford_learning_outcomes}.
+
+Secara ringkas, buku ini menargetkan kompetensi berikut:
 \begin{enumerate}
-  \item Memberikan pemahaman mendalam tentang prinsip-prinsip dasar kriptografi dan keamanan informasi
-  \item Mengembangkan kemampuan menerapkan matematika (aritmetika modular, teori bilangan) dalam konteks kriptografi
-  \item Membangun keterampilan implementasi algoritma kriptografi klasik dan modern dalam bahasa C
-  \item Menumbuhkan kemampuan analisis kriptanalisis terhadap cipher sederhana
-  \item Memfasilitasi pencapaian CPL dan CPMK yang telah ditetapkan dalam RPS berbasis OBE
+  \item Memahami prinsip-prinsip dasar kriptografi dan keamanan informasi
+  \item Menerapkan matematika kriptografi (aritmetika modular, teori bilangan) pada algoritma dasar
+  \item Mengimplementasikan cipher klasik dan modern dalam bahasa C
+  \item Menganalisis kelemahan cipher klasik serta memahami konsep kriptanalisis
+  \item Menghubungkan materi kriptografi dengan CPMK dan CPL yang tercantum di RPS
 \end{enumerate}
 
-Setelah mempelajari buku ini secara menyeluruh, mahasiswa diharapkan mampu:
+\subsection{Peta Perjalanan Pembelajaran}
+
+Kriptografi adalah disiplin ilmu yang memadukan matematika teoritis, algoritma praktis, dan implementasi teknis. Perjalanan pembelajaran dalam buku ini dirancang secara spiral: setiap konsep matematika yang dipelajari akan langsung diaplikasikan dalam algoritma kriptografi, yang kemudian diimplementasikan dalam bahasa C.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[node distance=2cm, scale=0.9, transform shape]
+    \node[draw, rounded corners, fill=blue!10, text width=3cm, align=center] (teori) {Konsep Dasar\\Keamanan Informasi};
+    \node[draw, rounded corners, fill=green!10, text width=3cm, align=center, right=of teori] (matematika) {Matematika\\Kriptografi};
+    \node[draw, rounded corners, fill=orange!10, text width=3cm, align=center, right=of matematika] (algoritma) {Algoritma\\Klasik \& Modern};
+    \node[draw, rounded corners, fill=red!10, text width=3cm, align=center, below=of matematika] (implementasi) {Implementasi\\Bahasa C};
+    \node[draw, rounded corners, fill=purple!10, text width=3cm, align=center, left=of implementasi] (analisis) {Analisis\\Keamanan};
+    
+    \draw[->, thick] (teori) -- (matematika);
+    \draw[->, thick] (matematika) -- (algoritma);
+    \draw[->, thick] (algoritma) -- (implementasi);
+    \draw[->, thick] (implementasi) -- (analisis);
+    \draw[->, thick] (analisis) -- (teori);
+  \end{tikzpicture}
+  \caption{Siklus pembelajaran kriptografi: dari teori ke praktik dan kembali ke analisis.}
+\end{figure}
+
+\subsection{Mengapa Matematika Penting dalam Kriptografi?}
+
+Banyak mahasiswa bertanya mengapa harus mempelajari matematika yang kompleks untuk belajar kriptografi. Jawabannya sederhana: \textbf{keamanan kriptografi dibangun di atas kekuatan matematika}. Setiap algoritma kriptografi modern—mulai dari RSA hingga AES—didasarkan pada prinsip-prinsip matematika yang membuatnya aman terhadap serangan.
+
 \begin{itemize}
-  \item Menjelaskan konsep dasar kriptografi (confidentiality, integrity, authenticity)
-  \item Menerapkan aritmetika modular dan algoritma Euclid dalam konteks kriptografi
-  \item Mengimplementasikan cipher Caesar, Vigenère, dan RSA dalam bahasa C
-  \item Menganalisis kelemahan cipher klasik melalui frequency analysis dan Kasiski examination
-  \item Merancang dan menganalisis protokol kriptografi dasar
+  \item \textbf{Aritmetika modular} menjadi fondasi cipher klasik seperti Caesar dan Vigenère
+  \item \textbf{Teori bilangan} (prima, faktorisasi) menjadi dasar keamanan RSA
+  \item \textbf{Aljabar abstrak} (grup, field) digunakan dalam desain AES
+  \item \textbf{Probabilitas dan statistik} digunakan dalam kriptanalisis
 \end{itemize}
 
-Pendidikan kriptografi modern membutuhkan fondasi matematis yang kuat termasuk teori bilangan, aljabar linear, dan matematika diskrit untuk memahami algoritma enkripsi yang kompleks. Menurut Coursera, pemahaman tentang modular arithmetic, algoritma Euclid, dan teorema sisa China merupakan prasyarat esensial untuk menguasai kriptografi tingkat lanjut. Kurikulum yang dirancang dengan baik mengintegrasikan konsep matematika murni dengan aplikasi praktis dalam keamanan digital, mempersiapkan mahasiswa untuk karir di bidang keamanan siber.
+Dalam buku ini, setiap konsep matematika akan selalu disertai dengan contoh penerapan langsung dalam algoritma kriptografi, sehingga Anda dapat melihat relevansinya secara nyata.
 
-Profesi kriptografer menuntut kombinasi unik antara keahlian matematika, pemrograman, dan pemahaman keamanan siber untuk mengembangkan cipher baru dan melindungi data sensitif. Industri saat ini sangat membutuhkan ahli kriptografi yang mampu membuat solusi keamanan inovatif seiring dengan evolusi ancaman digital yang terus berubah. Mahasiswa yang menguasai materi dalam buku ini akan memiliki kompetensi untuk berkarir di lembaga pemerintah, institusi keuangan, atau perusahaan teknologi yang memprioritaskan keamanan data.
+Secara konseptual, kriptografi berperan menjaga kerahasiaan, integritas, dan keaslian informasi---tiga tujuan yang umum dipakai dalam keamanan informasi \cite{rfc4949}. Dengan memahami konsep dan implementasi yang disajikan, mahasiswa diharapkan mampu mengaitkan teori kriptografi dengan kebutuhan keamanan data di dunia nyata.

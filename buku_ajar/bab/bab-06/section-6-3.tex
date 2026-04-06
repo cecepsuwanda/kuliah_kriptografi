@@ -1,8 +1,6 @@
 \section{Implementasi RSA dalam C}
 
-Implementasi RSA yang aman dan efisien memerlukan perhatian khusus pada aspek keamanan dan performa. Menurut Wikipedia, implementasi RSA yang benar sangat sulit karena harus menangani bilangan besar dengan operasi modular yang aman terhadap serangan side-channel. Untuk pembelajaran, kita dapat mengimplementasikan RSA dengan bilangan kecil, tetapi untuk produksi harus menggunakan library yang telah teruji.
-
-Untuk pembelajaran, kita dapat mengimplementasikan RSA dengan bilangan kecil. Untuk bilangan besar, gunakan library (misalnya OpenSSL, GMP) karena tipe \code{long long} terbatas. Menurut sumber keamanan, implementasi manual untuk kunci RSA 2048-bit atau lebih tidak praktis dan sangat rentan terhadap berbagai jenis serangan, termasuk overflow dan timing attacks.
+Implementasi RSA yang aman memerlukan perhatian pada side-channel dan operasi constant-time \cite{ferguson2010}. Untuk pembelajaran gunakan bilangan kecil; untuk produksi gunakan library (OpenSSL, GMP).
 
 \subsection{Implementasi Edukatif dengan Bilangan Kecil}
 
@@ -39,11 +37,11 @@ int main() {
 }
 \end{lstlisting}
 
-Implementasi edukatif ini menunjukkan konsep dasar RSA dengan jelas. Menurut sumber keamanan, kode ini hanya untuk tujuan pembelajaran karena tidak memiliki fitur keamanan seperti padding yang aman, constant-time operations, atau validasi input. Dalam praktik, implementasi seperti ini sangat berbahaya karena rentan terhadap serangan timing dan overflow.
+Kode di atas hanya untuk pembelajaran; tidak memiliki padding aman atau constant-time operations.
 
 \subsection{Implementasi Produksi dengan OpenSSL}
 
-Untuk RSA nyata, gunakan API modern OpenSSL berbasis \code{EVP\_PKEY} dan padding OAEP/PSS \cite{rfc8017}. Hindari penggunaan langsung fungsi \code{RSA\_*} legacy. Menurut Wikipedia, OpenSSL EVP (EnVeloPe) API menyediakan interface tingkat tinggi yang aman dan telah dioptimasi untuk berbagai algoritma kriptografi.
+Untuk RSA nyata, gunakan API OpenSSL berbasis \code{EVP\_PKEY} dan padding OAEP/PSS \cite{rfc8017}.
 
 \begin{lstlisting}[style=cstyle, caption={Cuplikan EVP untuk RSA-OAEP (ringkas)}]
 EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
@@ -61,7 +59,6 @@ EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256());
 EVP_PKEY_sign(ctx, sig, &siglen, msg, msglen);
 \end{lstlisting}
 
-OpenSSL EVP API menyediakan implementasi RSA yang aman dan efisien. Menurut dokumentasi OpenSSL, API ini secara otomatis menggunakan constant-time operations, padding yang aman (OAEP/PSS), dan optimasi internal yang telah diuji secara ekstensif. Penggunaan EVP API sangat direkomendasikan untuk aplikasi produksi.
 
 \subsection{Keamanan Implementasi dan Side-Channel Attacks}
 
@@ -74,11 +71,11 @@ Implementasi RSA yang aman harus memperhatikan berbagai aspek keamanan:
   \item \textbf{Input Validation}: Validasi semua input sebelum diproses.
 \end{itemize}
 
-Side-channel attacks merupakan ancaman serius terhadap implementasi RSA. Menurut Wikipedia, timing attacks pertama kali dideskripsikan oleh Paul Kocher pada tahun 1995, di mana penyerang dapat mendedeksi kunci privat dengan mengukur waktu dekripsi untuk berbagai ciphertext yang diketahui. Serangan CacheBleed menunjukkan bahwa bahkan implementasi constant-time dapat rentan terhadap serangan cache-based.
+Timing attacks (Kocher, 1995) dapat mendeduksi kunci dari waktu dekripsi. Gunakan constant-time dan blinding \cite{ferguson2010}.
 
 \subsection{Cryptographic Blinding}
 
-Cryptographic blinding adalah teknik penting untuk melindungi RSA dari timing attacks. Menurut Wikipedia, teknik ini menggunakan sifat multiplikatif RSA dengan menambahkan nilai acak (blinding factor) sebelum operasi dekripsi. Ini memastikan bahwa waktu eksekusi tidak lagi berkorelasi dengan nilai ciphertext, sehingga timing attacks menjadi tidak efektif.
+Cryptographic blinding melindungi dari timing attacks.
 
 Implementasi blinding dalam RSA:
 \begin{enumerate}
@@ -88,11 +85,10 @@ Implementasi blinding dalam RSA:
   \item Hilangkan blinding: $m = m' \cdot r^{-1} \bmod n$
 \end{enumerate}
 
-Teknik blinding ini efektif karena $m' \cdot r^{-1} \equiv c^d \cdot r^{ed} \cdot r^{-1} \equiv c^d \pmod{n}$. Menurut sumber keamanan, implementasi blinding yang benar dapat mencegah berbagai jenis timing attacks dan merupakan standar dalam implementasi RSA modern.
 
 \subsection{Optimasi Performa dengan Chinese Remainder Theorem}
 
-Untuk aplikasi yang memerlukan banyak operasi dekripsi, optimasi CRT dapat memberikan percepatan signifikan. Menurut Wikipedia, CRT memungkinkan dekripsi dengan melakukan dua operasi modular yang lebih kecil secara paralel, kemudian menggabungkan hasilnya. Optimasi ini sangat penting untuk server yang melakukan banyak operasi RSA.
+Optimasi CRT memberikan percepatan hingga 4x untuk dekripsi.
 
 \begin{lstlisting}[style=cstyle, caption={Optimasi CRT untuk RSA Dekripsi}]
 // Precompute CRT parameters
@@ -108,7 +104,6 @@ long long h = ((qInv * (m1 - m2)) % p) * q;
 long long m = (m2 + h) % n;
 \end{lstlisting}
 
-Optimasi CRT dapat memberikan percepatan hingga 4x untuk operasi dekripsi. Menurut sumber keamanan, implementasi CRT harus dilakukan dengan hati-hati untuk menghindari timing attacks dan memastikan bahwa semua operasi dilakukan secara constant-time. Optimasi ini sangat berguna untuk aplikasi server-side dan sistem yang memerlukan throughput tinggi.
 
 \subsection{Validasi dan Testing}
 
@@ -120,4 +115,3 @@ Implementasi RSA harus divalidasi secara menyeluruh sebelum digunakan dalam prod
   \item \textbf{Performance Tests}: Uji throughput dan latensi untuk berbagai ukuran kunci.
 \end{itemize}
 
-Validasi yang komprehensif sangat penting untuk memastikan keamanan implementasi RSA. Menurut sumber keamanan, proses testing harus mencakup berbagai skenario attack dan edge cases, serta memastikan bahwa implementasi memenuhi standar industri seperti FIPS 140-2 untuk modul kriptografi.

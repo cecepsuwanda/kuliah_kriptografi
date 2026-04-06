@@ -5,7 +5,8 @@
 \chapter{Protokol dan Manajemen Kunci}
 
 \begin{subcpmk}
-  \item Sub-CPMK 6.1: Menganalisis protokol Diffie-Hellman dan siklus hidup manajemen kunci
+  \item Sub-CPMK 5.2: Memahami infrastruktur kunci publik (PKI), chain of trust, dan protokol SSL/TLS
+  \item Menganalisis siklus hidup manajemen kunci dan peran sertifikat dalam protokol keamanan
 \end{subcpmk}
 
 % ============================================================
@@ -13,17 +14,20 @@
 % ============================================================
 \input{bab-08/section-8-1}
 \input{bab-08/section-8-2}
+\input{bab-08/section-8-3}
+\input{bab-08/section-8-4}
+\input{bab-08/section-8-4a-contoh-tls}
 
 % ============================================================
 % AKTIVITAS PEMBELAJARAN
 % ============================================================
 
 \begin{aktivitas}
-  \item \textbf{Analisis}: Jalankan protokol Diffie-Hellman secara manual dengan $p=23$, $g=5$, $a=6$, $b=15$. Verifikasi bahwa Alice dan Bob memperoleh $K$ yang sama.
+  \item \textbf{Analisis}: Buka sertifikat situs web HTTPS (browser: klik ikon gembok $\to$ sertifikat). Identifikasi issuer, subject, chain of trust.
   
-  \item \textbf{Studi Kasus}: Analisis bagaimana HTTPS (TLS) melindungi transaksi e-commerce.
+  \item \textbf{Studi Kasus}: Analisis bagaimana HTTPS (TLS) melindungi transaksi e-commerce. Jelaskan peran sertifikat.
   
-  \item \textbf{Diskusi}: Apa risiko jika kunci privat tidak disimpan dengan aman?
+  \item \textbf{Diskusi}: Apa risiko jika kunci privat CA root bocor? Apa itu certificate revocation (CRL/OCSP)?
 \end{aktivitas}
 
 % ============================================================
@@ -31,13 +35,13 @@
 % ============================================================
 
 \begin{latihan}
-  \item Jelaskan langkah protokol Diffie-Hellman. Mengapa Eve tidak dapat memperoleh $K$?
+  \item Jelaskan chain of trust. Mengapa klien memerlukan daftar CA root tepercaya?
   
-  \item Sebutkan fase-fase dalam siklus hidup kunci.
+  \item Sebutkan fase-fase dalam siklus hidup kunci (generasi, distribusi, penyimpanan, rotasi, pencabutan).
   
-  \item Bagaimana TLS menggabungkan kriptografi simetris dan asimetris?
+  \item Bagaimana TLS menggabungkan kriptografi simetris dan asimetris? Apa peran Diffie-Hellman?
   
-  \item Apa peran sertifikat digital dalam TLS?
+  \item Apa peran sertifikat digital dalam TLS? Apa yang terjadi jika sertifikat tidak divalidasi?
 \end{latihan}
 
 % ============================================================
@@ -45,7 +49,9 @@
 % ============================================================
 
 \begin{asesmen}
-Jelaskan dalam essay: (a) Mengapa Diffie-Hellman aman terhadap eavesdropping? (b) Apa yang terjadi jika kunci tidak dirotasi?
+\textbf{Instrumen Penilaian untuk Sub-CPMK 5.2}
+
+Jelaskan dalam essay: (a) Apa peran PKI dan chain of trust dalam TLS? (b) Mengapa validasi sertifikat penting untuk mencegah man-in-the-middle? (c) Apa yang terjadi jika kunci tidak dirotasi?
 \end{asesmen}
 
 % ============================================================
@@ -53,10 +59,10 @@ Jelaskan dalam essay: (a) Mengapa Diffie-Hellman aman terhadap eavesdropping? (b
 % ============================================================
 
 \begin{checklist}
-  \item Saya dapat menjelaskan protokol Diffie-Hellman
+  \item Saya memahami PKI dan komponennya (CA, RA, revocation)
+  \item Saya dapat menjelaskan chain of trust dan validasi sertifikat
+  \item Saya memahami peran TLS dalam keamanan komunikasi (HTTPS)
   \item Saya dapat menganalisis siklus hidup manajemen kunci
-  \item Saya memahami peran TLS dalam keamanan komunikasi
-  \item Saya dapat menjelaskan tantangan distribusi kunci
 \end{checklist}
 
 % ============================================================
@@ -64,17 +70,53 @@ Jelaskan dalam essay: (a) Mengapa Diffie-Hellman aman terhadap eavesdropping? (b
 % ============================================================
 
 \begin{rangkuman}
-Bab ini membahas protokol Diffie-Hellman untuk pertukaran kunci, TLS untuk keamanan transport, serta manajemen kunci (siklus hidup, distribusi).
+Bab ini membahas protokol keamanan (TLS/SSL, SSH, PGP) dan manajemen kunci (PKI, siklus hidup kunci, RNG). TLS menggabungkan semua komponen kriptografi dalam sistem komunikasi aman. PKI menyediakan infrastruktur untuk distribusi dan verifikasi kunci publik.
 
 \textbf{Poin Kunci:}
 \begin{itemize}
-  \item Diffie-Hellman: pertukaran kunci aman tanpa pertukaran rahasia
-  \item TLS: negosiasi, autentikasi, pertukaran kunci, enkripsi data
-  \item Manajemen kunci: generasi, distribusi, penyimpanan, rotasi, pencabutan
+  \item TLS: handshake (RSA/DH), sertifikat X.509, cipher suite, record layer
+  \item PKI: CA hierarchy, chain of trust, certificate revocation
+  \item Manajemen kunci: generasi, distribusi, rotasi, pencabutan
+  \item RNG: TRNG vs PRNG, keacakan untuk keamanan kriptografi
 \end{itemize}
 
-\textbf{Kata Kunci}: \crypt{Diffie-Hellman}, \crypt{TLS}, \crypt{Manajemen Kunci}, \crypt{Sertifikat}
+\textbf{Kata Kunci}: \crypt{TLS}, \crypt{SSL}, \crypt{PKI}, \crypt{Sertifikat Digital}, \crypt{Chain of Trust}, \crypt{Manajemen Kunci}, \crypt{RNG}
 \end{rangkuman}
+
+% ============================================================
+% Persiapan untuk Bab Berikutnya
+% ============================================================
+
+\begin{transition}
+Setelah memahami protokol keamanan praktis, kita siap untuk memasuki \textbf{Bab IX: Kriptanalisis}.
+
+Dalam Bab IX, kita akan membalik perspektif — dari membuat sistem aman menjadi menyerang sistem:
+\begin{itemize}
+  \item \textbf{Frequency Analysis}: Teknik dasar untuk memecahkan cipher klasik
+  \item \textbf{Kasiski Examination}: Metode untuk memecahkan Vigenère cipher
+  \item \textbf{Differential Cryptanalysis}: Serangan terhadap cipher modern
+  \item \textbf{Linear Cryptanalysis}: Teknik analisis struktur cipher
+\end{itemize}
+
+\textbf{Koneksi dengan Bab-Bab Sebelumnya}:
+\begin{itemize}
+  \item \textbf{Bab IV}: Kita mempelajari Caesar dan Vigenère — sekarang kita pelajari cara memecahkannya
+  \item \textbf{Bab V}: Kita mempelajari DES/AES — sekarang kita pelajari cara menganalisis kelemahannya
+  \item \textbf{Bab VI}: Kita mempelajari RSA — sekarang kita pelajari serangan terhadapnya
+\end{itemize}
+
+\textbf{Mengapa Kriptanalisis Penting}:
+\begin{enumerate}
+  \item \textbf{Desain Cipher}: Memahami kelemahan membantu desain cipher yang lebih kuat
+  \item \textbf{Implementasi Aman}: Mengetahui serangan membantu implementasi yang robust
+  \item \textbf{Evaluasi Keamanan}: Kemampuan menilai kekuatan sistem kriptografi
+  \item \textbf{Red Team/Blue Team}: Perspektif penyerang dan pembela
+\end{enumerate}
+
+\textbf{Preview}: Di Bab IX, kita akan melihat bagaimana penyerang berpikir — mencari pola, statistik, dan kelemahan matematis dalam cipher yang kita anggap aman. Kita akan memahami mengapa Caesar cipher sangat rentan terhadap frequency analysis, bagaimana Kasiski examination memecahkan Vigenère yang dianggap lebih aman, dan bagaimana cryptanalysis modern mengancang struktur cipher seperti DES dan AES.
+
+Setelah Bab IX, Anda akan memiliki pemahaman holistik tentang kriptografi — tidak hanya bagaimana membuat sistem aman, tetapi juga bagaimana sistem bisa diserang. Ini akan mempersiapkan Anda untuk evaluasi komprehensif di Bab X di mana kita akan mengintegrasikan semua pengetahuan untuk menganalisis dan merancang sistem keamanan yang sesungguhnya.
+\end{transition}
 
 \ifSubfilesClassLoaded{
   \renewcommand{\bibname}{Daftar Pustaka}

@@ -1,0 +1,85 @@
+\section{Contoh Protokol: TLS 1.3 Handshake}
+
+\subsection{Flow Lengkap TLS 1.3}
+
+TLS 1.3 menyederhanakan handshake dibandingkan TLS 1.2, mengurangi latensi menjadi 1-RTT (Round Trip Time). Berikut adalah alur lengkap koneksi aman antara Client (Browser) dan Server (Website).
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[node distance=3cm, auto, thick]
+    % Nodes
+    \node (client) {\textbf{Client}};
+    \node (server) [right=6cm of client] {\textbf{Server}};
+    
+    % Timeline lines
+    \draw (client) -- ++(0,-10);
+    \draw (server) -- ++(0,-10);
+    
+    % Messages
+    % 1. Client Hello
+    \draw[->] ($(client)+(0,-1)$) -- node[above, align=left] {\textbf{Client Hello}\\ + Key Share (e.g., ECDH public key)\\ + Cipher Suites Supported\\ + Random Nonce} ($(server)+(0,-2)$);
+    
+    % 2. Server Hello
+    \draw[<-] ($(client)+(0,-4)$) -- node[above, align=right] {\textbf{Server Hello}\\ + Key Share (e.g., ECDH public key)\\ + Cipher Suite Selected\\ + Server Random} ($(server)+(0,-3)$);
+    
+    % Encryption starts here!
+    \draw[dashed, red] ($(client)+(0,-4.5)$) -- node[midway, fill=white] {Enkripsi Dimulai (Handshake Keys)} ($(server)+(0,-4.5)$);
+    
+    % 3. Encrypted Extensions
+    \draw[<-] ($(client)+(0,-5.5)$) -- node[above, align=right] {\textbf{\{Encrypted Extensions\}}\\ \textbf{\{Certificate\}}\\ \textbf{\{Certificate Verify\}} (Signature)\\ \textbf{\{Finished\}} (MAC)} ($(server)+(0,-4.5)$);
+    
+    % 4. Finished
+    \draw[->] ($(client)+(0,-6.5)$) -- node[above, align=left] {\textbf{\{Finished\}} (MAC)} ($(server)+(0,-7.5)$);
+    
+    % Encryption Application Data
+    \draw[dashed, blue] ($(client)+(0,-8)$) -- node[midway, fill=white] {Application Data Encryption (Traffic Keys)} ($(server)+(0,-8)$);
+    
+    % 5. HTTP Data
+    \draw[<->, double] ($(client)+(0,-9)$) -- node[above] {\textbf{\{HTTP Request / Response\}}} ($(server)+(0,-9)$);
+    
+  \end{tikzpicture}
+  \caption{Alur TLS 1.3 Handshake yang menunjukkan pertukaran kunci Diffie-Hellman dalam paket Hello pertama.}
+\end{figure}
+
+\subsection{Penjelasan Tahapan}
+
+\textbf{1. Client Hello}:
+\begin{itemize}
+  \item Client mengirimkan \textbf{Key Share} (bagian publik dari Diffie-Hellman, missal $g^a \bmod p$) secara spekulatif.
+  \item Mengirim daftar cipher yang didukung (misal: TLS\_AES\_256\_GCM\_SHA384).
+  \item Mengirim \textbf{Random Nonce} untuk mencegah replay attack.
+\end{itemize}
+
+\textbf{2. Server Hello}:
+\begin{itemize}
+  \item Server memilih cipher suite.
+  \item Server mengirimkan \textbf{Key Share} miliknya ($g^b \bmod p$).
+  \item \textbf{Saat ini juga}, kedua pihak sudah bisa menghitung \textbf{Handshake Traffic Key} ($g^{ab} \bmod p$). Semua pesan berikutnya dienkripsi!
+\end{itemize}
+
+\textbf{3. Otentikasi Server}:
+\begin{itemize}
+  \item Server mengirim \textbf{Certificate} (mengandung Public Key RSA/ECC Server).
+  \item Server mengirim \textbf{Certificate Verify}: Tanda tangan digital atas semua pesan handshake sejauh ini, menggunakan Private Key Server.
+  \item Client memverifikasi tanda tangan menggunakan Public Key dari sertifikat. Ini membuktikan Server memiliki Private Key yang sesuai.
+\end{itemize}
+
+\textbf{4. Finished}:
+\begin{itemize}
+  \item Kedua pihak mengirim pesan \textbf{Finished} yang berisi MAC (HMAC) dari seluruh transkrip handshake. Ini memastikan integritas: tidak ada penyerang yang memodifikasi pesan Hello (misalnya downgrade attack).
+\end{itemize}
+
+\subsection{Kunci yang Diturunkan}
+
+Dari Handshake, TLS 1.3 menurunkan beberapa kunci berbeda menggunakan HKDF (HMAC-based Key Derivation Function):
+
+\begin{enumerate}
+  \item \textbf{Handshake Traffic Keys}: Mengenkripsi sisa handshake.
+  \item \textbf{Application Traffic Keys}: Mengenkripsi data HTTP.
+  \item \textbf{Exporter Master Secret}: Untuk penggunaan eksternal (jarang dipakai).
+  \item \textbf{Resumption Master Secret}: Untuk fast resume koneksi di masa depan (0-RTT).
+\end{enumerate}
+
+\begin{konsep}
+Perbedaan utama TLS 1.3 dan 1.2 adalah \textbf{Key Exchange} dilakukan seawal mungkin. Di TLS 1.2, Key Exchange terjadi setelah Certificate exchange, membutuhkan 2 kali round-trip sebelum data dikirim. TLS 1.3 melakukannya di pesan pertama, hanya butuh 1 round-trip.
+\end{konsep}

@@ -4,9 +4,7 @@
 
 Cipher Vigenère adalah cipher substitusi polialfabetik yang menggunakan kata kunci berulang untuk menentukan pergeseran setiap huruf. Setiap huruf plaintext digeser dengan jumlah yang sesuai dengan posisi huruf tersebut dalam kata kunci. Jika plaintext lebih panjang dari kata kunci, kunci diulang dari awal.
 
-Cipher Vigenère dikembangkan oleh Blaise de Vigenère pada abad ke-16 dan pertama kali dipublikasikan pada tahun 1586. Menurut Wikipedia, cipher ini merupakan cipher substitusi polialfabetik pertama yang menggunakan kata kunci untuk mengatasi frekuensi huruf dengan cara yang sistematis. Cipher ini dinamai untuk menghormati teman de Vigenère yang mempromosikan penggunaannya dalam bukunya "Traité de Chiffres" pada tahun 1586.
-
-Cipher Vigenère merevolusi konsep enkripsi substitusi monoalfabetik dengan menambahkan kompleksitas melalui penggunaan kata kunci yang berulang. Menurut penelitian kriptografi, cipher ini secara signifikan mengatasi kelemahan analisis frekuensi yang ada pada Caesar cipher dengan cara yang lebih canggih. Dengan menggunakan kata kunci yang lebih panjang dan variasi shift yang berbeda untuk setiap huruf, pola frekuensi alami menjadi lebih sulit diidentifikasi, meningkatkan keamanan secara substansial.
+Cipher Vigenère dikembangkan pada abad ke-16 dan merupakan cipher polialfabetik yang menggunakan kata kunci berulang \cite{stallings2017}. Dengan variasi shift per huruf, Vigenère lebih tahan terhadap analisis frekuensi huruf tunggal dibanding Caesar. Namun, jika kunci pendek, pola berulang memungkinkan serangan Kasiski.
 
 \subsection{Tabula Vigenère}
 

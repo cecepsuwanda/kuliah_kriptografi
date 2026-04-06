@@ -1,0 +1,294 @@
+\section{Elliptic Curve Cryptography (ECC)}
+
+\subsection{Pengantar Elliptic Curve}
+
+Elliptic Curve Cryptography (ECC) adalah alternatif modern untuk RSA yang menawarkan keamanan setara dengan ukuran kunci yang jauh lebih kecil \cite{hankerson2004}. ECC didasarkan pada matematika kurva eliptik atas field hingga, memberikan keamanan yang lebih efisien untuk perangkat dengan sumber daya terbatas seperti smartphone dan IoT devices.
+
+\textbf{Keunggulan ECC vs RSA}:
+\begin{itemize}
+  \item \textbf{Ukuran kunci}: ECC 256-bit $\approx$ RSA 3072-bit dalam keamanan
+  \item \textbf{Efisiensi komputasi}: Operasi ECC lebih cepat untuk ukuran kunci yang sama
+  \item \textbf{Ukuran signature}: ECC signature lebih kecil
+  \item \textbf{Implementasi}: Cocok untuk perangkat dengan sumber daya terbatas
+\end{itemize}
+
+\subsection{Kurva Eliptik atas Field Hingga}
+
+Kurva eliptik atas field hingga $\mathbb{F}_p$ didefinisikan sebagai:
+\[
+E: y^2 = x^3 + ax + b \pmod{p}
+\]
+dimana $4a^3 + 27b^2 \neq 0 \pmod{p}$ (tidak ada singularitas).
+
+\begin{contoh}
+Kurva secp256r1 (NIST P-256):
+\begin{itemize}
+  \item Prime field: $p = 2^{256} - 2^{224} + 2^{192} + 2^{96} - 1$
+  \item Kurva: $y^2 = x^3 - 3x + b \pmod{p}$
+  \item Koefisien $b$: \path{0x5AC635D8AA3A93E7B3EBBD55769886BC651D06B0CC53B0F63BCE3C3E27D2604B}
+\end{itemize}
+\end{contoh}
+
+\subsection{Struktur Aljabar Kurva Eliptik}
+
+Himpunan titik pada kurva eliptik membentuk grup abelian dengan operasi penjumlahan titik \cite{silverman2009}:
+
+\textbf{Elemen Identitas}: Titik di tak hingga $\mathcal{O}$
+
+\textbf{Penjumlahan Titik}: Diberikan dua titik $P$ dan $Q$, penjumlahan $P + Q$ didefinisikan sebagai:
+\begin{enumerate}
+  \item Jika $P = \mathcal{O}$, maka $P + Q = Q$
+  \item Jika $Q = \mathcal{O}$, maka $P + Q = P$
+  \item Jika $x_P = x_Q$ dan $y_P = -y_Q$, maka $P + Q = \mathcal{O}$ (invers)
+  \item Jika tidak, maka garis melalui $P$ dan $Q$ memotong kurva di titik ketiga $R$, dan $P + Q$ adalah refleksi $R$ terhadap sumbu x
+\end{enumerate}
+
+\textbf{Perkalian Titik}: Perkalian skalar $kP$ adalah penjumlahan titik $P$ dengan dirinya sendiri sebanyak $k$ kali:
+\[
+kP = \underbrace{P + P + \cdots + P}_{k \text{ kali}}
+\]
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=0.8]
+    % Draw axes
+    \draw[->] (-3,0) -- (4,0) node[right] {$x$};
+    \draw[->] (0,-2) -- (3,2) node[above] {$y$};
+    
+    % Draw elliptic curve y^2 = x^3 - 3x + 1 (non-negative for x in ~[-1.88,0.35] and [1.54,infty))
+    \draw[thick, blue] plot[smooth, domain=-1.86:0.34] (\x, {sqrt(\x*\x*\x - 3*\x + 1)});
+    \draw[thick, blue] plot[smooth, domain=-1.86:0.34] (\x, {-sqrt(\x*\x*\x - 3*\x + 1)});
+    \draw[thick, blue] plot[smooth, domain=1.54:3.5] (\x, {sqrt(\x*\x*\x - 3*\x + 1)});
+    \draw[thick, blue] plot[smooth, domain=1.54:3.5] (\x, {-sqrt(\x*\x*\x - 3*\x + 1)});
+    
+    % Draw points
+    \node[circle, fill=red, inner sep=2pt] (P) at (1,1) {};
+    \node[below right] at (P) {$P$};
+    
+    \node[circle, fill=red, inner sep=2pt] (Q) at (-1,1) {};
+    \node[below left] at (Q) {$Q$};
+    
+    \node[circle, fill=green, inner sep=2pt] (R) at (2,-2) {};
+    \node[below] at (R) {$R$};
+    
+    \node[circle, fill=green, inner sep=2pt] (PplusQ) at (2,2) {};
+    \node[above] at (PplusQ) {$P+Q$};
+    
+    % Draw lines
+    \draw[dashed, red] (P) -- (Q);
+    \draw[dashed, green] (PplusQ) -- (R);
+  \end{tikzpicture}
+  \caption{Penjumlahan titik pada kurva eliptik: $P + Q = R'$}
+\end{figure}
+
+\subsection{Implementasi Operasi Kurva Eliptik}
+
+\subsubsection{Representasi Titik}
+
+Titik pada kurva eliptik direpresentasikan sebagai struktur:
+\begin{lstlisting}[style=cstyle, caption={Representasi Titik ECC}]
+typedef struct {
+    int x;
+    int y;
+    int is_infinity;  // flag untuk titik di tak hingga
+} ECPoint;
+\end{lstlisting}
+
+\subsubsection{Penjumlahan Titik dalam C}
+
+\begin{lstlisting}[style=cstyle, caption={Penjumlahan Titik Kurva Eliptik}]
+ECPoint point_add(ECPoint P, ECPoint Q, int p, int a, int b) {
+    ECPoint R;
+    
+    if (P.is_infinity) return Q;
+    if (Q.is_infinity) return P;
+    
+    // Check for invers
+    if (P.x == Q.x && P.y == -Q.y % p) {
+        R.is_infinity = 1;
+        return R;
+    }
+    
+    // Calculate slope
+    int lambda;
+    if (P.x == Q.x) {
+        // Point doubling: 2P
+        lambda = (3 * P.x * P.x + a) * mod_inverse(2 * P.y, p) % p;
+    } else {
+        // Point addition: P + Q
+        lambda = (Q.y - P.y) * mod_inverse(Q.x - P.x, p) % p;
+    }
+    
+    // Calculate result
+    R.x = (lambda * lambda - P.x - Q.x) % p;
+    R.y = (lambda * (P.x - R.x) - P.y) % p;
+    R.is_infinity = 0;
+    
+    return R;
+}
+\end{lstlisting}
+
+\subsubsection{Perkalian Skalar dengan Double-and-Add}
+
+\begin{lstlisting}[style=cstyle, caption={Perkalian Skalar dengan Double-and-Add}]
+ECPoint scalar_multiply(ECPoint P, int k, int p, int a, int b) {
+    ECPoint result;
+    result.is_infinity = 1;  // Initialize to infinity
+    
+    ECPoint current = P;
+    
+    while (k > 0) {
+        if (k & 1) {
+            result = point_add(result, current, p, a, b);
+        }
+        current = point_add(current, current, p, a, b);  // Double
+        k >>= 1;
+    }
+    
+    return result;
+}
+\end{lstlisting}
+
+\subsection{Domain Parameters ECC}
+
+Setiap kurva eliptik memiliki domain parameters yang didefinisikan secara unik:
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{ll}
+    \toprule
+    Parameter & Deskripsi \\
+    \midrule
+    $p$ & Prime modulus field \\
+    $a, b$ & Koefisien kurva $y^2 = x^3 + ax + b$ \\
+    $G$ & Generator point (base point) \\
+    $n$ & Order generator (jumlah titik dalam grup) \\
+    $h$ & Cofactor $h = \#E(\mathbb{F}_p)/n$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Domain parameters kurva eliptik.}
+\end{table}
+
+\begin{contoh}
+Domain parameters secp256r1 (NIST P-256):
+\begin{itemize}
+  \item $p$ = \path{0xFFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF}
+  \item $a$ = \path{0xFFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFC}
+  \item $b$ = \path{0x5AC635D8AA3A93E7B3EBBD55769886BC651D06B0CC53B0F63BCE3C3E27D2604B}
+  \item $G_x$ = \path{0x6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296}
+  \item $G_y$ = \path{0x4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5}
+  \item $n$ = \path{0xFFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551}
+  \item $h$ = 1
+\end{itemize}
+\end{contoh}
+
+\subsection{ECC untuk Kriptografi Kunci Publik}
+
+\subsubsection{ECDSA (Elliptic Curve Digital Signature Algorithm)}
+
+ECDSA adalah adaptasi DSA untuk kurva eliptik \cite{johnson2001}:
+
+\textbf{Key Generation}:
+\begin{enumerate}
+  \item Pilih bilangan acak $d$ dengan $1 < d < n$
+  \item Hitung kunci publik $Q = dG$
+  \item Private key: $d$, Public key: $Q$
+\end{enumerate}
+
+\textbf{Signature Generation}:
+\begin{enumerate}
+  \item Pilih bilangan acak $k$ dengan $1 < k < n$
+  \item Hitung $R = kG = (x_R, y_R)$
+  \item Hitung $r = x_R \bmod n$
+  \item Hitung $s = k^{-1}(H(m) + dr) \bmod n$
+  \item Signature: $(r, s)$
+\end{enumerate}
+
+\textbf{Signature Verification}:
+\begin{enumerate}
+  \item Hitung $w = s^{-1} \bmod n$
+  \item Hitung $u_1 = H(m)w \bmod n$
+  \item Hitung $u_2 = rw \bmod n$
+  \item Hitung $X = u_1G + u_2Q = (x_X, y_X)$
+  \item Hitung $v = x_X \bmod n$
+  \item Valid jika $v = r$
+\end{enumerate}
+
+\subsubsection{ECDH (Elliptic Curve Diffie-Hellman)}
+
+ECDH adalah protokol pertukaran kunci berdasarkan kurva eliptik \cite{menezes1996}:
+
+\textbf{Key Exchange}:
+\begin{enumerate}
+  \item Alice memilih $a$ acak, hitung $A = aG$
+  \item Bob memilih $b$ acak, hitung $B = bG$
+  \item Alice mengirim $A$ ke Bob, Bob mengirim $B$ ke Alice
+  \item Alice hitung $K = aB$, Bob hitung $K = bA$
+  \item Keduanya mendapatkan kunci bersama yang sama
+\end{enumerate}
+
+\begin{lstlisting}[style=cstyle, caption={ECDH Key Exchange}]
+// Alice's side
+int a = random_int(1, n-1);
+ECPoint A = scalar_multiply(G, a, p, curve_a, curve_b);
+
+// Bob's side  
+int b = random_int(1, n-1);
+ECPoint B = scalar_multiply(G, b, p, curve_a, curve_b);
+
+// Shared secret computation
+ECPoint shared_alice = scalar_multiply(B, a, p, curve_a, curve_b);
+ECPoint shared_bob = scalar_multiply(A, b, p, curve_a, curve_b);
+
+// Both should get the same point
+assert(shared_alice.x == shared_bob.x && shared_alice.y == shared_bob.y);
+\end{lstlisting}
+
+\subsection{Keamanan ECC}
+
+Keamanan ECC bergantung pada \textbf{Elliptic Curve Discrete Logarithm Problem} (ECDLP):
+\begin{itemize}
+  \item Diberikan $P$ dan $Q = kP$, sangat sulit menghitung $k$
+  \item Tidak ada algoritma sub-eksponensial yang diketahui untuk ECDLP
+  \item Pollard's rho algorithm adalah yang tercepat dengan kompleksitas $O(\sqrt{n})$
+\end{itemize}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lcc}
+    \toprule
+    Algoritma & Ukuran Kunci & Keamanan Setara \\
+    \midrule
+    RSA-1024 & 1024 bit & ECC-160 \\
+    RSA-2048 & 2048 bit & ECC-224 \\
+    RSA-3072 & 3072 bit & ECC-256 \\
+    RSA-7680 & 7680 bit & ECC-384 \\
+    RSA-15360 & 15360 bit & ECC-512 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perbandingan keamanan RSA vs ECC.}
+\end{table}
+
+\subsection{Implementasi Praktis}
+
+\textbf{Library yang Direkomendasikan}:
+\begin{itemize}
+  \item OpenSSL: Implementasi lengkap ECC (ECDSA, ECDH, EdDSA)
+  \item libsodium: API modern dan aman untuk kriptografi
+  \item Bouncy Castle: Library Java untuk kriptografi
+  \item wolfSSL: Library C yang ringan untuk embedded systems
+\end{itemize}
+
+\textbf{Pertimbangan Implementasi}:
+\begin{itemize}
+  \item Gunakan kurva yang telah divalidasi (secp256r1, secp384r1, curve25519)
+  \item Gunakan RNG yang aman untuk kunci privat
+  \item Implementasi constant-time untuk side-channel resistance
+  \item Validasi input untuk mencegah invalid curve attacks
+\end{itemize}
+
+\begin{catatan}
+Implementasi ECC dari contoh di atas adalah untuk tujuan edukasi. Untuk produksi, gunakan library yang telah diaudit keamanannya dan mengikuti standar industri seperti FIPS 186-4 untuk implementasi digital signature.
+\end{catatan}

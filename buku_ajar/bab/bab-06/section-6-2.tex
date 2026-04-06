@@ -2,7 +2,7 @@
 
 \subsection{Pembangkitan Kunci}
 
-RSA didasarkan pada teori bilangan klasik, khususnya sifat-sifat aritmetika modular dan teorema Euler. Menurut Wikipedia, algoritma ini menggunakan hubungan matematika yang elegan antara eksponensial modular dan fungsi totient Euler untuk menciptakan fungsi satu arah yang dapat dibalikkan hanya dengan informasi rahasia.
+RSA didasarkan pada teori bilangan: aritmetika modular dan teorema Euler \cite{stallings2017}.
 
 \begin{enumerate}
   \item Pilih dua bilangan prima besar $p$ dan $q$
@@ -12,7 +12,7 @@ RSA didasarkan pada teori bilangan klasik, khususnya sifat-sifat aritmetika modu
   \item Kunci publik: $(n, e)$; Kunci privat: $(n, d)$
 \end{enumerate}
 
-Hubungan antara $e$ dan $d$ sangat fundamental untuk keamanan RSA. Menurut Wikipedia, kedua bilangan harus memenuhi $ed \equiv 1 \pmod{\varphi(n)}$, yang menjamin bahwa $m^{ed} \equiv m \pmod{n}$ untuk semua pesan $m$ yang relatif prima terhadap $n$. Sifat ini merupakan generalisasi dari Teorema Kecil Fermat dan membentuk dasar matematis RSA.
+Hubungan $ed \equiv 1 \pmod{\varphi(n)}$ menjamin $m^{ed} \equiv m \pmod{n}$ (teorema Euler).
 
 \textbf{Catatan pembangkitan prima} \cite{menezes1996}:
 \begin{itemize}
@@ -21,7 +21,6 @@ Hubungan antara $e$ dan $d$ sangat fundamental untuk keamanan RSA. Menurut Wikip
   \item Dalam praktik, sering digunakan $\lambda(n) = \text{lcm}(p-1, q-1)$ sebagai pengganti $\varphi(n)$ untuk menghitung $d$.
 \end{itemize}
 
-Pemilihan bilangan prima yang kuat dan acak sangat kritis untuk keamanan RSA. Menurut sumber keamanan, bilangan prima yang lemah atau terprediksi dapat memfasilitasi serangan faktorisasi yang jauh lebih efisien. Penggunaan Cryptographically Secure Random Number Generators (CSRNG) sangat penting untuk memastikan bahwa bilangan prima yang dihasilkan tidak dapat diprediksi.
 
 \subsection{Pemilihan \texorpdfstring{$p$ dan $q$}{p dan q} yang Aman}
 
@@ -33,13 +32,10 @@ Kualitas pemilihan $p$ dan $q$ sangat menentukan keamanan RSA. Praktik umum:
   \item Hindari pasangan prima yang terlalu dekat satu sama lain untuk mengurangi risiko faktorisasi tertentu.
 \end{itemize}
 
-Keamanan RSA sangat bergantung pada kesulitan memfaktorkan $n = p \cdot q$. Menurut Wikipedia, jika penyerang dapat memfaktorkan $n$, ia dapat menghitung $\varphi(n)$ dan kemudian $d$, sehingga dapat mendekripsi semua pesan. Oleh karena itu, pemilihan $p$ dan $q$ yang kuat sangat penting untuk mencegah serangan faktorisasi yang efisien.
 
 \subsection{Peran \texorpdfstring{$\lambda(n)$}{lambda(n)} dan CRT}
 
-Menghitung $d$ dengan modulus $\lambda(n)$ memberi orde yang lebih kecil dibanding $\varphi(n)$, tetapi tetap menjamin $m^{ed} \equiv m \pmod{n}$ untuk pesan yang valid. Menurut Wikipedia, $\lambda(n)$ adalah fungsi Carmichael, yang memberikan hasil yang sama untuk semua bilangan yang relatif prima terhadap $n$, termasuk kasus di mana $m$ tidak relatif prima terhadap $n$.
-
-Parameter CRT mempercepat dekripsi dengan menghitung $m$ secara terpisah modulo $p$ dan $q$, lalu menggabungkannya dengan Teorema Sisa Cina. Menurut sumber keamanan, optimasi ini dapat memberikan percepatan hingga 4x untuk operasi dekripsi, yang sangat penting untuk aplikasi server-side yang melakukan banyak operasi dekripsi.
+Menghitung $d$ dengan $\lambda(n) = \text{lcm}(p-1, q-1)$ memberi orde lebih kecil tetapi tetap menjamin correctness. CRT mempercepat dekripsi: hitung $m \bmod p$ dan $m \bmod q$, gabungkan dengan Teorema Sisa Cina \cite{stallings2017}.
 
 \[
 d_P = d \bmod (p-1), \quad d_Q = d \bmod (q-1), \quad q^{-1} \bmod p
@@ -57,7 +53,6 @@ m = c^d \bmod n = (m^e)^d \bmod n = m^{ed} \bmod n
 \]
 Karena $ed \equiv 1 \pmod{\varphi(n)}$, maka $m^{ed} \equiv m \pmod{n}$ (teorema Euler).
 
-Bukti kebenaran RSA menggunakan Teorema Euler sangat elegan secara matematis. Menurut Wikipedia, meskipun makalah asli RSA menggunakan Teorema Kecil Fermat, bukti yang lebih umum menggunakan Teorema Euler memberikan jaminan yang lebih kuat. Hubungan $ed \equiv 1 \pmod{\varphi(n)}$ memastikan bahwa operasi dekripsi benar-benar membalikkan operasi enkripsi untuk semua pesan yang valid.
 
 \subsection{Correctness dan Ruang Pesan}
 
@@ -67,13 +62,11 @@ m^{ed} = m^{1+k\varphi(n)} \equiv m \cdot (m^{\varphi(n)})^k \equiv m \pmod{n}
 \]
 Untuk kasus umum (termasuk $m$ tidak relatif prima), korektness dijamin oleh Teorema Sisa Cina (CRT) \cite{menezes1996}.
 
-RSA beroperasi pada bilangan bulat $0 \leq m < n$, sehingga pesan harus di-\textbf{encode} ke integer dan dipad dengan skema yang aman. Menurut sumber keamanan, encoding yang salah dapat menyebabkan kerentanan serius, seperti serangan malleability di mana penyerang dapat memodifikasi ciphertext dengan cara yang dapat diprediksi untuk menghasilkan perubahan terkontrol pada plaintext.
+RSA beroperasi pada integer $0 \leq m < n$; pesan harus di-encode dan dipad dengan skema aman (OAEP).
 
 \subsection{Padding RSA (OAEP)}
 
-Textbook RSA bersifat deterministik. RSAES-OAEP menambahkan \textbf{seed acak} dan fungsi \textbf{MGF1} agar ciphertext berbeda meski pesan sama \cite{rfc8017}. OAEP direkomendasikan untuk enkripsi, sedangkan PKCS\#1 v1.5 dianggap legacy. Menurut Wikipedia, OAEP menyediakan semantic security dan mencegah serangan chosen-ciphertext yang efektif terhadap RSA tanpa padding.
-
-OAEP menggunakan Mask Generation Function (MGF1) berdasarkan hash functions untuk menciptakan padding yang semirandom. Menurut RFC 8017, skema ini dirancang untuk menjadi IND-CCA2 secure, yang berarti tahan terhadap serangan adaptive chosen-ciphertext. Implementasi OAEP yang benar sangat penting karena kesalahan kecil dalam padding dapat menyebabkan kerentanan keamanan yang kritis.
+Textbook RSA bersifat deterministik. RSAES-OAEP menambahkan seed acak serta MGF1 \cite{rfc8017}; menyediakan semantic security dan IND-CCA2.
 
 \begin{table}[htbp]
   \centering
@@ -93,7 +86,6 @@ OAEP menggunakan Mask Generation Function (MGF1) berdasarkan hash functions untu
 
 Untuk tanda tangan digital, RSA tidak boleh digunakan dengan padding deterministik. Skema yang direkomendasikan adalah \textbf{RSASSA-PSS} \cite{rfc8017}. PSS menambahkan \textbf{salt} acak dan memakai hash, sehingga tanda tangan tidak deterministik dan lebih tahan terhadap serangan adaptif dibanding skema legacy.
 
-PSS menggunakan salt acak dan fungsi hash untuk mencegah serangan yang memanfaatkan determinisme tanda tangan. Menurut sumber keamanan, PSS menyediakan keamanan yang dapat dibuktikan secara matematis dan resisten terhadap berbagai jenis serangan adaptif. Salt yang acak memastikan bahwa tanda tangan untuk pesan yang sama akan berbeda setiap kali, mencegah serangan replay dan analisis pola.
 
 \subsection{Keamanan}
 

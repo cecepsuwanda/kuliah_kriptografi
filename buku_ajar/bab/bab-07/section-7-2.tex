@@ -2,27 +2,15 @@
 
 \subsection{MD5}
 
-MD5 menghasilkan hash 128 bit. Tidak lagi dianggap aman untuk keamanan kriptografis karena kolisi dapat ditemukan dengan metode yang diketahui. Masih digunakan untuk checksum non-keamanan. Menurut Wikipedia, MD5 dirancang oleh Ronald Rivest pada tahun 1991 sebagai pengganti MD4 yang telah diketahui memiliki kelemahan, tetapi analisis lebih lanjut menunjukkan bahwa MD5 juga memiliki kerentanan yang serius.
-
-MD5 mengalami proses degradasi keamanan yang dramatis sejak pertama kali dipublikasikan. Menurut Wikipedia, pada tahun 1996 Hans Dobbertin menemukan collision dalam fungsi kompresi MD5, diikuti oleh serangan collision oleh Xiaoyun Wang dan timnya pada tahun 2004. Serangan ini sangat signifikan karena untuk pertama kalinya menunjukkan bahwa collision MD5 dapat ditemukan secara praktis, bukan hanya secara teoretis.
-
-Pada tahun 2012, Microsoft mengumumkan bahwa malware Flame menggunakan collision MD5 untuk memalsukan sertifikat digital. Menurut Wikipedia, insiden ini menunjukkan dampak nyata dari kerentanan MD5, di mana penyerang berhasil memalsukan sertifikat Code Signing Microsoft yang valid dengan collision yang dibuat secara khusus. Kejadian ini menjadi bukti final bahwa MD5 tidak lagi aman untuk penggunaan kriptografi.
+MD5 menghasilkan hash 128 bit. Tidak aman untuk kriptografi—collision ditemukan secara praktis (Wang et al., 2004); malware Flame (2012) memalsukan sertifikat dengan collision MD5 \cite{stallings2017}. Gunakan SHA-256 atau SHA-3 untuk keamanan.
 
 \subsection{SHA (Secure Hash Algorithm)}
 
-SHA-1 (160 bit): mulai tidak direkomendasikan. SHA-256, SHA-384, SHA-512: standar NIST \cite{nist}, dianggap aman. Menurut Wikipedia, SHA-1 dikembangkan oleh NSA dan dipublikasikan sebagai standar federal pada tahun 1993, tetapi analisis keamanan menunjukkan adanya kelemahan yang membuatnya tidak direkomendasikan lagi untuk aplikasi kriptografi.
-
-SHA-2 dikembangkan oleh NSA dan merupakan bagian dari keluarga standar FIPS 180 (FIPS 180-2, 180-4). Menurut Wikipedia, SHA-2 dirancang untuk mengatasi kelemahan keamanan yang ditemukan pada SHA-1 dan distandarisasi dalam FIPS 180-2 (2002) serta FIPS 180-4. SHA-2 menyediakan berbagai ukuran hash (SHA-224, SHA-256, SHA-384, SHA-512) untuk aplikasi yang berbeda.
-
-\subsection{Serangan Collision dan Dampaknya}
-
-Serangan collision terhadap SHA-1 pertama kali dipublikasikan pada tahun 2005 oleh tim yang terdiri dari Xiaoyun Wang, Dengguo Feng, Lai, dan Hongbo Yu. Menurut Wikipedia, serangan ini menggunakan teknik yang canggih dan memerlukan daya komputasi yang besar, tetapi berhasil menunjukkan bahwa SHA-1 memiliki kelemahan struktural yang serius. Serangan ini menyebabkan penghentian penggunaan SHA-1 dalam banyak aplikasi keamanan.
-
-Pada bulan Februari 2017, Google mengumumkan collision SHA-1 yang pertama kali ditemukan secara praktis. Menurut Wikipedia, collision ini ditemukan oleh tim Google (Shattered) yang menggunakan teknik berbeda dari serangan sebelumnya. Kejadian ini menandai akhir dari SHA-1 sebagai standar keamanan yang dapat diandalkan untuk aplikasi produksi.
+SHA-1 (160 bit): tidak direkomendasikan; collision praktis oleh Google (2017, Shattered). SHA-256, SHA-384, SHA-512: standar NIST FIPS 180-4, aman \cite{stallings2017}. SHA-3 (Keccak): standar alternatif.
 
 \subsection{Implementasi dalam C}
 
-Untuk implementasi hash yang aman dan efisien, sangat direkomendasikan untuk menggunakan library yang telah teruji seperti OpenSSL. Menurut Wikipedia, implementasi manual fungsi hash sangat rentan terhadap berbagai serangan side-channel dan timing attacks, serta memerlukan optimasi yang kompleks untuk performa yang baik.
+Gunakan library teruji (OpenSSL) \cite{stallings2017}:
 
 \begin{lstlisting}[style=cstyle]
 #include <openssl/sha.h>
@@ -31,10 +19,6 @@ unsigned char hash[SHA256_DIGEST_LENGTH];
 SHA256(data, len, hash);
 \end{lstlisting}
 
-OpenSSL menyediakan implementasi SHA yang telah dioptimasi dan diuji secara ekstensif. Menurut dokumentasi OpenSSL, implementasi ini menggunakan constant-time operations dan telah melalui audit keamanan yang ketat. Penggunaan OpenSSL sangat direkomendasikan untuk aplikasi produksi karena menyediakan interface yang konsisten dan aman di berbagai platform.
-
 \subsection{Integritas Data}
 
-Salah satu penggunaan paling fundamental dari fungsi hash adalah untuk memverifikasi integritas data. Menurut Wikipedia, dengan menghitung hash $h = H(m)$ dan mengirimkan $(m, h)$, penerima dapat memverifikasi bahwa data tidak berubah selama transmisi dengan membandingkan hash yang diterima dengan hash yang dihitung ulang.
-
-Verifikasi integritas data sangat kritis dalam keamanan komunikasi digital. Menurut sumber keamanan, teknik ini mencegah serangan man-in-the-middle di mana penyerang mencoba memodifikasi data selama transmisi. Hash juga digunakan dalam sistem version control (seperti Git) untuk mendeteksi perubahan file dan dalam blockchain untuk memastikan integritas transaksi tanpa memerlukan otoritas terpusat.
+Dengan $h = H(m)$ dan transmisi $(m, h)$, penerima memverifikasi integritas dengan membandingkan hash yang dihitung ulang. Hash tanpa kunci tidak memberikan otentikasi; untuk itu gunakan MAC/HMAC \cite{stallings2017}.

@@ -1,6 +1,7 @@
 % Silabus Mata Kuliah Kriptografi - OBE
-% Program Studi Matematika S1
-% 3 SKS, 16 pertemuan, implementasi dengan bahasa C
+% Program Studi Matematika / Teknik Informatika
+% Mengacu pada Textbook Rinaldi Munir & Standar Akademik
+% Struktur: Struktur Silabus Kurikulum OBE (Standar BAN-PT / LAM)
 
 \documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
@@ -11,16 +12,19 @@
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{enumitem}
-\usepackage[hidelinks,breaklinks]{hyperref}
+\usepackage{hyperref}
+\usepackage{multirow}
+
 \geometry{margin=2.5cm}
+\hypersetup{hidelinks,breaklinks}
 
 \begin{document}
 
 \begin{center}
 \textbf{\Large RENCANA PEMBELAJARAN SEMESTER (RPS)}\\
 \textbf{Berbasis Outcome-Based Education (OBE)}\\[0.5cm]
-\textbf{PROGRAM STUDI MATEMATIKA}\\
-\textbf{FAKULTAS MIPA / SAINS}\\
+\textbf{PROGRAM STUDI [NAMA PRODI]}\\
+\textbf{FAKULTAS [NAMA FAKULTAS]}\\
 \textbf{MATA KULIAH KRIPTOGRAFI}\\
 \end{center}
 
@@ -30,16 +34,14 @@
 % 1. IDENTITAS MATA KULIAH
 % ============================================================
 \section*{1. Identitas Mata Kuliah}
-\begin{tabular}{ll}
-Nama Program Studi & : Matematika \\
+\begin{tabular}{lp{10cm}}
+Nama Program Studi & : [Nama Prodi] \\
 Nama Mata Kuliah & : Kriptografi \\
-Kode Mata Kuliah & : MAT-XXX \\
-Semester & : Ganjil/Genap (sesuai kurikulum) \\
+Kode Mata Kuliah & : [KODE-MK] \\
+Semester & : [Ganjil/Genap] \\
 SKS / Bobot Kredit & : 3 SKS (2 Teori, 1 Praktikum) \\
-Jumlah Pertemuan & : 16 pertemuan \\
 Dosen Pengampu & : [Nama Dosen] \\
-Prasyarat & : Aljabar Linear, Matematika Diskrit \\
-Tanggal Penyusunan & : [Tanggal] \\
+Prasyarat & : Matematika Diskrit, Aljabar Linear, Algoritma dan Pemrograman \\
 \end{tabular}
 
 \vspace{0.5cm}
@@ -49,20 +51,13 @@ Tanggal Penyusunan & : [Tanggal] \\
 % ============================================================
 \section*{2. Capaian Pembelajaran Lulusan (CPL)}
 
-CPL yang dibebankan pada mata kuliah ini mencakup kompetensi lulusan dalam aspek pengetahuan, keterampilan, dan sikap:
+CPL yang dibebankan pada mata kuliah ini mencakup kompetensi lulusan dalam aspek pengetahuan, keterampilan, dan sikap, sesuai dengan standar kurikulum program studi:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{CPL-1 (Pengetahuan):} Menguasai konsep teoretis matematika termasuk aljabar, analisis, dan matematika diskrit untuk menyelesaikan masalah.
-  
-  \item \textbf{CPL-2 (Pengetahuan):} Menguasai prinsip-prinsip komputasi dan pemrograman untuk implementasi solusi matematika.
-  
-  \item \textbf{CPL-3 (Keterampilan Umum):} Mampu menerapkan pemikiran logis, kritis, sistematis, dan inovatif dalam konteks pengembangan ilmu pengetahuan.
-  
-  \item \textbf{CPL-4 (Keterampilan Khusus):} Mampu merancang dan mengimplementasikan algoritma matematika menggunakan bahasa pemrograman.
-  
-  \item \textbf{CPL-5 (Keterampilan Khusus):} Mampu menganalisis dan menyelesaikan masalah matematika terapan.
-  
-  \item \textbf{CPL-6 (Sikap):} Menunjukkan sikap bertanggung jawab atas pekerjaan di bidang keahliannya secara mandiri dan mampu bekerja sama dalam tim.
+  \item \textbf{CPL-Pengetahuan:} Menguasai konsep teoritis matematika (teori bilangan, aljabar abstrak) dan prinsip keamanan informasi untuk menganalisis sistem kriptografi.
+  \item \textbf{CPL-Keterampilan Umum:} Mampu menerapkan pemikiran logis, kritis, sistematis, dan inovatif dalam konteks pengembangan atau implementasi solusi keamanan data.
+  \item \textbf{CPL-Keterampilan Khusus:} Mampu merancang, mengimplementasikan, dan mengevaluasi algoritma kriptografi (klasik dan modern) serta protokol keamanan menggunakan bahasa pemrograman (misal: C/Python).
+  \item \textbf{CPL-Sikap:} Menunjukkan sikap bertanggung jawab dan etika profesional dalam penggunaan teknologi keamanan informasi.
 \end{itemize}
 
 \vspace{0.5cm}
@@ -72,24 +67,16 @@ CPL yang dibebankan pada mata kuliah ini mencakup kompetensi lulusan dalam aspek
 % ============================================================
 \section*{3. Capaian Pembelajaran Mata Kuliah (CPMK)}
 
-Kemampuan atau kompetensi spesifik yang diharapkan mahasiswa kuasai setelah menyelesaikan mata kuliah:
+Setelah menyelesaikan mata kuliah ini, mahasiswa diharapkan mampu:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{CPMK-1:} Mahasiswa mampu menjelaskan prinsip-prinsip dasar kriptografi dan konsep keamanan informasi (confidentiality, integrity, authenticity).
-  
-  \item \textbf{CPMK-2:} Mahasiswa mampu menerapkan aritmetika modular, algoritma Euclid, dan teori bilangan dalam konteks kriptografi.
-  
-  \item \textbf{CPMK-3:} Mahasiswa mampu menganalisis dan mengimplementasikan algoritma kriptografi klasik (Caesar, Vigenère, substitusi) dalam bahasa C.
-  
-  \item \textbf{CPMK-4:} Mahasiswa mampu menganalisis dan mengimplementasikan algoritma kriptografi modern simetris (AES, DES) dan asimetris (RSA) dalam bahasa C.
-  
-  \item \textbf{CPMK-5:} Mahasiswa mampu menerapkan fungsi hash dan tanda tangan digital dalam keamanan data.
-  
-  \item \textbf{CPMK-6:} Mahasiswa mampu merancang dan menganalisis protokol kriptografi serta manajemen kunci.
-  
-  \item \textbf{CPMK-7:} Mahasiswa mampu melakukan kriptanalisis dasar terhadap cipher sederhana (frequency analysis, Kasiski examination).
-  
-  \item \textbf{CPMK-8:} Mahasiswa mampu mengimplementasikan algoritma kriptografi menggunakan bahasa pemrograman C.
+  \item \textbf{CPMK-1:} Menjelaskan konsep dasar keamanan informasi, terminologi kriptografi, teori informasi, dan landasan matematika (teori bilangan, aljabar abstrak) yang relevan.
+  \item \textbf{CPMK-2:} Menganalisis dan mengimplementasikan algoritma kriptografi klasik (Substitusi, Transposisi, Vigenere, Hill, Enigma) serta melakukan kriptanalisis dasar.
+  \item \textbf{CPMK-3:} Menganalisis dan mengimplementasikan algoritma kriptografi modern simetris (Stream Cipher, Block Cipher: DES, AES) dan mode operasinya.
+  \item \textbf{CPMK-4:} Menganalisis dan mengimplementasikan algoritma kriptografi kunci publik (RSA, ElGamal, Diffie-Hellman, ECC) serta manajemen kunci.
+  \item \textbf{CPMK-5:} Menerapkan fungsi hash, Message Authentication Code (MAC), tanda tangan digital, dan sertifikat digital untuk menjamin integritas dan otentikasi data.
+  \item \textbf{CPMK-6:} Menjelaskan prinsip kerja Pembangkit Bilangan Acak (RNG) dan protokol kriptografi (SSL/TLS).
+  \item \textbf{CPMK-7:} Menerapkan teknik steganografi dan watermarking untuk penyembunyian data.
 \end{itemize}
 
 \vspace{0.5cm}
@@ -99,23 +86,22 @@ Kemampuan atau kompetensi spesifik yang diharapkan mahasiswa kuasai setelah meny
 % ============================================================
 \section*{4. Sub-CPMK / Indikator Pencapaian}
 
-Penjabaran CPMK menjadi indikator yang lebih terukur dan dapat diuji:
+Penjabaran CPMK menjadi indikator yang lebih terukur:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Sub-CPMK 1.1:} Menjelaskan model komunikasi aman dan ancaman keamanan informasi
-  \item \textbf{Sub-CPMK 1.2:} Mendefinisikan confidentiality, integrity, dan authenticity
-  \item \textbf{Sub-CPMK 1.3:} Membedakan kriptografi simetris dan asimetris
-  \item \textbf{Sub-CPMK 2.1:} Menghitung operasi aritmetika modular (penjumlahan, perkalian, invers) dan mengimplementasikan algoritma Euclid diperluas dalam C
-  \item \textbf{Sub-CPMK 2.2:} Menentukan bilangan prima, uji primalitas, dan menghitung pangkat modular (fast exponentiation) dalam C
-  \item \textbf{Sub-CPMK 3.1:} Mengimplementasikan cipher Caesar dan Vigenère dalam bahasa C
-  \item \textbf{Sub-CPMK 3.2:} Menganalisis kelemahan cipher klasik dan melakukan enkripsi/dekripsi dengan cipher substitusi
-  \item \textbf{Sub-CPMK 4.1:} Menjelaskan struktur AES dan DES serta mode operasi block cipher (ECB, CBC)
-  \item \textbf{Sub-CPMK 4.2:} Mengimplementasikan algoritma RSA dalam bahasa C (dengan bilangan kecil atau library)
-  \item \textbf{Sub-CPMK 5.1:} Menjelaskan sifat fungsi hash kriptografis dan mengimplementasikan SHA/MD5 untuk integritas data
-  \item \textbf{Sub-CPMK 5.2:} Merancang tanda tangan digital berbasis RSA
-  \item \textbf{Sub-CPMK 6.1:} Menganalisis protokol Diffie-Hellman dan siklus hidup manajemen kunci
-  \item \textbf{Sub-CPMK 7.1:} Melakukan frequency analysis dan Kasiski examination pada cipher substitusi
-  \item \textbf{Sub-CPMK 8.1:} Membuat dokumentasi dan pengujian kode C untuk implementasi kriptografi
+  \item \textbf{Sub-CPMK 1.1:} Menjelaskan layanan keamanan (confidentiality, integrity, availability, non-repudiation) dan sejarah kriptografi.
+  \item \textbf{Sub-CPMK 1.2:} Menghitung entropi dan laju bahasa dalam konteks teori informasi.
+  \item \textbf{Sub-CPMK 1.3:} Menerapkan teori bilangan (aritmetika modular, prima, Euclid) dan aljabar abstrak (grup, ring, field, Galois Field) dalam kriptografi.
+  \item \textbf{Sub-CPMK 2.1:} Mengimplementasikan cipher klasik (Caesar, Vigenere, Playfair, Affine, Hill) dan teknik frekuensi analisis.
+  \item \textbf{Sub-CPMK 3.1:} Menjelaskan prinsip stream cipher (LFSR, RC4) dan block cipher (Feistel, SPN).
+  \item \textbf{Sub-CPMK 3.2:} Mengimplementasikan dan menganalisis keamanan DES dan AES (termasuk operasi S-Box, ShiftRows, MixColumns).
+  \item \textbf{Sub-CPMK 3.3:} Membandingkan mode operasi block cipher (ECB, CBC, CFB, OFB, CTR).
+  \item \textbf{Sub-CPMK 4.1:} Menjelaskan konsep kriptografi kunci publik dan masalah matematika yang mendasarinya (faktorisasi, logaritma diskrit).
+  \item \textbf{Sub-CPMK 4.2:} Mengimplementasikan algoritma RSA, ElGamal, dan pertukaran kunci Diffie-Hellman.
+  \item \textbf{Sub-CPMK 5.1:} Mengimplementasikan fungsi hash (MD5, SHA) dan menjelaskan konsep collision.
+  \item \textbf{Sub-CPMK 5.2:} Menerapkan skema tanda tangan digital (DSA, RSA-Sig) dan memahami struktur sertifikat digital (X.509).
+  \item \textbf{Sub-CPMK 6.1:} Membedakan PRNG dan TRNG serta menguji keacakan deret bit (misal: uji NIST).
+  \item \textbf{Sub-CPMK 7.1:} Mengimplementasikan metode LSB untuk steganografi pada citra digital.
 \end{itemize}
 
 \vspace{0.5cm}
@@ -125,72 +111,80 @@ Penjabaran CPMK menjadi indikator yang lebih terukur dan dapat diuji:
 % ============================================================
 \section*{5. Materi Pembelajaran (Bahan Kajian)}
 
-Daftar topik materi yang relevan dengan Sub-CPMK dan CPMK:
+Daftar topik materi yang disusun berdasarkan literatur utama (Rinaldi Munir) dan standar akademik:
 
 \begin{enumerate}[leftmargin=*]
-  \item Pengantar Kriptografi: model keamanan, terminologi, sejarah
-  \item Aritmetika modular dan operasi dasar (penjumlahan, perkalian, invers modular)
-  \item Algoritma Euclid dan Euclid diperluas
-  \item Teori bilangan: bilangan prima, uji primalitas, teorema Fermat dan Euler
-  \item Pangkat modular (fast exponentiation)
-  \item Algoritma kriptografi klasik: Caesar, substitusi monoalfabetik, Vigenère, transposisi
-  \item Block cipher: DES, AES, mode operasi ECB, CBC, CFB, OFB
-  \item Kriptografi asimetris: RSA (pembangkitan kunci, enkripsi, dekripsi)
-  \item Fungsi hash (SHA, MD5), integritas data
-  \item Tanda tangan digital dan sertifikat digital
-  \item Protokol kriptografi: Diffie-Hellman, TLS dasar
-  \item Manajemen kunci: siklus hidup, distribusi kunci
-  \item Kriptanalisis: frequency analysis, Kasiski examination, serangan known-plaintext
+  \item \textbf{Pengantar Kriptografi:} Definisi, terminologi, sejarah, layanan keamanan (CIA), kriptanalisis dasar.
+  \item \textbf{Landasan Matematika \& Teori Informasi:}
+    \begin{itemize}
+        \item Teori Informasi: Entropy, laju bahasa.
+        \item Teori Bilangan: Pembagian bulat, PBB, Algoritma Euclidean, Aritmetika Modulo, Bilangan Prima, Invers Modulo, Chinese Remainder Theorem.
+        \item Aljabar Abstrak: Grup, Ring, Field, Finite Fields (GF), Aritmetika Polinom di GF($2^n$).
+    \end{itemize}
+  \item \textbf{Kriptografi Klasik:} 
+    \begin{itemize}
+        \item Cipher Substitusi (Caesar, Monoalfabetik, Homofonik, Poligram).
+        \item Cipher Transposisi, Super Enkripsi.
+        \item Vigenere Cipher (dan variannya), Playfair Cipher, Affine Cipher, Hill Cipher, Enigma Cipher.
+        \item One-Time Pad (OTP).
+    \end{itemize}
+  \item \textbf{Kriptografi Modern Simetris:}
+    \begin{itemize}
+        \item Stream Cipher: OTP sebagai stream cipher, LFSR, RC4, A5, ChaCha20.
+        \item Block Cipher: Prinsip perancangan (Confusion \& Diffusion, Feistel Network), DES, Triple DES, AES (Rijndael), Mode Operasi (ECB, CBC, CFB, OFB, CTR).
+    \end{itemize}
+  \item \textbf{Kriptografi Kunci Publik (Asimetris):} Konsep kunci publik/privat, RSA, Diffie-Hellman Key Exchange, ElGamal, Rabin, Elliptic Curve Cryptography (ECC), Knapsack (Merkle-Hellman).
+  \item \textbf{Fungsi Hash \& Integritas Data:} Sifat hash satu arah, MD5, SHA (SHA-1, SHA-2, SHA-3), Message Authentication Code (MAC), HMAC.
+  \item \textbf{Tanda Tangan Digital \& PKI:} Digital Signature Algorithm (DSA), Sertifikat Digital (X.509), Public Key Infrastructure (PKI).
+  \item \textbf{Pembangkit Bilangan Acak (RNG):} PRNG vs TRNG, Linear Congruential Generator (LCG), Blum Blum Shub, Uji Keacakan.
+  \item \textbf{Protokol \& Aplikasi:} SSL/TLS, SSH, PGP, Kriptografi pada E\-commerce/Blockchain.
+  \item \textbf{Steganografi \& Watermarking:} Sejarah, Metode LSB (Least Significant Bit), Steganalis, Watermarking citra/audio.
 \end{enumerate}
 
 \subsection*{Rencana Pembelajaran 16 Pertemuan}
 
-\begin{longtable}{|c|>{\raggedright\arraybackslash}p{5.5cm}|>{\raggedright\arraybackslash}p{5.5cm}|}
+\begin{longtable}{|c|p{4cm}|p{8cm}|}
 \hline
 \textbf{Mg} & \textbf{Sub-CPMK} & \textbf{Materi / Bahan Kajian} \\
 \hline
 \endfirsthead
-
 \hline
 \textbf{Mg} & \textbf{Sub-CPMK} & \textbf{Materi / Bahan Kajian} \\
 \hline
 \endhead
-
-1 & Sub-CPMK 1 & Pengantar kriptografi, model keamanan, ancaman \\
+1 & Sub-CPMK 1.1, 1.2 & \textbf{Pengantar \& Teori Informasi}: Definisi, Sejarah, Layanan Keamanan, Entropi, Laju Bahasa, Redundansi. \\
 \hline
-2 & Sub-CPMK 2 & Aritmetika modular, operasi dasar, invers modular \\
+2 & Sub-CPMK 1.3 & \textbf{Landasan Matematika I}: Teori Bilangan (PBB, Euclidean Algo, Aritmetika Modulo, Bilangan Prima, Relatif Prima). \\
 \hline
-3 & Sub-CPMK 2 & Algoritma Euclid dan Euclid diperluas (implementasi C) \\
+3 & Sub-CPMK 1.3 & \textbf{Landasan Matematika II}: Aljabar Abstrak (Grup, Ring, Field), Finite Field GF($2^n$), Aritmetika Polinom. \\
 \hline
-4 & Sub-CPMK 2 & Teori bilangan: prima, fast exponentiation (implementasi C) \\
+4 & Sub-CPMK 2.1 & \textbf{Cipher Klasik I}: Teknik Substitusi (Caesar, Monoalfabetik), Teknik Transposisi, Kriptanalisis (Frequency Analysis). \\
 \hline
-5 & Sub-CPMK 3 & Cipher Caesar dan substitusi sederhana (implementasi C) \\
+5 & Sub-CPMK 2.1 & \textbf{Cipher Klasik II}: Vigenere Cipher (Kasiski Method), Playfair, Affine, Hill Cipher, One-Time Pad. \\
 \hline
-6 & Sub-CPMK 3 & Cipher Vigenère dan polyalphabetic (implementasi C) \\
+6 & Sub-CPMK 3.1 & \textbf{Modern Cipher - Stream Cipher}: Konsep Stream Cipher, LFSR (Linear Feedback Shift Register), RC4, A5/1. \\
 \hline
-7 & Sub-CPMK 4 & Block cipher: DES, AES, mode ECB/CBC \\
+7 & Sub-CPMK 3.1, 3.2 & \textbf{Modern Cipher - Block Cipher}: Struktur Feistel, DES (Data Encryption Standard), Triple DES. \\
 \hline
-8 & -- & \textbf{Ujian Tengah Semester (UTS)} \\
+8 & -- & \textbf{UJIAN TENGAH SEMESTER (UTS)} \\
 \hline
-9 & Sub-CPMK 4 & Algoritma RSA, enkripsi asimetris (implementasi C) \\
+9 & Sub-CPMK 3.2, 3.3 & \textbf{Advanced Encryption Standard (AES)}: Struktur AES, Transformasi (SubBytes, ShiftRows, MixColumns, AddRoundKey), Mode Operasi Blok (ECB, CBC, CTR). \\
 \hline
-10 & Sub-CPMK 5 & Fungsi hash (SHA, MD5), integritas data \\
+10 & Sub-CPMK 4.1, 4.2 & \textbf{Kriptografi Kunci Publik I}: Konsep Asimetris, Algoritma RSA (Pembangkitan Kunci, Enkripsi, Dekripsi), Keamanan RSA. \\
 \hline
-11 & Sub-CPMK 5 & Tanda tangan digital (implementasi berbasis RSA) \\
+11 & Sub-CPMK 4.2 & \textbf{Kriptografi Kunci Publik II}: Diffie-Hellman Key Exchange, ElGamal Cryptosystem, Pengantar ECC. \\
 \hline
-12 & Sub-CPMK 6 & Protokol kriptografi, Diffie-Hellman, TLS \\
+12 & Sub-CPMK 5.1 & \textbf{Fungsi Hash}: Sifat Hash, Birthday Paradox, MD5, Keluarga SHA (SHA-256, SHA-3), MAC \& HMAC. \\
 \hline
-13 & Sub-CPMK 6 & Manajemen kunci, siklus hidup, distribusi \\
+13 & Sub-CPMK 5.2, 6.1 & \textbf{Tanda Tangan Digital \& RNG}: Digital Signature Standard (DSS), Pembangkit Bilangan Acak (LCG, Blum Blum Shub). \\
 \hline
-14 & Sub-CPMK 7 & Kriptanalisis: frequency analysis, Kasiski (praktikum) \\
+14 & Sub-CPMK 5.2 & \textbf{Infrastruktur Kunci Publik (PKI)}: Sertifikat Digital (X.509), Chain of Trust, Protokol SSL/TLS. \\
 \hline
-15 & Sub-CPMK 8 & Presentasi proyek implementasi C \\
+15 & Sub-CPMK 7.1 & \textbf{Steganografi}: Konsep Steganografi, Metode LSB (Least Significant Bit), Watermarking, Steganalis. \\
 \hline
-16 & -- & \textbf{Ujian Akhir Semester (UAS)} \\
+16 & -- & \textbf{UJIAN AKHIR SEMESTER (UAS)} \\
 \hline
 \end{longtable}
-
-\textit{Catatan: Mg = Minggu ke.}
 
 \vspace{0.5cm}
 
@@ -199,16 +193,12 @@ Daftar topik materi yang relevan dengan Sub-CPMK dan CPMK:
 % ============================================================
 \section*{6. Metode Pembelajaran}
 
-Strategi atau pendekatan pembelajaran yang dipilih sesuai OBE yang menekankan aktivitas mahasiswa:
-
+Pendekatan \textit{Student-Centered Learning} (SCL) digunakan untuk mencapai CPL:
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Ceramah Interaktif:} Penjelasan konsep matematika kriptografi dengan diskusi tanya jawab
-  \item \textbf{Problem-Based Learning (PBL):} Mahasiswa menyelesaikan permasalahan keamanan informasi untuk mengidentifikasi kebutuhan kriptografi
-  \item \textbf{Project-Based Learning:} Proyek implementasi algoritma kriptografi dalam bahasa C dengan dokumentasi dan pengujian
-  \item \textbf{Praktikum Terbimbing:} Latihan coding C di laboratorium dengan bimbingan asisten
-  \item \textbf{Diskusi Kasus:} Analisis studi kasus keamanan data dan protokol kriptografi
-  \item \textbf{Flipped Classroom:} Mahasiswa mempelajari materi sebelum kelas, diskusi mendalam di kelas
-  \item \textbf{Studi Kasus:} Analisis implementasi kriptografi pada aplikasi nyata (e-commerce, komunikasi aman)
+  \item \textbf{Kuliah Interaktif \& Diskusi:} Pemaparan konsep teoritis dan diskusi kelas mengenai studi kasus keamanan.
+  \item \textbf{Problem-Based Learning (PBL):} Penyelesaian masalah kriptanalisis atau desain protokol sederhana.
+  \item \textbf{Project-Based Learning (PjBL):} Tugas besar implementasi algoritma kriptografi (misal: membuat aplikasi chat aman atau steganografi tools) secara berkelompok.
+  \item \textbf{Praktikum Laboratorium:} Implementasi algoritma (C/Python) dan penggunaan tools kriptanalisis.
 \end{itemize}
 
 \vspace{0.5cm}
@@ -218,19 +208,13 @@ Strategi atau pendekatan pembelajaran yang dipilih sesuai OBE yang menekankan ak
 % ============================================================
 \section*{7. Pengalaman Belajar Mahasiswa}
 
-Deskripsi tugas, aktivitas, atau pengalaman belajar yang mendukung pencapaian Sub-CPMK:
-
 \begin{itemize}[leftmargin=*]
-  \item Mengimplementasikan cipher Caesar dan Vigenère dalam bahasa C
-  \item Mengimplementasikan algoritma Euclid diperluas dan fast modular exponentiation dalam C
-  \item Mengimplementasikan algoritma RSA dalam C (dengan bilangan kecil atau library seperti OpenSSL)
-  \item Melakukan praktikum frequency analysis pada cipher substitusi
-  \item Melakukan Kasiski examination untuk menyerang cipher Vigenère
-  \item Merancang sistem enkripsi hibrida (AES + RSA) dalam C
-  \item Membuat dokumentasi teknis dan laporan praktikum untuk setiap implementasi
-  \item Berkolaborasi dalam tim untuk menyelesaikan proyek implementasi kriptografi
-  \item Mempresentasikan hasil proyek dan analisis algoritma
-  \item Melakukan pengujian kode dengan berbagai test cases
+  \item Mengerjakan latihan soal aritmetika modular dan teori bilangan.
+  \item Mengimplementasikan cipher klasik (Vigenere, Playfair) dan melakukan pemecahan sandi (breaking cipher) sederhana.
+  \item Membangun program simulasi DES/AES atau menggunakan library kriptografi (OpenSSL/\allowbreak PyCryptodome) untuk memahami mode operasi.
+  \item Melakukan pembangkitan kunci RSA dan simulasi pertukaran pesan terenkripsi antar mahasiswa.
+  \item Menganalisis sertifikat digital pada browser web (HTTPS).
+  \item Mengimplementasikan teknik penyembunyian pesan (steganografi) pada file gambar bmp/png.
 \end{itemize}
 
 \vspace{0.5cm}
@@ -240,60 +224,38 @@ Deskripsi tugas, aktivitas, atau pengalaman belajar yang mendukung pencapaian Su
 % ============================================================
 \section*{8. Kriteria, Indikator, dan Bobot Penilaian}
 
-Teknik/alat asesmen dipetakan ke Sub-CPMK/CPMK dengan bobot yang jelas:
+Evaluasi dilakukan berdasarkan prinsip penilaian otentik:
 
-\begin{longtable}{|>{\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{5.5cm}|c|}
+\begin{longtable}{|p{3cm}|p{5cm}|c|}
 \hline
-\textbf{Komponen} & \textbf{Teknik Asesmen} & \textbf{Indikator/CPMK} & \textbf{Bobot (\%)} \\
+\textbf{Komponen} & \textbf{Indikator} & \textbf{Bobot} \\
 \hline
-\endfirsthead
+Tugas & Penyelesaian soal latihan, analisis kasus & 15\% \\
 \hline
-\textbf{Komponen} & \textbf{Teknik Asesmen} & \textbf{Indikator/CPMK} & \textbf{Bobot (\%)} \\
+Praktikum & Keberhasilan implementasi kode, laporan praktikum & 20\% \\
 \hline
-\endhead
+Kuis & Pemahaman konsep dasar tiap bab & 10\% \\
 \hline
-\endfoot
-
-Tugas Individu & Coding Assignment (C) & Sub-CPMK 3.1, 3.2, 4.2 & 15 \\
+Proyek (Tugas Besar) & Kualitas aplikasi/implementasi, dokumen laporan, presentasi & 15\% \\
 \hline
-Kuis & Multiple Choice \& Essay & Sub-CPMK 1.1, 1.2, 2.1, 2.2 & 10 \\
+UTS & Evaluasi paruh semester (Teori \& Kripto Klasik/Simetris) & 20\% \\
 \hline
-Praktikum & Lab Exercise (implementasi C) & Sub-CPMK 2.1, 2.2, 3.1, 7.1, 8.1 & 20 \\
+UAS & Evaluasi akhir semester (Kripto Asimetris, Hash, Protokol) & 20\% \\
 \hline
-UTS & Written Exam & CPMK-1, CPMK-2, CPMK-3 & 25 \\
-\hline
-Proyek & Implementasi C + Dokumentasi & CPMK-4, CPMK-5, CPMK-8 & 15 \\
-\hline
-UAS & Comprehensive Exam & Semua CPMK & 15 \\
-\hline
-\textbf{Total} & & & \textbf{100} \\
+\multicolumn{2}{|r|}{\textbf{Total}} & \textbf{100\%} \\
 \hline
 \end{longtable}
-
-\textbf{Kriteria Penilaian:}
-\begin{itemize}[leftmargin=*]
-  \item A (85-100): Menguasai semua CPMK dengan sangat baik, mampu mengimplementasikan algoritma kriptografi dalam C
-  \item B (70-84): Menguasai sebagian besar CPMK dengan baik
-  \item C (60-69): Menguasai CPMK dasar dengan cukup
-  \item D (50-59): Menguasai sebagian kecil CPMK
-  \item E (<50): Belum menguasai CPMK yang ditetapkan
-\end{itemize}
 
 \vspace{0.5cm}
 
 % ============================================================
-% 9. EVALUASI DAN REFLEKSI PEMBELAJARAN (OPSIONAL)
+% 9. EVALUASI DAN REFLEKSI PEMBELAJARAN
 % ============================================================
 \section*{9. Evaluasi dan Refleksi Pembelajaran}
-
-Penilaian sumatif/formatif untuk memantau ketercapaian outcome secara menyeluruh:
-
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Evaluasi Formatif:} Kuis mingguan, latihan coding C, peer review untuk memberikan feedback berkelanjutan
-  \item \textbf{Evaluasi Sumatif:} UTS dan UAS untuk mengukur pencapaian CPMK secara komprehensif
-  \item \textbf{Refleksi Mahasiswa:} Jurnal belajar mingguan untuk refleksi terhadap pemahaman materi dan implementasi
-  \item \textbf{Evaluasi Dosen:} Survey kepuasan mahasiswa di tengah dan akhir semester
-  \item \textbf{Continuous Improvement:} Analisis hasil penilaian untuk perbaikan RPS di semester berikutnya
+    \item Survei umpan balik mahasiswa di tengah dan akhir semester.
+    \item Analisis statistik nilai untuk mengukur ketercapaian CPMK.
+    \item Refleksi dosen terhadap metode pengajaran dan materi yang perlu diperbarui sesuai perkembangan teknologi keamanan terkini.
 \end{itemize}
 
 \vspace{0.5cm}
@@ -303,36 +265,18 @@ Penilaian sumatif/formatif untuk memantau ketercapaian outcome secara menyeluruh
 % ============================================================
 \section*{10. Daftar Referensi}
 
-Sumber belajar utama yang digunakan dalam penyusunan materi dan asesmen:
-
+\textbf{Referensi Utama:}
 \begin{enumerate}[leftmargin=*]
-  \item Stinson, D. R., \& Paterson, M. (2018). \textit{Cryptography: Theory and Practice} (4th ed.). CRC Press.
-  
-  \item Katz, J., \& Lindell, Y. (2020). \textit{Introduction to Modern Cryptography} (3rd ed.). CRC Press.
-  
-  \item Trappe, W., \& Washington, L. C. (2006). \textit{Introduction to Cryptography with Coding Theory} (2nd ed.). Pearson.
-  
-  \item Schneier, B. (1996). \textit{Applied Cryptography} (2nd ed.). John Wiley \& Sons.
-  
-  \item Stallings, W. (2017). \textit{Cryptography and Network Security: Principles and Practice} (7th ed.). Pearson.
-  
-  \item Menezes, A. J., van Oorschot, P. C., \& Vanstone, S. A. (1996). \textit{Handbook of Applied Cryptography}. CRC Press.
-  
-  \item Ferguson, N., Schneier, B., \& Kohno, T. (2010). \textit{Cryptography Engineering}. Wiley.
-  
-  \item NIST Cryptographic Standards. \url{https://csrc.nist.gov/}
-  
-  \item Cryptography Stack Exchange. \url{https://crypto.stackexchange.com/}
+  \item Munir, Rinaldi. (2019). \textit{Kriptografi}, Edisi Kedua. Penerbit Informatika Bandung.
+  \item Stallings, William. (2017). \textit{Cryptography and Network Security: Principles and Practice}, 7th Edition. Pearson Education.
 \end{enumerate}
 
-\vspace{1cm}
-
-\begin{flushright}
-\begin{tabular}{c}
-Disusun oleh,\\[2cm]
-\textbf{[Nama Dosen]}\\
-NIP. [NIP]
-\end{tabular}
-\end{flushright}
+\textbf{Referensi Pendukung:}
+\begin{enumerate}[leftmargin=*]
+  \item Schneier, Bruce. (1996). \textit{Applied Cryptography: Protocols, Algorithms, and Source Code in C}, 2nd Edition. John Wiley \& Sons.
+  \item Menezes, A. J., van Oorschot, P. C., \& Vanstone, S. A. (1996). \textit{Handbook of Applied Cryptography}. CRC Press.
+  \item Stinson, D. R., \& Paterson, M. (2018). \textit{Cryptography: Theory and Practice}, 4th Edition. CRC Press.
+  \item Katz, J., \& Lindell, Y. (2020). \textit{Introduction to Modern Cryptography}, 3rd Edition. CRC Press.
+\end{enumerate}
 
 \end{document}

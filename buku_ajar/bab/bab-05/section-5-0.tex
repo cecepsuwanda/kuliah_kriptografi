@@ -1,0 +1,102 @@
+\section{Stream Cipher}
+
+\subsection{Evolusi dari Cipher Klasik ke Modern}
+
+Dalam Bab IV, kita mempelajari cipher klasik yang memproses plaintext karakter per karakter. Sekarang, kita akan melihat evolusi konsep ini dalam \textbf{stream cipher} modern.
+
+\textbf{Koneksi dengan Cipher Klasik}:
+\begin{itemize}
+  \item \textbf{Caesar/Vigenère}: Proses karakter per karakter dengan operasi matematika sederhana
+  \item \textbf{Stream Cipher}: Proses bit/byte per bit/byte dengan XOR dan keystream kompleks
+  \item \textbf{Perbedaan kunci}: Classical $\rightarrow$ kunci pendek berulang, Modern $\rightarrow$ keystream panjang pseudo-acak
+\end{itemize}
+
+Stream cipher dapat dilihat sebagai "penerus modern" dari cipher klasik berurutan, tetapi dengan keamanan yang jauh superior melalui:
+\begin{itemize}
+  \item Keystream yang jauh lebih kompleks daripada kunci berulang sederhana
+  \item Operasi XOR yang lebih efisien daripada substitusi huruf
+  \item Ruang kunci yang jauh lebih besar
+\end{itemize}
+
+\subsection{Konsep}
+
+Stream cipher mengenkripsi plaintext bit/byte per bit/byte dengan meng-XOR dengan keystream yang dihasilkan dari kunci \cite{stallings2017}. Secara matematis: $c_i = p_i \oplus k_i$ dengan $k_i$ dari pembangkit keystream. Stream cipher ideal jika keystream benar-benar acak dan sepanjang plaintext (One-Time Pad). Dalam praktik, keystream dihasilkan secara deterministik dari kunci dengan algoritma PRNG.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{ll}
+    \toprule
+    Stream Cipher & Block Cipher \\
+    \midrule
+    Proses bit/byte bertahap & Proses blok tetap (64/128 bit) \\
+    Cocok untuk real-time, panjang variabel & Perlu padding untuk data tidak lengkap \\
+    Keystream dari PRNG/kunci & Setiap blok dienkripsi (mode operasi) \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perbandingan Stream Cipher dan Block Cipher.}
+\end{table}
+
+\textbf{Hubungan dengan One-Time Pad (Bab IV)}:
+\begin{itemize}
+  \item OTP: Keystream acak sempurna, sepanjang plaintext, sekali pakai
+  \item Stream Cipher: Keystream pseudo-acak, dihasilkan dari kunci, dapat digunakan ulang
+  \item Trade-off: OTP $\rightarrow$ keamanan sempurna tapi tidak praktis, Stream Cipher $\rightarrow$ keamanan baik tapi praktis
+\end{itemize}
+
+\subsection{LFSR (Linear Feedback Shift Register)}
+
+LFSR menghasilkan deret bit pseudorandom dari register geser dengan tap umpan balik linear \cite{menezes1996}. Register $n$ bit menghasilkan periode maksimal $2^n - 1$ jika polinom umpan balik primitif.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=0.85]
+    \node[draw, rounded corners] (b0) at (0,0) {$b_0$};
+    \node[draw, rounded corners] (b1) at (1.2,0) {$b_1$};
+    \node[draw, rounded corners] (b2) at (2.4,0) {$b_2$};
+    \node[draw, rounded corners] (b3) at (3.6,0) {$b_3$};
+    \node[draw, circle] (xor) at (4.8,0) {$\oplus$};
+    \draw[->] (b0) -- (b1);
+    \draw[->] (b1) -- (b2);
+    \draw[->] (b2) -- (b3);
+    \draw[->] (b3) -- (xor);
+    \draw[->] (xor) to[bend left=25] (b0);
+    \node[below=0.3cm of b3, font=\small] {output};
+  \end{tikzpicture}
+  \caption{Contoh LFSR 4-bit dengan tap umpan balik.}
+\end{figure}
+
+\textbf{Koneksi ke Matematika Bab III}:
+\begin{itemize}
+  \item LFSR menggunakan operasi dalam $\mathrm{GF}(2)$ (field dengan dua elemen)
+  \item Polinom primitif terkait dengan konsep field dari Bab III
+  \item Periode maksimal $2^n - 1$ mirip dengan konsep grup siklik
+\end{itemize}
+
+LFSR sederhana tidak aman untuk kriptografi: polinom umpan balik dapat direkonstruksi dari cukup banyak output. LFSR digunakan sebagai komponen dalam cipher yang lebih kompleks (misal A5/1).
+
+\subsection{RC4}
+
+RC4 adalah stream cipher yang sangat populer (WEP, WPA, TLS legacy). Algoritma: inisialisasi S-box 256 byte dari kunci, lalu menghasilkan keystream dengan permutasi S \cite{schneier1996}. RC4 memiliki bias pada beberapa byte awal; praktik modern menghindari beberapa puluh byte pertama keystream.
+
+\textbf{Evolusi dari Vigenère}:
+\begin{itemize}
+  \item Vigenère: Kunci berulang pendek, substitusi sederhana
+  \item RC4: Kunci menghasilkan keystream panjang kompleks, XOR operation
+  \item Keamanan: Vigenère rentan frequency analysis, RC4 lebih resisten (tapi masih memiliki kelemahan)
+\end{itemize}
+
+RC4 sekarang dianggap lemah untuk aplikasi baru \cite{stallings2017}. Standar modern seperti ChaCha20 menggantikan RC4.
+
+\subsection{A5/1}
+
+A5/1 digunakan dalam GSM untuk enkripsi percakapan seluler. Menggunakan tiga LFSR dengan panjang berbeda yang digabungkan secara non-linear \cite{menezes1996}. A5/1 telah berhasil diserang; A5/2 (varian lemah) sudah dipecahkan. Standar seluler modern menggunakan algoritma yang lebih aman.
+
+\textbf{Pelajaran dari Evolusi Stream Cipher}:
+\begin{itemize}
+  \item \textbf{Keamanan meningkat}: Dari substitusi sederhana ke keystream kompleks
+  \item \textbf{Efisiensi terjaga}: Proses bit/byte tetap cocok untuk real-time
+  \item \textbf{Implementasi praktis}: Dari kunci manual ke kunci digital yang panjang
+\end{itemize}
+
+Stream cipher menunjukkan bagaimana konsep dasar dari cipher klasik dapat dievolusikan menjadi algoritma modern yang jauh lebih aman namun tetap mempertahankan prinsip processing berurutan.

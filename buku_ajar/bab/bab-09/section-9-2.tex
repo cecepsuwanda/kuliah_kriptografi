@@ -1,19 +1,28 @@
-\section{Kasiski Examination}
+\section{Steganografi dan Watermarking}
 
-\subsection{Prinsip}
+\subsection{Konsep Steganografi}
 
-Cipher Vigenère menggunakan kunci berulang. Jika plaintext mengandung pengulangan (misalnya "THE" muncul dua kali dengan jarak kelipatan panjang kunci), ciphertext juga akan memiliki pola berulang. Jarak antar pola berulang adalah kelipatan panjang kunci.
+Steganografi menyembunyikan keberadaan pesan rahasia di dalam media pembawa (cover) sehingga tidak terlihat oleh pengamat biasa \cite{stallings2017}. Berbeda dengan kriptografi yang membuat pesan tidak terbaca, steganografi menyembunyikan fakta bahwa ada pesan. Keduanya dapat dikombinasikan: enkripsi dulu, lalu sembunyikan dalam cover.
 
-\subsection{Langkah}
+\subsection{Metode LSB (Least Significant Bit)}
 
-\begin{enumerate}
-  \item Cari urutan 3--4 karakter yang berulang dalam ciphertext
-  \item Catat jarak antar kemunculan
-  \item Faktor persekutuan dari jarak-jarak tersebut kemungkinan adalah panjang kunci
-  \item Setelah panjang kunci $L$ diketahui, bagi ciphertext menjadi $L$ kelompok (posisi 1, $L+1$, $2L+1$, ...; posisi 2, $L+2$, ...; dst.)
-  \item Setiap kelompok berperilaku seperti Caesar cipher. Lakukan frequency analysis pada setiap kelompok untuk memperoleh subkunci
-\end{enumerate}
+LSB mengganti bit paling tidak signifikan dari setiap byte sampel dengan bit pesan rahasia \cite{stallings2017}. Pada citra 24-bit (RGB), satu pixel = 3 byte; mengganti LSB setiap byte mengubah nilai pixel sangat sedikit (max $\pm 1$) sehingga tidak terlihat mata.
 
-\subsection{Praktikum}
+Kapasitas: 1 bit per byte sampel. Untuk citra 640×480 RGB: $640 \times 480 \times 3 = 921{,}600$ bit $\approx$ 115 KB pesan rahasia.
 
-Implementasikan dalam C: (a) penghitungan frekuensi huruf; (b) pencarian pengulangan untuk Kasiski. Gunakan ciphertext dari Vigenère dengan kunci yang diketahui untuk validasi.
+\begin{lstlisting}[style=cstyle, caption={Prinsip LSB embedding (pseudocode)}]
+// Embed: ganti LSB byte cover dengan bit pesan
+for i = 0 to len(pesan)-1:
+    cover_byte = (cover_byte & 0xFE) | bit_pesan[i]
+
+// Extract: baca LSB
+bit_pesan[i] = cover_byte & 1
+\end{lstlisting}
+
+\subsection{Watermarking}
+
+Watermarking menyisipkan informasi (watermark) ke dalam media untuk kepemilikan atau integritas \cite{stallings2017}. Berbeda dengan steganografi: watermark sering dibuat robust terhadap modifikasi (kompresi, resize) sehingga masih dapat dideteksi. Steganografi lebih fokus pada kapasitas dan ketidakamatan.
+
+\subsection{Steganalis}
+
+Steganalis bertujuan mendeteksi atau mengekstrak pesan tersembunyi \cite{stallings2017}. Teknik: analisis statistik (distribusi LSB), deteksi anomali, machine learning. LSB naif dapat terdeteksi karena distribusi bit berubah. Steganografi robust menggunakan spread spectrum atau transform domain (DCT, DWT).

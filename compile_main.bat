@@ -4,6 +4,7 @@ setlocal
 set "ROOT_DIR=%~dp0"
 set "OUTPUT_DIR=%ROOT_DIR%output"
 set "SOURCE_DIR=%ROOT_DIR%buku_ajar"
+set "JOBNAME=main_build"
 
 if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
 if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%" 2>nul
@@ -11,6 +12,8 @@ if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%" 2>nul
 echo ============================================================
 echo Compiling Main Document
 echo ============================================================
+echo Jika main.pdf terbuka di viewer, tutup dulu agar bisa ditimpa.
+echo.
 
 pushd "%SOURCE_DIR%"
 
@@ -38,17 +41,20 @@ if errorlevel 1 (
 
 :pdflatex_loop
 echo Running Stage 1: pdflatex...
-pdflatex -interaction=nonstopmode -halt-on-error -output-directory="%OUTPUT_DIR%" "main.tex"
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory="%OUTPUT_DIR%" -jobname="%JOBNAME%" "main.tex"
 if errorlevel 1 goto :failed
 
 echo Running Stage 2: bibtex...
-bibtex "%OUTPUT_DIR%\main"
+bibtex "%OUTPUT_DIR%\%JOBNAME%"
 
 echo Running Stage 3: pdflatex...
-pdflatex -interaction=nonstopmode -halt-on-error -output-directory="%OUTPUT_DIR%" "main.tex"
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory="%OUTPUT_DIR%" -jobname="%JOBNAME%" "main.tex"
 
 echo Running Stage 4: pdflatex...
-pdflatex -interaction=nonstopmode -halt-on-error -output-directory="%OUTPUT_DIR%" "main.tex"
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory="%OUTPUT_DIR%" -jobname="%JOBNAME%" "main.tex"
+
+echo Running Stage 5: pdflatex (stabilize refs)...
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory="%OUTPUT_DIR%" -jobname="%JOBNAME%" "main.tex"
 if errorlevel 1 goto :failed
 
 :success
@@ -58,9 +64,18 @@ echo Cleaning up intermediate files...
 call :cleanup "%OUTPUT_DIR%"
 call :cleanup "%SOURCE_DIR%"
 
-echo.
+REM Coba timpa main.pdf; jika terkunci, hasil tetap di main_build.pdf
+copy /Y "%OUTPUT_DIR%\%JOBNAME%.pdf" "%OUTPUT_DIR%\main.pdf" >nul 2>&1
+if errorlevel 1 (
+    echo.
+    echo Hasil build: %OUTPUT_DIR%\%JOBNAME%.pdf
+    echo ^(main.pdf kemungkinan terbuka di program lain - tutup lalu jalankan lagi untuk mendapatkan main.pdf^)
+) else (
+    del "%OUTPUT_DIR%\%JOBNAME%.pdf" 2>nul
+    echo.
+    echo Final PDF: %OUTPUT_DIR%\main.pdf
+)
 echo Operation Completed.
-echo Final PDF: %OUTPUT_DIR%\main.pdf
 goto :end
 
 :failed

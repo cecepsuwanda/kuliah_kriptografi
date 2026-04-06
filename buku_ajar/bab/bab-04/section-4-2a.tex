@@ -2,7 +2,7 @@
 
 \subsection{Konsep}
 
-Cipher Playfair adalah cipher digraph (berbasis pasangan huruf) yang ditemukan oleh Charles Wheatstone pada tahun 1854. Kunci berupa matriks 5x5 berisi alfabet (I/J digabung) yang dibentuk dari sebuah kata kunci. Aturan utama \cite{dummit_classical}:
+Cipher Playfair adalah cipher digraph (berbasis pasangan huruf) yang ditemukan oleh Charles Wheatstone pada tahun 1854. Kunci berupa matriks 5x5 berisi alfabet (I/J digabung) yang dibentuk dari sebuah kata kunci \cite{stallings2017}. Aturan utama:
 \begin{itemize}
   \item Gabungkan I dan J, hilangkan spasi/simbol.
   \item Bentuk pasangan huruf (digraph). Jika ada pasangan huruf sama, sisipkan X.
@@ -10,9 +10,7 @@ Cipher Playfair adalah cipher digraph (berbasis pasangan huruf) yang ditemukan o
   \item Baca matriks baris demi baris: kiri ke kanan, atas ke bawah.
 \end{itemize}
 
-Playfair cipher merevolusi konsep enkripsi dari substitusi monoalfabetik sederhana ke sistem yang lebih canggih dengan memproses pasangan huruf. Menurut Wikipedia, Playfair adalah cipher pertama yang mengenkripsi pasangan huruf (digraph) secara sistematis, menciptakan pola substitusi yang lebih kompleks dan sulit dipecahkan dengan analisis frekuensi sederhana. Cipher ini dinamai untuk menghormati teman dekat Wheatstone, Baron Playfair, yang mempromosikan penggunaannya.
-
-Keunggulan Playfair terhadap serangan frekuensi sangat lebih baik dibandingkan cipher substitusi monoalfabetik karena memecah pola frekuensi huruf tunggal. Namun, cipher ini memiliki kelemahan yang diketahui, terutama terkait dengan pemrosesan pasangan ganda (double letter sequences) yang dapat diidentifikasi dan dieksploitasi. Meskipun memiliki kerentanan ini, Playfair tetap menjadi tonggak sejarah dalam evolusi kriptografi dan dasar untuk cipher polialfabetik yang lebih modern.
+Playfair memproses pasangan huruf (digraph), sehingga lebih tahan terhadap analisis frekuensi huruf tunggal dibanding substitusi monoalfabetik \cite{schneier1996}. Namun, pasangan huruf ganda (double letters) dapat membocorkan informasi.
 
 \subsection{Matriks Kunci}
 
@@ -32,7 +30,6 @@ Contoh kunci: MONARCHY.
   \caption{Matriks kunci Playfair (I/J digabung).}
 \end{table}
 
-Matriks kunci Playfair dibangun dengan mengisi alfabet 5x5 secara unik tanpa pengulangan, yang memastikan setiap huruf alfabet muncul tepat satu kali. Proses pembangunan matriks ini sangat penting karena menentukan bagaimana pasangan huruf akan dipetakan selama proses enkripsi. Menurut sumber historis, matriks ini sering dibangun dengan hati-hati untuk memastikan tidak ada huruf yang terlewat atau duplikasi yang dapat menyebabkan kegagalan dekripsi.
 
 \subsection{Aturan Enkripsi}
 
@@ -43,7 +40,6 @@ Matriks kunci Playfair dibangun dengan mengisi alfabet 5x5 secara unik tanpa pen
   \item \textbf{Bentuk persegi}: tukar posisi dengan pasangan di atas diagonal.
 \end{itemize}
 
-Aturan enkripsi Playfair yang sistematis memungkinkan proses enkripsi yang konsisten dan dapat diimplementasikan secara algoritmik. Setiap aturan dirancang untuk memastikan bahwa setiap pasangan huruf dalam plaintext diproses secara unik dan dapat direkonstruksi kembali selama dekripsi. Pendekatan ini sangat penting untuk menciptakan cipher yang dapat diandalkan dalam implementasi perangkat keras dengan sumber daya terbatas.
 
 \subsection{Contoh Enkripsi}
 
@@ -60,7 +56,6 @@ Enkripsi setiap digraph dengan matriks di atas:
 
 Ciphertext: CFPTPM.
 
-Proses enkripsi Playfair mendemonstrasikan bagaimana cipher ini mengubah plaintext menjadi ciphertext melalui serangkaian substitusi pasangan yang kompleks. Setiap digraph diproses secara independen sesuai dengan posisinya dalam matriks kunci, yang menciptakan pola enkripsi yang tidak mudah diprediksi.
 
 \subsection{Implementasi Ringkas dalam C}
 
@@ -126,12 +121,12 @@ void playfair_encrypt(char *plaintext, char *key, char *ciphertext) {
             ciphertext[i + 1] = square[row_b][(col_b + 1) % 5];
         } else if (col_a == col_b) {
             // Same column - use letter below
-            ciphertext[i] = square[(row_a + 1) % 5][col_b];
-            ciphertext[i + 1] = square[(row_a + 1) % 5][col_b];
+            ciphertext[i] = square[(row_a + 1) % 5][col_a];
+            ciphertext[i + 1] = square[(row_b + 1) % 5][col_b];
         } else {
-            // Rectangle case
-            ciphertext[i] = square[row_b][col_a];
-            ciphertext[i + 1] = square[row_b][col_b];
+            // Rectangle: swap columns
+            ciphertext[i] = square[row_a][col_b];
+            ciphertext[i + 1] = square[row_b][col_a];
         }
     }
     ciphertext[i + 2] = '\0';

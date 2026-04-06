@@ -23,18 +23,74 @@ Selamat! Anda telah menyelesaikan perjalanan pembelajaran Kriptografi. Dari land
 
 \textbf{Apa yang Telah Anda Pelajari}:
 \begin{itemize}
-  \item Landasan teori kriptografi (confidentiality, integrity, authenticity)
-  \item Matematika kriptografi (modular, Euclid, fast exponentiation)
-  \item Algoritma klasik (Caesar, Vigenère) dan implementasi C
-  \item Block cipher (DES, AES) dan mode operasi
-  \item Kriptografi asimetris (RSA) dan implementasi C
-  \item Fungsi hash dan tanda tangan digital
-  \item Protokol Diffie-Hellman dan manajemen kunci
-  \item Kriptanalisis (frequency analysis, Kasiski)
+  \item Landasan teori (layanan keamanan, teori informasi)
+  \item Matematika kriptografi (modular, Euclid, aljabar abstrak, GF)
+  \item Cipher klasik (Caesar, Vigenère, Playfair, Hill, OTP) dan kriptanalisis
+  \item Stream cipher (LFSR, RC4), block cipher (DES, AES), mode operasi
+  \item Kriptografi asimetris (RSA, Diffie-Hellman, ElGamal, ECC)
+  \item Fungsi hash, MAC/HMAC, tanda tangan digital (RSA-Sig, DSA)
+  \item PKI, chain of trust, protokol TLS
+  \item RNG (PRNG/TRNG), steganografi LSB
+\end{itemize}
+
+\textbf{Integrasi Semua Konsep}:
+\begin{itemize}
+  \item \textbf{Matematika (Bab III)} → \textbf{Cipher (Bab IV-VI)}: Teori menjadi praktik
+  \item \textbf{Cipher Klasik (Bab IV)} → \textbf{Cipher Modern (Bab V)}: Evolusi keamanan
+  \item \textbf{Simetris (Bab V)} + \textbf{Asimetris (Bab VI)} → \textbf{Hybrid (Praktik)}
+  \item \textbf{Komponen Individual (Bab II-VII)} → \textbf{Protokol (Bab VIII)}: Sistem lengkap
+  \item \textbf{Pembelaan (Bab II-VIII)} → \textbf{Penyerangan (Bab IX)}: Perspektif lengkap
+\end{itemize}
+
+\textbf{Pencapaian Kompetensi}:
+\begin{itemize}
+  \item \textbf{Teoretis}: Pemahaman konsep dan matematika kriptografi
+  \item \textbf{Praktis}: Implementasi cipher dan protokol dalam C
+  \item \textbf{Analitis}: Kemampuan mengevaluasi keamanan sistem
+  \item \textbf{Integratif}: Pemahaman sistem keamanan holistik
 \end{itemize}
 
 \textbf{Langkah Selanjutnya}: Terus praktik implementasi dalam C, eksplorasi OpenSSL, dan ikuti perkembangan standar kriptografi.
 \end{rangkuman}
+
+% ============================================================
+% PENUTUP: PERJALANAN LANJUTAN
+% ============================================================
+
+\begin{transition}
+\textbf{Selamat Menyelesaikan Perjalanan Kriptografi!}
+
+Anda telah menyelesaikan perjalanan yang komprehensif dari teori dasar hingga implementasi praktis. Sekarang Anda memiliki fondasi yang kuat untuk:
+
+\textbf{Aplikasi Langsung}:
+\begin{itemize}
+  \item \textbf{Pengembangan Software}: Implementasi keamanan dalam aplikasi
+  \item \textbf{Keamanan Jaringan}: Konfigurasi firewall, VPN, IDS/IPS
+  \item \textbf{Forensik Digital}: Analisis serangan dan bukti digital
+  \item \textbf{Penelitian}: Eksplorasi topik lanjutan (post-quantum,\\ homomorfik, zero-knowledge)
+\end{itemize}
+
+\textbf{Topik Lanjutan yang Direkomendasikan}:
+\begin{itemize}
+  \item \textbf{Post-Quantum Cryptography}: Lattice-based, hash-based, code-based
+  \item \textbf{Advanced Protocols}: Secure Multi-Party Computation, Zero-Knowledge Proofs
+  \item \textbf{Hardware Security}: TPM, HSM, side-channel attacks
+  \item \textbf{Formal Methods}: Verifikasi keamanan protokol
+\end{itemize}
+
+\textbf{Sumber Belajar Tambahan}:
+\begin{itemize}
+  \item \textbf{Standar}: NIST SP 800-57, RFC seri kriptografi
+  \item \textbf{Implementasi}: OpenSSL, Crypto++, libsodium
+  \item \textbf{Komunitas}: IACR, Crypto Stack Exchange, CRYPTO conference
+  \item \textbf{Praktik}: CTF competitions, bug bounty programs
+\end{itemize}
+
+\textbf{Refleksi Akhir}:
+Kriptografi adalah bidang yang terus berkembang. Standar hari ini mungkin tidak aman besok, dan serangan baru selalu muncul. Namun dengan fondasi yang telah Anda bangun — matematika yang kokoh, pemahaman implementasi yang praktis, dan perspektif keamanan yang holistik — Anda siap untuk menghadapi tantangan keamanan informasi masa depan.
+
+Teruslah belajar, teruslah berlatih, dan jadilah ahli keamanan siber yang andal dan bertanggung jawab!
+\end{transition}
 
 \ifSubfilesClassLoaded{
   \renewcommand{\bibname}{Daftar Pustaka}

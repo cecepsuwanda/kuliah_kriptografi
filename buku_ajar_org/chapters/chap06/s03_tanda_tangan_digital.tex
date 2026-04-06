@@ -1,5 +1,0 @@
-\section{Tanda Tangan Digital}
-
-Tanda tangan digital memastikan keaslian dan integritas dokumen digital. Prinsip: pengirim mengenkripsi hash dokumen dengan kunci privat; penerima mendekripsi dengan kunci publik pengirim dan memverifikasi hash cocok dengan hash dokumen yang dihitung ulang.
-
-Skema berbasis RSA: Sign$(m) = H(m)^d \bmod n$; Verify$(m, s) = (s^e \bmod n \stackrel{?}{=} H(m))$. Tanda tangan digital memberikan non-repudiation: pengirim tidak dapat menyangkal telah menandatangani.

@@ -5,22 +5,29 @@
 \chapter{Block Cipher dan Kriptografi Simetris}
 
 \begin{subcpmk}
-  \item Sub-CPMK 4.1: Menjelaskan struktur AES dan DES serta mode operasi block cipher (ECB, CBC)
+  \item Sub-CPMK 3.1: Menjelaskan prinsip stream cipher (LFSR, RC4) dan block cipher (Feistel, SPN)
+  \item Sub-CPMK 3.2: Mengimplementasikan dan menganalisis keamanan DES dan AES (S-Box, ShiftRows, MixColumns)
+  \item Sub-CPMK 3.3: Membandingkan mode operasi block cipher (ECB, CBC, CFB, OFB, CTR)
 \end{subcpmk}
 
 % ============================================================
 % MATERI POKOK
 % ============================================================
+\input{bab-05/section-5-0}
 \input{bab-05/section-5-1}
 \input{bab-05/section-5-2}
 \input{bab-05/section-5-3}
+\input{bab-05/section-5-4}
+\input{bab-05/section-5-4a-contoh-trace}
 
 % ============================================================
 % AKTIVITAS PEMBELAJARAN
 % ============================================================
 
 \begin{aktivitas}
-  \item \textbf{Studi Literatur}: Bandingkan struktur Feistel (DES) dengan struktur AES. Apa perbedaan utama?
+  \item \textbf{Studi Literatur}: Bandingkan struktur Feistel (DES) dengan struktur SPN (AES). Apa perbedaan utama?
+  
+  \item \textbf{Stream vs Block}: Jelaskan kapan stream cipher lebih cocok daripada block cipher.
   
   \item \textbf{Praktikum}: Gunakan OpenSSL atau library C untuk mengenkripsi file dengan AES-CBC. Amati peran IV.
   
@@ -32,13 +39,15 @@
 % ============================================================
 
 \begin{latihan}
+  \item Jelaskan prinsip stream cipher dan bedakan dengan block cipher. Apa peran LFSR?
+  
   \item Jelaskan struktur Feistel. Mengapa dekripsi Feistel mirip dengan enkripsi?
   
-  \item Sebutkan 4 operasi dalam satu round AES.
+  \item \raggedright Sebutkan 4 operasi dalam satu round AES:\linebreak (SubBytes, ShiftRows, MixColumns, AddRoundKey).
   
-  \item Jelaskan perbedaan ECB dan CBC. Mengapa CBC lebih aman?
+  \item Jelaskan perbedaan ECB, CBC, dan CTR. Mengapa ECB tidak aman?
   
-  \item Apa fungsi IV dalam mode CBC?
+  \item Apa fungsi IV dalam mode CBC? Apa yang terjadi jika IV diulang?
 \end{latihan}
 
 % ============================================================
@@ -46,9 +55,30 @@
 % ============================================================
 
 \begin{asesmen}
-\textbf{Instrumen Penilaian untuk Sub-CPMK 4.1}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 3.1, 3.2, 3.3}
 
-Jelaskan dalam bentuk essay: (a) Mengapa DES tidak lagi aman? (b) Apa keunggulan AES dibanding DES? (c) Kapan mode ECB masih dapat digunakan?
+\textbf{A. Essay}
+
+Jelaskan: (a) Mengapa DES tidak lagi aman? (b) Apa keunggulan AES dibanding DES? (c) Kapan mode ECB masih dapat digunakan? (d) Apa perbedaan stream cipher dan block cipher?
+
+\textbf{B. Pilihan Ganda}
+
+\begin{enumerate}
+  \item LFSR digunakan dalam:
+  \begin{enumerate}
+    \item Block cipher
+    \item Stream cipher
+    \item Hash function
+    \item Digital signature
+  \end{enumerate}
+  \item AES menggunakan struktur:
+  \begin{enumerate}
+    \item Feistel
+    \item SPN (Substitution-Permutation Network)
+    \item Stream
+    \item RSA
+  \end{enumerate}
+\end{enumerate}
 \end{asesmen}
 
 % ============================================================
@@ -56,10 +86,11 @@ Jelaskan dalam bentuk essay: (a) Mengapa DES tidak lagi aman? (b) Apa keunggulan
 % ============================================================
 
 \begin{checklist}
-  \item Saya dapat menjelaskan struktur DES (Feistel)
+  \item Saya dapat menjelaskan prinsip stream cipher (LFSR, RC4) dan block cipher (Feistel, SPN)
+  \item Saya dapat menjelaskan struktur DES (Feistel) dan 3DES
   \item Saya dapat menjelaskan struktur AES (SubBytes, ShiftRows, MixColumns, AddRoundKey)
-  \item Saya dapat membedakan mode ECB, CBC, CFB, OFB
-  \item Saya memahami peran IV dalam mode CBC
+  \item Saya dapat membedakan mode ECB, CBC, CFB, OFB, CTR
+  \item Saya memahami peran IV/nonce dalam mode CBC, CTR, GCM
 \end{checklist}
 
 % ============================================================
@@ -67,17 +98,59 @@ Jelaskan dalam bentuk essay: (a) Mengapa DES tidak lagi aman? (b) Apa keunggulan
 % ============================================================
 
 \begin{rangkuman}
-Bab ini membahas block cipher DES dan AES, serta mode operasi ECB, CBC, CFB, OFB. AES adalah standar modern untuk enkripsi simetris.
+Bab ini membahas kriptografi simetris modern: stream cipher (LFSR, RC4, A5/1), block cipher DES dan AES, serta mode operasi (ECB, CBC, CFB, OFB, CTR, GCM).
 
 \textbf{Poin Kunci:}
 \begin{itemize}
-  \item DES: Feistel, 64-bit block, 56-bit key; tidak aman untuk aplikasi baru
-  \item AES: blok 128 bit, kunci 128/192/256 bit; standar NIST
-  \item Mode operasi: ECB (lemah), CBC/CFB/OFB (lebih aman dengan IV)
+  \item Stream cipher: keystream XOR plaintext; LFSR, RC4 (legacy), A5/1 (GSM)
+  \item DES: Feistel, 64-bit block, 56-bit key; 3DES untuk kompatibilitas
+  \item AES: SPN, blok 128 bit, kunci 128/192/256 bit; SubBytes, ShiftRows, MixColumns, AddRoundKey
+  \item Mode operasi: ECB (lemah), CBC/CTR/GCM (aman dengan IV/nonce unik)
 \end{itemize}
 
-\textbf{Kata Kunci}: \crypt{Block Cipher}, \crypt{DES}, \crypt{AES}, \crypt{Feistel}, \crypt{ECB}, \crypt{CBC}
+\textbf{Kata Kunci}: \crypt{Stream Cipher}, \crypt{LFSR}, \crypt{Block Cipher}, \crypt{DES}, \crypt{AES}, \crypt{Feistel}, \crypt{SPN}, \crypt{ECB}, \crypt{CBC}, \crypt{CTR}
 \end{rangkuman}
+
+% ============================================================
+% Persiapan untuk Bab Berikutnya
+% ============================================================
+
+\begin{transition}
+Setelah mempelajari kriptografi simetris modern, kita siap untuk memasuki \textbf{Bab VI: Kriptografi Kunci Publik dan RSA}.
+
+Dalam Bab VI, kita akan memecahkan masalah fundamental yang belum terpecahkan dalam kriptografi simetris:
+\begin{itemize}
+  \item \textbf{Masalah Distribusi Kunci}: Bagaimana Alice dan Bob berbagi kunci rahasia?
+  \item \textbf{Masalah Autentikasi}: Bagaimana memastikan identitas pengirim?
+  \item \textbf{Masalah Non-repudiation}: Bagaimana mencegah penyangkalan transaksi?
+\end{itemize}
+
+\textbf{Solusi: Kriptografi Kunci Publik}:
+\begin{itemize}
+  \item \textbf{RSA}: Algoritma kunci publik pertama yang praktis
+  \item \textbf{Diffie-Hellman}: Protokol pertukaran kunci tanpa kunci rahasia awal
+  \item \textbf{ElGamal}: Evolusi dari Diffie-Hellman untuk enkripsi
+\end{itemize}
+
+\textbf{Koneksi dengan Bab V}:
+\begin{itemize}
+  \item \textbf{Simetris}: Satu kunci rahasia, cepat, masalah distribusi kunci
+  \item \textbf{Asimetris}: Dua kunci (publik+privat), lebih lambat, solusi distribusi
+  \item \textbf{Praktik}: Enkripsi hibrida — gunakan asimetris untuk kunci, simetris untuk data
+\end{itemize}
+
+\textbf{Matematika yang Akan Diterapkan}:
+\begin{itemize}
+  \item \textbf{Teori Bilangan (Bab III)}: Prima, faktorisasi, $\varphi(n)$ — dasar keamanan RSA
+  \item \textbf{Algoritma Euclid (Bab III)}: Invers modular untuk kunci privat RSA
+  \item \textbf{Fast Exponentiation (Bab III)}: Enkripsi/dekripsi RSA yang efisien
+  \item \textbf{Chinese Remainder Theorem (Bab III)}: Optimasi dekripsi RSA
+\end{itemize}
+
+\textbf{Preview}: Di Bab VI, kita akan melihat bagaimana teori bilangan yang kita pelajari di Bab III menjadi fondasi keamanan RSA. Kita akan memahami mengapa faktorisasi bilangan besar yang sulit membuat RSA aman, dan bagaimana algoritma Euclid diperluas memungkinkan generasi kunci privat. Kita juga akan melihat bagaimana Diffie-Hellman memecahkan masalah distribusi kunci yang menjadi keterbatasan kriptografi simetris.
+
+Setelah Bab VI, Anda akan mengerti mengapa sistem keamanan modern menggunakan kombinasi kriptografi simetris dan asimetris, dan bagaimana kedua pendekatan ini saling melengkapi untuk menciptakan sistem yang aman dan efisien.
+\end{transition}
 
 \ifSubfilesClassLoaded{
   \renewcommand{\bibname}{Daftar Pustaka}

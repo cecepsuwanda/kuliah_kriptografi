@@ -1,0 +1,21 @@
+\section{MAC, HMAC, dan Birthday Paradox}
+
+\subsection{Birthday Paradox}
+
+Untuk fungsi hash dengan output $n$ bit, serangan brute-force collision memerlukan sekitar $2^{n/2}$ percobaan karena \textbf{Birthday Paradox} \cite{stallings2017}. Dalam kelompok $\sqrt{2^n} \approx 2^{n/2}$ input acak, probabilitas menemukan collision mendekati 50\%.
+
+Implikasi: hash 128-bit (MD5) memiliki keamanan collision efektif sekitar $2^{64}$; hash 256-bit (SHA-256) sekitar $2^{128}$. Oleh karena itu SHA-256 direkomendasikan untuk keamanan jangka panjang \cite{menezes1996}.
+
+\subsection{MAC (Message Authentication Code)}
+
+MAC memastikan \textbf{integritas dan otentikasi} pesan menggunakan kunci rahasia bersama. MAC$(m, K) = \tau$; verifikasi: hitung ulang MAC dan bandingkan. Berbeda dengan hash biasa, MAC memerlukan kunci—penyerang tanpa kunci tidak dapat memalsukan MAC valid \cite{stallings2017}.
+
+\subsection{HMAC}
+
+HMAC (Hash-based MAC) mengkombinasikan fungsi hash $H$ dengan kunci $K$ \cite{stallings2017}:
+\[
+\text{HMAC}(K, m) = H\bigl( (K' \oplus \text{opad}) \| H( (K' \oplus \text{ipad}) \| m ) \bigr)
+\]
+dengan $K'$ adalah kunci yang dipad/dipotong ke ukuran blok hash, opad dan ipad konstanta.
+
+HMAC aman selama hash dasarnya aman. Digunakan untuk autentikasi dalam TLS, API, JWT. Gunakan SHA-256 atau SHA-3 sebagai hash dasar \cite{menezes1996}.

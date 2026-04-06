@@ -5,8 +5,8 @@
 \chapter{Landasan Teori dan Konsep Dasar Kriptografi}
 
 \begin{subcpmk}
-  \item Sub-CPMK 1.1: Menjelaskan model komunikasi aman dan ancaman keamanan informasi
-  \item Sub-CPMK 1.2: Mendefinisikan confidentiality, integrity, dan authenticity
+  \item Sub-CPMK 1.1: Menjelaskan layanan keamanan (confidentiality, integrity, availability, non-repudiation) dan sejarah kriptografi
+  \item Sub-CPMK 1.2: Menghitung entropi dan laju bahasa dalam konteks teori informasi
   \item Sub-CPMK 1.3: Membedakan kriptografi simetris dan asimetris
 \end{subcpmk}
 
@@ -15,9 +15,11 @@
 % ============================================================
 \input{bab-02/section-2-1}
 \input{bab-02/section-2-2}
+\input{bab-02/section-2-2a}
 \input{bab-02/section-2-3}
 \input{bab-02/section-2-4}
 \input{bab-02/section-2-5}
+\input{bab-02/section-2-6}
 
 % ============================================================
 % AKTIVITAS PEMBELAJARAN
@@ -30,7 +32,9 @@
   
   \item \textbf{Perbandingan}: Buat tabel perbandingan antara kriptografi simetris dan asimetris untuk penggunaannya dalam: enkripsi file, pertukaran kunci, tanda tangan digital.
   
-  \item \textbf{Mind Mapping}: Buat mind map yang menghubungkan confidentiality, integrity, authenticity dengan mekanisme kriptografi yang mendukungnya.
+  \item \textbf{Mind Mapping}: Buat mind map yang menghubungkan confidentiality, integrity, availability, non-repudiation dengan mekanisme kriptografi yang mendukungnya.
+  
+  \item \textbf{Perhitungan Entropi}: Hitung entropi untuk sumber dengan 4 simbol berpeluang sama. Bandingkan dengan laju bahasa Inggris.
 \end{aktivitas}
 
 % ============================================================
@@ -40,7 +44,7 @@
 \begin{latihan}
   \item Jelaskan definisi plaintext, ciphertext, cipher, dan key! Berikan contoh konkret.
   
-  \item Sebutkan dan jelaskan tiga pilar keamanan informasi (confidentiality, integrity, authenticity)! Berikan contoh ancaman yang melanggar masing-masing.
+  \item Sebutkan dan jelaskan empat layanan keamanan informasi (confidentiality, integrity, availability, non-repudiation)! Berikan contoh ancaman yang melanggar masing-masing.
   
   \item Apa perbedaan utama antara kriptografi simetris dan asimetris? Kapan masing-masing lebih cocok digunakan?
   
@@ -61,12 +65,12 @@
 \textbf{A. Pilihan Ganda}
 
 \begin{enumerate}
-  \item Manakah yang BUKAN merupakan pilar keamanan informasi?
+  \item Manakah yang BUKAN merupakan layanan keamanan informasi?
   \begin{enumerate}
     \item Confidentiality
     \item Integrity
     \item Complexity
-    \item Authenticity
+    \item Non-repudiation
   \end{enumerate}
   
   \item Dalam kriptografi simetris, jumlah kunci yang digunakan adalah:
@@ -104,7 +108,8 @@
 \begin{checklist}
   \item Saya dapat menjelaskan terminologi dasar kriptografi (plaintext, ciphertext, cipher, key)
   \item Saya dapat menjelaskan model komunikasi aman dan ancaman keamanan
-  \item Saya dapat mendefinisikan confidentiality, integrity, dan authenticity
+  \item Saya dapat mendefinisikan confidentiality, integrity, availability, dan non-repudiation
+  \item Saya dapat menghitung entropi sederhana dan menjelaskan laju bahasa serta redundansi
   \item Saya dapat membedakan kriptografi simetris dan asimetris
   \item Saya dapat memberikan contoh penggunaan masing-masing jenis kriptografi
 \end{checklist}
@@ -114,18 +119,43 @@
 % ============================================================
 
 \begin{rangkuman}
-Bab ini membahas landasan teori kriptografi, termasuk definisi, sejarah, terminologi, model komunikasi aman, ancaman keamanan, tiga pilar keamanan informasi, serta perbedaan kriptografi simetris dan asimetris.
+Bab ini membahas landasan teori kriptografi: definisi, sejarah, terminologi, model komunikasi aman, ancaman keamanan, layanan keamanan informasi (CIA + non-repudiation), teori informasi (entropi, laju bahasa, redundansi), serta perbedaan kriptografi simetris dan asimetris.
 
 \textbf{Poin Kunci:}
 \begin{itemize}
   \item Kriptografi mengamankan informasi melalui enkripsi dan dekripsi
-  \item Tiga pilar: Confidentiality, Integrity, Authenticity
+  \item Layanan keamanan: Confidentiality, Integrity, Availability, Non-repudiation
+  \item Entropi mengukur ketidakpastian; redundansi memungkinkan analisis frekuensi
   \item Simetris: satu kunci, cepat; Asimetris: pasangan kunci, handal untuk distribusi
-  \item Pemahaman landasan teori adalah fondasi untuk mempelajari algoritma kriptografi
 \end{itemize}
 
-\textbf{Kata Kunci}: \crypt{Kriptografi}, \crypt{Plaintext}, \crypt{Ciphertext}, \crypt{Enkripsi}, \crypt{Dekripsi}, \crypt{Confidentiality}, \crypt{Integrity}, \crypt{Authenticity}
+\textbf{Kata Kunci}: \crypt{Kriptografi}, \crypt{Plaintext}, \crypt{Ciphertext}, \crypt{Entropi}, \crypt{Confidentiality}, \crypt{Integrity}, \crypt{Availability}, \crypt{Non-repudiation}
 \end{rangkuman}
+
+% ============================================================
+% Persiapan untuk Bab Berikutnya
+% ============================================================
+\begin{transition}
+Setelah memahami konsep dasar kriptografi dan landscape keamanan informasi, kita siap untuk memasuki \textbf{Bab III: Matematika Kriptografi}.
+
+Dalam Bab III, kita akan mempelajari fondasi matematika yang membuat semua cipher bekerja:
+\begin{itemize}
+  \item \textbf{Aritmetika modular}: Fondasi untuk Caesar, Vigenère, dan RSA
+  \item \textbf{Algoritma Euclid}: Untuk menghitung invers modular yang diperlukan RSA
+  \item \textbf{Teori bilangan}: Prima, faktorisasi, yang menjadi dasar keamanan RSA
+  \item \textbf{Fast exponentiation}: Untuk komputasi efisien dalam RSA dan Diffie-Hellman
+  \item \textbf{Aljabar abstrak}: Grup, field, dan Galois Field untuk AES
+\end{itemize}
+
+Setiap konsep matematika akan langsung kita terapkan:
+\begin{itemize}
+  \item Modular arithmetic $\rightarrow$ Caesar dan Vigenère cipher (Bab IV)
+  \item Teori bilangan $\rightarrow$ RSA (Bab VI)
+  \item Galois Field $\rightarrow$ AES (Bab V)
+\end{itemize}
+
+Pendekatan ini memastikan Anda melihat langsung relevansi matematika dalam aplikasi kriptografi, bukan hanya sebagai teori abstrak. Setelah Bab III, Anda akan memiliki alat matematika yang diperlukan untuk memahami dan mengimplementasikan semua cipher yang akan kita pelajari.
+\end{transition}
 
 \ifSubfilesClassLoaded{
   \renewcommand{\bibname}{Daftar Pustaka}

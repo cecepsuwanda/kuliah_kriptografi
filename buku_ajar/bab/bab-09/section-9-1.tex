@@ -1,16 +1,42 @@
-\section{Frequency Analysis}
+\section{Pembangkit Bilangan Acak (RNG)}
 
-\subsection{Prinsip}
+\subsection{PRNG vs TRNG}
 
-Dalam bahasa alami, setiap huruf memiliki frekuensi kemunculan yang khas. Untuk bahasa Inggris (contoh): E $\approx$ 12\%, T $\approx$ 9\%, A $\approx$ 8\%, O $\approx$ 7\%, I $\approx$ 7\%, N $\approx$ 7\%, S $\approx$ 6\%, ...
+\textbf{TRNG (True Random Number Generator)}: Menggunakan sumber fisik yang tidak dapat diprediksi (noise termal, radioaktivitas, gerakan mouse). Output benar-benar acak; cocok untuk seed, kunci, nonce \cite{stallings2017}.
 
-Untuk cipher substitusi monoalfabetik (termasuk Caesar), pemetaan huruf bersifat satu-satu. Huruf yang paling sering dalam ciphertext kemungkinan besar memetakan ke E, T, atau A. Dengan mencoba korespondensi dan memeriksa kemungkinan kata, penyerang dapat memecahkan cipher.
+{\sloppy \textbf{PRNG (Pseudo-Random Number Generator)}: Algoritma deterministik yang menghasilkan deret bit yang \textit{tampak} acak dari seed. Diberikan seed sama, output sama. Untuk kriptografi harus \textbf{CSPRNG} (Cryptographically Secure PRNG) \cite{menezes1996}.\par}
 
-\subsection{Langkah Praktis}
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    Sifat & TRNG & PRNG \\
+    \midrule
+    Prediktabilitas & Tidak dapat diprediksi & Deterministik dari seed \\
+    Kecepatan & Biasanya lambat & Cepat \\
+    Penggunaan & Seed, kunci, IV & Keystream, nonce (dari seed) \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perbandingan TRNG dan PRNG.}
+\end{table}
 
-\begin{enumerate}
-  \item Hitung frekuensi setiap huruf dalam ciphertext
-  \item Urutkan dari yang paling sering
-  \item Coba pemetaan: huruf paling sering $\to$ E, kedua $\to$ T, dsb.
-  \item Sesuaikan berdasarkan konteks (kata yang mungkin, bigram, trigram)
-\end{enumerate}
+\subsection{Linear Congruential Generator (LCG)}
+
+LCG: $x_{n+1} = (a \cdot x_n + c) \bmod m$. Parameter $a$, $c$, $m$ menentukan periode dan kualitas. LCG \textbf{tidak aman} untuk kriptografi—polanya dapat dideteksi dari sedikit output \cite{schneier1996}. Hanya untuk simulasi non-keamanan.
+
+\subsection{Blum Blum Shub (BBS)}
+
+BBS adalah CSPRNG berbasis kesulitan faktorisasi \cite{menezes1996}. Pilih prima $p$, $q$ kongruen 3 mod 4. Seed $x_0$ koprima dengan $n = pq$. Iterasi:
+\[
+x_{i+1} = x_i^2 \bmod n
+\]
+Output: bit paritas dari $x_i$ (atau bit low-order). Aman secara kriptografis tetapi lambat; digunakan untuk kunci, bukan keystream volume tinggi.
+
+\subsection{Uji Keacakan}
+
+NIST SP 800-22 mendefinisikan serangkaian uji statistik untuk mengevaluasi keacakan deret bit \cite{stallings2017}. Contoh uji: frequency (monobit), runs, longest run, spectral, dll. Deret yang lolos uji tidak menjamin keamanan kriptografis, tetapi kegagalan uji mengindikasikan kelemahan.
+
+\begin{catatan}
+Untuk kriptografi, gunakan \texttt{/dev/urandom} (Linux), \texttt{ CryptGenRandom} (Windows), atau API CSPRNG library (OpenSSL \texttt{RAND\_bytes}). Hindari \texttt{rand()} untuk kunci atau nonce \cite{ferguson2010}.
+\end{catatan}

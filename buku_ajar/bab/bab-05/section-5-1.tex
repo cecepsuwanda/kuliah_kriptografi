@@ -4,21 +4,19 @@
 
 Block cipher memecah plaintext menjadi blok-blok dengan ukuran tetap, kemudian mengenkripsi setiap blok secara independen. Berbeda dengan cipher klasik yang memproses karakter satu per satu, block cipher bekerja pada unit data yang lebih besar, memberikan keamanan dan efisiensi yang lebih baik. DES adalah contoh paling terkenal dari block cipher yang menggunakan blok 64 bit dengan kunci 56 bit efektif.
 
-Block cipher merevolusi konsep enkripsi dari substitusi karakter ke substitusi blok yang lebih kompleks dan aman. Menurut Wikipedia, DES dikembangkan oleh IBM pada awal tahun 1970-an dan distandarisasi sebagai Data Encryption Standard (DES) oleh NIST pada tahun 1977. Standaris ini sangat penting karena menciptakan spesifikasi yang terstandar untuk enkripsi simetris yang digunakan secara luas dalam industri dan pemerintahan.
-
-Keunggulan utama block cipher dibandingkan cipher klasik adalah keamanan yang jauh lebih tinggi karena memproses data dalam blok yang lebih besar. Menurut sumber keamanan, block cipher modern seperti AES menggunakan blok 128 bit atau 256 bit yang memberikan ruang kunci yang sangat besar (\(2^{128}\) atau \(2^{256}\) kemungkinan), membuat serangan brute force menjadi tidak mungkin secara praktis. Namun, block cipher juga memperkenalkan tantangan baru seperti implementasi mode operasi dan padding yang harus ditangani dengan hati-hati.
+DES dikembangkan oleh IBM pada 1970-an dan distandarisasi sebagai FIPS 46 oleh NIST pada 1977 \cite{fips46_3}. Block cipher modern seperti AES menggunakan blok 128 bit dan kunci hingga 256 bit \cite{stallings2017}.
 
 \subsection{Struktur Feistel DES}
 
 DES menggunakan struktur Feistel dengan 16 round untuk menciptakan kebingungan yang tinggi (confusion dan diffusion). Setiap round terdiri dari empat operasi utama: Expansion, Substitution, Permutation, dan Mixing. Struktur ini dirancang untuk memastikan bahwa perubahan kecil dalam plaintext atau kunci akan menyebabkan perubahan besar dalam ciphertext, membuat analisis kriptografi menjadi sangat sulit.
 
-Struktur Feistel DES dirancang secara matematis untuk memaksimalkan sifat keamanan yang diinginkan oleh Claude Shannon: confusion dan diffusion. Menurut Wikipedia, tim IBM yang mengembangkan DES termasuk para ahli seperti Horst Feistel, Walter Tuchman, Don Coppersmith, dan Carl Meyer yang memainkan peran penting dalam teori informasi dan kriptografi modern. Struktur 16-round ini memastikan bahwa setiap bit output sangat bergantung pada banyak bit input, menciptakan kebingungan yang kompleks dan tidak linear.
+Struktur Feistel memberikan confusion dan diffusion \cite{stallings2017}. Dekripsi mirip enkripsi karena operasi $F$ tidak harus invertible.
 
 \subsection{Fungsi Round DES}
 
 Setiap round DES menggunakan fungsi round yang sama dengan kunci subround yang berbeda. Fungsi ini menggabungkan empat operasi dasar: Expansion E, Substitution S, Permutation P, dan Mixing M. Operasi-operasi ini dirancang untuk memberikan kombinasi optimal antara keamanan dan efisiensi, dengan setiap operasi berkontribusi pada sifat confusion dan diffusion yang diinginkan.
 
-Fungsi round DES menunjukkan bagaimana operasi matematis yang kompleks dapat dikombinasikan untuk menciptakan transformasi non-linear yang aman. Menurut spesifikasi NIST FIPS 46-3, setiap fungsi round harus diimplementasikan secara tepat untuk memastikan interoperabilitas antar implementasi yang berbeda. Kombinasi dari expansion, substitution, permutation, dan mixing ini menciptakan sifat avalanche di mana perubahan kecil pada input menyebabkan perubahan besar pada output.
+Fungsi round DES memadukan expansion (E), S-box (S), permutation (P) \cite{fips46_3}. Kombinasi ini menciptakan avalanche effect.
 
 \begin{figure}[htbp]
   \centering
@@ -79,21 +77,15 @@ DES memiliki beberapa komponen fundamental yang bekerja sama untuk menciptakan k
 
 \subsection{DES (Data Encryption Standard)}
 
-DES distandarisasi sebagai Data Encryption Standard (DES) oleh National Institute of Standards and Technology (NIST) pada tahun 1977. Menurut Wikipedia, standar ini diterbitkan pada November 1976 dan diterbitkan kembali pada tahun 1983, 1988, dan 1993 sebagai FIPS 46-1, 46-2, dan 46-3. DES menggunakan blok 64 bit dengan kunci 56 bit efektif, dirancang untuk keamanan tingkat tinggi pada masanya.
-
-Standarisasi DES sebagai federal standard sangat signifikan karena menciptakan spesifikasi yang terstandar dan teruji untuk enkripsi simetris. Menurut sumber sejarah, proses standarisasi melibatkan evaluasi keamanan yang ketat oleh para ahli dari NSA, IBM, dan akademia. Hasilnya adalah standar yang sangat kuat tetapi juga memiliki kelemahan yang diketahui, seperti kunci yang relatif pendek dan kerentanan terhadap serangan differential cryptanalysis.
+DES distandarisasi sebagai FIPS 46 oleh NIST \cite{fips46_3}. Blok 64 bit, kunci 56 bit efektif. Kerentanan utama: brute force (56 bit) dan differential/linear cryptanalysis \cite{stallings2017}.
 
 \subsection{Serangan terhadap DES}
 
-DES memiliki beberapa kerentanan keamanan yang signifikan yang membatasi penggunaannya dalam aplikasi modern. Menurut Wikipedia, DES rentan terhadap \textbf{brute force attack} karena kunci 56 bit dapat dipecahkan dengan komputer modern dalam waktu yang wajar. Serangan ini berhasil dilakukan pada tahun 1998 ketika mesin khusus dibangun untuk menguji semua kemungkinan kunci DES dalam beberapa hari.
-
-\textbf{Differential cryptanalysis} menjadi teknik yang paling efektif untuk menyerang DES. Menurut Wikipedia, teknik ini menganalisis perbedaan ciphertext yang dihasilkan dari plaintext yang berbeda dengan kunci yang sedikit berbeda. Dengan mengumpulkan cukup pasangan plaintext-ciphertext, penyerang dapat memulihkan kunci DES tanpa harus melakukan brute force penuh.
-
-\textbf{Linear cryptanalysis} juga efektif terhadap DES karena struktur Feistel yang linear membuatnya rentan terhadap serangan yang memanfaatkan hubungan linear. Menurut sumber keamanan, kombinasi dari linear cryptanalysis dan differential cryptanalysis dapat mengurangi keamanan DES secara signifikan, yang pada akhirnya menyebabkan pengembangan 3DES untuk mengatasi kelemahan ini.
+DES rentan terhadap brute force (kunci 56 bit dapat dipecahkan dalam waktu wajar), differential cryptanalysis, dan linear cryptanalysis \cite{menezes1996}.
 
 \subsection{3DES (Triple DES)}
 
-Untuk mengatasi kelemahan DES, dikembangkan 3DES yang menerapkan enkripsi DES tiga kali secara berurutan dengan tiga kunci berbeda. Menurut Wikipedia, 3DES dirancang oleh Walter Tuchman dan pertama kali dipublikasikan pada tahun 1978. Meskipun 3DES memberikan keamanan yang lebih baik, ia juga memiliki kelemahan: kunci yang tiga kali lebih panjang (3 × 56 = 168 bit) dan proses yang lebih lambat.
+3DES menerapkan DES tiga kali dengan kunci berbeda; keamanan efektif sekitar 112 bit \cite{stallings2017}. 3DES lebih lambat; untuk aplikasi baru gunakan AES.
 
 \begin{table}[htbp]
   \centering
@@ -111,7 +103,7 @@ Untuk mengatasi kelemahan DES, dikembangkan 3DES yang menerapkan enkripsi DES ti
 
 \subsection{Implementasi Praktis}
 
-Implementasi DES dalam praktik modern tidak direkomendasikan karena kompleksitas dan risiko keamanan. Menurut Wikipedia, implementasi DES yang benar sangat sulit dan rentan terhadap berbagai serangan side-channel. Sebagian besar implementasi menggunakan library kriptografi yang sudah teruji seperti OpenSSL, Crypto++, atau libsodium yang menyediakan implementasi AES yang lebih aman dan efisien.
+Implementasi DES hanya direkomendasikan untuk tujuan edukasi. Gunakan library teruji (OpenSSL, libsodium) untuk produksi \cite{ferguson2010}.
 
 \begin{catatan}
 Implementasi manual DES hanya direkomendasikan untuk tujuan edukasi dan pemahaman konsep. Untuk aplikasi produksi, selalu gunakan library yang telah melalui audit keamanan profesional dan validasi standar industri. Hindari implementasi sendiri dari algoritma kompleks seperti DES kecuali jika diperlukan untuk pembelajaran mendalam tentang kriptanalisis.
@@ -154,15 +146,11 @@ Kunci DES 64 bit mengandung 8 bit parity, sehingga hanya 56 bit efektif. Proses 
 
 \subsection{Evolusi dari DES ke AES}
 
-Kelemahan DES mendorong pengembangan Advanced Encryption Standard (AES) melalui kompetisi internasional yang diselenggarakan oleh NIST dari tahun 1997 hingga 2000. Menurut Wikipedia, kompetisi ini mengevaluasi 15 kandidat dari berbagai negara sebelum memilih Rijndael sebagai pemenang. AES menawarkan keamanan yang jauh superior dengan kunci 128, 192, atau 256 bit dan blok 128 bit, mengatasi semua kelemahan fundamental DES.
-
-Transisi dari DES ke AES menandai evolusi signifikan dalam kriptografi simetris modern. Menurut sumber keamanan, AES tidak hanya mengatasi kerentanan brute force DES, tetapi juga memberikan performa yang lebih baik dalam implementasi perangkat keras dan perangkat lunak. Standar ini dirancang untuk masa depan dengan kemampuan untuk menahan serangan kuantum dan komputasi klasik yang canggih.
+AES dipilih NIST (1997--2000) sebagai pemenang kompetisi; Rijndael menang \cite{fips197}. AES menggunakan blok 128 bit, kunci 128/192/256 bit.
 
 \subsection{Pentingnya DES dalam Sejarah Kriptografi}
 
-Meskipun tidak lagi direkomendasikan untuk penggunaan baru, DES memainkan peran fundamental dalam pengembangan kriptografi modern. Menurut Wikipedia, DES adalah cipher simetris pertama yang distandarisasi secara publik dan menjadi dasar untuk penelitian kriptanalisis selama beberapa dekade. Banyak teknik analisis yang dikembangkan untuk DES menjadi dasar untuk evaluasi keamanan cipher modern.
-
-Warisan DES terlihat dalam struktur desain AES dan cipher modern lainnya. Menurut sumber akademis, konsep seperti S-box, permutasi, dan struktur Feistel yang diperkenalkan atau dipopulerkan oleh DES tetap menjadi komponen fundamental dalam desain cipher modern. DES juga mengajarkan komunitas kriptografi pentingnya evaluasi keamanan publik dan standar terbuka.
+DES adalah cipher simetris pertama yang distandarisasi publik; konsep S-box, Feistel, confusion/diffusion tetap fundamental \cite{stallings2017}.
 
 \begin{catatan}
 Studi DES tetap penting untuk pemahaman mendalam tentang kriptografi simetris dan kriptanalisis. Banyak konsep fundamental dalam kriptografi modern, seperti confusion, diffusion, dan avalanche effect, pertama kali dipelajari secara mendalam melalui analisis DES. Meskipun tidak lagi digunakan dalam produksi, DES tetap menjadi alat edukasi yang sangat berharga.

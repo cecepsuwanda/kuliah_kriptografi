@@ -2,7 +2,7 @@
 
 \subsection{Konsep}
 
-Cipher Hill menggunakan aljabar linear: plaintext dibagi menjadi blok berukuran $n$, lalu dikalikan dengan matriks kunci $K$ berukuran $n \times n$ secara modulo 26 \cite{libretexts_hill}. 
+Cipher Hill menggunakan aljabar linear: plaintext dibagi menjadi blok berukuran $n$, lalu dikalikan dengan matriks kunci $K$ berukuran $n \times n$ secara modulo 26 \cite{stallings2017,trappe2006}. 
 
 \[
 \mathbf{C} = K \mathbf{P} \bmod 26
@@ -35,9 +35,7 @@ Gunakan $K=\begin{bmatrix}3 & 3\\ 2 & 1\end{bmatrix}$. Plaintext HI:
 
 Sebagai ilustrasi syarat invertibilitas: matriks $K$ berukuran $2 \times 3$ (bukan persegi) tidak dapat memiliki invers. Untuk matriks $2 \times 2$ modulo 26, determinan harus relatif prima dengan 26. Contoh: $K=\begin{bmatrix}6 & 24\\ 13 & 16\end{bmatrix}$ mempunyai determinan $6 \cdot 16 - 24 \cdot 13 = 96 - 312 = -216$. Karena $\gcd(216, 26) = 2 \neq 1$, matriks tidak invertible modulo 26.
 
-Cipher Hill merevolusi konsep enkripsi dari substitusi sederhana ke sistem yang berbasis matriks dan aljabar linear. Menurut sumber historis, cipher ini dikembangkan oleh Lester S. Hill pada tahun 1929, menggunakan konsep matriks dan modular arithmetic yang telah dipelajari dalam Bab III. Hill cipher merupakan langkah penting dalam evolusi kriptografi karena mengintegrasikan matematika tingkat lanjut secara langsung ke dalam proses enkripsi.
-
-Keunggulan utama Hill cipher adalah ketergantungan pada linearitas matriks kunci. Jika matriks kunci tidak invertible (determinannya tidak relatif prima dengan modulus), maka dekripsi tidak mungkin dilakukan. Selain itu, Hill cipher juga rentan terhadap serangan known-plaintext karena jika penyerang memperoleh beberapa pasangan plaintext-ciphertext, mereka dapat menyelesaikan sistem persamaan linear untuk memulihkan matriks kunci. Kerentanan ini menunjukkan pentingnya memilih parameter matriks yang valid dan memahami batasan keamanan dari setiap cipher.
+Cipher Hill dikembangkan oleh Lester S. Hill (1929) menggunakan aljabar linear dan modular arithmetic \cite{trappe2006}. Hill cipher rentan terhadap known-plaintext attack: dengan $n^2$ pasangan plaintext-ciphertext, penyerang dapat menyelesaikan sistem persamaan linear untuk memulihkan matriks kunci.
 
 \subsection{Implementasi dalam C}
 

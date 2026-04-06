@@ -4,7 +4,7 @@
 
 Bilangan prima adalah bilangan bulat $p > 1$ yang hanya habis dibagi oleh 1 dan dirinya sendiri. Bilangan prima penting dalam kriptografi karena menjadi dasar pembangkitan kunci RSA \cite{shoup2009}.
 
-Bilangan prima membentuk fondasi keamanan dalam banyak algoritma kriptografi modern, terutama RSA yang secara fundamental bergantung pada sifat unik dari bilangan prima. Menurut GeeksforGeeks, sistem kriptografi sering mengandalkan kesulitan faktorisasi bilangan komposit besar menjadi faktor prima-faktornya. Sifat ini menciptakan masalah satu arah di mana mengalikan dua bilangan prima besar mudah, tetapi memfaktorkan hasilnya kembali menjadi sangat sulit secara komputasional.
+Bilangan prima membentuk fondasi keamanan dalam banyak algoritma kriptografi modern \cite{stallings2017}. RSA bergantung pada kesulitan faktorisasi: mengalikan dua bilangan prima besar mudah, tetapi memfaktorkan hasilnya kembali sangat sulit secara komputasional.
 
 Dalam praktik, RSA dan Diffie-Hellman menggunakan bilangan prima yang sangat besar (ratusan atau ribuan digit) untuk memastikan keamanan. Generasi bilangan prima ini memerlukan algoritma uji primalitas yang efisien seperti Miller-Rabin yang dapat memverifikasi primalitas dengan probabilitas tinggi tanpa harus melakukan faktorisasi penuh. Ketersediaan bilangan prima yang aman dan acak sangat penting untuk keamanan jangka panjang sistem kriptografi kunci publik.
 
@@ -31,7 +31,7 @@ Dalam praktik, RSA dan Diffie-Hellman menggunakan bilangan prima yang sangat bes
   \caption{Perbandingan ringkas uji primalitas.}
 \end{table}
 
-Menurut GeeksforGeeks, uji primalitas probabilistik seperti Miller-Rabin sangat penting untuk protokol kriptografi yang sering memerlukan generasi bilangan prima besar. Algoritma ini bekerja dengan sangat cepat dan dapat memverifikasi primalitas dengan probabilitas kesalahan yang dapat diabaikan, membuatnya ideal untuk aplikasi kriptografi dunia nyata. Efisiensi ini sangat penting karena generasi kunci RSA yang aman memerlukan penemuan bilangan prima besar secara berulang.
+Uji primalitas probabilistik seperti Miller-Rabin sangat penting untuk protokol kriptografi \cite{shoup2009}. Algoritma ini cepat dan memverifikasi primalitas dengan probabilitas kesalahan yang dapat diabaikan, ideal untuk generasi bilangan prima besar dalam RSA.
 
 Pemilihan metode uji primalitas tergantung pada ukuran bilangan dan kebutuhan aplikasi. Untuk bilangan kecil, trial division atau sieve of Eratosthenes mungkin sudah cukup, tetapi untuk bilangan besar yang digunakan dalam kriptografi modern, Miller-Rabin atau uji primalitas probabilistik lainnya menjadi satu-satunya pilihan praktis. Trade-off antara kecepatan dan kepastian menjadi pertimbangan penting dalam desain sistem kriptografi.
 
@@ -96,3 +96,12 @@ Teorema Euler menjadi dasar matematis untuk RSA: $a^{k \cdot \varphi(n) + 1} \eq
 Teorema Euler menggeneralisasi Teorema Fermat Kecil dan membentuk landasan matematis untuk operasi kriptografi kunci publik. Dalam RSA, teorema ini menjamin bahwa $m^{e \cdot d} \equiv m \pmod{n}$ ketika $e \cdot d \equiv 1 \pmod{\varphi(n)}$, yang merupakan prinsip dasar enkripsi dan dekripsi RSA. Sifat ini memastikan bahwa operasi dekripsi benar-benar membalikkan operasi enkripsi ketika kunci yang tepat digunakan.
 
 Penting untuk dicatat bahwa Teorema Euler hanya berlaku ketika $\gcd(a, n) = 1$, yang dalam konteks RSA berarti bahwa pesan harus relatif prima dengan modulus. Dalam praktik, ini biasanya tidak menjadi masalah karena modulus $n$ adalah produk dari dua bilangan prima besar dan pesan umumnya jauh lebih kecil dari $n$, membuat probabilitas bahwa $\gcd(m, n) \neq 1$ sangat kecil. Namun, implementasi yang robust harus memeriksa kondisi ini untuk memastikan operasi dekripsi bekerja dengan benar.
+
+\subsection{Chinese Remainder Theorem}
+
+\textbf{Chinese Remainder Theorem (CRT)}: Jika $n_1,\ldots,n_k$ saling koprima dan $a_1,\ldots,a_k$ sebarang bilangan bulat, maka terdapat tepat satu solusi $x$ modulo $N = n_1 \cdots n_k$ untuk sistem kongruensi:
+\[
+x \equiv a_i \pmod{n_i} \quad \text{untuk } i = 1,\ldots,k
+\]
+
+CRT memungkinkan komputasi modulo $N$ dilakukan secara paralel dalam modulus yang lebih kecil, mempercepat operasi seperti dekripsi RSA \cite{stallings2017}. Dalam implementasi RSA, CRT dipakai untuk menghitung $m = c^d \bmod n$ via $m_p = c^d \bmod p$ dan $m_q = c^d \bmod q$, lalu menggabungkan hasil dengan CRT.

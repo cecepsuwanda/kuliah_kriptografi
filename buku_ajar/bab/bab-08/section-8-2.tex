@@ -2,7 +2,7 @@
 
 \subsection{Siklus Hidup Kunci}
 
-Manajemen kunci kriptografi modern memerlukan pendekatan yang komprehensif untuk memastikan keamanan, ketersediaan, dan kepatutan terhadap regulasi. Menurut Microsoft, desain PKI yang baik harus mempertimbangkan berbagai aspek operasional, keamanan, dan kepatuhan bisnis. Manajemen kunci yang efektif memerlukan kombinasi teknologi, prosedur, dan kebijakan yang terintegrasi.
+Manajemen kunci memerlukan pendekatan komprehensif untuk keamanan dan ketersediaan \cite{stallings2017}.
 
 \begin{itemize}
   \item \textbf{Generasi}: Kunci harus dihasilkan dengan sumber acak yang aman (CSPRNG)
@@ -13,13 +13,12 @@ Manajemen kunci kriptografi modern memerlukan pendekatan yang komprehensif untuk
   \item \textbf{Pencabutan}: Jika kunci bocor, cabut dan ganti segera
 \end{itemize}
 
-Manajemen kunci memerlukan pendekatan yang sistematis dan prosedural yang ketat. Menurut sumber keamanan, setiap aspek manajemen harus didokumentasikan dan diaudit secara berkala untuk memastikan konsistensi dan kepatuhan. Implementasi manajemen kunci yang buruk dapat menyebabkan kebocoran kunci, downtime sistem, atau bahkan kegagalan keamanan perusahaan.
 
 \subsection{Distribusi Kunci}
 
-Untuk kriptografi simetris, distribusi kunci merupakan tantangan yang kompleks. Solusi modern menggunakan arsitektur PKI (Public Key Infrastructure) yang terstandar. Menurut Microsoft, PKI menyediakan kerangka kerja yang terpisah untuk Certificate Authority (CA), Registration Authority (RA), dan Validation Authority (VA), memungkinkan manajemen siklus hidup kunci yang terpusat dan skalabel.
+\subsection{Arsitektur PKI}
 
-PKI terdiri dari beberapa komponen fundamental yang bekerja sama untuk memastikan keamanan:
+PKI (Public Key Infrastructure) menyediakan kerangka untuk distribusi dan validasi kunci publik \cite{stallings2017}. Komponen:
 \begin{itemize}
   \item \textbf{Certificate Authority (CA)}: Menerbitkan dan menandatangani sertifikat digital
   \item \textbf{Registration Authority (RA)}: Mendaftarkan identitas pemohon sertifikat
@@ -29,6 +28,4 @@ PKI terdiri dari beberapa komponen fundamental yang bekerja sama untuk memastika
   \item \textbf{Key Management}: Menyimpan dan melindungi kunci CA
 \end{itemize}
 
-Arsitektur PKI yang dirancang dengan baik memungkinkan segregasi tugas, delegasi otoritas, dan redundansi. Menurut sumber keamanan, implementasi PKI yang sukses harus mengikuti standar industri seperti X.509 untuk format sertifikat dan protokol manajemen kunci yang aman seperti KMIP (Key Management Interoperability Protocol).
-
-Untuk kriptografi simetris, distribusi kunci merupakan tantangan tersendiri. Solusi praktis meliputi: pertukaran Diffie-Hellman untuk menghasilkan kunci sesi; enkripsi kunci simetris dengan kunci publik penerima (hybrid encryption); serta Key Distribution Center (KDC) dalam skema terpusat. Pertukaran Diffie-Hellman tetap menjadi pilihan utama dalam protokol modern seperti TLS karena efisiensi komputasional dan forward secrecy. Enkripsi kunci simetris dengan kunci publik penerima menyediakan keamanan end-to-end yang baik. KDC memungkinkan kontrol terpusat atas kunci dan kebijakan yang konsisten untuk organisasi besar.
+Format sertifikat mengikuti X.509 \cite{stallings2017}. Distribusi kunci simetris: Diffie-Hellman (TLS), hybrid encryption (RSA + AES), atau Key Distribution Center (KDC) untuk skema terpusat.

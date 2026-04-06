@@ -5,15 +5,21 @@
 \chapter{Kriptografi Asimetris dan RSA}
 
 \begin{subcpmk}
-  \item Sub-CPMK 4.2: Mengimplementasikan algoritma RSA dalam bahasa C (dengan bilangan kecil atau library)
+  \item Sub-CPMK 4.1: Menjelaskan konsep kriptografi kunci publik dan masalah matematika (faktorisasi, logaritma diskrit)
+  \item Sub-CPMK 4.2: Mengimplementasikan algoritma RSA, ElGamal, dan pertukaran kunci Diffie-Hellman
 \end{subcpmk}
 
 % ============================================================
 % MATERI POKOK
 % ============================================================
 \input{bab-06/section-6-1}
+\input{bab-06/section-6-1a-contoh-rsa}
 \input{bab-06/section-6-2}
+\input{bab-06/section-6-2a}
 \input{bab-06/section-6-3}
+\input{bab-06/section-6-4}
+\input{bab-06/section-6-4a-contoh-ecc}
+\input{bab-06/section-6-5}
 
 % ============================================================
 % AKTIVITAS PEMBELAJARAN
@@ -23,6 +29,8 @@
   \item \textbf{Praktikum C}: Implementasikan pembangkitan kunci RSA (p, q kecil), hitung $d$ dengan \code{mod\_inverse}.
   
   \item \textbf{Praktikum}: Gunakan OpenSSL untuk generate key pair RSA dan enkripsi/dekripsi file.
+  
+  \item \textbf{Diffie-Hellman}: Hitung secara manual pertukaran kunci dengan $p=23$, $g=5$, $a=6$, $b=15$. Tentukan kunci bersama.
   
   \item \textbf{Analisis}: Mengapa $e=65537$ sering dipilih? Apa dampaknya terhadap keamanan?
   
@@ -40,13 +48,15 @@
   
   \item Jelaskan mengapa $m^{ed} \equiv m \pmod{n}$ untuk RSA.
   
-  \item Apa yang terjadi jika $p$ atau $q$ tidak prima?
+  \item Sebutkan tiga masalah matematika yang mendasari kriptografi kunci publik (RSA, DH, ECC).
   
   \item Berapa ukuran kunci RSA minimal yang direkomendasikan saat ini?
   
-  \item Jelaskan perbedaan $\varphi(n)$ dan $\lambda(n)$ serta dampaknya pada perhitungan $d$.
+  \item Uraikan langkah Diffie-Hellman. Mengapa penyerang tidak dapat menghitung $g^{ab}$ dari $g^a$ dan $g^b$?
   
-  \item Uraikan langkah-langkah hybrid encryption (KEM-DEM) dan sebutkan keuntungannya.
+  \item Jelaskan perbedaan ElGamal dan RSA. Mana yang bersifat probabilistik?
+  
+  \item Uraikan langkah hybrid encryption (KEM-DEM) dan sebutkan keuntungannya.
   
   \item Mengapa padding oracle berbahaya? Sebutkan mitigasi praktisnya.
 \end{latihan}
@@ -56,13 +66,23 @@
 % ============================================================
 
 \begin{asesmen}
-\textbf{Instrumen Penilaian untuk Sub-CPMK 4.2}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 4.1, 4.2}
+
+\textbf{A. Essay}
 
 \begin{enumerate}
-  \item Implementasikan dalam C: program yang menerima $p$, $q$, $e$, dan plaintext $m$, lalu menampilkan ciphertext dan hasil dekripsi. Validasi bahwa dekripsi menghasilkan $m$.
+  \item Jelaskan masalah faktorisasi dan logaritma diskrit serta perannya dalam RSA dan Diffie-Hellman.
   \item Jelaskan perbedaan RSA-OAEP dan RSASSA-PSS serta konteks penggunaannya.
-  \item Buat diagram alur sederhana untuk skema hybrid RSA + AES (KEM-DEM).
+  \item Uraikan langkah Diffie-Hellman. Mengapa protokol ini rentan man-in-the-middle tanpa otentikasi?
 \end{enumerate}
+
+\textbf{B. Coding}
+
+Implementasikan dalam C: program yang menerima $p$, $q$, $e$, dan plaintext $m$, lalu menampilkan ciphertext dan hasil dekripsi. Validasi bahwa dekripsi menghasilkan $m$.
+
+\textbf{C. Diagram}
+
+Buat diagram alur sederhana untuk skema hybrid RSA + AES (KEM-DEM).
 \end{asesmen}
 
 % ============================================================
@@ -70,13 +90,14 @@
 % ============================================================
 
 \begin{checklist}
+  \item Saya dapat menjelaskan konsep kunci publik dan masalah matematika (faktorisasi, log diskrit)
   \item Saya dapat menjelaskan langkah pembangkitan kunci RSA
   \item Saya dapat menghitung enkripsi dan dekripsi RSA secara manual
   \item Saya dapat mengimplementasikan RSA dengan bilangan kecil dalam C
-  \item Saya memahami dasar keamanan RSA (faktorisasi)
+  \item Saya memahami Diffie-Hellman key exchange dan ElGamal
+  \item Saya memahami dasar keamanan RSA (faktorisasi) dan DH (log diskrit)
   \item Saya dapat membedakan OAEP (enkripsi) dan PSS (tanda tangan)
   \item Saya memahami alur hybrid encryption (KEM-DEM)
-  \item Saya memahami mitigasi dasar serangan padding oracle dan side-channel
 \end{checklist}
 
 % ============================================================
@@ -84,19 +105,60 @@
 % ============================================================
 
 \begin{rangkuman}
-Bab ini membahas kriptografi asimetris dan algoritma RSA: pembangkitan kunci, enkripsi, dekripsi, padding modern, hybrid encryption, serta implementasi C.
+Bab ini membahas kriptografi kunci publik: konsep asimetris, RSA (enkripsi, tanda tangan, hybrid), Diffie-Hellman, ElGamal, dan implementasi C. Kriptografi asimetris memecahkan masalah distribusi kunci dan autentikasi yang menjadi keterbatasan kriptografi simetris.
 
 \textbf{Poin Kunci:}
 \begin{itemize}
-  \item RSA: $n=pq$, $\varphi(n)=(p-1)(q-1)$, $ed \equiv 1 \pmod{\varphi(n)}$
-  \item Enkripsi: $c = m^e \bmod n$; Dekripsi: $m = c^d \bmod n$
-  \item OAEP direkomendasikan untuk enkripsi, PSS untuk tanda tangan
-  \item Skema hybrid (KEM-DEM) memakai RSA untuk kunci dan AES untuk data
-  \item Keamanan bergantung pada kesulitan memfaktorkan $n$ dan kualitas implementasi
+  \item Kriptografi asimetris menggunakan pasangan kunci (publik+privat)
+  \item RSA: $c = m^e \bmod n$, keamanan dari kesulitan faktorisasi
+  \item Diffie-Hellman: pertukaran kunci tanpa kunci rahasia awal
+  \item Hybrid encryption: RSA untuk kunci, AES untuk data
+  \item PKI untuk distribusi dan verifikasi kunci publik
 \end{itemize}
 
-\textbf{Kata Kunci}: \crypt{RSA}, \crypt{OAEP}, \crypt{PSS}, \crypt{Hybrid Encryption}, \crypt{KEM-DEM}, \crypt{CRT}, \crypt{Kunci Publik}
+\textbf{Kata Kunci}: \crypt{RSA}, \crypt{Diffie-Hellman}, \crypt{ElGamal}, \crypt{Kunci Publik}, \crypt{Hybrid Encryption}, \crypt{PKI}, \crypt{Sertifikat Digital}
 \end{rangkuman}
+
+% ============================================================
+% Persiapan untuk Bab Berikutnya
+% ============================================================
+
+\begin{transition}
+Setelah mempelajari kriptografi kunci publik, kita siap untuk memasuki \textbf{Bab VII: Fungsi Hash, MAC, dan Tanda Tangan Digital}.
+
+Dalam Bab VII, kita akan melengkapi toolkit keamanan informasi dengan komponen-komponen penting:
+\begin{itemize}
+  \item \textbf{Fungsi Hash}: SHA-256, SHA-3 — untuk integrity dan fingerprint data
+  \item \textbf{MAC (Message Authentication Code)}: HMAC — untuk integrity dan authenticity
+  \item \textbf{Tanda Tangan Digital}: RSA-Sig, DSA, ECDSA — untuk non-repudiation
+\end{itemize}
+
+\textbf{Koneksi dengan Bab VI}:
+\begin{itemize}
+  \item \textbf{RSA Enkripsi}: Menyediakan confidentiality
+  \item \textbf{RSA Signature}: Menyediakan integrity dan non-repudiation
+  \item \textbf{Bab VII}: Menjelaskan bagaimana signature bekerja dengan hash
+\end{itemize}
+
+\textbf{Integrasi Semua Layanan Keamanan (Bab II)}:
+\begin{itemize}
+  \item \textbf{Confidentiality}: RSA/AES enkripsi (Bab V-VI)
+  \item \textbf{Integrity}: Fungsi hash dan MAC (Bab VII)
+  \item \textbf{Authenticity}: Sertifikat + tanda tangan (Bab VI-VII)
+  \item \textbf{Non-repudiation}: Tanda tangan digital (Bab VII)
+\end{itemize}
+
+\textbf{Matematika yang Akan Diterapkan}:
+\begin{itemize}
+  \item \textbf{Aljabar Abstrak (Bab III)}: Struktur fungsi hash modern
+  \item \textbf{Teori Informasi}: Konsep collision resistance dan preimage resistance
+  \item \textbf{Aritmetika Modular}: Operasi dalam tanda tangan DSA/ECDSA
+\end{itemize}
+
+\textbf{Preview}: Di Bab VII, kita akan memahami bagaimana fungsi hash seperti SHA-256 dapat menciptakan "fingerprint" digital yang unik untuk setiap data, bagaimana HMAC menggabungkan hash dengan kunci rahasia untuk autentikasi pesan, dan bagaimana tanda tangan digital menggabungkan hash dengan kriptografi kunci publik untuk menciptakan bukti matematis yang tidak dapat dipalsukan.
+
+Setelah Bab VII, Anda akan memiliki pemahaman lengkap tentang semua layanan keamanan informasi fundamental dan bagaimana mereka bekerja sama dalam sistem keamanan modern. Ini akan mempersiapkan Anda untuk memahami protokol lengkap seperti TLS/SSL yang menggabungkan semua komponen ini dalam satu sistem yang kohesif.
+\end{transition}
 
 \ifSubfilesClassLoaded{
   \renewcommand{\bibname}{Daftar Pustaka}

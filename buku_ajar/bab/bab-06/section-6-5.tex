@@ -1,0 +1,432 @@
+\section{Side-Channel Attacks dan Countermeasures}
+
+\subsection{Pengantar Side-Channel Attacks}
+
+Side-channel attacks mengeksploitasi informasi yang bocor dari implementasi fisik kriptografi, bukan kelemahan matematis algoritma itu sendiri \cite{kochert1996}. Informasi ini dapat berupa waktu eksekusi, konsumsi daya, emisi elektromagnetik, atau suara.
+
+\textbf{Jenis Side-Channel Attacks}:
+\begin{itemize}
+  \item \textbf{Timing Attacks}: Analisis variasi waktu eksekusi
+  \item \textbf{Power Analysis}: Analisis konsumsi daya
+  \item \textbf{Electromagnetic Analysis}: Analisis emisi EM
+  \item \textbf{Acoustic Cryptanalysis}: Analisis suara
+  \item \textbf{Cache Attacks}: Eksploitasi cache behavior
+\end{itemize}
+
+\subsection{Timing Attacks}
+
+Timing attacks pertama kali didemonstrasikan oleh Paul Kocher pada tahun 1996 terhadap RSA \cite{kochert1996}. Prinsipnya: waktu eksekusi operasi kriptografi dapat bergantung pada data rahasia (kunci).
+
+\subsubsection{Timing Attack pada RSA}
+
+Dalam RSA, operasi modular eksponensial $c = m^e \bmod n$ menggunakan algoritma square-and-multiply yang waktu eksekusinya bergantung pada bit-bit kunci.
+
+\begin{lstlisting}[style=cstyle, caption={Vulnerable RSA Implementation}]
+// Vulnerable implementation - timing depends on key bits
+uint64_t mod_exp_vulnerable(uint64_t base, uint64_t exp, uint64_t mod) {
+    uint64_t result = 1;
+    
+    for (int i = 63; i >= 0; i--) {
+        result = (result * result) % mod;  // Always executed
+        
+        if ((exp >> i) & 1) {  // Timing leak!
+            result = (result * base) % mod;  // Only for key bits = 1
+        }
+    }
+    
+    return result;
+}
+
+// Timing attack measurement
+void timing_attack_rsa() {
+    uint64_t ciphertexts[1000];
+    uint64_t timings[1000];
+    
+    // Generate random ciphertexts
+    for (int i = 0; i < 1000; i++) {
+        ciphertexts[i] = random_uint64();
+    }
+    
+    // Measure timing for each ciphertext
+    for (int i = 0; i < 1000; i++) {
+        clock_t start = clock();
+        mod_exp_vulnerable(ciphertexts[i], unknown_key, MODULUS);
+        clock_t end = clock();
+        
+        timings[i] = end - start;
+    }
+    
+    // Analyze timing differences to recover key bits
+    analyze_timings(ciphertexts, timings, 1000);
+}
+\end{lstlisting}
+
+\subsubsection{Countermeasures: Constant-Time Implementation}
+
+\begin{lstlisting}[style=cstyle, caption={Constant-Time RSA Implementation}]
+uint64_t mod_exp_constant_time(uint64_t base, uint64_t exp, uint64_t mod) {
+    uint64_t result = 1;
+    uint64_t temp = base % mod;
+    
+    for (int i = 63; i >= 0; i--) {
+        // Always compute both possibilities
+        uint64_t result_if_bit_0 = (result * result) % mod;
+        uint64_t result_if_bit_1 = (result_if_bit_0 * temp) % mod;
+        
+        // Select based on key bit (constant-time selection)
+        uint64_t mask = -((exp >> i) & 1);  // All 1s if bit=1, all 0s if bit=0
+        result = result_if_bit_0 ^ (mask & (result_if_bit_1 ^ result_if_bit_0));
+        
+        // Always update temp
+        temp = (temp * temp) % mod;
+    }
+    
+    return result;
+}
+
+// Alternative: Always perform multiplication
+uint64_t mod_exp_always_multiply(uint64_t base, uint64_t exp, uint64_t mod) {
+    uint64_t result = 1;
+    
+    for (int i = 63; i >= 0; i--) {
+        result = (result * result) % mod;
+        
+        // Always multiply, but conditionally apply result
+        uint64_t temp = (result * base) % mod;
+        uint64_t mask = (exp >> i) & 1;
+        result = result + mask * (temp - result);
+    }
+    
+    return result;
+}
+\end{lstlisting}
+
+\subsection{Power Analysis}
+
+Power analysis attacks mengukur konsumsi daya selama eksekusi operasi kriptografi \cite{kochert1999}. Ada dua jenis utama:
+
+\begin{itemize}
+  \item \textbf{Simple Power Analysis (SPA)}: Analisis satu trace daya
+  \item \textbf{Differential Power Analysis (DPA)}: Analisis statistik multiple traces
+\end{itemize}
+
+\subsubsection{SPA pada DES}
+
+SPA dapat mengeksploitasi perbedaan daya antara operasi yang berbeda dalam DES.
+
+\begin{lstlisting}[style=cstyle, caption={DES Implementation Vulnerable to SPA}]
+void des_round_vulnerable(uint32_t *L, uint32_t *R, uint32_t *K) {
+    uint32_t expanded_R = expand_e(*R);
+    uint32_t substituted_R = substitution_s(expanded_R, *K);
+    uint32_t permuted_R = permutation_p(substituted_R);
+    
+    // SPA leak: conditional operation based on key bit
+    if (K[0] & 1) {  // Key-dependent branch
+        *L ^= permuted_R;
+    } else {
+        *L ^= permuted_R >> 1;  // Different operation
+    }
+}
+
+// Power trace measurement and analysis
+void spa_attack_des() {
+    PowerTrace traces[100];
+    
+    // Collect power traces during DES encryption
+    for (int i = 0; i < 100; i++) {
+        traces[i] = measure_power_trace(des_encrypt, plaintext[i], key);
+    }
+    
+    // Analyze traces to identify key-dependent operations
+    analyze_power_traces(traces, 100);
+}
+\end{lstlisting}
+
+\subsubsection{DPA Implementation}
+
+DPA menggunakan statistik untuk mengekstrak informasi kunci dari banyak power traces.
+
+\begin{lstlisting}[style=cstyle, caption={DPA Attack Framework}]
+typedef struct {
+    double samples[1000];  // Power trace samples
+    uint8_t plaintext[8];   // Corresponding plaintext
+} PowerTrace;
+
+// DPA attack on DES S-box
+void dpa_attack_des_sbox(PowerTrace *traces, int num_traces) {
+    int hypothesis_counts[256][2] = {0};  // [key_hypothesis][bit_value]
+    double hypothesis_sums[256][2] = {0};
+    
+    for (int trace_idx = 0; trace_idx < num_traces; trace_idx++) {
+        PowerTrace *trace = &traces[trace_idx];
+        
+        // Try all possible key values for S-box input
+        for (int key_hypothesis = 0; key_hypothesis < 256; key_hypothesis++) {
+            // Compute intermediate value
+            uint8_t intermediate = trace->plaintext[0] ^ key_hypothesis;
+            uint8_t sbox_output = sbox1[intermediate >> 4][intermediate & 0x0F];
+            int target_bit = (sbox_output >> 3) & 1;  // Target bit 3
+            
+            // Add power trace to appropriate hypothesis group
+            hypothesis_counts[key_hypothesis][target_bit]++;
+            hypothesis_sums[key_hypothesis][target_bit] += trace->samples[100];  // Sample at relevant time
+        }
+    }
+    
+    // Find key hypothesis with maximum correlation
+    double max_correlation = 0;
+    int best_key = 0;
+    
+    for (int key = 0; key < 256; key++) {
+        double mean0 = hypothesis_sums[key][0] / hypothesis_counts[key][0];
+        double mean1 = hypothesis_sums[key][1] / hypothesis_counts[key][1];
+        double correlation = fabs(mean1 - mean0);  // Simple correlation measure
+        
+        if (correlation > max_correlation) {
+            max_correlation = correlation;
+            best_key = key;
+        }
+    }
+    
+    printf("Best key hypothesis: 0x%02x (correlation: %.4f)\n", best_key, max_correlation);
+}
+\end{lstlisting}
+
+\subsection{Cache Attacks}
+
+Cache attacks mengeksploitasi perilaku cache CPU untuk mengekstrak informasi kriptografi \cite{osvik2006}.
+
+\subsubsection{Prime+Probe Attack}
+
+Prime+Probe attack mengisi cache dengan data target, kemudian mengukur waktu akses untuk menentukan mana yang diakses oleh victim.
+
+\begin{lstlisting}[style=cstyle, caption={Prime+Probe Attack Framework}]
+#include <time.h>
+
+#define CACHE_SIZE 64  // Simplified cache size
+#define CACHE_LINE_SIZE 64
+
+// Probe array for cache attack
+char probe_array[CACHE_SIZE * CACHE_LINE_SIZE];
+
+void prime_cache() {
+    // Fill entire cache with probe array
+    for (int i = 0; i < CACHE_SIZE; i++) {
+        // Force cache line to be loaded
+        probe_array[i * CACHE_LINE_SIZE] = i;
+    }
+}
+
+void probe_cache(uint64_t *timings) {
+    for (int i = 0; i < CACHE_SIZE; i++) {
+        clock_t start = clock();
+        volatile char dummy = probe_array[i * CACHE_LINE_SIZE];
+        clock_t end = clock();
+        
+        timings[i] = end - start;
+    }
+}
+
+// AES cache attack example
+void aes_cache_attack() {
+    uint64_t timings[CACHE_SIZE];
+    
+    // Prime cache
+    prime_cache();
+    
+    // Victim encrypts data (accesses S-box entries)
+    victim_aes_encrypt(plaintext, key);
+    
+    // Probe cache to find which entries were accessed
+    probe_cache(timings);
+    
+    // Analyze timings to identify accessed cache lines
+    for (int i = 0; i < CACHE_SIZE; i++) {
+        if (timings[i] < THRESHOLD) {
+            printf("Cache line %d was likely accessed\n", i);
+        }
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Flush+Reload Attack}
+
+Flush+Reload attack menggunakan shared memory (shared libraries) untuk cache attacks.
+
+\begin{lstlisting}[style=cstyle, caption={Flush+Reload Attack}]
+#include <sys/mman.h>
+#include <fcntl.h>
+
+void flush_reload_attack() {
+    // Open shared library (e.g., OpenSSL crypto library)
+    int fd = open("/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1", O_RDONLY);
+    void *crypto_lib = mmap(NULL, 4096, PROT_READ, MAP_SHARED, fd, 0);
+    
+    // Find AES T-table address in shared library
+    uint8_t *aes_ttable = find_aes_ttable(crypto_lib);
+    
+    while (1) {
+        // Flush T-table from cache
+        for (int i = 0; i < 256; i++) {
+            _mm_clflush(&aes_ttable[i * 64]);  // CLFLUSH instruction
+        }
+        
+        // Wait for victim to perform AES operation
+        usleep(1000);
+        
+        // Reload and measure access times
+        for (int i = 0; i < 256; i++) {
+            clock_t start = clock();
+            volatile uint8_t dummy = aes_ttable[i * 64];
+            clock_t end = clock();
+            
+            if (end - start < CACHE_HIT_THRESHOLD) {
+                printf("T-table entry %d was accessed\n", i);
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{Countermeasures}
+
+\subsubsection{Hardware Countermeasures}
+
+\begin{itemize}
+  \item \textbf{Random Delays}: Menambahkan noise timing
+  \item \textbf{Power Filtering}: Menstabilkan suplai daya
+  \item \textbf{Shielding}: Mengurangi emisi elektromagnetik
+  \item \textbf{Secure Hardware}: TPM, HSM, secure enclaves
+\end{itemize}
+
+\subsubsection{Software Countermeasures}
+
+\begin{lstlisting}[style=cstyle, caption={Side-Channel Resistant Implementation}]
+// Blinding technique for RSA
+uint64_t rsa_blinded_decrypt(uint64_t ciphertext, uint64_t d, uint64_t n) {
+    // Generate random blinding factor
+    uint64_t r = random_uint64() % n;
+    uint64_t r_inv = mod_inverse(r, n);
+    
+    // Blind the ciphertext
+    uint64_t blinded_ct = (ciphertext * mod_pow(r, 65537, n)) % n;
+    
+    // Decrypt blinded ciphertext
+    uint64_t blinded_pt = mod_pow(blinded_ct, d, n);
+    
+    // Unblind the result
+    uint64_t plaintext = (blinded_pt * r_inv) % n;
+    
+    return plaintext;
+}
+
+// Randomized projective coordinates for ECC
+typedef struct {
+    uint32_t x, y, z;  // Projective coordinates (X:Y:Z)
+} ECPointProjective;
+
+ECPointProjective ecc_blinded_multiply(ECPointProjective P, uint32_t scalar) {
+    ECPointProjective result = {0, 1, 0};  // Point at infinity
+    
+    // Add random point R
+    ECPointProjective R = generate_random_point();
+    ECPointProjective PR = point_add(P, R);
+    
+    // Compute (scalar * P) + (scalar * R)
+    result = scalar_multiply(PR, scalar);
+    
+    // Subtract (scalar * R)
+    ECPointProjective sR = scalar_multiply(R, scalar);
+    result = point_subtract(result, sR);
+    
+    return result;
+}
+
+// Constant-time memory operations
+void constant_time_memcpy(void *dest, const void *src, size_t n) {
+    volatile uint8_t *d = (volatile uint8_t*)dest;
+    const volatile uint8_t *s = (const volatile uint8_t*)src;
+    
+    for (size_t i = 0; i < n; i++) {
+        d[i] = s[i];  // Prevent compiler optimization
+    }
+}
+
+// Constant-time comparison
+int constant_time_compare(const void *a, const void *b, size_t n) {
+    const volatile uint8_t *aa = (const volatile uint8_t*)a;
+    const volatile uint8_t *bb = (const volatile uint8_t*)b;
+    
+    uint8_t result = 0;
+    for (size_t i = 0; i < n; i++) {
+        result |= aa[i] ^ bb[i];
+    }
+    
+    return result;  // 0 if equal, non-zero if different
+}
+\end{lstlisting}
+
+\subsection{Praktikum: Side-Channel Analysis}
+
+\begin{lstlisting}[style=cstyle, caption={Simple Timing Analysis}]
+#include <time.h>
+#include <stdio.h>
+
+// Function with timing dependency
+int vulnerable_function(int secret, int input) {
+    int result = input;
+    
+    // Timing leak: loop iterations depend on secret
+    for (int i = 0; i < secret; i++) {
+        result = (result * 1103515245 + 12345) & 0x7fffffff;
+    }
+    
+    return result;
+}
+
+// Timing analysis
+void timing_analysis() {
+    int inputs[100];
+    clock_t timings[100];
+    
+    // Generate inputs
+    for (int i = 0; i < 100; i++) {
+        inputs[i] = i;
+    }
+    
+    // Measure timing for different secret values
+    for (int secret = 1; secret <= 10; secret++) {
+        clock_t total_time = 0;
+        
+        for (int i = 0; i < 100; i++) {
+            clock_t start = clock();
+            vulnerable_function(secret, inputs[i]);
+            clock_t end = clock();
+            
+            total_time += (end - start);
+        }
+        
+        printf("Secret %d: Average time = %ld ticks\n", secret, total_time / 100);
+    }
+}
+
+int main() {
+    timing_analysis();
+    return 0;
+}
+\end{lstlisting}
+
+\subsection{Evaluasi Keamanan Implementasi}
+
+\textbf{Checklist Keamanan Side-Channel}:
+\begin{itemize}
+  \item \textbf{Timing}: Apakah waktu eksekusi konstan terhadap data rahasia?
+  \item \textbf{Power}: Apakah konsumsi daya tidak tergantung pada operasi?
+  \item \textbf{Cache}: Apakah akses memori tidak membocorkan informasi kunci?
+  \item \textbf{Branching}: Apakah tidak ada conditional branches berdasarkan data rahasia?
+  \item \textbf{Memory}: Apakah tidak ada data rahasia yang tersimpan dalam memori yang tidak perlu?
+\end{itemize}
+
+\begin{catatan}
+Side-channel attacks menunjukkan bahwa keamanan kriptografi tidak hanya bergantung pada matematika, tetapi juga pada implementasi fisik. Countermeasures yang efektif memerlukan pendekatan holistik yang mencakup hardware, software, dan prosedur operasional.
+\end{catatan}
