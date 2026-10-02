@@ -6,35 +6,35 @@ Model standar melibatkan:
 \begin{itemize}
   \item \textbf{Alice (Pengirim)}: Mengirim plaintext, melakukan enkripsi
   \item \textbf{Bob (Penerima)}: Menerima ciphertext, melakukan dekripsi
-  \item \textbf{Eve (Penyerang)}: Mencoba mencuri dengar (eavesdropping) atau memodifikasi pesan
-  \item \textbf{Kanal}: Saluran komunikasi (internet, udara, jaringan) yang mungkin tidak aman
+  \item \textbf{Eve (Penyerang)}: Mencoba mencuri dengar (\textit{eavesdropping}) atau memodifikasi pesan
+  \item \textbf{Kanal}: Saluran komunikasi (pos, telepon, jaringan seluler, internet) yang mungkin tidak aman
 \end{itemize}
 
-Tujuan kriptografi adalah memastikan komunikasi aman meskipun kanal tidak terpercaya. Model komunikasi ini mencerminkan skenario dunia nyata di mana informasi sensitif harus ditransmisikan melalui jaringan publik yang rentan terhadap intervensi pihak ketiga. Dalam implementasi praktis, Alice dan Bob dapat merepresentasikan berbagai entitas seperti pengguna dan server, dua sistem dalam jaringan korporat, atau bahkan proses yang berkomunikasi dalam satu sistem komputer.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{bab-02/alice-eve-bob-enkripsi}
+\caption{Model komunikasi: Alice mengenkripsi plainteks, Bob mendekripsi cipherteks, dan Eve yang menyadap kanal hanya melihat cipherteks \cite{munir_slides_itb}.}
+\label{fig:alice-eve-bob}
+\end{figure}
+
+Tujuan kriptografi adalah memastikan komunikasi aman meskipun kanal tidak terpercaya (Gambar~\ref{fig:alice-eve-bob}). Dalam dunia nyata, ``Alice'' dan ``Bob'' tidak selalu manusia: keduanya dapat berupa manusia dengan mesin (misalnya IVR telepon), mesin dengan mesin (klien--server), browser dengan server web, aplikasi perbankan daring, router, atau layanan DNS \cite{munir_slides_itb}. Intinya sama: dua pihak berkomunikasi melalui kanal publik yang rentan disadap atau dimanipulasi.
+
+\subsection{Empat Masalah yang Memunculkan Kebutuhan Kriptografi}
+
+Empat skenario berikut merangkum mengapa kriptografi diperlukan \cite{munir_slides_itb}:
+\begin{enumerate}
+  \item \textbf{Case~1 --- Penyadapan}: Bagaimana Alice memastikan pesan tidak dapat dibaca oleh Eve yang menguping kanal? $\rightarrow$ masalah \textbf{kerahasiaan} (\textit{confidentiality}).
+  \item \textbf{Case~2 --- Penyamaran}: Bagaimana Bob memastikan pesan benar-benar dari Alice, bukan dari Carol yang menyamar? $\rightarrow$ masalah \textbf{otentikasi} (\textit{authentication}).
+  \item \textbf{Case~3 --- Manipulasi}: Bagaimana Bob memastikan pesan masih utuh dan tidak diubah di perjalanan? $\rightarrow$ masalah \textbf{keutuhan} (\textit{integrity}).
+  \item \textbf{Case~4 --- Penyangkalan}: Bagaimana Bob mencegah Alice menyangkal telah mengirim pesan? $\rightarrow$ masalah \textbf{nir-penyangkalan} (\textit{non-repudiation}).
+\end{enumerate}
+
+\begin{catatan}
+Keempat masalah di atas menjadi kerangka layanan keamanan. Sebelum mendefinisikan layanan secara formal, bagian berikutnya menegaskan \textbf{urgensi} masalah tersebut di teknologi informasi; setelah itu layanan keamanan dibahas secara rinci. Kriptografi menyediakan mekanisme (enkripsi, hash/MAC, tanda tangan digital, protokol autentikasi) untuk menjawab masing-masing masalah.
+\end{catatan}
 
 \subsection{Ancaman Keamanan}
 
-\begin{table}[htbp]
-\centering
-\small
-\begin{tabular}{|l|p{6cm}|}
-\hline
-\textbf{Ancaman} & \textbf{Deskripsi} \\
-\hline
-Interception & Eve mencuri dengar pesan tanpa diketahui \\
-\hline
-Modification & Eve mengubah isi pesan dalam perjalanan \\
-\hline
-Fabrication & Eve membuat pesan palsu seolah dari Alice \\
-\hline
-Replay & Eve merekam pesan dan mengirim ulang di waktu lain \\
-\hline
-Masquerade & Eve berpura-pura sebagai pihak lain \\
-\hline
-\end{tabular}
-\caption{Jenis Ancaman Keamanan}
-\end{table}
+Keempat masalah tersebut muncul karena kanal publik dapat disadap dan dimanipulasi. Eve dapat sekadar menguping (serangan pasif) atau ikut campur dengan memblokir, mengubah, memalsukan, dan mengirim ulang pesan (serangan aktif). Jenis-jenis ancaman ini beserta contohnya, mulai dari penyadapan dengan Wireshark sampai \textit{man-in-the-middle attack}, dibahas pada Subbab~\ref{sec:serangan-pasif-aktif}.
 
-Ancaman keamanan diklasifikasikan berdasarkan dampaknya terhadap layanan keamanan informasi \cite{rfc4949}. Ancaman terhadap \textbf{confidentiality} mencakup serangan langsung untuk mendapatkan akses ke sistem atau teknik man-in-the-middle di mana penyerang memposisikan diri dalam aliran informasi untuk mencegat data. Ancaman terhadap \textbf{integrity} berupa modifikasi tidak sah terhadap data atau log sistem untuk menyembunyikan serangan.
-
-{\sloppy Untuk mengatasi ancaman tersebut, kriptografi menyediakan mekanisme: \textbf{confidentiality} (kerahasiaan), \textbf{integrity} (keutuhan), \textbf{availability} (ketersediaan), dan \textbf{non-repudiation} (ketidakbantahan).\par} Ketiga layanan pertama dikenal sebagai CIA triad; non-repudiation melengkapi model untuk transaksi yang memerlukan bukti hukum. Implementasi yang tepat memastikan komunikasi digital tetap aman dan terpercaya.
+{\sloppy Untuk mengatasi ancaman tersebut, kriptografi menyediakan mekanisme: \textbf{confidentiality} (kerahasiaan), \textbf{integrity} (keutuhan), \textbf{availability} (ketersediaan), dan \textbf{non-repudiation} (ketidakbantahan), dilengkapi \textbf{authentication} (otentikasi pihak).\par} Tiga layanan pertama dikenal sebagai CIA triad; non-repudiation dan authenticity melengkapi model untuk transaksi yang memerlukan kepercayaan dan bukti. Setelah melihat mengapa masalah ini mendesak di TI, detail setiap layanan dibahas pada bagian layanan keamanan.

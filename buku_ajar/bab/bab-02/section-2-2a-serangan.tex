@@ -1,0 +1,180 @@
+\section{Serangan Pasif dan Serangan Aktif}
+\label{sec:serangan-pasif-aktif}
+
+Pihak ketiga yang mengganggu komunikasi Alice dan Bob melakukan \textbf{serangan} (\textit{attack}), yaitu setiap usaha untuk menemukan kunci, menemukan plainteks dari cipherteks, atau memanipulasi komunikasi. Berdasarkan keterlibatan penyerang dalam komunikasi, serangan dibagi menjadi dua: \textbf{serangan pasif} dan \textbf{serangan aktif} \cite{munir_slides_itb,stallings2017}. Pengelompokan serangan menurut informasi yang dimiliki penyerang (\textit{ciphertext-only}, \textit{known-plaintext}, \textit{chosen-plaintext}, dan seterusnya) dibahas di Bab~IV setelah cipher klasik dipelajari.
+
+Tabel~\ref{tab:ancaman-keamanan} merangkum jenis ancaman dan pengelompokannya.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}p{1.2cm}>{\raggedright\arraybackslash}p{5.8cm}>{\raggedright\arraybackslash}p{3cm}@{}}
+\toprule
+\textbf{Ancaman} & \textbf{Jenis} & \textbf{Deskripsi} & \textbf{Layanan terancam} \\
+\midrule
+Interception & Pasif & Eve membaca isi pesan tanpa diketahui & Confidentiality \\
+Traffic analysis & Pasif & Eve mengamati pola lalu lintas (siapa, kapan, seberapa sering, seberapa besar) & Confidentiality \\
+Interruption & Aktif & Eve memblokir pengiriman pesan & Availability \\
+Modification & Aktif & Eve mengubah isi pesan dalam perjalanan & Integrity \\
+Fabrication & Aktif & Eve membuat pesan palsu seolah dari Alice & Authenticity \\
+Replay & Aktif & Eve merekam pesan sah dan mengirim ulang di waktu lain & Authenticity, integrity \\
+Masquerade & Aktif & Eve berpura-pura sebagai pihak lain & Authenticity \\
+\bottomrule
+\end{tabular}
+\caption{Jenis ancaman keamanan dan layanan yang terancam \cite{stallings2017,rfc4949}.}
+\label{tab:ancaman-keamanan}
+\end{table}
+
+Ancaman keamanan diklasifikasikan berdasarkan dampaknya terhadap layanan keamanan informasi \cite{rfc4949}. Interception dan traffic analysis mengancam confidentiality; interruption mengancam availability; modification mengancam integrity; fabrication, replay, dan masquerade mengancam authenticity; penyangkalan pengiriman mengancam non-repudiation.
+
+\subsection{Serangan Pasif}
+
+Pada \crypt{serangan pasif} (\textit{passive attack}) \cite{munir_slides_itb}:
+\begin{itemize}
+  \item penyerang tidak terlibat dalam komunikasi antara pengirim dan penerima;
+  \item penyerang hanya menyadap untuk memperoleh data atau informasi sebanyak mungkin;
+  \item enkripsi pesan mencegah penyadap memahami isi pesan (Gambar~\ref{fig:serangan-pasif-eve}).
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{bab-02/serangan-pasif-eve}
+\caption{Serangan pasif: Eve menyadap kanal antara Alice dan Bob, tetapi hanya melihat cipherteks \cite{munir_slides_itb}.}
+\label{fig:serangan-pasif-eve}
+\end{figure}
+
+Serangan pasif sulit dideteksi karena tidak mengubah data sama sekali. Karena itu, pertahanannya menitikberatkan pada \textbf{pencegahan} (terutama enkripsi), bukan deteksi. Stallings membedakan dua bentuk serangan pasif (Gambar~\ref{fig:serangan-pasif-stallings}) \cite{stallings2017}:
+\begin{itemize}
+  \item \textbf{Interception} (\textit{release of message contents}): penyerang membaca isi pesan.
+  \item \textbf{Traffic analysis}: meskipun isi pesan terenkripsi, penyerang masih dapat mengamati pola komunikasi, misalnya identitas dan lokasi pihak yang berkomunikasi, frekuensi, dan panjang pesan, lalu menarik kesimpulan dari pola tersebut.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{bab-02/pasif-interception}\\[2pt]
+  {\small (a) Interception: membaca isi pesan}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{bab-02/pasif-traffic-analysis}\\[2pt]
+  {\small (b) Traffic analysis: mengamati pola lalu lintas}
+\end{minipage}
+\caption{Dua bentuk serangan pasif. Darth adalah penyerang yang menyadap komunikasi Bob dan Alice (sumber: Stallings, \textit{Cryptography and Network Security}, Bab~1) \cite{stallings2017}.}
+\label{fig:serangan-pasif-stallings}
+\end{figure}
+
+Penyadapan lalu lintas jaringan tidak memerlukan alat mahal. Perangkat lunak \textit{packet sniffer} seperti Wireshark dapat merekam seluruh paket yang melintas di jaringan lokal. Jika aplikasi mengirim data tanpa enkripsi (misalnya formulir masuk lewat HTTP biasa), \textit{filter} sederhana sudah cukup untuk menampilkan nama pengguna dan kata sandi dalam bentuk plainteks (Gambar~\ref{fig:wireshark-password}). Inilah alasan praktis mengapa layanan web wajib memakai HTTPS (Bab~VIII).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{bab-02/wireshark-password}
+\caption{\textit{Filter} \texttt{http.request.method=="POST"} di Wireshark menampilkan nama pengguna dan kata sandi yang dikirim tanpa enkripsi (sumber: ResearchGate, \textit{Wireshark Filtering Showing Clear Text of User Name and Password}) \cite{munir_slides_itb}.}
+\label{fig:wireshark-password}
+\end{figure}
+
+\subsection{Metode Penyadapan}
+
+Tiga metode penyadapan yang umum adalah \textit{wiretapping}, \textit{electromagnetic eavesdropping}, dan \textit{acoustic eavesdropping} \cite{munir_slides_itb}.
+
+\textbf{Wiretapping} adalah penyadapan langsung pada saluran kabel. Sistem telepon analog sangat sederhana: kabel telepon standar berisi kabel merah dan hijau yang membentuk satu rangkaian listrik, seperti rangkaian senter, dengan kabel hijau di kutub positif dan kabel merah di kutub negatif. Kesederhanaan ini membuat saluran telepon mudah disadap diam-diam: cukup sambungkan alat penyadap secara paralel ke kedua kabel tersebut (Gambar~\ref{fig:penyadapan-wiretap}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.65\textwidth]{bab-02/penyadapan-wiretap}
+\caption{Cara kerja \textit{wiretapping} sederhana (\textit{simple line tap}) pada saluran telepon (sumber: \url{http://www.howstuffworks.com/wiretapping.htm}) \cite{munir_slides_itb}.}
+\label{fig:penyadapan-wiretap}
+\end{figure}
+
+\textbf{Electromagnetic eavesdropping} memanfaatkan radiasi elektromagnetik yang dipancarkan perangkat elektronik seperti komputer, monitor, printer, atau ponsel. Dengan antena dan penerima yang tepat, sinyal dapat ditangkap dari ruangan sebelah, bahkan menembus dinding (Gambar~\ref{fig:penyadapan-em}). Perangkat \textit{software-defined radio} (SDR) yang murah juga memungkinkan penyadapan sinyal radio, termasuk komunikasi GSM yang enkripsinya lemah.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{bab-02/penyadapan-elektromagnetik}
+\caption{\textit{Electromagnetic eavesdropping}: antena penerima menangkap emisi perangkat di kantor sebelah dari jarak kurang dari 2~m (sumber: ResearchGate) \cite{munir_slides_itb}.}
+\label{fig:penyadapan-em}
+\end{figure}
+
+\textbf{Acoustic eavesdropping} adalah penyadapan suara, mulai dari cara konvensional (bersembunyi dan menguping, atau memasang mikrofon tersembunyi) hingga cara modern yang memanfaatkan sinyal nirkabel untuk mendeteksi getaran \textit{speaker} korban (\textit{reflective}) atau emisi ponsel korban (\textit{emissive}) dari balik dinding (Gambar~\ref{fig:penyadapan-akustik}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{bab-02/penyadapan-akustik}
+\caption{\textit{Acoustic eavesdropping} melalui \textit{wireless vibrometry}: skenario \textit{reflective} (kiri) dan \textit{emissive} (kanan) (sumber: Wei dkk., \textit{Acoustic Eavesdropping through Wireless Vibrometry}) \cite{munir_slides_itb}.}
+\label{fig:penyadapan-akustik}
+\end{figure}
+
+\begin{catatan}
+\textbf{Bahan tonton (opsional).}
+\begin{itemize}
+  \item Tutorial Wireshark menemukan nama pengguna dan kata sandi pada lalu lintas jaringan: \url{https://www.youtube.com/watch?v=HMkIhUEByd4}
+  \item \textit{Intercept Any Radio Signal} (SDR): \url{https://www.youtube.com/watch?v=UMu5AhSg-TI}
+  \item \textit{GSM Sniffing: Voice Decryption 101}: \url{https://www.youtube.com/watch?v=krJKKjYdwgc}
+  \item Bacaan \textit{wiretapping}: \url{https://hackaday.com/2008/06/19/wiretapping-and-how-to-avoid-it/}
+\end{itemize}
+Penyadapan tanpa izin adalah tindak pidana (di Indonesia diatur dalam UU ITE). Lakukan percobaan hanya pada jaringan dan perangkat milik sendiri atau yang telah diizinkan.
+\end{catatan}
+
+\subsection{Serangan Aktif}
+
+Pada \crypt{serangan aktif} (\textit{active attack}), penyerang mengintervensi komunikasi dan ikut memengaruhi sistem untuk keuntungannya sendiri \cite{munir_slides_itb}. Penyerang dapat mengubah aliran pesan, misalnya:
+\begin{itemize}
+  \item menghapus sebagian cipherteks;
+  \item mengubah cipherteks;
+  \item menyisipkan potongan cipherteks palsu;
+  \item mengirim ulang (\textit{replay}) pesan lama;
+  \item mengubah informasi yang tersimpan.
+\end{itemize}
+
+Gambar~\ref{fig:serangan-aktif-stallings} memperlihatkan empat bentuk serangan aktif menurut Stallings \cite{stallings2017}:
+\begin{itemize}
+  \item \textbf{Interruption}: penyerang memblokir pengiriman pesan sehingga tidak sampai ke penerima.
+  \item \textbf{Fabrication}: penyerang membuat dan mengirim pesan palsu seolah-olah dari pengirim sah.
+  \item \textbf{Replay}: penyerang menangkap pesan sah lalu mengirimkannya ulang di kemudian hari. Penyerang tidak perlu memecahkan enkripsinya; pesan terenkripsi yang dikirim ulang tetap dianggap sah jika sistem tidak memeriksa keunikannya (\textit{nonce}, \textit{timestamp}, atau nomor urut).
+  \item \textbf{Modification}: penyerang mencegat pesan, mengubah isinya, lalu meneruskannya ke penerima.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{bab-02/aktif-interruption}\\[2pt]
+  {\small (a) Interruption}\\[8pt]
+  \includegraphics[width=\linewidth]{bab-02/aktif-replay}\\[2pt]
+  {\small (c) Replay}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{bab-02/aktif-fabrication}\\[2pt]
+  {\small (b) Fabrication}\\[8pt]
+  \includegraphics[width=\linewidth]{bab-02/aktif-modification}\\[2pt]
+  {\small (d) Modification}
+\end{minipage}
+\caption{Empat bentuk serangan aktif oleh Darth terhadap komunikasi Bob dan Alice (sumber: Stallings, \textit{Cryptography and Network Security}, Bab~1) \cite{stallings2017}.}
+\label{fig:serangan-aktif-stallings}
+\end{figure}
+
+Berbeda dengan serangan pasif, serangan aktif sulit dicegah sepenuhnya karena kanal publik memang dapat dimanipulasi. Pertahanannya menitikberatkan pada \textbf{deteksi}: fungsi hash dan MAC mendeteksi modifikasi, tanda tangan digital mendeteksi pemalsuan, dan nomor urut atau \textit{nonce} mendeteksi \textit{replay}.
+
+\subsection{Man-in-the-Middle Attack}
+
+Contoh serangan aktif yang paling berbahaya adalah \crypt{man-in-the-middle attack} (MITM). Penyerang menempatkan diri di antara dua pihak, memutus koneksi asli, lalu membuat dua koneksi baru: satu dengan pengguna dan satu dengan server. Kedua pihak mengira sedang berkomunikasi langsung satu sama lain, padahal semua pesan melewati penyerang yang dapat membaca dan mengubahnya (Gambar~\ref{fig:mitm}a) \cite{munir_slides_itb}.
+
+\begin{figure}[!htbp]
+\centering
+\begin{minipage}[c]{0.36\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{bab-02/mitm-umum}\\[2pt]
+  {\small (a) Koneksi asli diputus, penyerang membuat koneksi baru ke pengguna dan situs web}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.6\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{bab-02/mitm-diffie-hellman}\\[2pt]
+  {\small (b) MITM pada pertukaran kunci Diffie--Hellman}
+\end{minipage}
+\caption{\textit{Man-in-the-middle attack}: penyerang menyamar sebagai B di hadapan A, dan sebagai A di hadapan B \cite{munir_slides_itb}.}
+\label{fig:mitm}
+\end{figure}
+
+MITM sangat berbahaya pada tahap pertukaran kunci. Pada Gambar~\ref{fig:mitm}b, User~A dan User~B bertukar kunci publik untuk membentuk kunci rahasia bersama dengan protokol Diffie--Hellman (Bab~VI). Penyerang mencegat kedua kunci publik dan menggantinya dengan kunci publiknya sendiri. Akibatnya, A dan B masing-masing berbagi kunci rahasia dengan penyerang, bukan satu sama lain, padahal keduanya yakin telah memiliki kunci bersama. Inilah sebabnya kunci publik harus diautentikasi, misalnya dengan sertifikat digital dan PKI (Bab~VIII).

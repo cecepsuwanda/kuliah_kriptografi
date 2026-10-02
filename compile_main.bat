@@ -6,7 +6,6 @@ set "OUTPUT_DIR=%ROOT_DIR%output"
 set "SOURCE_DIR=%ROOT_DIR%buku_ajar"
 set "JOBNAME=main_build"
 
-if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
 if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%" 2>nul
 
 echo ============================================================
@@ -29,7 +28,7 @@ if errorlevel 1 (
         goto :pdflatex_loop
     ) else (
         echo Latexmk and Perl found. Using latexmk...
-        latexmk -pdf -interaction=nonstopmode -output-directory="%OUTPUT_DIR%" "main.tex"
+        latexmk -pdf -interaction=nonstopmode -output-directory="%OUTPUT_DIR%" -jobname="%JOBNAME%" "main.tex"
         if errorlevel 1 (
             echo Latexmk failed. Falling back to pdflatex loop...
             goto :pdflatex_loop
@@ -63,6 +62,8 @@ popd
 echo Cleaning up intermediate files...
 call :cleanup "%OUTPUT_DIR%"
 call :cleanup "%SOURCE_DIR%"
+REM Log di output dipertahankan untuk analisis warning/badbox
+del /s /q "%SOURCE_DIR%\*.log" >nul 2>&1
 
 REM Coba timpa main.pdf; jika terkunci, hasil tetap di main_build.pdf
 copy /Y "%OUTPUT_DIR%\%JOBNAME%.pdf" "%OUTPUT_DIR%\main.pdf" >nul 2>&1
@@ -87,8 +88,8 @@ goto :end
 :cleanup
 set "TARGET_FOLDER=%~1"
 pushd "%TARGET_FOLDER%"
-for %%E in (bcf fls fdb_latexmk nav snm vrb idx ilg ind acn acr alg glg glo gls ist xdy run.xml synctex pdfsync synctex.gz) do (
-    del /s /q "*.%%E" 2>nul
+for %%E in (aux bbl blg toc lof lot lol out bcf fls fdb_latexmk nav snm vrb idx ilg ind acn acr alg glg glo gls ist xdy run.xml synctex pdfsync synctex.gz) do (
+    del /s /q "*.%%E" >nul 2>&1
 )
 popd
 exit /b 0

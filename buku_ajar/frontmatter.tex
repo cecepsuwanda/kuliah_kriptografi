@@ -30,12 +30,12 @@
 
 Puji syukur kehadirat Tuhan Yang Maha Esa atas terselesaikannya buku ajar \textit{Kriptografi} ini. Buku ini disusun dengan pendekatan \textbf{Outcome-Based Education (OBE)}, yang berfokus pada pencapaian kompetensi terukur sesuai dengan Capaian Pembelajaran Lulusan (CPL) dan Capaian Pembelajaran Mata Kuliah (CPMK).
 
-Kriptografi merupakan ilmu yang menggabungkan matematika dan komputasi untuk mengamankan informasi. Mata kuliah ini membekali mahasiswa Program Studi Matematika dengan kemampuan memahami konsep-konsep teoretis kriptografi dan mengimplementasikannya dalam bahasa pemrograman C.
+Kriptografi merupakan ilmu yang menggabungkan matematika dan komputasi untuk mengamankan informasi. Mata kuliah ini membekali mahasiswa agar \textbf{mengenal} algoritma kriptografi klasik dan modern serta \textbf{memahami} konsep kriptografi dan urgensinya dalam teknologi informasi, sesuai CPMK pada RPS.
 
 Buku ini dirancang untuk mendukung pembelajaran dengan pendekatan student-centered learning. Setiap bab dilengkapi dengan:
 \begin{itemize}
-  \item Sub-CPMK yang jelas dan terukur
-  \item Materi pokok dengan contoh kode C yang lengkap
+  \item Sub-CPMK yang jelas dan terukur (mengacu silabus OBE)
+  \item Materi pokok pada tingkat mengenal/memahami, dengan demonstrasi (termasuk contoh C opsional)
   \item Aktivitas pembelajaran yang mendorong eksplorasi mandiri
   \item Latihan dan refleksi untuk penguatan pemahaman
   \item Asesmen untuk mengukur pencapaian kompetensi
@@ -65,23 +65,26 @@ Buku ajar ini dirancang dengan pendekatan OBE untuk memaksimalkan pencapaian pem
 \textbf{Bab I: Pendahuluan dan Orientasi}\\
 Memperkenalkan tujuan buku, keterkaitan dengan RPS, dan konteks kurikulum OBE.
 
-\textbf{Bab II: Landasan Teori}\\
-Menyajikan fondasi teoretis kriptografi yang menjadi basis pembelajaran seluruh bab berikutnya.
+\textbf{Bab II: Landasan Teori dan Urgensi}\\
+Konsep, sejarah, layanan keamanan (CIA), dan urgensi kriptografi di TI (Sub-CPMK 2.1, 2.2).
 
-\textbf{Bab III--IX: Unit Materi Inti}\\
-Setiap bab mencakup satu topik utama kriptografi dengan struktur lengkap: Sub-CPMK, materi, aktivitas, latihan, asesmen, dan checklist. Implementasi menggunakan bahasa C.
+\textbf{Bab III: Matematika (Pengantar)}\\
+Aritmetika modulo, bilangan prima, dan invers modulo secara pengenalan (Sub-CPMK 2.3).
+
+\textbf{Bab IV--VIII: Unit Materi Inti}\\
+Algoritma klasik, simetris modern, asimetris, hash/tanda tangan, serta PKI/TLS --- pada tingkat mengenal/memahami (Sub-CPMK 1.1--1.4).
 
 \textbf{Bab X: Evaluasi dan Integrasi}\\
-Berisi asesmen komprehensif dan panduan refleksi untuk mengukur pencapaian kompetensi secara menyeluruh.
+Asesmen UTS/UAS dan refleksi sesuai CPMK-1 dan CPMK-2.
 
 \textbf{Lampiran}\\
-Menyediakan rubrik penilaian, glosarium istilah kriptografi, dan referensi tambahan.
+Rubrik, glosarium, dan materi opsional (RNG/steganografi) di luar CPMK wajib.
 
 \section*{Komponen dalam Setiap Bab}
 
 \begin{enumerate}
   \item \textbf{Sub-CPMK}: Baca dengan seksama untuk memahami kompetensi yang harus dicapai
-  \item \textbf{Materi Pokok}: Pelajari dengan cermat, jalankan semua contoh kode C
+  \item \textbf{Materi Pokok}: Pelajari konsep; contoh kode C bersifat demonstrasi
   \item \textbf{Aktivitas Pembelajaran}: Lakukan secara mandiri atau berkelompok
   \item \textbf{Latihan}: Kerjakan untuk menguji pemahaman Anda
   \item \textbf{Asesmen}: Gunakan untuk mengukur pencapaian Sub-CPMK
@@ -91,12 +94,12 @@ Menyediakan rubrik penilaian, glosarium istilah kriptografi, dan referensi tamba
 \section*{Tips Belajar Efektif}
 
 \begin{itemize}
-  \item Jangan hanya membaca, praktikkan semua contoh kode C
-  \item Gunakan compiler C (GCC, Clang) atau IDE (Code::Blocks, Visual Studio Code) untuk eksperimen
+  \item Fokus pada mengenal jenis algoritma dan memahami urgensi di TI
+  \item Manfaatkan referensi silabus (Munir, Stallings, HAC, NIST, Boneh)
+  \item Contoh C/OpenSSL bersifat demo --- jalankan bila membantu pemahaman
   \item Kerjakan latihan sebelum melihat solusi
   \item Diskusikan konsep yang sulit dengan teman atau dosen
   \item Manfaatkan checklist untuk self-assessment berkala
-  \item Kerjakan proyek implementasi kriptografi untuk mengintegrasikan konsep yang dipelajari
 \end{itemize}
 
 \cleardoublepage
@@ -123,64 +126,48 @@ Menyediakan rubrik penilaian, glosarium istilah kriptografi, dan referensi tamba
 
 \section*{Capaian Pembelajaran Lulusan (CPL)}
 
-CPL yang dibebankan pada mata kuliah ini mencakup kompetensi lulusan dalam aspek pengetahuan, keterampilan, dan sikap:
+CPL yang dibebankan pada mata kuliah ini (sesuai silabus RPS):
 
 \begin{enumerate}
-  \item \textbf{CPL-1 (Pengetahuan):} Menguasai konsep teoretis matematika termasuk aljabar, analisis, dan matematika diskrit untuk menyelesaikan masalah.
-  
-  \item \textbf{CPL-2 (Pengetahuan):} Menguasai prinsip-prinsip komputasi dan pemrograman untuk implementasi solusi matematika.
-  
-  \item \textbf{CPL-3 (Keterampilan Umum):} Mampu menerapkan pemikiran logis, kritis, sistematis, dan inovatif dalam konteks pengembangan ilmu pengetahuan.
-  
-  \item \textbf{CPL-4 (Keterampilan Khusus):} Mampu merancang dan mengimplementasikan algoritma matematika menggunakan bahasa pemrograman.
-  
-  \item \textbf{CPL-5 (Keterampilan Khusus):} Mampu menganalisis dan menyelesaikan masalah matematika terapan.
-  
-  \item \textbf{CPL-6 (Sikap):} Menunjukkan sikap bertanggung jawab atas pekerjaan di bidang keahliannya secara mandiri dan mampu bekerja sama dalam tim.
+  \item \textbf{PP1 (Penguasaan Pengetahuan):} Menguasai konsep teoritis dan prinsip-prinsip dasar dalam matematika murni dan terapan untuk menyelesaikan berbagai permasalahan.
+  \item \textbf{KK1 (Keterampilan Khusus):} Mampu menganalisis pemikiran matematis, pemecahan masalah, serta model matematika dengan pendekatan matematis dan teknologi untuk menghasilkan interpretasi yang akurat.
+  \item \textbf{KU2 (Keterampilan Umum):} Mampu mengkaji dan menerapkan ilmu pengetahuan serta teknologi dengan menyusun deskripsi saintifik serta dapat dipertanggungjawabkan.
+  \item \textbf{KU3 (Keterampilan Umum):} Mampu mendokumentasikan, menyimpan, mengamankan, dan menemukan kembali data untuk menjamin kesahihan dan mencegah plagiasi.
+  \item \textbf{S2 (Sikap):} Bertindak dengan tanggung jawab, kepedulian, dan etika dalam kehidupan bermasyarakat, berbangsa, dan bernegara berdasarkan nilai kemanusiaan, kebhinekaan, dan Pancasila.
 \end{enumerate}
 
 \section*{Capaian Pembelajaran Mata Kuliah (CPMK)}
 
-Kemampuan atau kompetensi spesifik yang diharapkan mahasiswa kuasai setelah menyelesaikan mata kuliah:
-
 \begin{enumerate}
-  \item \textbf{CPMK-1:} Mahasiswa mampu menjelaskan prinsip-prinsip dasar kriptografi dan konsep keamanan informasi (confidentiality, integrity, authenticity).
-  
-  \item \textbf{CPMK-2:} Mahasiswa mampu menerapkan aritmetika modular, algoritma Euclid, dan teori bilangan dalam konteks kriptografi.
-  
-  \item \textbf{CPMK-3:} Mahasiswa mampu menganalisis dan mengimplementasikan algoritma kriptografi klasik (Caesar, Vigenère, substitusi) dalam bahasa C.
-  
-  \item \textbf{CPMK-4:} Mahasiswa mampu menganalisis dan mengimplementasikan algoritma kriptografi modern simetris (AES, DES) dan asimetris (RSA) dalam bahasa C.
-  
-  \item \textbf{CPMK-5:} Mahasiswa mampu menerapkan fungsi hash dan tanda tangan digital dalam keamanan data.
-  
-  \item \textbf{CPMK-6:} Mahasiswa mampu merancang dan menganalisis protokol kriptografi serta manajemen kunci.
-  
-  \item \textbf{CPMK-7:} Mahasiswa mampu melakukan kriptanalisis dasar terhadap cipher sederhana (frequency analysis, Kasiski examination).
-  
-  \item \textbf{CPMK-8:} Mahasiswa mampu mengimplementasikan algoritma kriptografi menggunakan bahasa pemrograman C.
+  \item \textbf{CPMK-1:} Mengenal beberapa jenis algoritma kriptografi klasik dan modern.
+  \item \textbf{CPMK-2:} Mahasiswa mampu memahami konsep kriptografi secara umum dan urgensinya dalam dunia teknologi informasi.
 \end{enumerate}
+
+\section*{Pemetaan CPL terhadap CPMK}
+
+\begin{itemize}
+  \item \textbf{CPMK-1} dibebankan pada CPL: PP1, KK1, KU2.
+  \item \textbf{CPMK-2} dibebankan pada CPL: PP1, KU2, KU3, S2.
+\end{itemize}
 
 \section*{Matriks Keterkaitan CPL dan CPMK}
 
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{|c|c|>{\raggedright\arraybackslash}p{5.5cm}|}
+\begin{tabular}{|c|c|>{\raggedright\arraybackslash}p{6cm}|}
   \hline
   \textbf{CPL} & \textbf{CPMK} & \textbf{Keterangan} \\
   \hline
-  CPL-1 & CPMK-1, 2, 3, 4, 5, 6, 7 & Penguasaan konsep teoretis kriptografi \\
+  PP1 & CPMK-1, CPMK-2 & Konsep teoritis dan prinsip matematika/terapan \\
   \hline
-  CPL-2 & CPMK-3, 4, 8 & Prinsip komputasi dan implementasi \\
+  KK1 & CPMK-1 & Model matematis algoritma klasik dan modern \\
   \hline
-  CPL-3 & CPMK-1 s/d 8 & Pemikiran logis dan inovatif \\
+  KU2 & CPMK-1, CPMK-2 & Mengkaji IPTEK dan deskripsi saintifik \\
   \hline
-  CPL-4 & CPMK-3, 4, 8 & Implementasi algoritma dalam C \\
+  KU3 & CPMK-2 & Urgensi pengamanan data \\
   \hline
-  CPL-5 & CPMK-2, 3, 4, 5, 6, 7 & Analisis masalah matematika terapan \\
-  \hline
-  CPL-6 & CPMK-8 & Kerja sama dalam proyek implementasi \\
+  S2 & CPMK-2 & Etika dan tanggung jawab keamanan informasi \\
   \hline
 \end{tabular}
 \caption{Matriks Keterkaitan CPL dan CPMK}

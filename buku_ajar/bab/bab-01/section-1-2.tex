@@ -1,48 +1,46 @@
 \section{Keterkaitan Buku Ajar dan RPS OBE}
 
-Buku ajar ini dirancang mengikuti Rencana Pembelajaran Semester (RPS) berbasis \textbf{OBE} (Outcome-Based Education). Dalam OBE, seluruh komponen pembelajaran disusun mengacu pada hasil (outcomes) yang harus dicapai mahasiswa; tidak ada satu metode mengajar yang diwajibkan, selama metode tersebut membantu mencapai outcome yang ditetapkan \cite{obe_wikipedia}.
+Buku ajar ini dirancang mengikuti Rencana Pembelajaran Semester (RPS) berbasis \textbf{OBE} (Outcome-Based Education) pada \textit{silabus\_kriptografi}. Dalam OBE, seluruh komponen pembelajaran disusun mengacu pada hasil (outcomes) yang harus dicapai mahasiswa \cite{obe_wikipedia}.
 
-Keterkaitan dengan RPS diwujudkan melalui pemetaan bab ke CPMK dan Sub-CPMK, sehingga materi, aktivitas, latihan, dan asesmen memiliki arah kompetensi yang jelas. Tabel berikut menunjukkan keterkaitan bab dengan Sub-CPMK sesuai silabus, termasuk rencana penambahan bab untuk topik steganografi.
+Keterkaitan dengan RPS diwujudkan melalui pemetaan bab ke \textbf{CPMK-1} (mengenal algoritma klasik dan modern) dan \textbf{CPMK-2} (memahami konsep dan urgensi di TI), serta Sub-CPMK 2.1--2.3 dan 1.1--1.4. Referensi utama mengikuti Bagian~10 silabus: Munir \cite{munir2019,munir_slides_itb}, Stallings \cite{stallings2017}, HAC \cite{menezes1996,hac_online}, Schneier \cite{schneier1996}, Stinson \cite{stinson2018}, Katz \& Lindell \cite{katz2020}, NIST \cite{nist}, dan Boneh CS255 \cite{boneh_cs255}.
 
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{|c|c|>{\raggedright\arraybackslash}p{7cm}|}
+\begin{tabular}{|c|c|c|>{\raggedright\arraybackslash}p{4.8cm}|}
 \hline
-\textbf{Bab} & \textbf{Sub-CPMK} & \textbf{Materi Terkait} \\
+\textbf{Bab} & \textbf{Sub-CPMK} & \textbf{Mg} & \textbf{Materi / Rujukan} \\
 \hline
-I & -- & Orientasi, tujuan buku, dan panduan belajar \\
+I & -- & -- & Orientasi buku dan panduan OBE \\
 \hline
-II & 1.1, 1.2, 1.3 & Layanan keamanan, terminologi, teori informasi, dasar kriptografi \\
+II & 2.1, 2.2 & 1--2 & Konsep, CIA, urgensi TI (Munir 01, HAC 1, Stallings) \\
 \hline
-III & 1.3 & Aritmetika modular, Euclid, teori bilangan, fast exponentiation \\
+III & 2.3 & 3 & Matematika pengantar: modulo, prima, invers (Munir, HAC 2) \\
 \hline
-IV & 2.1 & Cipher klasik, kriptanalisis dasar, implementasi C \\
+IV & 1.1 & 4--5 & Cipher klasik + frekuensi (Munir 02--05, Schneier, Stinson) \\
 \hline
-V & 3.1, 3.2, 3.3 & Stream/block cipher, DES/AES, mode operasi \\
+V & 1.2 & 6--7, 9 & Stream, DES, AES, mode (Munir modern, Stallings, NIST, HAC 6--7) \\
 \hline
-VI & 4.1, 4.2 & Kunci publik, RSA, pertukaran kunci, implementasi C \\
+VI & 1.3 & 10--11 & RSA, DH, ElGamal, ECC intro (Munir, HAC 8, Katz, Boneh) \\
 \hline
-VII & 5.1, 5.2 & Hash, MAC, tanda tangan digital \\
+VII & 1.4 & 12--13 & Hash, MAC, tanda tangan, X.509 (Stallings, NIST) \\
 \hline
-VIII & 6.1 & RNG, protokol, manajemen kunci, TLS/PKI dasar \\
+VIII & 1.4, 2.2 & 13--14 & PKI, SSL/TLS, urgensi aplikasi (Munir, Boneh, Stallings) \\
 \hline
-IX & 2.1 (pendalaman) & Kriptanalisis: frequency analysis dan Kasiski \\
-\hline
-X & -- & Evaluasi, refleksi, dan integrasi kompetensi \\
-\hline
-XI (tambahan) & 7.1 & Steganografi dan watermarking \\
+X & CPMK-1, 2 & 8, 15--16 & Review, UTS, UAS \\
 \hline
 \end{tabular}
-\caption{Pemetaan Bab ke Sub-CPMK}
+\caption{Pemetaan Bab ke Sub-CPMK, pertemuan, dan rujukan silabus}
 \end{table}
+
+\noindent\textit{Catatan:} Materi RNG dan steganografi dipindahkan ke lampiran opsional (di luar CPMK wajib).
 
 \begin{figure}[htbp]
   \centering
   \begin{tikzpicture}[node distance=1.2cm]
-    \node[draw, rounded corners, fill=blue!5, inner sep=4pt] (cpl) {CPL};
-    \node[draw, rounded corners, fill=blue!5, inner sep=4pt, below=of cpl] (cpmk) {CPMK};
-    \node[draw, rounded corners, fill=blue!5, inner sep=4pt, below=of cpmk] (subcpmk) {Sub-CPMK};
+    \node[draw, rounded corners, fill=blue!5, inner sep=4pt] (cpl) {CPL (PP1, KK1, KU2, KU3, S2)};
+    \node[draw, rounded corners, fill=blue!5, inner sep=4pt, below=of cpl] (cpmk) {CPMK-1, CPMK-2};
+    \node[draw, rounded corners, fill=blue!5, inner sep=4pt, below=of cpmk] (subcpmk) {Sub-CPMK 2.1--2.3, 1.1--1.4};
     \node[draw, rounded corners, fill=green!5, inner sep=4pt, below=of subcpmk] (aktivitas) {Aktivitas \& Materi};
     \node[draw, rounded corners, fill=orange!5, inner sep=4pt, below=of aktivitas] (asesmen) {Asesmen};
     \node[draw, rounded corners, fill=gray!10, inner sep=4pt, below=of asesmen] (bukti) {Bukti Pencapaian};
@@ -55,4 +53,4 @@ XI (tambahan) & 7.1 & Steganografi dan watermarking \\
   \caption{Alur keterkaitan CPL, CPMK, Sub-CPMK, aktivitas, dan asesmen.}
 \end{figure}
 
-Dengan pemetaan ini, setiap aktivitas pembelajaran berfungsi sebagai bukti pencapaian outcome yang terukur. Mahasiswa dapat memantau kemajuan belajar melalui indikator dan checklist kompetensi yang disediakan pada setiap bab.
+Dengan pemetaan ini, setiap aktivitas pembelajaran berfungsi sebagai bukti pencapaian outcome pada tingkat \textit{mengenal} dan \textit{memahami}.

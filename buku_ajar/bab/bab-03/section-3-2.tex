@@ -2,7 +2,7 @@
 
 \subsection{Mengapa Algoritma Euclid Penting dalam Kriptografi}
 
-Dalam section sebelumnya, kita belajar tentang invers modular—konsep fundamental untuk cipher seperti Affine dan RSA. Pertanyaan penting: "Bagaimana kita menghitung invers modular secara efisien?" Jawabannya adalah \textbf{Algoritma Euclid Diperluas}.
+Pada bagian sebelumnya kita melihat bahwa invers modular $a^{-1} \bmod n$ ada jika dan hanya jika $a$ dan $n$ relatif prima. Dua pertanyaan muncul: bagaimana memeriksa $\gcd(a, n) = 1$ secara efisien, dan bagaimana menghitung inversnya? Jawabannya adalah \textbf{algoritma Euclid} dan \textbf{algoritma Euclid diperluas}.
 
 Algoritma ini sangat penting karena:
 \begin{itemize}
@@ -72,6 +72,7 @@ Cari invers $35^{-1} \pmod{64}$. Kita gunakan tabel Extended Euclidean Algorithm
 
 Target: $35x + 64y = 1$. Kita mencari $x$.
 
+{\captionsetup{hypcap=false}%
 \begin{center}
   \small
   \begin{tabular}{ccccccc}
@@ -84,7 +85,7 @@ Target: $35x + 64y = 1$. Kita mencari $x$.
     \multicolumn{7}{c}{\textit{Komputasi berjalan...}} \\
   \end{tabular}
   \captionof{table}{Jejak langkah Extended Euclid untuk $35^{-1} \pmod{64}$.}
-\end{center}
+\end{center}}
 
 \textbf{Metode Substitusi Balik (Back-Substitution)}:
 \begin{align*}
@@ -118,7 +119,7 @@ Extended Euclidean Algorithm sangat penting dalam kriptografi kunci publik \cite
 
 Sebagai preview ke Bab IV, mari kita lihat bagaimana Extended Euclidean Algorithm digunakan dalam Affine Cipher:
 
-\textbf{Affine Cipher}: $E(x) = (ax + b) \bmod 26$
+\textbf{Affine Cipher}: $E(x) = (ax + b) \bmod 26$ (di Bab~IV pengali $a$ ditulis sebagai $m$, mengikuti slide kuliah)
 
 Untuk dekripsi, kita perlu invers modular dari $a$:
 \[

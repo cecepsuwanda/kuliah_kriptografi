@@ -5,17 +5,18 @@
 \chapter{Landasan Teori dan Konsep Dasar Kriptografi}
 
 \begin{subcpmk}
-  \item Sub-CPMK 1.1: Menjelaskan layanan keamanan (confidentiality, integrity, availability, non-repudiation) dan sejarah kriptografi
-  \item Sub-CPMK 1.2: Menghitung entropi dan laju bahasa dalam konteks teori informasi
-  \item Sub-CPMK 1.3: Membedakan kriptografi simetris dan asimetris
+  \item Sub-CPMK 2.1: Menjelaskan definisi, terminologi, sejarah, dan layanan keamanan (CIA + non-repudiation)
+  \item Sub-CPMK 2.2: Menjelaskan urgensi kriptografi dalam TI (privasi, transaksi elektronik, HTTPS/TLS, etika)
 \end{subcpmk}
+
+\noindent\textit{Rujukan:} Munir \cite{munir2019,munir_slides_itb}; HAC Bab~1 \cite{menezes1996,hac_online}; Stallings \cite{stallings2017}.
 
 % ============================================================
 % MATERI POKOK
 % ============================================================
 \input{bab-02/section-2-1}
 \input{bab-02/section-2-2}
-\input{bab-02/section-2-2a}
+\input{bab-02/section-2-2a-serangan}
 \input{bab-02/section-2-3}
 \input{bab-02/section-2-4}
 \input{bab-02/section-2-5}
@@ -26,15 +27,17 @@
 % ============================================================
 
 \begin{aktivitas}
-  \item \textbf{Diskusi Kelompok}: Identifikasi 5 aplikasi sehari-hari yang menggunakan kriptografi (misalnya: WhatsApp, perbankan online, e-commerce). Jelaskan ancaman apa yang dilindungi masing-masing.
+  \item \textbf{Diskusi Kelompok (urgensi)}: Identifikasi 5 aplikasi sehari-hari yang menggunakan kriptografi (misalnya: WhatsApp, perbankan online, e-commerce). Jelaskan ancaman apa yang dilindungi masing-masing, dan apakah proteksinya lebih ke \textit{at rest}, \textit{in transit}, atau keduanya.
+  
+  \item \textbf{Empat Case Alice--Bob}: Petakan Case~1--4 (penyadapan, penyamaran, manipulasi, penyangkalan) ke layanan keamanan dan satu mekanisme kriptografi yang relevan.
   
   \item \textbf{Analisis Kasus}: Diberikan skenario: Eve mencuri ciphertext dari komunikasi Alice dan Bob. Apa yang bisa dan tidak bisa dilakukan Eve? Jelaskan peran confidentiality, integrity, dan authenticity.
   
-  \item \textbf{Perbandingan}: Buat tabel perbandingan antara kriptografi simetris dan asimetris untuk penggunaannya dalam: enkripsi file, pertukaran kunci, tanda tangan digital.
+  \item \textbf{Demo Wireshark (di jaringan sendiri)}: Rekam lalu lintas saat masuk ke sebuah situs uji HTTP (misalnya \url{http://testphp.vulnweb.com}) dan saat membuka situs HTTPS. Bandingkan apa yang terlihat oleh penyadap pada keduanya, lalu kaitkan dengan serangan pasif \textit{interception} dan \textit{traffic analysis}.
   
   \item \textbf{Mind Mapping}: Buat mind map yang menghubungkan confidentiality, integrity, availability, non-repudiation dengan mekanisme kriptografi yang mendukungnya.
   
-  \item \textbf{Perhitungan Entropi}: Hitung entropi untuk sumber dengan 4 simbol berpeluang sama. Bandingkan dengan laju bahasa Inggris.
+  \item \textbf{Perbandingan}: Buat tabel perbandingan antara kriptografi simetris dan asimetris untuk: enkripsi file, pertukaran kunci, tanda tangan digital. Tambahkan satu baris: kapan fungsi hash dipakai.
 \end{aktivitas}
 
 % ============================================================
@@ -48,7 +51,21 @@
   
   \item Apa perbedaan utama antara kriptografi simetris dan asimetris? Kapan masing-masing lebih cocok digunakan?
   
-  \item Jelaskan model komunikasi kriptografi (Alice, Bob, Eve). Apa peran masing-masing?
+  \item Jelaskan model komunikasi kriptografi (Alice, Bob, Eve). Apa peran masing-masing, dan berikan contoh Alice/Bob yang berupa mesin (bukan manusia)?
+  
+  \item Bedakan serangan pasif dan serangan aktif. Klasifikasikan interception, traffic analysis, interruption, modification, fabrication, dan replay, serta sebutkan layanan keamanan yang diancam masing-masing.
+  
+  \item Mengapa enkripsi saja tidak cukup untuk mencegah \textit{replay attack}? Mekanisme apa yang dapat mencegahnya?
+  
+  \item Jelaskan cara kerja \textit{man-in-the-middle attack} pada pertukaran kunci Diffie--Hellman. Apa yang diperlukan agar serangan ini gagal?
+  
+  \item Jelaskan \textbf{prinsip Kerckhoffs}. Mengapa algoritma modern dipublikasikan?
+  
+  \item Bedakan enkripsi, encoding, hashing, dan tokenisasi. Mana yang melindungi kerahasiaan plaintext?
+  
+  \item Apa perbedaan \textit{encryption at rest} dan \textit{encryption in transit}? Berikan satu contoh masing-masing.
+  
+  \item Sebutkan peran BSSN (atau lembaga sandi/siber terkait) dalam konteks kriptografi di Indonesia.
   
   \item Berikan 3 contoh ancaman keamanan dan jelaskan bagaimana kriptografi dapat mengatasinya.
   
@@ -60,7 +77,7 @@
 % ============================================================
 
 \begin{asesmen}
-\textbf{Instrumen Penilaian untuk Sub-CPMK 1.1, 1.2, 1.3}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 2.1, 2.2}
 
 \textbf{A. Pilihan Ganda}
 
@@ -88,6 +105,14 @@
     \item Keaslian
     \item Ketersediaan
   \end{enumerate}
+  
+  \item Penyerang merekam pesan perintah transfer yang sah lalu mengirimkannya kembali keesokan harinya tanpa mendekripsinya. Serangan ini termasuk:
+  \begin{enumerate}
+    \item Serangan pasif berupa traffic analysis
+    \item Serangan aktif berupa replay
+    \item Serangan pasif berupa interception
+    \item Serangan aktif berupa interruption
+  \end{enumerate}
 \end{enumerate}
 
 \textbf{B. Essay}
@@ -106,12 +131,13 @@
 % ============================================================
 
 \begin{checklist}
-  \item Saya dapat menjelaskan terminologi dasar kriptografi (plaintext, ciphertext, cipher, key)
-  \item Saya dapat menjelaskan model komunikasi aman dan ancaman keamanan
-  \item Saya dapat mendefinisikan confidentiality, integrity, availability, dan non-repudiation
-  \item Saya dapat menghitung entropi sederhana dan menjelaskan laju bahasa serta redundansi
-  \item Saya dapat membedakan kriptografi simetris dan asimetris
-  \item Saya dapat memberikan contoh penggunaan masing-masing jenis kriptografi
+  \item Saya dapat menjelaskan terminologi dasar kriptografi (plaintext, ciphertext, cipher, key) dan gagasan cryptosystem
+  \item Saya dapat menjelaskan model komunikasi aman, empat case Alice--Bob, dan ancaman keamanan
+  \item Saya dapat membedakan serangan pasif (interception, traffic analysis, penyadapan) dan serangan aktif (interruption, modification, fabrication, replay, man-in-the-middle)
+  \item Saya dapat menjelaskan urgensi kriptografi di TI, termasuk at rest vs in transit, serta mengenal lembaga terkait (misalnya BSSN)
+  \item Saya dapat mendefinisikan confidentiality, integrity, availability, authenticity, dan non-repudiation
+  \item Saya dapat menjelaskan prinsip Kerckhoffs dan membedakan enkripsi dari encoding/hashing/tokenisasi
+  \item Saya dapat membedakan kriptografi simetris, asimetris, dan peran fungsi hash secara konseptual
 \end{checklist}
 
 % ============================================================
@@ -119,42 +145,33 @@
 % ============================================================
 
 \begin{rangkuman}
-Bab ini membahas landasan teori kriptografi: definisi, sejarah, terminologi, model komunikasi aman, ancaman keamanan, layanan keamanan informasi (CIA + non-repudiation), teori informasi (entropi, laju bahasa, redundansi), serta perbedaan kriptografi simetris dan asimetris.
+Bab ini mengikuti alur: pengantar (definisi, sejarah, terminologi, Kerckhoffs, cryptosystem) $\to$ model komunikasi dan empat case $\to$ serangan pasif dan aktif $\to$ urgensi di TI $\to$ layanan keamanan $\to$ keluarga algoritma (simetris, asimetris, hash) $\to$ peta konsep dan tantangan masa depan.
 
 \textbf{Poin Kunci:}
 \begin{itemize}
-  \item Kriptografi mengamankan informasi melalui enkripsi dan dekripsi
-  \item Layanan keamanan: Confidentiality, Integrity, Availability, Non-repudiation
-  \item Entropi mengukur ketidakpastian; redundansi memungkinkan analisis frekuensi
-  \item Simetris: satu kunci, cepat; Asimetris: pasangan kunci, handal untuk distribusi
+  \item Kriptografi mengamankan informasi; kriptanalisis adalah ``lawannya''; keduanya membentuk kriptologi
+  \item Kerckhoffs: algoritma boleh publik; yang rahasia adalah kunci
+  \item Empat case Alice--Bob memotivasi confidentiality, authentication, integrity, non-repudiation
+  \item Serangan pasif (interception, traffic analysis; lewat wiretapping, emisi elektromagnetik, atau akustik) sulit dideteksi sehingga dicegah dengan enkripsi; serangan aktif (interruption, modification, fabrication, replay, MITM) dideteksi dengan hash/MAC, tanda tangan digital, dan nonce/nomor urut
+  \item Enkripsi $\neq$ encoding $\neq$ hashing $\neq$ tokenisasi
+  \item Simetris: satu kunci, cepat; asimetris: pasangan kunci; hash: ringkasan satu arah untuk integritas
 \end{itemize}
 
-\textbf{Kata Kunci}: \crypt{Kriptografi}, \crypt{Plaintext}, \crypt{Ciphertext}, \crypt{Entropi}, \crypt{Confidentiality}, \crypt{Integrity}, \crypt{Availability}, \crypt{Non-repudiation}
+\textbf{Kata Kunci}: \crypt{Kriptografi}, \crypt{Kriptologi}, \crypt{Kerckhoffs}, \crypt{Plaintext}, \crypt{Ciphertext}, \crypt{Confidentiality}, \crypt{Integrity}, \crypt{Availability}, \crypt{Non-repudiation}, \crypt{Serangan Pasif}, \crypt{Serangan Aktif}, \crypt{Replay}, \crypt{Man-in-the-Middle}
 \end{rangkuman}
 
 % ============================================================
 % Persiapan untuk Bab Berikutnya
 % ============================================================
 \begin{transition}
-Setelah memahami konsep dasar kriptografi dan landscape keamanan informasi, kita siap untuk memasuki \textbf{Bab III: Matematika Kriptografi}.
+Setelah memahami konsep dasar dan urgensi kriptografi di TI---termasuk prinsip Kerckhoffs, layanan keamanan, serta perbedaan simetris/asimetris/hash---kita siap untuk \textbf{Bab III: Matematika Kriptografi} (pengenalan). Setiap cipher yang akan dipelajari, dari Caesar hingga RSA dan AES, bertumpu pada matematika; Bab III membekali alat-alat tersebut.
 
-Dalam Bab III, kita akan mempelajari fondasi matematika yang membuat semua cipher bekerja:
+Dalam Bab III (Sub-CPMK 2.3), kita mengenal:
 \begin{itemize}
-  \item \textbf{Aritmetika modular}: Fondasi untuk Caesar, Vigenère, dan RSA
-  \item \textbf{Algoritma Euclid}: Untuk menghitung invers modular yang diperlukan RSA
-  \item \textbf{Teori bilangan}: Prima, faktorisasi, yang menjadi dasar keamanan RSA
-  \item \textbf{Fast exponentiation}: Untuk komputasi efisien dalam RSA dan Diffie-Hellman
-  \item \textbf{Aljabar abstrak}: Grup, field, dan Galois Field untuk AES
+  \item Aritmetika modular, relatif prima, dan invers modulo
+  \item Algoritma Euclid serta bilangan prima (Fermat, Euler)
+  \item Teori informasi (entropi) --- mengapa cipherteks yang baik tampak acak
 \end{itemize}
-
-Setiap konsep matematika akan langsung kita terapkan:
-\begin{itemize}
-  \item Modular arithmetic $\rightarrow$ Caesar dan Vigenère cipher (Bab IV)
-  \item Teori bilangan $\rightarrow$ RSA (Bab VI)
-  \item Galois Field $\rightarrow$ AES (Bab V)
-\end{itemize}
-
-Pendekatan ini memastikan Anda melihat langsung relevansi matematika dalam aplikasi kriptografi, bukan hanya sebagai teori abstrak. Setelah Bab III, Anda akan memiliki alat matematika yang diperlukan untuk memahami dan mengimplementasikan semua cipher yang akan kita pelajari.
 \end{transition}
 
 \ifSubfilesClassLoaded{

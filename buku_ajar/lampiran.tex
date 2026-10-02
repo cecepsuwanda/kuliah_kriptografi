@@ -66,8 +66,26 @@ Analisis & Analisis mendalam terhadap kelemahan & Analisis memadai & Analisis se
 % ============================================================
 \section*{Lampiran D: Referensi Tambahan}
 \begin{itemize}
+  \item Munir, Rinaldi. Slide IF4020 Kriptografi (ITB): \url{https://informatika.stei.itb.ac.id/~rinaldi.munir/Kriptografi/2023-2024/}
+  \item Handbook of Applied Cryptography (bab PDF): \url{http://cacr.uwaterloo.ca/hac/}
   \item NIST Cryptographic Standards: \url{https://csrc.nist.gov/}
+  \item Boneh, Dan. Crypto I (CS255 Stanford): \url{https://crypto.stanford.edu/~dabo/courses/cs255/}
   \item OpenSSL Documentation: \url{https://www.openssl.org/docs/}
   \item Cryptography Stack Exchange: \url{https://crypto.stackexchange.com/}
-  \item The Joy of Cryptography (Mike Rosulek): \url{https://joyofcryptography.com/}
 \end{itemize}
+
+% ============================================================
+% Lampiran E: Materi Opsional (di luar CPMK wajib silabus)
+% ============================================================
+\section*{Lampiran E: Materi Opsional --- RNG dan Steganografi}
+
+\noindent\textit{Catatan:} Topik ini \textbf{tidak} termasuk CPMK-1/CPMK-2 pada silabus. Disediakan sebagai pengayaan.
+
+\subsection*{E.1 Ringkasan RNG}
+TRNG memakai sumber fisik; PRNG deterministik dari seed dan untuk kripto harus CSPRNG. LCG tidak aman untuk kunci. Uji keacakan (mis. NIST SP 800-22) membantu deteksi kelemahan statistik, tetapi lulus uji tidak menjamin keamanan kriptografis \cite{stallings2017,menezes1996}.
+
+\subsection*{E.2 Ringkasan Steganografi LSB}
+Steganografi menyembunyikan keberadaan pesan dalam media cover (berbeda dari enkripsi). Metode LSB mengganti bit paling tidak signifikan sampel citra; kapasitas besar tetapi rentan steganalis statistik. Watermarking lebih menekankan ketahanan terhadap modifikasi \cite{stallings2017}.
+
+\noindent Untuk uraian lebih lengkap, lihat berkas sumber \texttt{bab/bab-09/} (tidak diikutkan dalam kompilasi utama).
+

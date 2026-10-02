@@ -1,0 +1,82 @@
+\section{Pengayaan: Enigma Cipher}
+
+Subbab ini bersifat pengayaan. Enigma adalah mesin enkripsi elektromekanik untuk enkripsi dan dekripsi yang ditemukan dan dipatenkan oleh insinyur Jerman, Arthur Scherbius, untuk keperluan komersial, diplomatik, dan militer. Enigma menjadi terkenal karena dipakai tentara Nazi Jerman selama Perang Dunia II untuk mengenkripsi pesan-pesan militer. Namanya berasal dari bahasa Latin \textit{aenigma} yang berarti teka-teki \cite{munir_slides_itb}. Foto Enigma sebagai artefak sejarah sudah ditampilkan pada Gambar~\ref{fig:artefak-kriptografi} di Bab~II; di sini kita melihat cara kerjanya.
+
+\subsection{Komponen dan Cara Kerja}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.42\textwidth]{bab-04/enigma-berlabel}
+  \caption{Komponen mesin Enigma: rotor, \textit{keyboard}, \textit{lampboard}, dan \textit{plugboard} \cite{munir_slides_itb}.}
+  \label{fig:enigma-berlabel}
+\end{figure}
+
+Komponen utama Enigma ditunjukkan pada Gambar~\ref{fig:enigma-berlabel}:
+\begin{itemize}
+  \item \textbf{Keyboard}: tempat operator mengetik huruf plainteks.
+  \item \textbf{Plugboard}: kabel-kabel penukar pasangan huruf sebelum dan sesudah melewati rotor; pengaturannya diganti setiap hari.
+  \item \textbf{Rotor}: roda-roda pengacak (tiga, kemudian empat) yang posisinya menentukan pengodean setiap huruf.
+  \item \textbf{Reflektor}: memantulkan sinyal kembali melalui rotor-rotor.
+  \item \textbf{Lampboard}: papan lampu yang menyalakan huruf cipherteks.
+\end{itemize}
+Operator mengetik huruf plainteks pada \textit{keyboard}, lalu menyalin huruf cipherteks yang menyala pada \textit{lampboard}. Cipherteks itu kemudian dikirim ke penerima pesan, biasanya lewat radio dengan kode Morse.
+
+Enigma membentuk huruf cipherteks yang berubah-ubah dengan sistem rotor:
+\begin{itemize}
+  \item Setiap rotor melakukan substitusi abjad-tunggal.
+  \item Hasil substitusi sebuah rotor menjadi huruf masukan bagi rotor berikutnya; hasil rotor terakhir menjadi huruf cipherteks.
+  \item Setiap kali sebuah huruf dienkripsi, rotor berputar satu posisi, sehingga huruf plainteks berikutnya dienkripsi dengan substitusi yang berbeda.
+\end{itemize}
+Satu rotor kembali ke posisi semula setelah berputar 26 kali, sehingga satu rotor menghasilkan cipher abjad-majemuk dengan periode 26.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[b]{0.52\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{bab-04/enigma-rotor-sederhana}\\
+    \small (a) Posisi awal: D $\rightarrow$ E
+  \end{minipage}\hfill
+  \begin{minipage}[b]{0.42\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{bab-04/enigma-rotor-bergeser}\\
+    \small (b) Rotor 3 bergeser satu huruf: D $\rightarrow$ A
+  \end{minipage}
+  \caption{Tiga rotor yang disederhanakan menjadi 6 huruf. Huruf yang sama menghasilkan cipherteks berbeda setelah rotor bergeser \cite{munir_slides_itb}.}
+  \label{fig:enigma-rotor}
+\end{figure}
+
+\begin{contoh}
+Tinjau tiga rotor yang disederhanakan menjadi hanya 6 huruf (Gambar~\ref{fig:enigma-rotor}). Huruf plainteks D ditekan pada \textit{keyboard}. Rotor pertama mengenkripsi D menjadi E; E menjadi masukan rotor kedua dan dienkripsi menjadi B; B menjadi masukan rotor ketiga dan dienkripsi menjadi E. Jadi D dienkripsi menjadi E. Setelah itu rotor ketiga bergeser satu huruf, sehingga jika D ditekan lagi, hasilnya adalah A.
+\end{contoh}
+
+Enigma 4-rotor menggerakkan rotornya seperti odometer: setiap kali sebuah huruf selesai disubstitusi, rotor pertama bergeser satu huruf; setiap kali rotor pertama selesai bergeser 26 kali, rotor kedua bergeser satu huruf, dan seterusnya sampai rotor keempat. Akibatnya terdapat
+\[
+26 \times 26 \times 26 \times 26 = 456.976
+\]
+kemungkinan substitusi sebelum urutan cipherteks berulang. Posisi awal rotor (bersama pengaturan \textit{plugboard}) yang dapat di-\textit{set} merupakan \textbf{kunci} Enigma.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.45\textwidth]{bab-04/enigma-reflektor}
+  \caption{Jalur sinyal melalui tiga rotor dan reflektor. Atas: huruf A dienkripsi menjadi G. Bawah: setelah rotor kanan bergeser satu posisi, huruf A dienkripsi menjadi C \cite{munir_slides_itb}.}
+  \label{fig:enigma-reflektor}
+\end{figure}
+
+Gambar~\ref{fig:enigma-reflektor} memperlihatkan peran reflektor: sinyal melewati rotor kanan, tengah, dan kiri, dipantulkan reflektor, lalu kembali melalui ketiga rotor lewat jalur berbeda. Reflektor membuat Enigma bersifat \textbf{resiprokal}: dengan pengaturan yang sama, jika A dienkripsi menjadi G maka G dienkripsi menjadi A, sehingga mesin yang sama dipakai untuk dekripsi. Namun reflektor juga menimbulkan kelemahan penting: \textbf{tidak ada huruf yang dapat dienkripsi menjadi dirinya sendiri}. Sifat inilah yang kemudian dimanfaatkan para pemecah kode.
+
+\subsection{Pemecahan Enigma}
+
+Kriptanalisis Enigma pertama kali berhasil pada tahun 1932 oleh tiga kriptografer Polandia: Marian Rejewski, Jerzy R\'o\.zycki, dan Henryk Zygalski. Jerman terus memperkuat Enigma, antara lain dengan menambah pilihan rotor dan memperbanyak sambungan \textit{plugboard} menjelang 1939, sehingga metode Polandia tidak lagi memadai. Jerman sangat yakin Enigma tidak akan dapat dipecahkan.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.45\textwidth]{bab-04/bombe}
+  \caption{Mesin \textit{Bombe} rancangan Alan Turing untuk memecahkan Enigma \cite{munir_slides_itb}.}
+  \label{fig:bombe}
+\end{figure}
+
+Dengan bantuan hasil kerja Polandia, Inggris kemudian membangun mesin pemecah Enigma yang diberi nama \textit{Bombe} (Gambar~\ref{fig:bombe}), dirancang oleh Alan Turing di Bletchley Park. \textit{Bombe} berhasil memecahkan Enigma buatan Jerman, dan keberhasilan ini diperkirakan memperpendek Perang Dunia II sekitar dua tahun \cite{munir_slides_itb}.
+
+\begin{catatan}
+\textbf{Simulator daring.} Enigma dapat dicoba di \url{https://www.101computing.net/enigma/enigma-instructions.html}. Sebagai contoh, dengan satu pengaturan rotor tertentu, plainteks \texttt{PESAW ATMEN DARAT} dienkripsi menjadi \texttt{GUFYL FRKQE JXVHM}. Perhatikan bahwa huruf A pada plainteks dienkripsi menjadi huruf yang berbeda-beda (Y, F, \ldots), dan tidak ada huruf yang dienkripsi menjadi dirinya sendiri.
+\end{catatan}

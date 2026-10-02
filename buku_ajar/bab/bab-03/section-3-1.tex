@@ -1,8 +1,9 @@
 \section{Aritmetika Modular}
+\label{sec:aritmetika-modular}
 
-\subsection{Mengapa Modular Arithmetic Penting dalam Kriptografi}
+\subsection{Peran Aritmetika Modular dalam Kriptografi}
 
-Dalam Bab II, kita telah mempelajari konsep dasar kriptografi dan landscape keamanan informasi. Sekarang kita akan mempelajari \textbf{alat matematika} yang membuat semua cipher bekerja. Modular arithmetic adalah fondasi dari hampir semua algoritma kriptografi—mulai dari Caesar cipher yang sederhana hingga RSA yang kompleks.
+Aritmetika modular adalah alat teori bilangan yang paling sering muncul dalam kriptografi. Rumus-rumus berikut akan Anda jumpai lagi di bab-bab berikutnya:
 
 \begin{itemize}
   \item \textbf{Caesar cipher}: $E(x) = (x + k) \bmod 26$ — pergeseran huruf sederhana
@@ -12,7 +13,7 @@ Dalam Bab II, kita telah mempelajari konsep dasar kriptografi dan landscape keam
   \item \textbf{AES}: Operasi dalam $\mathrm{GF}(2^8)$ — aritmetika modular byte
 \end{itemize}
 
-Setiap konsep yang kita pelajari dalam bab ini akan langsung diterapkan dalam Bab IV (cipher klasik) dan bab-bab berikutnya. Pendekatan ini memastikan Anda melihat relevansi langsung matematika dalam aplikasi kriptografi.
+Konsep pada bagian ini langsung diterapkan di Bab~IV (cipher klasik) dan bab-bab berikutnya.
 
 \subsection{Definisi Kongruensi}
 
@@ -69,6 +70,16 @@ $(8 - 13) \bmod 11 = (-5) \bmod 11 = 6$.
 
 Sifat distributif aritmetika modular memungkinkan optimasi komputasi yang signifikan dalam implementasi kriptografi, terutama saat bekerja dengan bilangan yang sangat besar seperti dalam RSA. Dengan mengurangi setiap operan terlebih dahulu sebelum melakukan operasi aritmetika, kita dapat mencegah overflow dan meningkatkan efisiensi perhitungan. Teknik ini sangat penting dalam implementasi praktis di mana kita harus melakukan operasi modular berulang kali tanpa kehilangan presisi atau performa.
 
+\subsection{Relatif Prima}
+
+Dua bilangan bulat $a$ dan $b$ disebut \textbf{relatif prima} (koprima) jika faktor persekutuan terbesarnya sama dengan 1, yaitu $\gcd(a, b) = 1$ \cite{munir_slides_itb}. Dengan kata lain, $a$ dan $b$ tidak memiliki faktor bersama selain 1.
+
+\begin{contoh}
+$23$ dan $40$ relatif prima karena $\gcd(23, 40) = 1$. Sebaliknya, $20$ dan $26$ tidak relatif prima karena $\gcd(20, 26) = 2$.
+\end{contoh}
+
+Konsep ini menentukan kapan sebuah bilangan memiliki invers modulo $n$ (subbagian berikutnya), dan cara menghitung $\gcd$ secara efisien dibahas pada algoritma Euclid.
+
 \subsection{Invers Modular}
 
 Jika $a \cdot x \equiv 1 \pmod{n}$, maka $x$ adalah \textbf{invers modular} dari $a$ modulo $n$, ditulis $x = a^{-1} \pmod{n}$.
@@ -104,6 +115,18 @@ $3^{-1} \equiv 7 \pmod{10}$ karena $3 \cdot 7 = 21 \equiv 1 \pmod{10}$.
 \end{table}
 
 Invers modular merupakan konsep fundamental dalam kriptografi kunci publik \cite{shoup2009}. Algoritma Euclid diperluas menyediakan metode efisien untuk menghitung invers modular tanpa brute force yang tidak praktis untuk bilangan besar. Kemampuan menghitung invers modular dengan cepat sangat penting untuk generasi kunci RSA.
+
+\begin{contoh}
+Kumpulan contoh singkat \cite{munir_slides_itb}:
+\begin{enumerate}[label=(\roman*)]
+  \item $23 \bmod 5 = 3$, karena $23 = 4 \cdot 5 + 3$.
+  \item $-41 \bmod 9 = 4$, karena $41 \bmod 9 = 5$ dan $9 - 5 = 4$ (periksa: $-41 = -5 \cdot 9 + 4$).
+  \item $17 \equiv 2 \pmod{3}$, karena $3 \mid (17 - 2)$.
+  \item $-7 \equiv 15 \pmod{11}$, karena $11 \mid (-7 - 15) = -22$.
+  \item $4^{-1} \equiv 7 \pmod{9}$, karena $4 \cdot 7 = 28 \equiv 1 \pmod{9}$.
+  \item $23^{-1} \equiv -3 \equiv 7 \pmod{10}$, karena $23 \cdot (-3) = -69 \equiv 1 \pmod{10}$.
+\end{enumerate}
+\end{contoh}
 
 \subsection{Pembagian Modular}
 
@@ -147,4 +170,4 @@ Contoh: Enkripsi "HELLO" dengan $k=3$:
   \item Hasil: "KHOOR"
 \end{itemize}
 
-Ini adalah contoh sederhana bagaimana matematika yang kita pelajari langsung diterapkan dalam kriptografi. Dalam Bab IV, kita akan mengimplementasikan ini dalam bahasa C dan melihat cipher yang lebih kompleks.
+Ini adalah contoh sederhana bagaimana matematika yang kita pelajari langsung diterapkan dalam kriptografi. Dalam Bab IV, kita akan mengimplementasikan ini dalam bahasa Python dan C, memecahkannya dengan \textit{exhaustive key search}, dan melihat cipher yang lebih kompleks.

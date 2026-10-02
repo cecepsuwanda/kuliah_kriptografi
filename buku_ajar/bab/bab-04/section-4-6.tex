@@ -1,289 +1,299 @@
-\section{Kriptanalisis Mendalam}
+\section{Vigen\`{e}re Cipher}
+\label{sec:vigenere}
 
-\subsection{Differential Cryptanalysis}
+\subsection{Cipher Abjad-Majemuk}
 
-Differential cryptanalysis adalah teknik analisis yang dikembangkan oleh Biham dan Shamir pada tahun 1990-an untuk menyerang cipher blok \cite{biham1993}. Teknik ini memanfaatkan perbedaan dalam ciphertext ketika plaintext diubah secara sistematis.
-
-\textbf{Prinsip Dasar}: Jika kita dapat menemukan pasangan plaintext $(P, P')$ dengan perbedaan $\Delta P = P \oplus P'$ yang menghasilkan perbedaan ciphertext $\Delta C = C \oplus C'$ yang dapat diprediksi, maka kita dapat mengekstrak informasi tentang kunci.
-
-\subsection{Differential Cryptanalysis terhadap DES}
-
-DES adalah target pertama differential cryptanalysis karena strukturnya yang relatif sederhana \cite{biham1993}. Mari kita analisis DES dengan 3 round (reduced-round DES) untuk memahami konsepnya.
-
-\textbf{S-Box DES}: Setiap S-box DES mengubah 6-bit input menjadi 4-bit output. Distribusi output untuk input yang berbeda 1 bit tidak seragam, yang menciptakan bias yang dapat dieksploitasi.
-
-\begin{table}[htbp]
-  \centering
-  \small
-  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-    \hline
-    \multicolumn{16}{|c|}{Input (6-bit)} \\
-    \hline
-    0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 \\
-    \hline
-    14 & 4 & 13 & 1 & 2 & 15 & 11 & 8 & 3 & 10 & 6 & 12 & 5 & 9 & 0 & 7 \\
-    \hline
-  \end{tabular}
-  \caption{S-Box DES pertama (contoh sebagian).}
-\end{table}
-
-\textbf{Differential Characteristic}: Pola perbedaan yang konsisten melalui beberapa round.
-
-\begin{contoh}
-Differential characteristic untuk 2-round DES:
+Vigen\`{e}re cipher termasuk kelompok \crypt{cipher abjad-majemuk} (\textit{polyalphabetic cipher}). Perbedaannya dengan cipher abjad-tunggal \cite{munir_slides_itb}:
 \begin{itemize}
-  \item Input difference: $\Delta P = 0x00800000000000000$ (hanya bit 3 yang berbeda)
-  \item Setelah round 1: $\Delta_1 = 0x00000020000000000$ (bit 18 berbeda)
-  \item Setelah round 2: $\Delta_2 = 0x00000002000000000$ (bit 22 berbeda)
-  \item Probabilitas: $2^{-14}$ (sangat rendah)
+  \item \textbf{cipher abjad-tunggal}: satu kunci untuk semua huruf plainteks (contoh: Caesar cipher);
+  \item \textbf{cipher abjad-majemuk}: setiap huruf dapat dienkripsi dengan kunci yang berbeda (contoh: Vigen\`{e}re cipher).
 \end{itemize}
-\end{contoh}
+Cipher abjad-majemuk dibuat untuk mengatasi kelemahan cipher abjad-tunggal yang mudah dipecahkan dengan analisis frekuensi.
 
-\subsection{Implementasi Differential Cryptanalysis}
-
-\begin{lstlisting}[style=cstyle, caption={Differential Cryptanalysis Framework}]
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
-// DES round function (simplified)
-void des_round(uint64_t *state, uint64_t key) {
-    // Expansion, S-box, permutation, mixing
-    // ... (implementation details)
-}
-
-// Calculate difference between two values
-uint64_t calculate_diff(uint64_t a, uint64_t b) {
-    return a ^ b;
-}
-
-// Analyze differential characteristic
-void analyze_differential(uint64_t plaintext1, uint64_t plaintext2, 
-                         uint64_t key, int rounds) {
-    uint64_t state1 = plaintext1;
-    uint64_t state2 = plaintext2;
-    
-    printf("Round 0: Diff = %016lx\n", calculate_diff(state1, state2));
-    
-    for (int round = 1; round <= rounds; round++) {
-        des_round(&state1, key);
-        des_round(&state2, key);
-        
-        uint64_t diff = calculate_diff(state1, state2);
-        printf("Round %d: Diff = %016lx\n", round, diff);
-    }
-}
-
-// Find high-probability differentials
-void find_differentials() {
-    int count[65536] = {0}; // 16-bit differences
-    uint64_t key = 0x0123456789ABCDEF; // Test key
-    
-    // Test all possible input differences
-    for (int i = 0; i < 65536; i++) {
-        for (int j = 0; j < 65536; j++) {
-            uint64_t p1 = i, p2 = j;
-            uint64_t diff = calculate_diff(p1, p2);
-            
-            if (diff == 0x00000000000000000) continue; // Skip zero difference
-            
-            uint64_t c1 = encrypt_des(p1, key, 1); // 1 round
-            uint64_t c2 = encrypt_des(p2, key, 1);
-            uint64_t output_diff = calculate_diff(c1, c2);
-            
-            count[output_diff & 0xFFFF]++;
-        }
-    }
-    
-    // Find most common output differences
-    int max_count = 0;
-    int best_diff = 0;
-    for (int i = 0; i < 65536; i++) {
-        if (count[i] > max_count) {
-            max_count = count[i];
-            best_diff = i;
-        }
-    }
-    
-    printf("Best differential: 0x%04x (count = %d)\n", best_diff, max_count);
-}
-\end{lstlisting}
-
-\subsection{Linear Cryptanalysis}
-
-Linear cryptanalysis adalah teknik lain yang dikembangkan oleh Matsui pada tahun 1993 \cite{matsui1993}. Teknik ini mencari persamaan linear antara bit-bit plaintext, kunci, dan ciphertext.
-
-\textbf{Persamaan Linear}: 
+Bentuk umum cipher abjad-majemuk adalah sebagai berikut. Kunci $K = k_1 k_2 \ldots k_m$ dengan $m$ panjang kunci. Karena kunci biasanya lebih pendek daripada plainteks $P = p_1 p_2 \ldots p_m p_{m+1} \ldots p_{2m} \ldots$, kunci diulang secara periodik:
 \[
-P_{i_1} \oplus P_{i_2} \oplus \cdots \oplus P_{i_u} \oplus K_{j_1} \oplus K_{j_2} \oplus \cdots \oplus K_{j_v} = C_{k_1} \oplus C_{k_2} \oplus \cdots \oplus C_{k_w}
+C = E_K(P) = f_{k_1}(p_1)\, f_{k_2}(p_2) \ldots f_{k_m}(p_m)\, f_{k_1}(p_{m+1})\, f_{k_2}(p_{m+2}) \ldots
+\]
+dengan $f(\cdot)$ fungsi enkripsi cipher abjad-tunggal. Untuk $m = 1$, cipher-nya ekivalen dengan cipher abjad-tunggal. Misalnya dengan kunci \texttt{sony} ($m = 4$), plainteks dipasangkan dengan kunci yang diulang:
+\begin{center}
+\ttfamily
+\begin{tabular}{ll}
+  \rmfamily Plainteks: & thisplaintexthissecret \\
+  \rmfamily Kunci: & sonysonysonysonysonyso
+\end{tabular}
+\end{center}
+Setiap huruf plainteks dienkripsi dengan huruf kunci di bawahnya, misalnya dengan Caesar cipher: $(t + s) \bmod 26$, $(h + o) \bmod 26$, $(i + n) \bmod 26$, dan seterusnya.
+
+\subsection{Sejarah Singkat}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.22\textwidth]{bab-04/potret-vigenere}
+  \caption{Blaise de Vigen\`{e}re (1523--1596), diplomat dan kriptografer Prancis \cite{munir_slides_itb}.}
+  \label{fig:potret-vigenere}
+\end{figure}
+
+Penemu cipher ini sebenarnya Giovan Battista Bellaso, yang menggambarkannya pada tahun 1553 dalam bukunya \textit{La Cifra del Sig. Giovan Battista Bellaso}. Cipher ini kemudian disempurnakan dan dipublikasikan oleh diplomat sekaligus kriptolog Prancis, Blaise de Vigen\`{e}re (Gambar~\ref{fig:potret-vigenere}), pada tahun 1586. Pada abad ke-19 banyak orang mengira Vigen\`{e}re adalah penemunya, sehingga cipher ini dikenal luas sebagai Vigen\`{e}re cipher \cite{munir_slides_itb}.
+
+Vigen\`{e}re cipher dipakai oleh Tentara Konfederasi pada Perang Saudara Amerika (1861--1865), padahal saat itu cipher ini sudah dipecahkan secara diam-diam oleh Charles Babbage. Friedrich Kasiski kemudian mempublikasikan metode pemecahannya pada tahun 1863. Kasiski menguraikan langkah-langkah untuk menemukan \textbf{panjang kunci}, bukan langsung huruf-huruf kuncinya.
+
+\subsection{Bujursangkar Vigen\`{e}re}
+
+Enkripsi dan dekripsi dapat dilakukan dengan tabel bujursangkar Vigen\`{e}re (\textit{Vigen\`{e}re square}, Gambar~\ref{fig:bujursangkar-vigenere}). Setiap baris ke-$i$ (untuk huruf kunci ke-$i$) berisi huruf-huruf cipherteks hasil Caesar cipher dengan kunci $k = i$; artinya baris $i$ adalah alfabet yang digeser sejauh $i$ ke kanan. Huruf cipherteks diperoleh dari titik potong kolom huruf plainteks dan baris huruf kunci.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{bab-04/bujursangkar-vigenere}
+  \caption{Bujursangkar Vigen\`{e}re: enkripsi huruf plainteks \texttt{T} dengan huruf kunci \texttt{s} menghasilkan \texttt{L} \cite{munir_slides_itb}.}
+  \label{fig:bujursangkar-vigenere}
+\end{figure}
+
+Tanpa bujursangkar pun, enkripsi dapat dihitung secara aritmetika: setiap huruf dienkripsi dengan Caesar cipher yang kuncinya berubah-ubah mengikuti huruf kunci. Untuk huruf plainteks $p_j$ dan huruf kunci $k_i$ yang bersesuaian:
+\[
+\text{Enkripsi: } c_j = (p_j + k_i) \bmod 26 \qquad
+\text{Dekripsi: } p_j = (c_j - k_i) \bmod 26
 \]
 
-\textbf{Bias}: Persamaan linear tidak selalu benar dengan probabilitas 0.5. Jika probabilitasnya menyimpang dari 0.5, kita dapat mengekstrak bit kunci.
-
 \begin{contoh}
-Linear approximation untuk DES S-box:
-\[
-S_{box}[0x0F]_{(7)} \oplus S_{box}[0x0F]_{(2)} \oplus S_{box}[0x0F]_{(1)} = K_{5} \oplus C_{8}
-\]
-dengan probabilitas 0.75 (bias 0.25).
+Kunci \texttt{soreang} (dalam angka: 18, 14, 17, 4, 0, 13, 6). Kunci diulang sepanjang plainteks:
+\begin{center}
+\ttfamily
+\begin{tabular}{ll}
+  \rmfamily Plainteks: & terimapesanangulaikambing \\
+  \rmfamily Kunci: & soreangsoreangsoreangsore \\
+  \rmfamily Cipherteks: & LSIMMNVWGRRAAMMZRMKNSTWEK
+\end{tabular}
+\end{center}
+Contoh perhitungan: $(\texttt{t} + \texttt{s}) \bmod 26 = (19 + 18) \bmod 26 = 11 = \texttt{L}$ dan $(\texttt{e} + \texttt{o}) \bmod 26 = (4 + 14) \bmod 26 = 18 = \texttt{S}$, dan seterusnya.
 \end{contoh}
 
-\subsection{Linear Cryptanalysis Implementation}
+\subsection{Kelebihan: Histogram yang Datar}
 
-\begin{lstlisting}[style=cstyle, caption={Linear Approximation Analysis}]
-// Linear approximation table for DES S-box
-typedef struct {
-    int input_bits[8];
-    int output_bit;
-    int key_bits[8];
-    double probability;
-} LinearApprox;
+Pada Vigen\`{e}re cipher, huruf plainteks yang sama tidak selalu dienkripsi menjadi huruf cipherteks yang sama; hasilnya bergantung pada huruf kunci. Pada contoh di atas, huruf plainteks \texttt{a} dienkripsi menjadi \texttt{A}, \texttt{N}, atau \texttt{R}, sedangkan huruf cipherteks \texttt{M} dapat merepresentasikan huruf plainteks \texttt{g}, \texttt{i}, \texttt{m}, atau \texttt{u}. Inilah karakteristik cipher abjad-majemuk: setiap huruf cipherteks memiliki banyak kemungkinan huruf plainteks.
 
-LinearApprox sbox_approx[512];
+Akibatnya, distribusi huruf di dalam cipherteks mendekati seragam (\textit{uniform}) dan histogramnya cenderung datar (\textit{flat}), seperti Gambar~\ref{fig:histogram-flat}. Histogram yang datar menyulitkan kriptanalis memecahkan cipherteks dengan analisis frekuensi biasa.
 
-// Generate linear approximations for S-box
-void generate_sbox_approximations() {
-    for (int input = 0; input < 64; input++) {
-        for (int output_bit = 0; output_bit < 4; output_bit++) {
-            int output = sbox[input];
-            int output_bit_val = (output >> output_bit) & 1;
-            
-            // Try all possible linear combinations
-            for (int mask = 1; mask < 256; mask++) {
-                int input_parity = 0;
-                for (int i = 0; i < 6; i++) {
-                    if (mask & (1 << i)) {
-                        input_parity ^= ((input >> i) & 1);
-                    }
-                }
-                
-                if (input_parity == output_bit_val) {
-                    // Found linear approximation
-                    // Store in approximation table
-                    // ...
-                }
-            }
-        }
-    }
-}
-
-// Test linear approximation
-double test_linear_approximation(uint64_t plaintext, uint64_t key, 
-                                 LinearApprox approx) {
-    int count = 0;
-    int total = 1000;
-    
-    for (int i = 0; i < total; i++) {
-        uint64_t ciphertext = encrypt_des(plaintext ^ i, key, 16);
-        
-        // Check if approximation holds
-        int lhs = 0, rhs = 0;
-        for (int j = 0; j < 8; j++) {
-            if (approx.input_bits[j]) {
-                lhs ^= ((plaintext >> j) & 1);
-            }
-            if (approx.key_bits[j]) {
-                lhs ^= ((key >> j) & 1);
-            }
-        }
-        rhs = (ciphertext >> approx.output_bit) & 1;
-        
-        if (lhs == rhs) count++;
-    }
-    
-    return (double)count / total;
-}
-\end{lstlisting}
-
-\subsection{Countermeasures terhadap Cryptanalysis}
-
-Cipher modern dirancang untuk resisten terhadap differential dan linear cryptanalysis:
-
-\textbf{DES Countermeasures}:
-\begin{itemize}
-  \item DES menggunakan 16 round untuk membuat differential attack tidak praktis
-  \item S-box DES dirancang untuk meminimalkan bias linear
-  \item Permutation P menyebarkan efek local ke seluruh state
-\end{itemize}
-
-\textbf{AES Countermeasures}:
-\begin{itemize}
-  \item S-box AES berdasarkan inversi multiplicative di $\mathrm{GF}(2^8)$
-  \item MixColumns menyediakan diffusion yang kuat
-  \item Key schedule yang kompleks
-\end{itemize}
-
-\begin{table}[htbp]
+\begin{figure}[htbp]
   \centering
-  \small
-  \begin{tabular}{lcc}
-    \toprule
-    Cipher & Differential Resistance & Linear Resistance \\
-    \midrule
-    DES (16 rounds) & Baik (kompleksitas tinggi) & Sedang (beberapa bias) \\
-    AES-128 & Sangat Baik (tidak ada praktis) & Sangat Baik (bias minimal) \\
-    \bottomrule
-  \end{tabular}
-  \caption{Perbandingan resistensi cryptanalysis.}
-\end{table}
+  \includegraphics[width=0.8\textwidth]{bab-04/histogram-flat}
+  \caption{Histogram frekuensi huruf yang datar (kiri, khas cipher abjad-majemuk) dan yang tidak datar (kanan, khas bahasa alami dan cipher abjad-tunggal) \cite{munir_slides_itb}.}
+  \label{fig:histogram-flat}
+\end{figure}
 
-\subsection{Praktikum: Menyerang DES Reduced-Round}
+\subsection{Extended Vigen\`{e}re Cipher}
 
-\begin{lstlisting}[style=cstyle, caption={Differential Attack on 3-Round DES}]
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-
-// Simplified 3-round DES
-uint64_t des_3_round(uint64_t plaintext, uint64_t key) {
-    // Implementation of 3-round DES
-    // ... (use existing DES implementation)
-    return encrypt_des(plaintext, key, 3);
-}
-
-// Differential attack on 3-round DES
-int differential_attack_3_round() {
-    // Known plaintext pair with specific difference
-    uint64_t p1 = 0x123456789ABCDEF0;
-    uint64_t p2 = 0x103456789ABCDEF0; // Difference in bit 4
-    
-    // Collect ciphertexts
-    uint64_t c1[256], c2[256];
-    uint64_t keys[256];
-    
-    // Generate 256 possible keys
-    for (int i = 0; i < 256; i++) {
-        keys[i] = i; // Simplified key space
-        c1[i] = des_3_round(p1, keys[i]);
-        c2[i] = des_3_round(p2, keys[i]);
-    }
-    
-    // Find key that produces expected output difference
-    uint64_t expected_diff = 0x00000000000000008; // Expected difference
-    
-    for (int i = 0; i < 256; i++) {
-        if ((c1[i] ^ c2[i]) == expected_diff) {
-            printf("Possible key found: 0x%02x\n", i);
-            return i;
-        }
-    }
-    
-    printf("No key found\n");
-    return -1;
-}
-\end{lstlisting}
-
-\subsection{Implikasi untuk Keamanan Modern}
-
-Pemahaman cryptanalysis sangat penting untuk:
-
-\begin{itemize}
-  \item \textbf{Desain Cipher}: Mengetahui kelemahan untuk merancang cipher yang lebih kuat
-  \item \textbf{Implementasi Aman}: Menghindari implementasi yang rentan terhadap side-channel
-  \item \textbf{Evaluasi Keamanan}: Menilai kekuatan cipher yang ada
-  \item \textbf{Standar Industri}: Memahami mengapa standar tertentu dipilih
-\end{itemize}
+Vigen\`{e}re cipher untuk 26 huruf dapat diperluas untuk mengenkripsi 256 karakter ASCII, sehingga dapat dipakai untuk sembarang berkas (teks maupun biner):
+\[
+c_j = (p_j + k_i) \bmod 256 \qquad p_j = (c_j - k_i) \bmod 256
+\]
 
 \begin{catatan}
-Differential dan linear cryptanalysis adalah teknik analisis fundamental dalam kriptografi modern. Meskipun cipher modern seperti AES dirancang untuk resisten terhadap serangan ini, pemahaman teknik ini tetap penting untuk kriptografer dan analis keamanan.
+\textbf{Kakas daring.} Vigen\`{e}re cipher dapat dicoba di \url{https://cryptii.com/pipes/vigenere-cipher}. Kakas \url{https://www.boxentriq.com/code-breaking/vigenere-cipher} bahkan menyediakan fitur \textit{auto-solve} yang memecahkan cipherteks secara otomatis.
 \end{catatan}
+
+\subsection{Implementasi dalam Python dan C}
+
+Kode~\ref{lst:vigenere-py} dari slide kuliah memperlihatkan bahwa Vigen\`{e}re hanyalah Caesar cipher dengan kunci $k$ yang diambil bergiliran dari huruf-huruf kunci. Indeks kunci hanya maju ketika karakter yang diproses berupa huruf.
+
+\begin{pycode}[caption={Vigen\`{e}re cipher dalam Python \cite{munir_slides_itb}}, label={lst:vigenere-py}]
+def Vigenere_cipher_encrypt(plainteks, kunci):
+    cipherteks = ""
+    kunci = kunci.lower()
+    indeks_kunci = 0
+    for char in plainteks:
+        if char.isalpha():        # Hanya memproses huruf alfabet saja
+            start = ord('A') if char.isupper() else ord('a')
+            k = ord(kunci[indeks_kunci]) - ord('a')
+            c = (ord(char) - start + k) % 26  # Enkripsi dengan Caesar cipher
+            c = c + start         # Kembalikan ke posisi semula
+            cipherteks = cipherteks + chr(c)
+            indeks_kunci = (indeks_kunci + 1) % len(kunci)
+        else:
+            cipherteks = cipherteks + char  # Bukan huruf: tidak dienkripsi
+    return cipherteks
+
+def Vigenere_cipher_decrypt(cipherteks, kunci):
+    plainteks = ""
+    kunci = kunci.lower()
+    indeks_kunci = 0
+    for char in cipherteks:
+        if char.isalpha():
+            start = ord('A') if char.isupper() else ord('a')
+            k = ord(kunci[indeks_kunci]) - ord('a')
+            c = (ord(char) - start - k) % 26  # Dekripsi dengan Caesar cipher
+            c = c + start
+            plainteks = plainteks + chr(c)
+            indeks_kunci = (indeks_kunci + 1) % len(kunci)
+        else:
+            plainteks = plainteks + char
+    return plainteks
+
+print(Vigenere_cipher_encrypt("terimapesanangulaikambing", "soreang"))
+# lsimmnvwgrraammzrmknstwek
+\end{pycode}
+
+\begin{ccode}[caption={Vigen\`{e}re cipher dalam C}, label={lst:vigenere-c}]
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void vigenere_encrypt(const char *pt, const char *key, char *ct) {
+    int klen = strlen(key), j = 0, i;
+    for (i = 0; pt[i] != '\0'; i++) {
+        if (isalpha((unsigned char)pt[i])) {
+            char base = isupper((unsigned char)pt[i]) ? 'A' : 'a';
+            int k = toupper((unsigned char)key[j % klen]) - 'A';
+            ct[i] = base + (pt[i] - base + k) % 26;
+            j++;                      /* kunci maju hanya untuk huruf */
+        } else {
+            ct[i] = pt[i];
+        }
+    }
+    ct[i] = '\0';
+}
+
+void vigenere_decrypt(const char *ct, const char *key, char *pt) {
+    int klen = strlen(key), j = 0, i;
+    for (i = 0; ct[i] != '\0'; i++) {
+        if (isalpha((unsigned char)ct[i])) {
+            char base = isupper((unsigned char)ct[i]) ? 'A' : 'a';
+            int k = toupper((unsigned char)key[j % klen]) - 'A';
+            pt[i] = base + (ct[i] - base - k + 26) % 26;
+            j++;
+        } else {
+            pt[i] = ct[i];
+        }
+    }
+    pt[i] = '\0';
+}
+
+int main(void) {
+    char enc[64], dec[64];
+    vigenere_encrypt("terimapesanangulaikambing", "soreang", enc);
+    printf("%s\n", enc);   /* lsimmnvwgrraammzrmknstwek */
+    vigenere_decrypt(enc, "soreang", dec);
+    printf("%s\n", dec);   /* terimapesanangulaikambing */
+    return 0;
+}
+\end{ccode}
+
+\subsection{Pengayaan: Kriptanalisis dengan Metode Kasiski}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.2\textwidth]{bab-04/potret-kasiski}
+  \caption{Friedrich Kasiski (1805--1881), perwira Prusia yang mempublikasikan pemecahan Vigen\`{e}re cipher pada tahun 1863 \cite{munir_slides_itb}.}
+  \label{fig:potret-kasiski}
+\end{figure}
+
+Metode Kasiski (Gambar~\ref{fig:potret-kasiski}) tidak langsung menemukan kunci, tetapi membantu memperkirakan \textbf{panjang} kunci. Metode ini memanfaatkan fakta bahwa bahasa Inggris tidak hanya mengandung perulangan huruf, tetapi juga perulangan pasangan dan tripel huruf seperti TH, THE, dan EN. Perulangan kelompok huruf ini dapat menghasilkan kriptogram yang berulang pula.
+
+\begin{contoh}
+Kata \texttt{crypto} muncul dua kali dengan jarak 16 huruf.
+\begin{center}
+\ttfamily\small
+\begin{tabular}{ll}
+  \rmfamily Plainteks: & cryptoisshortforcryptography \\
+  \rmfamily Kunci: & abcdabcdabcdabcdabcdabcdabcd \\
+  \rmfamily Cipherteks: & \textbf{CSASTP}KVSIQUTGQU\textbf{CSASTP}IUAQJB \\[4pt]
+  \rmfamily Kunci: & abcdefabcdefabcdefabcdefabcd \\
+  \rmfamily Cipherteks: & CSASXTITUKSWTGQUGWYQVRKWAQJB
+\end{tabular}
+\end{center}
+Dengan kunci \texttt{abcd} (panjang 4), kedua \texttt{crypto} dienkripsi menjadi kriptogram yang sama, \texttt{CSASTP}, karena jaraknya (16) merupakan kelipatan 4. Dengan kunci \texttt{abcdef} (panjang 6), kriptogramnya berbeda karena 16 bukan kelipatan 6.
+\end{contoh}
+
+Secara intuitif: jika jarak antara dua \textit{string} yang berulang di dalam plainteks merupakan kelipatan panjang kunci, \textit{string} tersebut akan muncul sebagai kriptogram yang sama di dalam cipherteks. Tujuan metode Kasiski adalah mencari dua atau lebih kriptogram berulang untuk menentukan panjang kunci, dengan langkah-langkah:
+\begin{enumerate}
+  \item Temukan semua kriptogram yang berulang di dalam cipherteks (pesan yang panjang biasanya mengandung kriptogram berulang).
+  \item Hitung jarak antara kriptogram-kriptogram yang berulang.
+  \item Hitung semua faktor pembagi setiap jarak; faktor pembagi menyatakan panjang kunci yang mungkin.
+  \item Tentukan irisan himpunan faktor pembagi tersebut. Nilai yang muncul pada semua himpunan kemungkinan besar adalah panjang kunci.
+\end{enumerate}
+
+\begin{contoh}
+Cipherteks berikut memuat dua kriptogram berulang:
+\begin{center}
+\texttt{\textbf{DYDUXRMH}TVDV\underline{NQD}QNW\textbf{DYDUXRMH}ARTJGW\underline{NQD}}
+\end{center} Jarak antara dua \texttt{DYDUXRMH} adalah 18, dengan faktor pembagi $\{2, 3, 6, 9, 18\}$. Jarak antara dua \texttt{NQD} adalah 20, dengan faktor pembagi $\{2, 4, 5, 10, 20\}$. Irisan kedua himpunan adalah $\{2\}$, sehingga panjang kunci kemungkinan besar 2.
+\end{contoh}
+
+Setelah panjang kunci $p$ diketahui, huruf-huruf kunci dapat dicari dengan \textit{exhaustive key search} (paling banyak $26^p$ percobaan), tetapi analisis frekuensi jauh lebih sangkil:
+\begin{enumerate}
+  \item Setiap huruf yang berjarak $p$ pasti dienkripsi dengan huruf kunci yang sama. Kelompokkan huruf-huruf berjarak $p$ sehingga diperoleh $p$ ``pesan'', masing-masing dienkripsi dengan Caesar cipher (cipher abjad-tunggal).
+  \item Pecahkan setiap ``pesan'' dengan analisis frekuensi.
+  \item Susun huruf-huruf kunci dari hasil langkah 2, atau terka kata yang membantu memecahkan cipherteks.
+\end{enumerate}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{bab-04/kasiski-ljv}
+  \caption{Cipherteks Vigen\`{e}re dengan enam kemunculan kriptogram \texttt{LJV} \cite{munir_slides_itb}.}
+  \label{fig:kasiski-ljv}
+\end{figure}
+
+\begin{contoh}
+Pada cipherteks Gambar~\ref{fig:kasiski-ljv}, kriptogram \texttt{LJV} muncul enam kali. Jarak antarkemunculannya berturut-turut 15, 15, 15, 10, dan 10. Faktor pembagi 15 adalah $\{3, 5, 15\}$ dan faktor pembagi 10 adalah $\{2, 5, 10\}$; irisannya $\{5\}$, sehingga panjang kunci diperkirakan 5.
+
+Cipherteks lalu dikelompokkan per jarak 5, dimulai dari huruf pertama, kedua, dan seterusnya:
+\begin{center}
+\small
+\begin{tabular}{cl@{\hspace{2em}}c}
+  \toprule
+  Kelompok & Pesan & Huruf tersering \\
+  \midrule
+  1 & \texttt{LSLLMFLYJLVLLLYKWV} & L \\
+  2 & \texttt{JTQJPAJYQJTJKJJREH} & J \\
+  3 & \texttt{VNMVKVVVLVRVEVVFFZ} & V \\
+  4 & \texttt{BEEMAADNNHNCTHSTUN} & N \\
+  5 & \texttt{QZDAUTAFPKFMAUFTXP} & A \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Triplet tersering dalam bahasa Inggris adalah THE, sehingga \texttt{LJV} diterka sebagai \texttt{THE}. Huruf kunci kelompok lain diterka dan diuji coba dengan cara serupa. Ingat bahwa nilai numerik huruf kunci adalah besar pergeseran Caesar cipher:
+\begin{center}
+\small
+\begin{tabular}{cccc}
+  \toprule
+  Kelompok & Huruf plainteks & Huruf cipherteks & Huruf kunci \\
+  \midrule
+  1 & T & L & S (= 18) \\
+  2 & H & J & C (= 2) \\
+  3 & E & V & R (= 17) \\
+  4 & N & N & A (= 0) \\
+  5 & O & A & M (= 12) \\
+  \bottomrule
+\end{tabular}
+\end{center}
+Jadi kuncinya \texttt{SCRAM}, dan cipherteks terdekripsi menjadi \texttt{THEBE ARWEN TOVER THEMO UNTAI NYEAH \ldots}. Setelah \textit{post-processing}: \textit{THE BEAR WENT OVER THE MOUNTAIN YEAH, THE DOG WENT ROUND THE HYDRANT, THE CAT INTO THE HIGHEST SPOT HE COULD FIND}.
+\end{contoh}
+
+\begin{catatan}
+Panjang kunci juga dapat diperkirakan dengan \crypt{index of coincidence} yang dikembangkan William Friedman (1920-an): jika cipherteks dibagi menjadi $p$ kelompok dan $p$ adalah panjang kunci yang benar, indeks koinsidensi setiap kelompok mendekati nilai bahasa asli (sekitar 0,065 untuk bahasa Inggris); jika salah, nilainya mendekati teks acak (sekitar 0,038).
+\end{catatan}
+
+\subsection{Pengayaan: Varian Vigen\`{e}re Cipher}
+
+Untuk menahan serangan metode Kasiski, dibuat beberapa varian Vigen\`{e}re cipher \cite{munir_slides_itb}:
+\begin{enumerate}
+  \item \textbf{Full Vigen\`{e}re cipher}. Setiap baris bujursangkar bukan pergeseran alfabet, melainkan permutasi acak huruf-huruf alfabet. Tabel ini harus dirahasiakan; proses enkripsi dan dekripsi tetap sama seperti Vigen\`{e}re standar.
+  \item \textbf{Auto-key Vigen\`{e}re cipher}. Jika kunci lebih pendek daripada plainteks, kunci disambung dengan plainteks itu sendiri, sehingga tidak ada pengulangan periodik. Contoh dengan pesan \texttt{negara penghasil minyak mentah di dunia} dan kunci \texttt{INDO}:
+  \begin{center}
+  \ttfamily\small
+  \begin{tabular}{ll}
+    \rmfamily Plainteks: & negarapenghasilminyakmentahdidunia \\
+    \rmfamily Kunci: & INDONEGARAPENGHASILMINYAKMENTAHDID \\
+    \rmfamily Cipherteks: & VRJOEEVEEGWEFOSMAVJMSZCNDMLQBDBQQD
+  \end{tabular}
+  \end{center}
+  \item \textbf{Running-key Vigen\`{e}re cipher}. Kunci adalah \textit{string} sangat panjang yang diambil dari teks bermakna, misalnya naskah proklamasi, Pembukaan UUD 1945, atau terjemahan kitab suci. Untuk pesan yang sama:
+  \begin{center}
+  \ttfamily\small
+  \begin{tabular}{ll}
+    \rmfamily Plainteks: & negarapenghasilminyakmentahdidunia \\
+    \rmfamily Kunci: & KERAKYATANYANGDIPIMPINOLEHHIKMATPE \\
+    \rmfamily Cipherteks: & XIXABYPXNTFAFOOUXVKPSZSYXHOLSPUGXE
+  \end{tabular}
+  \end{center}
+\end{enumerate}

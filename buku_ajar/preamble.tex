@@ -14,6 +14,7 @@
 
 % --- Grafik dan Tabel ---
 \usepackage{graphicx}
+\graphicspath{{gambar/}{../gambar/}}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -105,6 +106,18 @@
 % Environment untuk C code dengan caption
 \lstnewenvironment{ccode}[1][]{
   \lstset{style=cstyle, #1}
+}{}
+
+% Style untuk Python code
+\lstdefinestyle{pystyle}{
+  style=cstyle,
+  language=Python,
+  morekeywords={True,False,None,def,return,in,not,and,or,import,from,as},
+  deletekeywords={int,char,void,unsigned,long,size_t}
+}
+
+\lstnewenvironment{pycode}[1][]{
+  \lstset{style=pystyle, #1}
 }{}
 
 % Alias javacode untuk kompatibilitas (redirect ke ccode)

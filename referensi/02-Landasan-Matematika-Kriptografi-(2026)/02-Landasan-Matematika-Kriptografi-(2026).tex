@@ -1,0 +1,248 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+\title{02-Landasan-Matematika-Kriptografi-(2026)}
+\author{pdf\_ppt\_to\_latex}
+\date{}
+
+\begin{document}
+
+% --- unit llm 1 ---
+% === Halaman 1 (llm) ===
+
+\begin{center}
+{\large IF4020 Kriptografi}
+
+\vspace{20mm}
+{\huge \textcolor{red}{02 -- Landasan Matematika untuk Kriptografi}}
+
+\vspace{15mm}
+Oleh: Rinaldi M
+
+\vspace{10mm}
+\textbf{Program Studi Teknik Informatika}\
+\textbf{Sekolah Teknik Elektro dan Informatika}\
+\textbf{Institut Teknologi Bandung}\
+\textbf{2026}
+\end{center}
+
+\newpage
+
+% --- unit llm 2 ---
+% === Halaman 2 (llm) ===
+
+\section*{Materi Matematika untuk Kriptorafi:}
+
+\begin{enumerate}
+    \item Teori Bilangan
+    \begin{itemize}
+        \item Integer dan aritmetika modulo
+        \item Algoritma euclidean
+        \item Kekongruenan
+        \item Relatif prima
+        \item Balikan (invers) modulo
+        \item Bilangan prima
+    \end{itemize}
+    \item Probabilitas dan Statistik
+    \item Kompleksitas algoritma
+    \item Teori Informasi
+    \item Aljabar abstrak
+\end{enumerate}
+
+\vspace{10mm}
+
+\begin{tabular}{|p{9cm}|}
+\hline
+No. 1 s/d 3 sudah dipelajari di dalam kuliah Matematika Diskrit dan Probabilitas dan Statistik \\
+\hline
+No 5 akan dibahas pada materi $ECC$ (Elliptic Curve Cryptography) \\
+\hline
+\end{tabular}
+
+\newpage
+
+% --- unit llm 3 ---
+% === Halaman 3 (llm) ===
+
+Contoh:
+\begin{enumerate}[(i)]
+  \item $23 \pmod{5} = 3$ karena $23$ dibagi $5 = 4 + \text{ sisa } 3$
+  \item $-41 \pmod{9} = 4$ karena $|-41| \pmod{9} = 5$, dan $9 - 5 = 4$
+  \item $17 \equiv 2 \pmod{3}$ karena $3 \mid (17 - 2)$
+  \item $-7 \equiv 15 \pmod{11}$ karena $11 \mid (-7 - 15)$
+  \item $23$ dan $40$ relatif prima sebab $\text{PBB}(23, 4) = 1$
+  \item $4^{-1} \pmod{9} \equiv 7 \pmod{9}$ karena $4 \cdot 7 \equiv 1 \pmod{9}$
+  \item $23^{-1} \pmod{10} = -3 \pmod{10}$ karena $23 \cdot (-3) \equiv 1 \pmod{10}$
+\end{enumerate}
+
+Latihan: (a) Hitung $-24 \pmod{11} = ?$
+(b) $12^{-1} \pmod{5} \equiv ?$
+
+\newpage
+
+% --- unit llm 4 ---
+% === Halaman 4 (llm) ===
+
+\section*{Teori Informasi (Information Theory)}
+
+\begin{itemize}
+    \item \textit{Information theory}: cabang ilmu yang mempelajari \textbf{kuantisasi, penyimpanan, transmisi, dan pengolahan informasi}
+    \item Contoh kuantisasi:
+    \begin{itemize}
+        \item 1 bit untuk mengkodekan jenis kelamin (M/F)
+        \item 3 bit untuk mengkodekan nama hari (ada 7 hari)
+        \item 4 bit untuk mengkodekan 0 s/d 9
+    \end{itemize}
+    \item Contoh penyimpanan: pemampatan data untuk mengurangi ukuran ruang \textit{storage}
+\end{itemize}
+
+\newpage
+
+% --- unit llm 5 ---
+% === Halaman 5 (llm) ===
+
+\begin{itemize}
+    \item Salah satu metrik penting di dalam teori informasi adalah \textbf{entropi}.
+    \item \textbf{Entropi} mengukur \textit{ketidakpastian} atau jumlah rata-rata informasi di dalam pesan.
+    \item Semakin acak suatu data, semakin tinggi entropinya. Cipherteks adalah pesan dengan entropi yang tinggi.
+    \item Entropi biasanya dinyatakan dalam satuan bit.
+    \item Secara umum, entropi pesan $X$ dihitung dengan rumus:
+\end{itemize}
+
+\vspace{5mm}
+
+\[ H(X) = - \sum_{i=1}^{n} p(x_i) \log_2 p(x_i) \]
+
+\vspace{5mm}
+
+$X$ = variabel acak yang menyatakan pesan \\
+$x_i$ = simbol ke-$i$ di dalam pesan \\
+$n$ = banyak simbol di dalam pesan \\
+$p(x_i)$ = peluang kemunculan $x_i$
+
+\newpage
+
+% --- unit llm 6 ---
+% === Halaman 6 (llm) ===
+
+\begin{itemize}
+  \item Contoh: misalkan pesan $X = \text{'AABBCBDB'}$
+  \begin{align*}
+    n &= 4 \text{ (yaitu huruf A, B, C, D)}\
+    p(A) &= 2/8, p(B) = 4/8\
+    p(C) &= 1/8, p(D) = 1/8
+  \end{align*}
+\end{itemize}
+
+\begin{align*}
+  H(x) &= -\{2/8 \, ^2\log(2/8) + 4/8 \, ^2\log(4/8) + 1/8 \, ^2\log(1/8) + 1/8 \, ^2\log(1/8) \}\
+  &= -\{1/4 \, ^2\log(1/4) + 1/2 \, ^2\log(1/2) + 1/8 \, ^2\log(1/8) + 1/8 \, ^2\log(1/8) \}\
+  &= -\{(1/4) \, (-^2\log(4) + (1/2) \, (-^2\log(2) + (1/8) \, (-^2\log(8) + (/8) \, (-^2\log(8) \}\
+  &= -\{(1/4) \, (- 2) + (1/2) \, (-1) + (1/8) \, (-3) + (1/8)(-3) \}\
+  &= - \{-1/2 - 1/2 - 3/8 - 3/8)\
+  &= - (-1.75)\
+  &= 1.75
+\end{align*}
+
+Entropi $= 1,75$ bit per simbol
+
+\newpage
+
+% --- unit llm 7 ---
+% === Halaman 7 (llm) ===
+
+\begin{itemize}
+    \item Nilai entropi berkisar dalam rentang:
+    \[ 0 \le H(X) \le \log_2(n) \]
+    \item Entropi minimum $= 0$ bit
+    \begin{itemize}
+        \item $\to$ Tidak ada ketidakpastian
+        \item $\to$ Terjadi jika hanya ada satu simbol dengan peluang $1$ (pasti).
+    \end{itemize}
+    Contoh: $n = 1$, misalkan A dan $p(A) = 1 \to H(X) = -1 \cdot \log_2 1 = 0
+    \item Entropi maksimum $= \log_2(n)$ bit
+    \begin{itemize}
+        \item $\to$ Terjadi jika semua simbol muncul dengan peluang sama, yaitu $1/n$.
+        \item $\to$ Ketidakpastian paling tinggi, setiap simbol membawa informasi maksimal.
+    \end{itemize}
+    Contoh: Empat simbol dengan peluang sama ($0.25$) $\to H(X) = -\sum_{i=1}^{4} 0.25 \log_2 0.25 = 2$ bit
+\end{itemize}
+
+\newpage
+
+% --- unit llm 8 ---
+% === Halaman 8 (llm) ===
+
+\begin{itemize}
+    \item Jika plainteks/cipherteks hanya menggunakan 26 huruf alfabet (A--Z), maka entropi Shannon maksimum terjadi ketika seluruh 26 huruf memiliki probabilitas yang sama:
+    \[ p_i = \frac{1}{26} \]
+    sehingga
+    \begin{align*}
+    H_{max} &= - \sum_{i=1}^{26} p_i \log_2 p_i \\
+    &= - \sum_{i=1}^{26} \frac{1}{26} \log_2 \frac{1}{26} = \log_2 26 = 4.7004 \text{ bit/karakter}
+    \end{align*}
+    Jadi, untuk teks yang hanya terdiri dari 26 huruf alfabet, entropi Shannon maksimum adalah sekitar 4,7004 bit/karakter.
+    
+    \item Jika pesan terdiri dari 256 karakter ASCII, maka entropi maksimum adalah $\log_2 256 = 8$
+    
+    \item Makin besar entropi, makin sulit memecahkan cipherteks.
+\end{itemize}
+
+\newpage
+
+% --- unit llm 9 ---
+% === Halaman 9 (llm) ===
+
+Plainteks: (P)
+\begin{center}
+\fbox{
+\begin{minipage}{0.6\textwidth}
+Dinas Pendidikan Kota Ternate meminta kepada pihak sekolah dan orang tua siswa untuk jenjang pendidikan SD dan SMP se-Kota Ternate untuk melarang para siswa membawa permainan lato-lato yang sedang tren itu ke sekolah, karena akan mengganggu kegiatan belajar mengajar yang dinilai berbahaya sehingga mengantisipasi kecelakaan bagi anak di daerah itu.
+\end{minipage}
+}
+\end{center}
+\vspace{5mm}
+$H(P)=3,8988$ bit/karakter
+\vspace{10mm}
+Cipherteks: (C)
+\begin{center}
+\fbox{
+\begin{minipage}{0.6\textwidth}
+HAWFHZDOHAHANGOMKLGFCVWFLBOCPRKFGHNOFNIN\\
+SPGNLHMPFVBEFWMVFWTBWRHSFZRWK FQMVHPAF WIK\\
+DOHAHANGPFEWNF PFNKLHMPFGLBAMGF C XK FQ MOCFV\\
+AVKANIAVHSFZR NCODG AF OHYUVG W G F O F G X E G F M L F W I T\\
+HEFWTBVCPAYQOBLHMPFVBPVADOVGNWFG NOV C A R K V A\\
+RQOBRGGF WH C V F G V Y Y U D O R V G V Y C F W A B A P V S V G C H G C I\\
+DRFIFH B A P V Q R V O C K A F W S G S H S N I H S O B D H F V N G F W D G R G R F\\
+W G N H A N F C V I D G S W Z
+\end{minipage}
+}
+\end{center}
+\vspace{5mm}
+$H(C)=4,3035$ bit/karakter
+
+\vspace{71.28mm}
+
+Entropi cipherteks meningkat
+
+Jadi cipherteks ini mencapai entropi sekitar:
+\[ \frac{4,3035}{4,7004} \times 100\% \approx 91,55\% \]
+dari entropi maksimum pesan 26 huruf alfabet
+
+% deskripsi: Tanda panah biru yang mengarah ke bawah, menghubungkan nilai H(P) dengan H(C).
+% bbox normalisasi: [0.8300, 0.2000, 0.8600, 0.4400]
+\begin{textblock*}{6.30mm}(174.30mm,59.40mm)
+\noindent\includegraphics[width=6.30mm,height=71.28mm]{images/llm/page_009_img_01.png}%
+\end{textblock*}
+
+\end{document}

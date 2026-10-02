@@ -1,0 +1,29 @@
+\section{Peta Matematika untuk Kriptografi}
+
+\subsection{Mengapa Matematika Penting dalam Kriptografi?}
+
+Keamanan kriptografi modern dibangun di atas fondasi matematika. Setiap algoritma yang akan kita pelajari---mulai dari Caesar hingga RSA---mengandalkan prinsip matematika tertentu:
+
+\begin{itemize}
+  \item \textbf{Caesar cipher} menggunakan \textbf{aritmetika modular} sederhana
+  \item \textbf{Vigen\`{e}re cipher} menerapkan operasi modular berulang
+  \item \textbf{RSA} mengandalkan \textbf{teori bilangan} (faktorisasi prima)
+  \item \textbf{AES} menggunakan \textbf{aljabar abstrak} (Galois Field)
+\end{itemize}
+
+Dengan matematika, kita dapat menjelaskan tidak hanya ``bagaimana'' suatu cipher bekerja, tetapi juga ``mengapa'' cipher tersebut aman (atau tidak aman).
+
+\subsection{Lima Kelompok Materi}
+
+Materi matematika yang relevan untuk kriptografi dapat dikelompokkan menjadi lima \cite{munir_slides_itb}:
+\begin{enumerate}
+  \item \textbf{Teori bilangan}: integer dan aritmetika modulo, algoritma Euclid, kekongruenan, relatif prima, invers modulo, dan bilangan prima. Inilah inti bab ini (Bagian~\ref{sec:aritmetika-modular} sampai pangkat modular), dan menjadi dasar cipher klasik serta RSA.
+  \item \textbf{Probabilitas dan statistik}: dasar analisis frekuensi pada cipher klasik, uji primalitas probabilistik (Miller--Rabin), dan perhitungan peluang menebak kunci.
+  \item \textbf{Kompleksitas algoritma}: mengukur biaya serangan dan operasi, misalnya brute force atas kunci $k$ bit membutuhkan hingga $2^k$ percobaan, pangkat modular dapat dihitung dalam $O(\log b)$ langkah, sedangkan faktorisasi bilangan besar dipercaya sulit.
+  \item \textbf{Teori informasi}: entropi sebagai ukuran ketidakpastian; menjelaskan mengapa cipherteks yang baik tampak acak dan mengapa redundansi bahasa memudahkan kriptanalisis.
+  \item \textbf{Aljabar abstrak}: grup, ring, dan field; dasar operasi pada AES dan kriptografi kurva eliptik (ECC). Bab ini menyajikannya sebagai pengayaan di bagian akhir.
+\end{enumerate}
+
+\begin{catatan}
+Teori bilangan dasar sudah dipelajari di Matematika Diskrit, sedangkan probabilitas sudah dipelajari di Probabilitas dan Statistik. Bab ini mengulang secara ringkas dengan fokus pada penggunaannya dalam kriptografi.
+\end{catatan}

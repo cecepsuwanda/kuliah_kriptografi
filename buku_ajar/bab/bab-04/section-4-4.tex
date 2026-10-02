@@ -1,54 +1,191 @@
-\section{Cipher Transposisi}
+\section{Substitusi Monoalfabetik dan Analisis Frekuensi}
+\label{sec:monoalfabetik}
 
-Cipher transposisi tidak mengganti huruf, tetapi \textbf{mengubah urutan} karakter. Plaintext disusun dalam pola tertentu (grid/rel), lalu dibaca ulang menurut urutan berbeda \cite{stallings2017}.
+\subsection{Cipher Abjad-Tunggal}
 
-\subsection{Rail Fence (Zigzag)}
-
-Plaintext ditulis zigzag pada beberapa baris (rail), lalu dibaca per baris.
-\begin{contoh}
-Plaintext: HELLOWORLD, 3 rail.
-\begin{verbatim}
-H   L   O
- E L W R D
-  L   O
-\end{verbatim}
-Ciphertext: HLOELWRDLO
-\end{contoh}
-
-\subsection{Columnar Transposition}
-
-Plaintext ditulis ke dalam tabel berdasarkan panjang kunci, lalu kolom dibaca sesuai urutan kunci.
-\begin{contoh}
-Plaintext: ATTACKATDAWN, kunci: 3-1-4-2 (panjang 4).
+\crypt{Cipher abjad-tunggal} (\textit{monoalphabetic cipher}) adalah kelompok cipher substitusi yang mengganti setiap huruf plainteks dengan satu huruf cipherteks yang selalu sama \cite{munir_slides_itb}. Caesar cipher termasuk kelompok ini, tetapi bukan satu-satunya: secara umum tabel substitusi dapat dibentuk sembarang, asalkan berupa permutasi 26 huruf. Banyaknya tabel substitusi yang mungkin adalah
 \[
-\begin{array}{cccc}
-A & T & T & A \\
-C & K & A & T \\
-D & A & W & N \\
-\end{array}
+26! = 403.291.461.126.605.635.584.000.000 \approx 4 \times 10^{26},
 \]
-Urutan baca kolom: 2, 4, 1, 3 $\Rightarrow$ TAAN | ATN | ACD | TAW.
+jauh lebih banyak daripada 26 kunci Caesar, sehingga \textit{exhaustive key search} tidak lagi praktis.
+
+Tabel substitusi dapat dibentuk secara acak, seperti Tabel~\ref{tab:substitusi-acak}.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{cccc}
+    \toprule
+    Plain & Cipher & Plain & Cipher \\
+    \midrule
+    A & Q & N & F \\
+    B & W & O & G \\
+    C & E & P & H \\
+    D & R & Q & J \\
+    E & T & R & K \\
+    F & Y & S & L \\
+    G & U & T & Z \\
+    H & I & U & X \\
+    I & O & V & C \\
+    J & P & W & V \\
+    K & A & X & B \\
+    L & S & Y & N \\
+    M & D & Z & M \\
+    \bottomrule
+  \end{tabular}
+  \caption{Contoh tabel substitusi monoalfabetik acak; dengan tabel ini \texttt{HELLO} dienkripsi menjadi \texttt{ITSSG}.}
+  \label{tab:substitusi-acak}
+\end{table}
+
+Tabel acak sulit diingat. Alternatifnya, tabel dibentuk dari \textbf{kalimat kunci} yang mudah diingat.
+
+\begin{contoh}
+Kalimat kunci: \texttt{di bawah sinar bulan purnama hati resah jadi senang}.
+\begin{enumerate}
+  \item Buang spasi dan huruf yang berulang: \texttt{dibawhsnrulpmtejg}.
+  \item Sambung dengan huruf alfabet yang belum muncul: \texttt{dibawhsnrulpmtejg} + \texttt{cfkoqvxyz}.
+\end{enumerate}
+Tabel substitusi yang dihasilkan:
+\begin{center}
+\ttfamily\small
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{l*{26}{c}}
+  \rmfamily Plainteks: & A&B&C&D&E&F&G&H&I&J&K&L&M&N&O&P&Q&R&S&T&U&V&W&X&Y&Z \\
+  \rmfamily Cipherteks: & D&I&B&A&W&H&S&N&R&U&L&P&M&T&E&J&G&C&F&K&O&Q&V&X&Y&Z
+\end{tabular}
+\end{center}
 \end{contoh}
 
-\subsection{Implementasi Columnar dalam C (Ringkas)}
+\subsection{Kelemahan: Statistik Bahasa Tetap Terlihat}
 
-\begin{lstlisting}[style=cstyle, caption={Columnar Transposition (enkripsi) dalam C}]
-#include <stdio.h>
-#include <string.h>
+Kelemahan cipher abjad-tunggal adalah tidak dapat menyembunyikan hubungan statistik antara plainteks dan cipherteks:
+\begin{itemize}
+  \item huruf plainteks yang sama selalu dienkripsi menjadi huruf cipherteks yang sama;
+  \item huruf yang sering muncul dalam plainteks juga sering muncul dalam cipherteks;
+  \item akibatnya struktur statistik bahasa masih tampak di dalam cipherteks.
+\end{itemize}
+Oleh karena itu, cipherteks dapat didekripsi tanpa mengetahui kunci dengan \crypt{teknik analisis frekuensi}. Gagasan ini berhubungan langsung dengan redundansi bahasa yang dibahas pada subbab entropi di Bab~III: bahasa alami jauh dari acak, dan ketidakacakan itulah yang dieksploitasi kriptanalis.
 
-void columnar_encrypt(const char *pt, int *key, int klen, char *ct) {
-    int len = strlen(pt);
-    int rows = (len + klen - 1) / klen;
-    int i, r, c, idx = 0;
-    for (i = 0; i < klen; i++) {
-        int col = key[i];
-        for (r = 0; r < rows; r++) {
-            c = r * klen + col;
-            if (c < len) ct[idx++] = pt[c];
-        }
+\subsection{Tabel Frekuensi Huruf}
+
+Kriptanalis memakai tabel frekuensi kemunculan huruf, pasangan huruf (\textit{bigram}), dan tiga huruf (\textit{trigram}) dalam suatu bahasa sebagai kakas bantu. Tabel~\ref{tab:frekuensi-inggris} dan Gambar~\ref{fig:frekuensi-inggris} menunjukkan frekuensi relatif huruf dalam teks bahasa Inggris (sampel sekitar 300.000 karakter dari sejumlah novel dan surat kabar).
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{cr@{\hspace{2.5em}}cr@{\hspace{2.5em}}cr@{\hspace{2.5em}}cr}
+    \toprule
+    Huruf & \% & Huruf & \% & Huruf & \% & Huruf & \% \\
+    \midrule
+    A & 8,2 & H & 6,1 & O & 7,5 & V & 1,0 \\
+    B & 1,5 & I & 7,0 & P & 1,9 & W & 2,4 \\
+    C & 2,8 & J & 0,1 & Q & 0,1 & X & 2,0 \\
+    D & 4,2 & K & 0,8 & R & 6,0 & Y & 0,1 \\
+    E & 12,7 & L & 4,0 & S & 6,3 & Z & 0,1 \\
+    F & 2,2 & M & 2,4 & T & 9,0 & & \\
+    G & 2,0 & N & 6,7 & U & 2,8 & & \\
+    \bottomrule
+  \end{tabular}
+  \caption{Frekuensi kemunculan relatif huruf dalam teks bahasa Inggris \cite{munir_slides_itb}.}
+  \label{tab:frekuensi-inggris}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[x=0.5cm, y=0.32cm]
+    \draw[->] (0,0) -- (26.6,0);
+    \draw[->] (0,0) -- (0,14) node[above] {\small \%};
+    \foreach \y in {0,2,...,12} {
+      \draw (-0.15,\y) -- (0,\y) node[left, font=\scriptsize] {\y};
     }
-    ct[idx] = '\0';
-}
-\end{lstlisting}
+    \foreach \h [count=\i from 0] in {8.2,1.5,2.8,4.2,12.7,2.2,2.0,6.1,7.0,0.1,0.8,4.0,2.4,6.7,7.5,1.9,0.1,6.0,6.3,9.0,2.8,1.0,2.4,2.0,0.1,0.1} {
+      \fill[blue!45] (\i+0.15,0) rectangle (\i+0.85,\h);
+    }
+    \foreach \ch [count=\i from 0] in {A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z} {
+      \node[below, font=\scriptsize] at (\i+0.5,0) {\ch};
+    }
+  \end{tikzpicture}
+  \caption{Diagram frekuensi relatif huruf dalam teks bahasa Inggris (data Tabel~\ref{tab:frekuensi-inggris}).}
+  \label{fig:frekuensi-inggris}
+\end{figure}
 
-Cipher transposisi relatif lemah terhadap analisis jika ukuran blok kecil. Kombinasi dengan substitusi (misalnya DES) meningkatkan keamanan.
+Dari tabel tersebut diperoleh pola yang perlu diingat:
+\begin{itemize}
+  \item Huruf yang paling sering muncul dalam teks bahasa Inggris: E, T, A, O, I, N, S, H, R, D, L, U.
+  \item Bigram tersering: TH, HE, IN, EN, NT, RE, ER, AN, TI, ES; frekuensi tertinggi TH (2,71\%), HE (2,33\%), IN (2,03\%).
+  \item Trigram tersering: THE, AND, THA, ENT, ING, ION, TIO, FOR, NDE, HAS; THE paling dominan (1,81\%).
+\end{itemize}
+
+Untuk bahasa Indonesia polanya berbeda (Tabel~\ref{tab:frekuensi-indonesia}): huruf A jauh mendominasi, diikuti N, I, dan E. Kriptanalis harus memakai tabel frekuensi sesuai bahasa plainteks.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{cr@{\hspace{3em}}cr}
+    \toprule
+    Huruf & Peluang (\%) & Huruf & Peluang (\%) \\
+    \midrule
+    A & 17,50 & T & 5,10 \\
+    N & 10,30 & R & 4,60 \\
+    I & 8,70 & D & 4,50 \\
+    E & 7,50 & S & 4,50 \\
+    K & 5,65 & M & 4,50 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Sepuluh huruf yang paling sering muncul dalam teks bahasa Indonesia \cite{munir_slides_itb}.}
+  \label{tab:frekuensi-indonesia}
+\end{table}
+
+\subsection{Langkah-langkah Analisis Frekuensi}
+
+\begin{enumerate}
+  \item Hitung frekuensi kemunculan relatif huruf-huruf di dalam cipherteks.
+  \item Bandingkan hasilnya dengan tabel frekuensi bahasa. Karena huruf tersering dalam bahasa Inggris adalah E, huruf tersering di cipherteks kemungkinan besar berpadanan dengan E.
+  \item Ulangi langkah 2 untuk huruf dengan frekuensi terbanyak berikutnya (biasanya hanya terpakai untuk 2--3 huruf teratas).
+  \item Ulangi langkah 1 dan 2 untuk bigram, trigram, dan seterusnya yang sering muncul di dalam cipherteks, sambil menerka kata-kata yang mungkin.
+\end{enumerate}
+
+\begin{catatan}
+\textbf{Kakas daring.} Penghitungan frekuensi huruf, bigram, dan trigram dapat dilakukan dengan CrypTool-Online: \url{https://www.cryptool.org/en/cto/n-gram-analysis}.
+\end{catatan}
+
+\subsection{Pengayaan: Contoh Kriptanalisis Langkah demi Langkah}
+
+Subbagian ini bersifat pengayaan. Diberikan cipherteks berikut (Stallings), spasi tidak dibuang; diasumsikan bahasanya Inggris dan cipher-nya abjad-tunggal \cite{stallings2017,munir_slides_itb}:
+
+\begin{center}
+\ttfamily\small
+\begin{tabular}{l}
+UZ QSO VUOHXMOPV GPOZPEVSG ZWSZ OPFPESX UDBMETSX AIZ \\
+VUEPHZ HMDZSHZO WSFP APPD TSVP QUZW YMXUZUHSX \\
+EPYEPOPDZSZUFPO MB ZWP FUPZ HMDJ UD TMOHMQ
+\end{tabular}
+\end{center}
+
+\textbf{Langkah awal.} Cipherteks memuat $N = 120$ huruf. Huruf tersering adalah P (16 kali) dan Z (14 kali), diikuti U dan S (10 kali). Indeks koinsidensi (\textit{index of coincidence}) cipherteks adalah
+\[
+CI = \frac{\sum_i f_i(f_i - 1)}{N(N-1)} = \frac{916}{120 \cdot 119} = 0{,}0641.
+\]
+Nilai ini sangat dekat dengan 0,065 (teks bahasa Inggris) dan jauh dari 0,038 (teks acak atau cipher abjad-majemuk), sehingga kemungkinan besar cipher-nya abjad-tunggal. Dua huruf tersering bahasa Inggris adalah E dan T, sehingga diduga P $\rightarrow$ e dan Z $\rightarrow$ t. Dugaan ini belum pasti; masih diperlukan \textit{trial and error} dan pengetahuan bahasa.
+
+\textbf{Iterasi 1.} Kata \texttt{ZWP} dan \texttt{ZWSZ} kini terbaca \texttt{t?e} dan \texttt{t??t}. Kemungkinan besar W $\rightarrow$ h sehingga keduanya adalah \texttt{the} dan \texttt{that}; diperoleh pula S $\rightarrow$ a.
+
+\textbf{Iterasi 2.} Kata \texttt{WSFP} terbaca \texttt{ha?e}. Kandidatnya \texttt{have}, \texttt{hate}, \texttt{hale}, \texttt{haze}; setelah mencoba mengganti semua F, hanya F $\rightarrow$ v yang cocok. Kriptogram \texttt{EPYEPOPDZSZUFPO} lalu terbaca \texttt{?e?e?e?tat?ve?}, dan kata yang cocok adalah \texttt{representatives}. Diperoleh E $\rightarrow$ r, Y $\rightarrow$ p, O $\rightarrow$ s, D $\rightarrow$ n, U $\rightarrow$ i.
+
+\textbf{Hasil akhir.} Dengan meneruskan cara yang sama, plainteks terungkap seluruhnya:
+\begin{center}
+\texttt{it was disclosed yesterday that several informal but direct contacts have been made with political representatives of the viet cong in moscow}
+\end{center}
+Tabel substitusi yang ditemukan (tanda \texttt{-} berarti huruf tidak muncul di plainteks):
+\begin{center}
+\ttfamily\small
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{l*{26}{c}}
+  \rmfamily Plainteks: & a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z \\
+  \rmfamily Cipherteks: & S&A&H&V&P&B&J&W&U&-&-&X&T&D&M&Y&-&E&O&Z&I&F&Q&-&G&-
+\end{tabular}
+\end{center}
+
+\begin{catatan}
+Contoh kedua di slide kuliah memakai cipherteks yang jauh lebih panjang. Hasil hitungan menunjukkan huruf I paling sering muncul, bigram tersering XL, dan trigram tersering XLI; dugaan awal I $\rightarrow$ e, X $\rightarrow$ t, L $\rightarrow$ h (XLI = \textit{the}) membuka seluruh pesan, yang ternyata kutipan cerpen \textit{The Gold-Bug} karya Edgar Allan Poe. Semakin panjang cipherteks, semakin andal analisis frekuensi.
+\end{catatan}

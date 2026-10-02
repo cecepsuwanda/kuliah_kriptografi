@@ -5,9 +5,10 @@
 \chapter{Kriptografi Asimetris dan RSA}
 
 \begin{subcpmk}
-  \item Sub-CPMK 4.1: Menjelaskan konsep kriptografi kunci publik dan masalah matematika (faktorisasi, logaritma diskrit)
-  \item Sub-CPMK 4.2: Mengimplementasikan algoritma RSA, ElGamal, dan pertukaran kunci Diffie-Hellman
+  \item Sub-CPMK 1.3: Mengenal kriptografi modern asimetris (RSA, Diffie--Hellman, ElGamal, pengantar ECC)
 \end{subcpmk}
+
+\noindent\textit{Rujukan:} Munir \cite{munir2019,munir_slides_itb}; HAC Bab~8 \cite{hac_online}; Katz \& Lindell \cite{katz2020}; Boneh \cite{boneh_cs255}.
 
 % ============================================================
 % MATERI POKOK
@@ -19,24 +20,17 @@
 \input{bab-06/section-6-3}
 \input{bab-06/section-6-4}
 \input{bab-06/section-6-4a-contoh-ecc}
-\input{bab-06/section-6-5}
+% section-6-5 (side-channel / lanjutan) di luar tingkat pengenalan --- tidak diinput
+% \input{bab-06/section-6-5}
 
 % ============================================================
 % AKTIVITAS PEMBELAJARAN
 % ============================================================
 
 \begin{aktivitas}
-  \item \textbf{Praktikum C}: Implementasikan pembangkitan kunci RSA (p, q kecil), hitung $d$ dengan \code{mod\_inverse}.
-  
-  \item \textbf{Praktikum}: Gunakan OpenSSL untuk generate key pair RSA dan enkripsi/dekripsi file.
-  
-  \item \textbf{Diffie-Hellman}: Hitung secara manual pertukaran kunci dengan $p=23$, $g=5$, $a=6$, $b=15$. Tentukan kunci bersama.
-  
-  \item \textbf{Analisis}: Mengapa $e=65537$ sering dipilih? Apa dampaknya terhadap keamanan?
-  
-  \item \textbf{Diskusi}: Bandingkan OAEP (enkripsi) dan PSS (tanda tangan). Jelaskan mengapa padding acak diperlukan.
-  
-  \item \textbf{Studi Kasus}: Rancang skema hybrid (KEM-DEM) untuk mengenkripsi file besar. Jelaskan alur kunci dan data.
+  \item \textbf{Hitung manual}: RSA dengan $p,q$ kecil; Diffie--Hellman dengan $p=23$, $g=5$.
+  \item \textbf{Demo}: Generate key pair RSA (OpenSSL) --- amati konsep, bukan coding penuh.
+  \item \textbf{Diskusi}: Kapan asimetris dipakai bersama simetris (hybrid)?
 \end{aktivitas}
 
 % ============================================================
@@ -45,20 +39,9 @@
 
 \begin{latihan}
   \item Dengan $p=3$, $q=11$, $e=3$: hitung $n$, $\varphi(n)$, $d$, lalu enkripsi $m=5$.
-  
-  \item Jelaskan mengapa $m^{ed} \equiv m \pmod{n}$ untuk RSA.
-  
-  \item Sebutkan tiga masalah matematika yang mendasari kriptografi kunci publik (RSA, DH, ECC).
-  
-  \item Berapa ukuran kunci RSA minimal yang direkomendasikan saat ini?
-  
-  \item Uraikan langkah Diffie-Hellman. Mengapa penyerang tidak dapat menghitung $g^{ab}$ dari $g^a$ dan $g^b$?
-  
-  \item Jelaskan perbedaan ElGamal dan RSA. Mana yang bersifat probabilistik?
-  
-  \item Uraikan langkah hybrid encryption (KEM-DEM) dan sebutkan keuntungannya.
-  
-  \item Mengapa padding oracle berbahaya? Sebutkan mitigasi praktisnya.
+  \item Sebutkan masalah matematika di balik RSA, DH, dan ECC (pengenalan).
+  \item Uraikan langkah Diffie--Hellman secara singkat.
+  \item Apa perbedaan ElGamal dan RSA pada tingkat konsep?
 \end{latihan}
 
 % ============================================================
@@ -66,23 +49,18 @@
 % ============================================================
 
 \begin{asesmen}
-\textbf{Instrumen Penilaian untuk Sub-CPMK 4.1, 4.2}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 1.3}
 
 \textbf{A. Essay}
 
 \begin{enumerate}
-  \item Jelaskan masalah faktorisasi dan logaritma diskrit serta perannya dalam RSA dan Diffie-Hellman.
-  \item Jelaskan perbedaan RSA-OAEP dan RSASSA-PSS serta konteks penggunaannya.
-  \item Uraikan langkah Diffie-Hellman. Mengapa protokol ini rentan man-in-the-middle tanpa otentikasi?
+  \item Jelaskan konsep kunci publik serta peran faktorisasi dan logaritma diskrit.
+  \item Uraikan langkah Diffie--Hellman secara singkat.
 \end{enumerate}
 
-\textbf{B. Coding}
+\textbf{B. Perhitungan}
 
-Implementasikan dalam C: program yang menerima $p$, $q$, $e$, dan plaintext $m$, lalu menampilkan ciphertext dan hasil dekripsi. Validasi bahwa dekripsi menghasilkan $m$.
-
-\textbf{C. Diagram}
-
-Buat diagram alur sederhana untuk skema hybrid RSA + AES (KEM-DEM).
+Hitung enkripsi/dekripsi RSA dengan parameter kecil (seperti di latihan).
 \end{asesmen}
 
 % ============================================================
@@ -90,14 +68,9 @@ Buat diagram alur sederhana untuk skema hybrid RSA + AES (KEM-DEM).
 % ============================================================
 
 \begin{checklist}
-  \item Saya dapat menjelaskan konsep kunci publik dan masalah matematika (faktorisasi, log diskrit)
-  \item Saya dapat menjelaskan langkah pembangkitan kunci RSA
-  \item Saya dapat menghitung enkripsi dan dekripsi RSA secara manual
-  \item Saya dapat mengimplementasikan RSA dengan bilangan kecil dalam C
-  \item Saya memahami Diffie-Hellman key exchange dan ElGamal
-  \item Saya memahami dasar keamanan RSA (faktorisasi) dan DH (log diskrit)
-  \item Saya dapat membedakan OAEP (enkripsi) dan PSS (tanda tangan)
-  \item Saya memahami alur hybrid encryption (KEM-DEM)
+  \item Saya mengenal konsep kunci publik/privat
+  \item Saya mengenal langkah RSA, Diffie--Hellman, dan ElGamal secara pengenalan
+  \item Saya mengenal gagasan ECC tanpa detail implementasi mendalam
 \end{checklist}
 
 % ============================================================

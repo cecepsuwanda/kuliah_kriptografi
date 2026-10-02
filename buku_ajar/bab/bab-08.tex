@@ -5,9 +5,11 @@
 \chapter{Protokol dan Manajemen Kunci}
 
 \begin{subcpmk}
-  \item Sub-CPMK 5.2: Memahami infrastruktur kunci publik (PKI), chain of trust, dan protokol SSL/TLS
-  \item Menganalisis siklus hidup manajemen kunci dan peran sertifikat dalam protokol keamanan
+  \item Sub-CPMK 1.4: Mengenal peran protokol SSL/TLS dan PKI sebagai aplikasi algoritma modern
+  \item Sub-CPMK 2.2: Menjelaskan urgensi kriptografi di TI lewat studi kasus HTTPS/TLS
 \end{subcpmk}
+
+\noindent\textit{Rujukan:} Munir \cite{munir_slides_itb}; Boneh \cite{boneh_cs255}; Stallings \cite{stallings2017}.
 
 % ============================================================
 % MATERI POKOK
@@ -49,9 +51,9 @@
 % ============================================================
 
 \begin{asesmen}
-\textbf{Instrumen Penilaian untuk Sub-CPMK 5.2}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 1.4, 2.2}
 
-Jelaskan dalam essay: (a) Apa peran PKI dan chain of trust dalam TLS? (b) Mengapa validasi sertifikat penting untuk mencegah man-in-the-middle? (c) Apa yang terjadi jika kunci tidak dirotasi?
+Jelaskan dalam essay: (a) Peran PKI dan chain of trust dalam TLS; (b) Mengapa validasi sertifikat penting terhadap MITM; (c) Mengapa HTTPS penting bagi privasi dan transaksi elektronik.
 \end{asesmen}
 
 % ============================================================
@@ -88,34 +90,7 @@ Bab ini membahas protokol keamanan (TLS/SSL, SSH, PGP) dan manajemen kunci (PKI,
 % ============================================================
 
 \begin{transition}
-Setelah memahami protokol keamanan praktis, kita siap untuk memasuki \textbf{Bab IX: Kriptanalisis}.
-
-Dalam Bab IX, kita akan membalik perspektif — dari membuat sistem aman menjadi menyerang sistem:
-\begin{itemize}
-  \item \textbf{Frequency Analysis}: Teknik dasar untuk memecahkan cipher klasik
-  \item \textbf{Kasiski Examination}: Metode untuk memecahkan Vigenère cipher
-  \item \textbf{Differential Cryptanalysis}: Serangan terhadap cipher modern
-  \item \textbf{Linear Cryptanalysis}: Teknik analisis struktur cipher
-\end{itemize}
-
-\textbf{Koneksi dengan Bab-Bab Sebelumnya}:
-\begin{itemize}
-  \item \textbf{Bab IV}: Kita mempelajari Caesar dan Vigenère — sekarang kita pelajari cara memecahkannya
-  \item \textbf{Bab V}: Kita mempelajari DES/AES — sekarang kita pelajari cara menganalisis kelemahannya
-  \item \textbf{Bab VI}: Kita mempelajari RSA — sekarang kita pelajari serangan terhadapnya
-\end{itemize}
-
-\textbf{Mengapa Kriptanalisis Penting}:
-\begin{enumerate}
-  \item \textbf{Desain Cipher}: Memahami kelemahan membantu desain cipher yang lebih kuat
-  \item \textbf{Implementasi Aman}: Mengetahui serangan membantu implementasi yang robust
-  \item \textbf{Evaluasi Keamanan}: Kemampuan menilai kekuatan sistem kriptografi
-  \item \textbf{Red Team/Blue Team}: Perspektif penyerang dan pembela
-\end{enumerate}
-
-\textbf{Preview}: Di Bab IX, kita akan melihat bagaimana penyerang berpikir — mencari pola, statistik, dan kelemahan matematis dalam cipher yang kita anggap aman. Kita akan memahami mengapa Caesar cipher sangat rentan terhadap frequency analysis, bagaimana Kasiski examination memecahkan Vigenère yang dianggap lebih aman, dan bagaimana cryptanalysis modern mengancang struktur cipher seperti DES dan AES.
-
-Setelah Bab IX, Anda akan memiliki pemahaman holistik tentang kriptografi — tidak hanya bagaimana membuat sistem aman, tetapi juga bagaimana sistem bisa diserang. Ini akan mempersiapkan Anda untuk evaluasi komprehensif di Bab X di mana kita akan mengintegrasikan semua pengetahuan untuk menganalisis dan merancang sistem keamanan yang sesungguhnya.
+Setelah mengenal PKI/TLS dan urgensi di TI, lanjut ke \textbf{Bab X: Evaluasi, Refleksi, dan Integrasi Kompetensi} (UTS/UAS sesuai CPMK-1 dan CPMK-2). Materi RNG/steganografi tersedia sebagai lampiran opsional.
 \end{transition}
 
 \ifSubfilesClassLoaded{

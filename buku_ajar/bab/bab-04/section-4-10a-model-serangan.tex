@@ -1,0 +1,197 @@
+\section{Jenis-Jenis Serangan terhadap Kriptografi}
+\label{sec:model-serangan}
+
+\subsection{Serangan dan Asumsi Penyerang}
+
+Inti kriptografi adalah menjaga kerahasiaan pesan atau kunci dari pihak ketiga: musuh, lawan, penyadap, atau kriptanalis (\textit{cryptanalyst}). Pihak lawan berusaha memecahkan cipherteks dengan menyerang sistem kriptografi. Tujuannya adalah mengungkap plainteks dari cipherteks, atau mendapatkan kunci dekripsi sehingga kunci itu dapat dipakai untuk mendekripsi cipherteks-cipherteks lainnya \cite{munir_slides_itb}.
+
+\begin{konsep}
+\textbf{Serangan} (\textit{attack}) adalah setiap usaha (\textit{attempt}) yang dilakukan pihak lawan untuk menemukan kunci atau menemukan plainteks dari cipherteksnya. Diasumsikan penyerang \textbf{mengetahui algoritma kriptografi} yang dipakai, sesuai prinsip Kerckhoffs (Bab~II): semua algoritma boleh publik, hanya kunci yang rahasia. Jadi, keamanan sistem kriptografi terletak pada \textbf{kunci}.
+\end{konsep}
+
+Seluruh kriptanalisis cipher klasik pada bab ini (\textit{exhaustive key search}, analisis frekuensi, metode Kasiski, pemecahan Affine dan Hill) adalah contoh serangan. Subbab ini mengelompokkan serangan tersebut secara sistematis menurut dua sudut pandang: \textbf{informasi yang tersedia} bagi penyerang dan \textbf{tujuan} yang ingin dicapai penyerang. Pengelompokan ketiga, serangan pasif dan aktif menurut keterlibatan penyerang dalam komunikasi, sudah dibahas di Bab~II.
+
+\begin{catatan}
+Penyerang tidak selalu menyerang matematika cipher. Komik xkcd pada Gambar~\ref{fig:xkcd-wrench} menyindir hal ini: alih-alih memecahkan RSA 4096 bit dengan klaster komputer mahal, penyerang di dunia nyata bisa saja memaksa korban menyebutkan kata sandinya. Keamanan sebuah sistem ditentukan oleh mata rantai terlemahnya, termasuk manusia dan implementasi.
+\end{catatan}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{bab-04/serangan-xkcd-wrench}
+  \caption{``Security'': imajinasi seorang \textit{crypto nerd} versus kenyataan (xkcd 538, \url{https://xkcd.com/538/}) \cite{munir_slides_itb}.}
+  \label{fig:xkcd-wrench}
+\end{figure}
+
+\subsection{Berdasarkan Ketersediaan Informasi}
+
+Berdasarkan informasi yang dimiliki penyerang, serangan dibagi menjadi lima jenis \cite{munir_slides_itb,stallings2017,menezes1996}. Pada notasi berikut, $E_k$ menyatakan enkripsi dan $D_k$ dekripsi dengan kunci $k$.
+
+\subsubsection{Ciphertext-only attack}
+
+Kriptanalis \textbf{hanya memiliki cipherteks}. Ini serangan yang paling sulit karena informasinya paling sedikit. Teknik yang dipakai antara lain \textit{exhaustive key search}, terkaan, dan analisis frekuensi.
+\begin{itemize}
+  \item \textbf{Diberikan}: $C_1 = E_k(P_1),\ C_2 = E_k(P_2),\ \ldots,\ C_i = E_k(P_i)$.
+  \item \textbf{Deduksi}: $P_1, P_2, \ldots, P_i$, atau $k$ untuk mendapatkan $P_{i+1}$ dari $C_{i+1} = E_k(P_{i+1})$.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{bab-04/serangan-ciphertext-only}
+  \caption{\textit{Ciphertext-only attack}: Eve hanya menyadap cipherteks yang dikirim Alice kepada Bob, lalu menganalisisnya \cite{munir_slides_itb}.}
+  \label{fig:serangan-coa}
+\end{figure}
+
+\begin{contoh}
+Pada Caesar cipher (Subbab~\ref{sec:caesar}), penyerang hanya memiliki cipherteks \texttt{KHOORZRUOG} tanpa mengetahui besar pergeserannya. Karena Caesar cipher hanya memiliki 25 pergeseran yang bermakna, penyerang mencoba semuanya (\textit{brute force}). Pergeseran 3 huruf ke kiri menghasilkan \texttt{HELLOWORLD}; kunci ditemukan dan cipherteks terpecahkan.
+\end{contoh}
+
+\subsubsection{Known-plaintext attack}
+
+Kriptanalis memiliki sejumlah \textbf{pasangan plainteks dan cipherteks} yang berkoresponden.
+\begin{itemize}
+  \item \textbf{Diberikan}: $P_1$ dan $C_1 = E_k(P_1)$, $P_2$ dan $C_2 = E_k(P_2)$, \ldots, $P_i$ dan $C_i = E_k(P_i)$.
+  \item \textbf{Deduksi}: $k$ untuk mendapatkan $P_{i+1}$ dari $C_{i+1} = E_k(P_{i+1})$.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{bab-04/serangan-known-plaintext}
+  \caption{\textit{Known-plaintext attack}: Eve memanfaatkan pasangan plainteks--cipherteks sebelumnya untuk menganalisis cipherteks baru \cite{munir_slides_itb}.}
+  \label{fig:serangan-kpa}
+\end{figure}
+
+Situasi ini sering terjadi bila sebagian isi pesan dapat ditebak, misalnya \textit{header} berkas, format protokol standar, atau salam pembuka surel. Pesan yang formatnya terstruktur membuka peluang untuk menerka plainteks dari cipherteks yang bersesuaian, misalnya:
+\begin{itemize}
+  \item \textit{From} dan \textit{To} pada surel;
+  \item ``Dengan hormat'' di awal dan ``Wassalam'' di akhir surat resmi;
+  \item \texttt{\#include} atau \texttt{program} pada kode sumber.
+\end{itemize}
+Dengan pasangan plainteks--cipherteks, kunci cipher linear dapat dihitung secara aljabar, seperti pada kriptanalisis Affine cipher (Subbab~\ref{sec:affine}) dan Hill cipher (Subbab~\ref{sec:hill}).
+
+\begin{contoh}
+Pada Caesar cipher, penyerang mengetahui cipherteks \texttt{KHOOR ZRUOG} dan tahu bahwa plainteksnya mengandung kata \texttt{HELLO}. Dari pasangan $\texttt{H} \rightarrow \texttt{K}$, penyerang menyimpulkan pergeseran $k = 3$. Dengan kunci itu semua cipherteks lain dapat didekripsi.
+\end{contoh}
+
+\subsubsection{Chosen-plaintext attack}
+
+Kriptanalis dapat \textbf{memilih plainteks sesuka hati} untuk dienkripsi, yaitu plainteks yang lebih mengarahkan pada penemuan kunci. Asumsinya, penyerang memiliki akses ke sistem enkripsi (tetapi tidak ke kuncinya).
+\begin{itemize}
+  \item \textbf{Diberikan}: $P_1, C_1 = E_k(P_1),\ P_2, C_2 = E_k(P_2),\ \ldots,\ P_i, C_i = E_k(P_i)$, dengan $P_1, P_2, \ldots, P_i$ dipilih oleh kriptanalis.
+  \item \textbf{Deduksi}: $k$ untuk mendapatkan $P_{i+1}$ dari $C_{i+1} = E_k(P_{i+1})$.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{bab-04/serangan-chosen-plaintext}
+  \caption{\textit{Chosen-plaintext attack}: Eve membuat pasangan plainteks--cipherteks dari plainteks pilihannya sendiri \cite{munir_slides_itb}.}
+  \label{fig:serangan-cpa}
+\end{figure}
+
+\begin{contoh}
+\textbf{Caesar cipher.} Penyerang memilih plainteks \texttt{AAAAA} dan mengirimkannya ke sistem enkripsi. Sistem mengembalikan cipherteks \texttt{FFFFF}. Karena $\texttt{A} \rightarrow \texttt{F}$, pergeserannya 5, dan semua cipherteks lain dapat didekripsi.
+
+\medskip
+\textbf{Vigen\`{e}re cipher.} Setiap huruf dienkripsi dengan $C = (P + K) \bmod 26$. Penyerang memilih plainteks $P = \texttt{AAAA}\ldots$ (yaitu $0000\ldots$), sehingga cipherteks yang keluar pasti sama dengan kunci: $C = K$. Dengan mengetahui $K$, cipherteks lain langsung dapat didekripsi.
+\end{contoh}
+
+Gambar~\ref{fig:serangan-cpa-atm} memberi contoh skenario nyata. Mesin ATM mengenkripsi PIN dengan kunci $k$ lalu mengirim cipherteksnya ke komputer bank. Kriptanalis pertama mengganti-ganti PIN yang dimasukkan ke ATM, sementara kriptanalis kedua menyadap cipherteks yang dihasilkan dan mempelajarinya untuk mendeduksi kunci $k$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{bab-04/serangan-cpa-atm}
+  \caption{Skenario \textit{chosen-plaintext attack} pada ATM: PIN dipilih oleh kriptanalis pertama, cipherteksnya disadap oleh kriptanalis kedua \cite{munir_slides_itb}.}
+  \label{fig:serangan-cpa-atm}
+\end{figure}
+
+\subsubsection{Adaptive chosen-plaintext attack}
+
+Serangan ini adalah variasi \textit{chosen-plaintext attack}: penyerang tidak hanya memilih plainteks, tetapi juga \textbf{menyesuaikan plainteks berikutnya} berdasarkan cipherteks hasil kueri sebelumnya. Penyerang belajar secara bertahap; setelah melihat hasil enkripsi pertama, ia memilih plainteks baru yang lebih ``cerdas'' untuk menggali informasi lebih dalam tentang algoritma atau kuncinya.
+
+\begin{contoh}
+\textbf{Caesar cipher.} Penyerang memilih plainteks \texttt{A} dan memperoleh cipherteks \texttt{F}, sehingga pergeserannya mungkin 5. Untuk memastikan, ia memilih plainteks \texttt{B} dan memperoleh \texttt{G}. Polanya konsisten, jadi kuncinya dipastikan 5.
+
+\medskip
+\textbf{Vigen\`{e}re cipher.} Penyerang pertama-tama memasukkan plainteks \texttt{AAAA} ($=0000$) sehingga $C = K$. Setelah mengetahui $K$, ia memverifikasinya dengan plainteks lain, misalnya \texttt{BBBB} ($=1111$), yang hasilnya menegaskan enkripsi dengan $K$ yang sama. Dengan informasi itu, cipherteks lain dapat langsung dipecahkan.
+\end{contoh}
+
+\subsubsection{Chosen-ciphertext attack}
+
+Penyerang dapat \textbf{memilih cipherteks} tertentu dan mendekripsinya dengan sebuah \textit{oracle} (sistem yang mampu mendekripsi), lalu memakai hasil dekripsi itu untuk memecahkan cipher atau menemukan kunci.
+\begin{itemize}
+  \item \textbf{Diberikan}: $C_1, P_1 = D_k(C_1),\ C_2, P_2 = D_k(C_2),\ \ldots,\ C_i, P_i = D_k(C_i)$.
+  \item \textbf{Deduksi}: $k$, yang mungkin diperlukan untuk mendekripsi pesan pada waktu yang akan datang.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{bab-04/serangan-chosen-ciphertext}
+  \caption{\textit{Chosen-ciphertext attack}: Eve membuat pasangan dari cipherteks pilihannya yang didekripsi oleh sistem milik Bob \cite{munir_slides_itb}.}
+  \label{fig:serangan-cca}
+\end{figure}
+
+\begin{contoh}
+Pada Caesar cipher, penyerang memilih cipherteks $C = \texttt{A}$, lalu sistem dekripsi menghasilkan plainteks $P = \texttt{X}$. Karena $\texttt{X} + 3 \equiv \texttt{A} \pmod{26}$, penyerang mengetahui pergeseran $k = 3$.
+\end{contoh}
+
+Tabel~\ref{tab:model-serangan} merangkum kelima model serangan. Urutannya mencerminkan kekuatan penyerang yang makin besar: cipher yang aman terhadap model yang lebih kuat juga aman terhadap model di atasnya. Cipher modern seperti AES dirancang agar tahan bahkan terhadap \textit{chosen-plaintext} dan \textit{chosen-ciphertext attack}.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{5cm}@{}}
+    \toprule
+    Model serangan & Yang dimiliki penyerang & Contoh pada cipher klasik \\
+    \midrule
+    \textit{Ciphertext-only} & Cipherteks saja & \textit{Brute force} Caesar; analisis frekuensi monoalfabetik; Kasiski pada Vigen\`{e}re \\
+    \textit{Known-plaintext} & Pasangan plainteks--cipherteks & Kunci Affine dan Hill dari beberapa pasangan huruf/blok \\
+    \textit{Chosen-plaintext} & Akses ke enkripsi dengan plainteks pilihan & Plainteks \texttt{AAAA\ldots} membocorkan kunci Vigen\`{e}re \\
+    \textit{Adaptive chosen-plaintext} & Seperti di atas, kueri disesuaikan bertahap & Verifikasi kunci Caesar dengan \texttt{A} lalu \texttt{B} \\
+    \textit{Chosen-ciphertext} & Akses ke dekripsi dengan cipherteks pilihan & Dekripsi \texttt{A} menjadi \texttt{X} membocorkan kunci Caesar \\
+    \bottomrule
+  \end{tabular}
+  \caption{Lima model serangan berdasarkan ketersediaan informasi \cite{munir_slides_itb}.}
+  \label{tab:model-serangan}
+\end{table}
+
+\subsection{Aman secara Komputasi}
+
+OTP aman tanpa syarat (\textit{unconditionally secure}): sebesar apa pun sumber daya penyerang, cipherteks tidak membocorkan informasi apa pun (Subbab~\ref{sec:otp}). Cipher praktis tidak dapat mencapai hal ini, sehingga ukurannya diganti dengan keamanan komputasi \cite{munir_slides_itb,stallings2017}.
+
+\begin{konsep}
+Sebuah algoritma kriptografi dikatakan \textbf{aman secara komputasi} (\textit{computationally secure}) bila memenuhi tiga kriteria berikut:
+\begin{enumerate}
+  \item persamaan matematika yang menggambarkan operasi algoritma sangat kompleks sehingga algoritma tidak mungkin dipecahkan secara analitik;
+  \item biaya untuk memecahkan cipherteks melampaui nilai informasi yang terkandung di dalamnya;
+  \item waktu yang diperlukan untuk memecahkan cipherteks melampaui lamanya informasi tersebut harus dijaga kerahasiaannya.
+\end{enumerate}
+\end{konsep}
+
+\subsection{Berdasarkan Tujuan Serangan}
+
+Serangan juga dapat dikelompokkan menurut tujuan atau hasil yang ingin dicapai penyerang \cite{munir_slides_itb}.
+
+\begin{enumerate}
+  \item \textbf{Key-recovery attack}. Tujuannya memperoleh kunci $K$ pada sistem $C = E_K(P)$. Contohnya \textit{brute force}: penyerang mencoba $K_1, K_2, K_3, \ldots$, mendekripsi $C$ dengan setiap kunci, sampai ditemukan kunci yang menghasilkan plainteks yang masuk akal. Ini serangan paling merusak karena kunci yang ditemukan membuka semua pesan lain.
+
+  \item \textbf{Plaintext-recovery attack}. Tujuannya memperoleh plainteks tanpa harus mengetahui kunci. Misalnya penyerang menganalisis struktur cipherteks \texttt{XQZ\ldots} dan menyimpulkan bahwa pesannya kemungkinan berbunyi \texttt{MEET AT THE STATION}. Dalam banyak situasi, mengetahui isi satu pesan penting sudah cukup bagi penyerang.
+
+  \item \textbf{Distinguishing attack}. Tujuannya menentukan apakah suatu data merupakan keluaran algoritma kriptografi atau data yang benar-benar acak. Jika secara statistik penyerang dapat membedakannya dengan peluang yang jauh lebih baik daripada tebakan acak, cipher tersebut memiliki \textit{distinguishing attack}. Misalnya cipher yang menghasilkan \texttt{1010101010\ldots} jelas tidak menyerupai data acak; penyerang cukup memeriksa apakah jumlah 0 dan 1 sangat tidak seimbang atau terdapat pola berulang. Cipher modern dirancang agar kelemahan seperti ini tidak mudah ditemukan.
+
+  \item \textbf{Forgery attack}. Tujuannya membuat pesan palsu yang diterima sebagai pesan sah. Serangan ini penting pada sistem yang memakai MAC (\textit{message authentication code}) atau tanda tangan digital (Bab~VII). Misalnya Alice mengirim pesan beserta MAC kepada Bob, dan Bob memeriksa MAC untuk memastikan pesan berasal dari pihak yang memegang kunci. Penyerang (Eve) berusaha membuat pesan palsu dengan MAC yang valid sehingga Bob menganggapnya autentik.
+
+  \item \textbf{Replay attack}. Tujuannya mengirim ulang pesan sah yang pernah dikirim sebelumnya agar suatu tindakan terjadi lagi (lihat juga serangan aktif di Bab~II). Pada \textit{replay attack}, penyerang tidak perlu memecahkan enkripsi. Pencegahannya adalah membuat setiap pesan unik atau berurutan, misalnya dengan \textit{nonce}, \textit{timestamp}, atau \textit{sequence number}. Jika pesan diberi nomor urut \texttt{Message 101}, \texttt{102}, \texttt{103}, lalu penyerang mengirim ulang \texttt{Message 101} setelah sistem menerima \texttt{Message 103}, sistem menolaknya karena nomor tersebut sudah kedaluwarsa.
+\end{enumerate}
+
+\subsection{Serangan Lain: Side-Channel Attack}
+
+\crypt{Side-channel attack} tidak menyerang matematika algoritma, tetapi memanfaatkan informasi yang bocor ketika algoritma dijalankan pada perangkat fisik \cite{munir_slides_itb,kochert1996}. Beberapa jenisnya:
+\begin{enumerate}
+  \item \textbf{Timing attack}: memanfaatkan perbedaan waktu eksekusi untuk memperoleh informasi tentang kunci.
+  \item \textbf{Power analysis attack}: menganalisis konsumsi daya perangkat ketika melakukan operasi kriptografi, misalnya \textit{Simple Power Analysis} (SPA) dan \textit{Differential Power Analysis} (DPA).
+  \item \textbf{Electromagnetic (EM) attack}: menganalisis radiasi elektromagnetik yang dipancarkan perangkat selama operasi kriptografi.
+  \item \textbf{Fault injection attack}: penyerang sengaja memicu kesalahan pada perangkat atau proses komputasi, lalu menganalisis keluaran yang salah tersebut, misalnya \textit{Differential Fault Analysis} (DFA).
+\end{enumerate}
+
+\begin{catatan}
+\textit{Side-channel attack} menunjukkan bahwa algoritma yang aman secara matematis tetap dapat bobol bila implementasinya bocor. Karena itu implementasi AES dan RSA di Bab~V dan VI dianjurkan memakai pustaka teruji dengan operasi \textit{constant-time}.
+\end{catatan}

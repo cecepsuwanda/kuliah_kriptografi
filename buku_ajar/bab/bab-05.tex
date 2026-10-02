@@ -5,10 +5,10 @@
 \chapter{Block Cipher dan Kriptografi Simetris}
 
 \begin{subcpmk}
-  \item Sub-CPMK 3.1: Menjelaskan prinsip stream cipher (LFSR, RC4) dan block cipher (Feistel, SPN)
-  \item Sub-CPMK 3.2: Mengimplementasikan dan menganalisis keamanan DES dan AES (S-Box, ShiftRows, MixColumns)
-  \item Sub-CPMK 3.3: Membandingkan mode operasi block cipher (ECB, CBC, CFB, OFB, CTR)
+  \item Sub-CPMK 1.2: Mengenal kriptografi modern simetris (stream/block, Feistel, DES, AES, mode operasi dasar)
 \end{subcpmk}
+
+\noindent\textit{Rujukan:} Munir (modern) \cite{munir_slides_itb}; Stallings \cite{stallings2017}; NIST \cite{nist}; HAC Bab~6--7 \cite{hac_online}.
 
 % ============================================================
 % MATERI POKOK
@@ -25,13 +25,9 @@
 % ============================================================
 
 \begin{aktivitas}
-  \item \textbf{Studi Literatur}: Bandingkan struktur Feistel (DES) dengan struktur SPN (AES). Apa perbedaan utama?
-  
-  \item \textbf{Stream vs Block}: Jelaskan kapan stream cipher lebih cocok daripada block cipher.
-  
-  \item \textbf{Praktikum}: Gunakan OpenSSL atau library C untuk mengenkripsi file dengan AES-CBC. Amati peran IV.
-  
-  \item \textbf{Analisis}: Mengapa ECB tidak aman? Cari contoh visual (gambar terenkripsi ECB vs CBC).
+  \item \textbf{Perbandingan}: Buat tabel stream vs block; Feistel (DES) vs SPN (AES).
+  \item \textbf{Demo}: Amati enkripsi AES-CBC (OpenSSL/library) --- fokus peran IV, bukan coding penuh.
+  \item \textbf{Analisis}: Mengapa ECB tidak aman? Cari contoh visual ECB vs CBC.
 \end{aktivitas}
 
 % ============================================================
@@ -55,7 +51,7 @@
 % ============================================================
 
 \begin{asesmen}
-\textbf{Instrumen Penilaian untuk Sub-CPMK 3.1, 3.2, 3.3}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 1.2}
 
 \textbf{A. Essay}
 
@@ -86,11 +82,9 @@ Jelaskan: (a) Mengapa DES tidak lagi aman? (b) Apa keunggulan AES dibanding DES?
 % ============================================================
 
 \begin{checklist}
-  \item Saya dapat menjelaskan prinsip stream cipher (LFSR, RC4) dan block cipher (Feistel, SPN)
-  \item Saya dapat menjelaskan struktur DES (Feistel) dan 3DES
-  \item Saya dapat menjelaskan struktur AES (SubBytes, ShiftRows, MixColumns, AddRoundKey)
-  \item Saya dapat membedakan mode ECB, CBC, CFB, OFB, CTR
-  \item Saya memahami peran IV/nonce dalam mode CBC, CTR, GCM
+  \item Saya mengenal prinsip stream cipher (LFSR, RC4) dan block cipher (Feistel, SPN)
+  \item Saya mengenal struktur DES/3DES dan AES secara pengenalan
+  \item Saya dapat membedakan mode ECB, CBC, dan CTR serta peran IV
 \end{checklist}
 
 % ============================================================

@@ -1,70 +1,81 @@
-\section{Kriptografi Simetris dan Asimetris}
+\section{Layanan Keamanan Informasi}
 
-\subsection{Kriptografi Simetris (Secret-Key)}
+Empat masalah Alice--Bob (penyadapan, penyamaran, manipulasi, penyangkalan) dijawab oleh layanan keamanan yang didukung kriptografi \cite{munir_slides_itb,rfc4949,nist_cia}: \textbf{confidentiality}, \textbf{authentication}/\textbf{authenticity}, \textbf{integrity}, dan \textbf{non-repudiation}, dilengkapi \textbf{availability} dalam model CIA. Kasus kebocoran data dan serangan pada bagian urgensi memperkuat motivasi bahwa layanan ini bukan sekadar istilah teoretis, melainkan kebutuhan praktis. Tiga layanan pertama CIA triad dikenal luas; non-repudiation dan authenticity melengkapi model untuk transaksi yang memerlukan kepercayaan dan bukti hukum.
 
-Menggunakan \textbf{satu kunci} yang sama untuk enkripsi dan dekripsi. Kunci harus dijaga kerahasiaannya dan dibagikan secara aman antara Alice dan Bob.
+\subsection{Confidentiality (Kerahasiaan)}
 
-\begin{itemize}
-  \item \textbf{Contoh}: Caesar, Vigenère, DES, AES
-  \item \textbf{Kelebihan}: Cepat, efisien untuk data besar
-  \item \textbf{Kekurangan}: Masalah distribusi kunci---bagaimana Alice dan Bob berbagi kunci tanpa Eve tahu?
-\end{itemize}
+Memastikan informasi hanya dapat diakses oleh pihak yang berwenang. Plaintext tidak boleh terbaca oleh Eve meskipun dia memiliki ciphertext. \textbf{Cara mencapai}: enkripsi dengan kunci yang hanya diketahui Alice dan Bob \cite{stallings2017}. Gambar~\ref{fig:layanan-kerahasiaan} menunjukkan plainteks yang menjadi tidak bermakna setelah dienkripsi.
 
-Kriptografi simetris menawarkan keunggulan kecepatan yang signifikan dibandingkan dengan kriptografi asimetris karena menggunakan kunci yang jauh lebih pendek dan hanya satu kunci untuk proses enkripsi dan dekripsi. Menurut Keyfactor, kecepatan ini membuat kriptografi simetris ideal untuk aplikasi di mana performa adalah prioritas utama, seperti enkripsi data dalam jumlah besar atau komunikasi real-time. Namun, risiko utama simetris terletak pada transmisi kunci di mana setiap pembagian kunci membawa risiko intersepsi oleh pihak ketiga yang tidak diinginkan.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{bab-02/kerahasiaan-plain-cipher}
+\caption{Kerahasiaan: plainteks (a) dienkripsi menjadi cipherteks (b) yang tidak dapat dipahami pihak yang tidak berhak \cite{munir_slides_itb}.}
+\label{fig:layanan-kerahasiaan}
+\end{figure}
 
-Implementasi kriptografi simetris secara luas digunakan dalam perbankan untuk mengenkripsi informasi kartu kredit atau data pribadi lainnya yang diperlukan untuk transaksi. Selain itu, kriptografi simetris juga umum digunakan untuk enkripsi data yang disimpan di perangkat ketika data tidak sedang ditransfer, memberikan perlindungan yang efisien untuk data diam. Algoritma seperti AES (Advanced Encryption Standard) telah menjadi standar industri untuk enkripsi simetris karena kombinasi keamanan dan performanya yang excellent.
+Confidentiality merupakan fondasi keamanan informasi. Akses ke informasi harus dikontrol untuk mencegah pembagian data tidak sah. Implementasi efektif memerlukan enkripsi data, kontrol akses, dan autentikasi. Ancaman terhadap confidentiality mencakup serangan siber maupun kesalahan manusia seperti berbagi kredensial atau kegagalan mengenkripsi komunikasi.
 
-\subsection{Kriptografi Asimetris (Public-Key)}
+\subsection{Integrity (Keutuhan)}
 
-Menggunakan \textbf{pasangan kunci}: kunci publik (dapat dibagikan) dan kunci privat (rahasia).
+Memastikan informasi tidak diubah selama transmisi. Bob harus yakin pesan yang diterima sama persis dengan yang dikirim Alice. \textbf{Cara mencapai}: fungsi hash, Message Authentication Code (MAC), atau tanda tangan digital. Perubahan kecil pun harus terdeteksi, seperti satu digit suhu atau satu bagian foto pada Gambar~\ref{fig:layanan-integritas}.
 
-\begin{itemize}
-  \item \textbf{Contoh}: RSA, ElGamal
-  \item \textbf{Kelebihan}: Tidak perlu pertukaran kunci rahasia di kanal terbuka
-  \item \textbf{Kekurangan}: Lebih lambat dibanding simetris, membutuhkan operasi matematika berat
-\end{itemize}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{bab-02/integritas-pesan-diubah}
+\caption{Integritas: pesan teks dan citra yang diubah sedikit tampak hampir sama dengan aslinya \cite{munir_slides_itb}.}
+\label{fig:layanan-integritas}
+\end{figure}
 
-Kriptografi asimetris menawarkan keamanan yang superior karena menggunakan dua kunci berbeda—kunci publik yang hanya digunakan untuk enkripsi pesan dan aman untuk dimiliki siapa pun, serta kunci privat untuk dekripsi yang tidak perlu dibagikan. Menurut Keyfactor, karena kunci privat tidak pernah dibagikan, ini membantu memastikan hanya penerima yang dimaksud yang dapat mendekripsi pesan terenkripsi dan menciptakan tanda tangan digital yang tidak dapat dipalsukan. Keamanan ini membuat asimetris ideal untuk aplikasi di mana verifikasi identitas diperlukan.
+Integrity memastikan data tetap tepercaya dan bebas dari perusakan. Setiap perubahan tidak sah terhadap data harus terdeteksi dan dicegah. Pelanggaran integrity dapat menyebabkan keputusan bisnis yang salah atau kehilangan kepercayaan. Teknologi hash, tanda tangan digital, dan MAC menyediakan mekanisme verifikasi yang diperlukan.
 
-Penggunaan umum kriptografi asimetris termasuk tanda tangan digital untuk mengkonfirmasi identitas seseorang yang menandatangani dokumen dan blockchain untuk mengkonfirmasi identitas guna mengotorisasi transaksi cryptocurrency. Public Key Infrastructure (PKI) juga menggunakan kriptografi asimetris untuk mengelola kunci enkripsi melalui penerbitan dan manajemen sertifikat digital. Meskipun lebih lambat, keamanan yang ditawarkan membuat asimetris sangat penting untuk aplikasi di mana identitas dan kepercayaan adalah prioritas utama.
+\subsection{Availability (Ketersediaan)}
 
-\subsection{Perbandingan}
+Memastikan sistem dan data dapat diakses oleh pihak yang berwenang ketika diperlukan. Serangan denial-of-service (DoS) mengancam availability dengan membuat layanan tidak dapat diakses.
 
+Kriptografi secara tidak langsung mendukung availability melalui proteksi terhadap serangan yang menargetkan infrastruktur. Manajemen kunci dan redundansi sistem juga berperan menjaga ketersediaan layanan kriptografi. Dalam praktik, availability sering ditangani melalui kombinasi kebijakan operasional, redundansi jaringan, dan mitigasi DoS.
+
+\subsection{Non-Repudiation (Ketidakbantahan)}
+
+Memastikan pihak yang melakukan tindakan tidak dapat menyangkal bahwa ia telah melakukannya. Alice tidak dapat menyangkal telah mengirim pesan; Bob tidak dapat menyangkal telah menerimanya. \textbf{Cara mencapai}: tanda tangan digital, sertifikat digital, log audit. Gambar~\ref{fig:layanan-nirpenyangkalan} mengilustrasikan nasabah yang menyangkal instruksi transfernya sendiri.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{bab-02/nirpenyangkalan-transfer}
+\caption{Non-repudiation: tanpa bukti kriptografis, A dapat menyangkal telah meminta transfer ke B \cite{munir_slides_itb}.}
+\label{fig:layanan-nirpenyangkalan}
+\end{figure}
+
+Non-repudiation penting untuk transaksi hukum, kontrak elektronik, dan pembayaran daring. Tanda tangan digital memberikan bukti matematis yang tidak dapat dipalsukan tentang asal dan integritas pesan. Sertifikat digital dari CA tepercaya mendukung verifikasi identitas dalam skala global \cite{stallings2017}.
+
+\subsection{Authenticity (Keaslian)}
+
+Authenticity memastikan pengirim pesan benar-benar pihak yang mengklaim. Bob yakin pesan berasal dari Alice, bukan Eve yang berpura-pura. \textbf{Cara mencapai}: tanda tangan digital, sertifikat digital, protokol autentikasi.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=0.5\textwidth]{bab-02/autentikasi-penyamaran}
+\caption{Autentikasi: pihak ketiga di tengah mengirim sinyal palsu seolah-olah berasal dari A, sehingga B perlu memverifikasi asal pesan \cite{munir_slides_itb}.}
+\label{fig:layanan-autentikasi}
+\end{figure}
+
+Gambar~\ref{fig:layanan-autentikasi} menggambarkan masalah ini secara sederhana: B menerima sinyal asap, tetapi tidak dapat memastikan apakah sinyal itu dari A atau dari penyamar.
 \begin{table}[htbp]
 \centering
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Aspek} & \textbf{Simetris} & \textbf{Asimetris} \\
-\hline
-Jumlah kunci & 1 (rahasia) & 2 (publik + privat) \\
-\hline
-Kecepatan & Cepat & Lebih lambat \\
-\hline
-Distribusi kunci & Sulit & Lebih mudah \\
-\hline
-Penggunaan umum & Enkripsi data besar & Pertukaran kunci, tanda tangan \\
-\hline
+\small
+\begin{tabular}{|l|>{\raggedright\arraybackslash}p{4.8cm}|>{\raggedright\arraybackslash}p{4.5cm}|}
+\toprule
+\textbf{Layanan} & \textbf{Definisi} & \textbf{Mekanisme Kriptografi} \\
+\midrule
+Confidentiality & Hanya pihak berwenang mengakses & Enkripsi \\
+Integrity & Data tidak diubah tanpa izin & Hash, MAC \\
+Availability & Data/sistem dapat diakses saat dibutuhkan & Manajemen kunci, redundansi \\
+Non-repudiation & Tindakan tidak dapat disangkal & Tanda tangan digital \\
+Authenticity & Identitas pengirim/penerima terverifikasi & Sertifikat, protokol auth \\
+\bottomrule
 \end{tabular}
-\caption{Perbandingan Kriptografi Simetris dan Asimetris}
+\caption{Layanan keamanan informasi dan mekanisme kriptografi.}
 \end{table}
 
-\begin{catatan}
-Dalam praktik, sistem modern sering menggunakan \textbf{enkripsi hibrida}: menggunakan asimetris untuk pertukaran kunci, lalu simetris untuk enkripsi data (misalnya TLS/SSL).
-\end{catatan}
-
-Pendekatan hibrida menggabungkan keunggulan kedua jenis kriptografi untuk menciptakan sistem yang aman dan efisien secara bersamaan. Menurut Keyfactor, sebagian besar implementasi hibrida menggunakan kriptografi simetris untuk mengenkripsi sebagian besar informasi dan kemudian menggunakan kriptografi asimetris untuk mengenkripsi kunci enkripsi/dekripsi simetris. SSL/TLS adalah contoh klasik di mana kriptografi asimetris digunakan untuk mengenkripsi kunci enkripsi simetris sekali pakai, yang kemudian digunakan untuk mengenkripsi/mendekripsi konten sesi browsing internet.
-
-Sistem chat mobile juga menggunakan pendekatan hibrida dengan kriptografi asimetris untuk memverifikasi identitas peserta di awal percakapan dan kemudian kriptografi simetris untuk mengenkripsi konten percakapan yang berkelanjutan. Kombinasi ini memastikan keamanan identitas dan kecepatan komunikasi, menjadikannya solusi ideal untuk aplikasi komunikasi modern yang membutuhkan kedua aspek tersebut.
-
-\subsection{Preview: Dari Teori ke Implementasi}
-
-Setelah memahami perbedaan kriptografi simetris dan asimetris, Anda mungkin bertanya: "Bagaimana semua ini bekerja dalam praktik?" Dalam bab-bab berikutnya, kita akan membangun pemahaman ini langkah demi langkah:
-
-\begin{enumerate}
-  \item \textbf{Bab III}: Kita akan mempelajari matematika yang menjadi fondasi semua cipher ini
-  \item \textbf{Bab IV}: Kita akan mengimplementasikan cipher simetris klasik (Caesar, Vigenère) menggunakan bahasa C
-  \item \textbf{Bab V}: Kita akan melihat bagaimana prinsip yang sama diterapkan dalam cipher modern (AES)
-  \item \textbf{Bab VI}: Kita akan mengimplementasikan kriptografi asimetris (RSA)
-\end{enumerate}
-
-Setiap langkah akan membangun di atas yang sebelumnya, memastikan Anda memahami tidak hanya "bagaimana" tetapi juga "mengapa" setiap desain bekerja.
+\begin{contoh}
+Dalam pembayaran daring: confidentiality melindungi data kartu kredit; integrity memastikan jumlah transaksi tidak diubah; authenticity memastikan pembayaran dari pemilik kartu yang sah; non-repudiation mencegah penyangkalan transaksi.
+\end{contoh}

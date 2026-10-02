@@ -1,0 +1,33 @@
+\section{Ringkasan Kriptanalisis Cipher Klasik}
+
+Semua cipher klasik pada bab ini dapat dipecahkan. Tabel~\ref{tab:ringkasan-kriptanalisis} merangkum kelemahan utama setiap cipher dan serangan yang paling efektif terhadapnya \cite{stallings2017,menezes1996,munir_slides_itb}.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}p{2.7cm}p{3.6cm}p{6.6cm}@{}}
+    \toprule
+    Cipher & Ruang kunci & Kelemahan dan serangan efektif \\
+    \midrule
+    Caesar & 26 & \textit{Exhaustive key search}; analisis frekuensi \\
+    Monoalfabetik & $26! \approx 4 \times 10^{26}$ & Analisis frekuensi huruf, bigram, dan trigram \\
+    Affine & $12 \times 26 = 312$ & \textit{Exhaustive key search}; \textit{known-plaintext} dengan dua pasangan huruf \\
+    Transposisi & bergantung panjang kunci & Frekuensi huruf tidak berubah; anagram dan analisis struktur, terutama bila format pesan diketahui \\
+    Vigen\`{e}re & $26^m$ ($m$ = panjang kunci) & Metode Kasiski atau \textit{index of coincidence} (Friedman) untuk panjang kunci, lalu analisis frekuensi per kelompok \\
+    Playfair & $25!$ & Analisis frekuensi bigram; bigram terbalik menghasilkan plainteks terbalik \\
+    Hill & matriks $m \times m$ yang invertibel & \textit{Known-plaintext}: $m$ pasangan blok cukup untuk menghitung $\mathbf{K} = \mathbf{C}\mathbf{P}^{-1}$ \\
+    Enigma & sangat besar (rotor + \textit{plugboard}) & Tidak ada huruf yang dienkripsi menjadi dirinya sendiri; kesalahan prosedur operator; \textit{Bombe} \\
+    One-Time Pad & $26^n$ ($n$ = panjang pesan) & Aman sempurna (\textit{perfect secrecy}) jika kunci acak sejati, sepanjang pesan, dan sekali pakai; pecah jika kunci dipakai ulang (\textit{two-time pad}) atau diambil dari teks bermakna \\
+    \bottomrule
+  \end{tabular}
+  \caption{Ringkasan kelemahan dan kriptanalisis cipher klasik.}
+  \label{tab:ringkasan-kriptanalisis}
+\end{table}
+
+Dari tabel tersebut tampak dua pola besar. Pertama, ruang kunci yang besar \textbf{tidak cukup}: substitusi monoalfabetik dan Playfair memiliki ruang kunci raksasa, tetapi tetap pecah karena statistik bahasa bocor ke cipherteks. Kedua, cipher yang \textbf{linear} seperti Affine dan Hill runtuh oleh \textit{known-plaintext attack} karena kuncinya dapat dihitung dengan aljabar sederhana.
+
+Dilihat dari model serangan pada Subbab~\ref{sec:model-serangan}, sebagian besar cipher klasik sudah pecah pada model yang paling lemah, yaitu \textit{ciphertext-only attack}: Caesar dan Affine oleh \textit{exhaustive key search}, monoalfabetik dan Playfair oleh analisis frekuensi, serta Vigen\`{e}re oleh metode Kasiski. Affine dan Hill bahkan pecah hanya dengan beberapa pasangan plainteks--cipherteks (\textit{known-plaintext}), dan Vigen\`{e}re langsung membocorkan kuncinya pada \textit{chosen-plaintext attack}. Hanya OTP yang tahan terhadap semua model serangan, dengan harga ketidakpraktisan kuncinya.
+
+\begin{konsep}
+Cipher klasik tidak aman untuk penggunaan modern. Kelemahan-kelemahannya justru menjadi prinsip desain cipher modern: ruang kunci harus sangat besar, statistik plainteks harus disebar ke seluruh cipherteks (\textit{diffusion}), hubungan kunci dan cipherteks harus rumit dan nonlinear (\textit{confusion}), dan cipher harus tahan terhadap \textit{known-plaintext}, \textit{chosen-plaintext}, maupun \textit{chosen-ciphertext attack} sambil tetap aman secara komputasi. Algoritma modern seperti AES (Bab~V) dirancang di atas prinsip-prinsip ini.
+\end{konsep}

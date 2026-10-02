@@ -1,52 +1,79 @@
-\section{Layanan Keamanan Informasi}
+\section{Urgensi Kriptografi dalam Teknologi Informasi}
 
-Model keamanan informasi melibatkan empat layanan utama yang didukung kriptografi \cite{rfc4949,nist_cia}: confidentiality, integrity, availability, dan non-repudiation. Tiga yang pertama dikenal sebagai \textbf{CIA triad}; non-repudiation melengkapi model untuk transaksi yang memerlukan bukti hukum.
+\subsection{Mengapa Komunikasi Publik Rentan?}
 
-\subsection{Confidentiality (Kerahasiaan)}
+Hampir semua komunikasi modern---surat elektronik, SMS, browser web, perbankan daring---melewati kanal publik (internet, jaringan seluler, infrastruktur bersama). Tanpa proteksi kriptografi, pesan dapat disadap, diubah, atau dipalsukan. Karena itu kriptografi menjadi inti banyak teknologi keamanan siber: memahami perannya penting untuk memahami cara mengamankan ruang siber \cite{munir_slides_itb,stallings2017}.
 
-Memastikan informasi hanya dapat diakses oleh pihak yang berwenang. Plaintext tidak boleh terbaca oleh Eve meskipun dia memiliki ciphertext. \textbf{Cara mencapai}: enkripsi dengan kunci yang hanya diketahui Alice dan Bob \cite{stallings2017}.
+\subsection{Kasus Ilustratif: Kebocoran dan Serangan}
 
-Confidentiality merupakan fondasi keamanan informasi. Akses ke informasi harus dikontrol untuk mencegah pembagian data tidak sah. Implementasi efektif memerlukan enkripsi data, kontrol akses, dan autentikasi. Ancaman terhadap confidentiality mencakup serangan siber maupun kesalahan manusia seperti berbagi kredensial atau kegagalan mengenkripsi komunikasi.
+Beberapa kasus berikut bersifat ilustratif (bukan laporan forensik lengkap). Tujuannya menunjukkan bahwa kegagalan melindungi data berdampak nyata pada privasi, kepercayaan publik, dan ekonomi digital \cite{munir_slides_itb}:
+\begin{itemize}
+  \item \textbf{Kebocoran data pribadi berulang}: data peserta asuransi kesehatan, pengguna e-commerce, atau nasabah lembaga keuangan yang bocor ke publik menekankan pentingnya enkripsi, kontrol akses, dan tata kelola data.
+  \item \textbf{Penyadapan atau akses tidak sah terhadap fasilitas komunikasi}: menggarisbawahi kebutuhan confidentiality pada kanal diplomatik maupun korporat.
+  \item \textbf{Peretasan situs lembaga atau ransomware}: dokumen rahasia atau data nasabah berisiko diekspos atau dienkripsi paksa oleh penyerang---menunjukkan bahwa keamanan tidak hanya soal firewall, tetapi juga proteksi kriptografi dan manajemen kunci.
+\end{itemize}
 
-\subsection{Integrity (Keutuhan)}
+\begin{konsep}
+Pelajaran utama: tanpa kerahasiaan, integritas, dan otentikasi yang memadai, data di kanal publik maupun di penyimpanan mudah menjadi sasaran. Kriptografi bukan satu-satunya solusi keamanan, tetapi merupakan fondasi teknis yang sulit digantikan.
+\end{konsep}
 
-Memastikan informasi tidak diubah selama transmisi. Bob harus yakin pesan yang diterima sama persis dengan yang dikirim Alice. \textbf{Cara mencapai}: fungsi hash, Message Authentication Code (MAC), atau tanda tangan digital.
+\subsection{Enkripsi At Rest dan In Transit}
 
-Integrity memastikan data tetap tepercaya dan bebas dari perusakan. Setiap perubahan tidak sah terhadap data harus terdeteksi dan dicegah. Pelanggaran integrity dapat menyebabkan keputusan bisnis yang salah atau kehilangan kepercayaan. Teknologi hash, tanda tangan digital, dan MAC menyediakan mekanisme verifikasi yang diperlukan.
+Dua aplikasi utama enkripsi dalam praktik TI \cite{munir_slides_itb}:
+\begin{itemize}
+  \item \textbf{Encryption at rest}: melindungi data yang disimpan (disk, basis data, berkas dokumen) agar tetap rahasia jika media fisik atau salinan cadangan dicuri.
+  \item \textbf{Encryption in transit} (\textit{on motion}): melindungi pesan
+        yang dikirim melalui jaringan.
+        Contoh familiar adalah enkripsi ujung-ke-ujung pada aplikasi pesan
+        atau HTTPS/TLS pada browser.
+\end{itemize}
 
-\subsection{Availability (Ketersediaan)}
+Gambar~\ref{fig:at-rest-in-transit} memberi contoh keduanya dari aplikasi sehari-hari.
 
-Memastikan sistem dan data dapat diakses oleh pihak yang berwenang ketika diperlukan. Serangan denial-of-service (DoS) mengancam availability dengan membuat layanan tidak dapat diakses.
-
-Kriptografi secara tidak langsung mendukung availability melalui proteksi terhadap serangan yang menargetkan infrastruktur. Manajemen kunci dan redundansi sistem juga berperan menjaga ketersediaan layanan kriptografi. Dalam praktik, availability sering ditangani melalui kombinasi kebijakan operasional, redundansi jaringan, dan mitigasi DoS.
-
-\subsection{Non-Repudiation (Ketidakbantahan)}
-
-Memastikan pihak yang melakukan tindakan tidak dapat menyangkal bahwa ia telah melakukannya. Alice tidak dapat menyangkal telah mengirim pesan; Bob tidak dapat menyangkal telah menerimanya. \textbf{Cara mencapai}: tanda tangan digital, sertifikat digital, log audit.
-
-Non-repudiation penting untuk transaksi hukum, kontrak elektronik, dan pembayaran daring. Tanda tangan digital memberikan bukti matematis yang tidak dapat dipalsukan tentang asal dan integritas pesan. Sertifikat digital dari CA tepercaya mendukung verifikasi identitas dalam skala global \cite{stallings2017}.
-
-\subsection{Authenticity (Keaslian)}
-
-Authenticity memastikan pengirim pesan benar-benar pihak yang mengklaim. Bob yakin pesan berasal dari Alice, bukan Eve yang berpura-pura. \textbf{Cara mencapai}: tanda tangan digital, sertifikat digital, protokol autentikasi.
-
-\begin{table}[htbp]
+\begin{figure}[htbp]
 \centering
-\small
-\begin{tabular}{|l|>{\raggedright\arraybackslash}p{4.8cm}|>{\raggedright\arraybackslash}p{4.5cm}|}
-\toprule
-\textbf{Layanan} & \textbf{Definisi} & \textbf{Mekanisme Kriptografi} \\
-\midrule
-Confidentiality & Hanya pihak berwenang mengakses & Enkripsi \\
-Integrity & Data tidak diubah tanpa izin & Hash, MAC \\
-Availability & Data/sistem dapat diakses saat dibutuhkan & Manajemen kunci, redundansi \\
-Non-repudiation & Tindakan tidak dapat disangkal & Tanda tangan digital \\
-Authenticity & Identitas pengirim/penerima terverifikasi & Sertifikat, protokol auth \\
-\bottomrule
-\end{tabular}
-\caption{Layanan keamanan informasi dan mekanisme kriptografi.}
-\end{table}
+\begin{minipage}[b]{0.42\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{bab-02/encrypt-document}\\[2pt]
+  {\small (a) At rest: enkripsi berkas dokumen dengan kata sandi}
+\end{minipage}\hfill
+\begin{minipage}[b]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{bab-02/whatsapp-e2e}\\[2pt]
+  {\small (b) In transit: enkripsi ujung-ke-ujung pada aplikasi pesan}
+\end{minipage}
+\caption{Contoh encryption at rest dan encryption in transit \cite{munir_slides_itb}.}
+\label{fig:at-rest-in-transit}
+\end{figure}
 
-\begin{contoh}
-Dalam pembayaran daring: confidentiality melindungi data kartu kredit; integrity memastikan jumlah transaksi tidak diubah; authenticity memastikan pembayaran dari pemilik kartu yang sah; non-repudiation mencegah penyangkalan transaksi.
-\end{contoh}
+\begin{catatan}
+Sistem modern sering menggabungkan keduanya: data dienkripsi saat disimpan \textit{dan} saat dikirim. TLS (Bab~VIII) adalah contoh proteksi in transit; mode penyimpanan seperti XTS (Bab~V) berkaitan dengan proteksi at rest.
+\end{catatan}
+
+\subsection{Lembaga Terkait Kriptografi di Indonesia}
+
+Di Indonesia, pengembangan kapasitas sandi dan keamanan siber melibatkan lembaga negara dan pendidikan antara lain \cite{munir_slides_itb,bssn_official}:
+\begin{enumerate}
+  \item \textbf{Badan Siber dan Sandi Negara (BSSN)} --- \url{https://bssn.go.id} --- lembaga yang menggabungkan fungsi sandi negara dan aspek aplikasi informatika terkait keamanan siber.
+  \item \textbf{Politeknik Siber dan Sandi Negara (PSSN)} --- \url{https://poltekssn.ac.id} --- pendidikan tinggi kedinasan di bidang siber dan sandi.
+\end{enumerate}
+
+Museum Sandi di Yogyakarta (\url{https://museum.lemsaneg.go.id/}, Jl.~Faridan Muridan Noto No.~21, Kota Baru) menyimpan koleksi alat sandi yang pernah digunakan di Indonesia dan menjadi referensi sejarah praktis bagi mahasiswa yang ingin melihat artefak kriptografi klasik secara langsung \cite{munir_slides_itb}. Salah satu koleksinya adalah mesin sandi SN-101 (Gambar~\ref{fig:museum-sandi}).
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}[b]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{bab-02/museum-sandi}\\[2pt]
+  {\small (a) Gedung Museum Sandi, Yogyakarta}
+\end{minipage}\hfill
+\begin{minipage}[b]{0.44\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{bab-02/mesin-sandi-sn101}\\[2pt]
+  {\small (b) Mesin sandi SN-101}
+\end{minipage}
+\caption{Museum Sandi dan salah satu koleksi alat sandinya \cite{munir_slides_itb}.}
+\label{fig:museum-sandi}
+\end{figure}
+
+Bagian berikutnya merinci \textbf{layanan keamanan informasi} yang menjawab empat masalah Alice--Bob dan ancaman yang telah dibahas.

@@ -1,35 +1,27 @@
 \section{Asesmen Komprehensif}
 
-Bab ini berisi asesmen untuk mengukur pencapaian seluruh CPMK \cite{stallings2017}. Sesuai silabus: UTS menilai Teori \& Kripto Klasik/Simetris; UAS menilai Kripto Asimetris, Hash, Protokol.
+Bab ini berisi asesmen untuk mengukur pencapaian \textbf{CPMK-1} dan \textbf{CPMK-2} sesuai silabus \cite{stallings2017,munir2019}.
 
-\subsection{Soal UTS (Teori \& Kripto Klasik/Simetris)}
+\subsection{Soal UTS (CPMK-2 dan Sub-CPMK 1.1--1.2 sebagian)}
 
-UTS mengukur Sub-CPMK 1.1--1.3, 2.1, 3.1--3.3. Contoh soal:
+UTS mengukur Sub-CPMK 2.1--2.3 serta pengenalan klasik dan simetris (1.1--1.2). Contoh soal:
 \begin{enumerate}
-  \item Jelaskan layanan keamanan (confidentiality, integrity, availability, non-repudiation) dan berikan contoh ancaman.
-  \item Hitung: (a) $17^{-1} \pmod{26}$, (b) $3^{10} \bmod 7$ dengan fast exponentiation.
-  \item Enkripsi "CRYPTO" dengan Caesar $k=7$. Jelaskan mengapa Caesar rentan frequency analysis.
-  \item Bedakan stream cipher dan block cipher. Sebutkan LFSR, RC4, dan struktur Feistel.
-  \item Jelaskan struktur DES (Feistel) dan AES (SPN). Sebutkan empat operasi dalam satu round AES.
-  \item Bandingkan mode ECB, CBC, dan CTR. Mengapa ECB tidak aman?
+  \item Jelaskan layanan keamanan (CIA + non-repudiation) dan urgensi kriptografi di TI (contoh HTTPS/perbankan).
+  \item Hitung invers modular sederhana, misalnya $17^{-1} \pmod{26}$.
+  \item Enkripsi singkat dengan Caesar/Vigen\`{e}re; jelaskan gagasan frequency analysis.
+  \item Bedakan stream cipher dan block cipher; sebutkan gagasan Feistel (DES) dan SPN (AES).
+  \item Bandingkan mode ECB, CBC, dan CTR secara konsep. Mengapa ECB tidak aman?
 \end{enumerate}
 
-\subsection{Soal UAS (Kripto Asimetris, Hash, Protokol)}
+\subsection{Soal UAS (CPMK-1 dan CPMK-2, termasuk Sub-CPMK 1.3--1.4)}
 
-UAS mengukur Sub-CPMK 4.1--4.2, 5.1--5.2, 6.1, 7.1. Contoh soal:
-
+UAS mengukur seluruh jalur silabus, dengan penekanan asimetris, hash/MAC/sig, dan TLS/urgensi. Contoh soal:
 \begin{enumerate}
-  \item Jelaskan langkah pembangkitan kunci RSA. Dengan $p=5$, $q=11$, $e=3$, hitung $n$, $\varphi(n)$, $d$, dan enkripsi $m=9$.
-  
-  \item Jelaskan Diffie-Hellman dan ElGamal. Masalah matematika apa yang mendasari masing-masing?
-  
-  \item Jelaskan peran fungsi hash dalam tanda tangan digital. Bedakan hash, MAC, dan HMAC.
-  
-  \item Jelaskan chain of trust dan peran sertifikat X.509 dalam TLS.
-  
-  \item Bedakan PRNG dan TRNG. Mengapa LCG tidak aman untuk kriptografi?
-  
-  \item Jelaskan metode LSB untuk steganografi. Berikan pseudocode embedding dan ekstraksi.
+  \item Dengan $p=5$, $q=11$, $e=3$, hitung $n$, $\varphi(n)$, $d$, dan enkripsi $m=9$ (RSA pengenalan).
+  \item Jelaskan Diffie--Hellman dan ElGamal secara singkat; sebutkan masalah matematika yang mendasarinya.
+  \item Bedakan hash, MAC, dan tanda tangan digital. Apa peran X.509?
+  \item Jelaskan gagasan TLS/HTTPS dan mengapa validasi sertifikat penting (urgensi di TI).
+  \item Bandingkan ciri kriptografi klasik vs modern serta simetris vs asimetris.
 \end{enumerate}
 
 Rubrik dan metode penilaian diuraikan pada section berikut.

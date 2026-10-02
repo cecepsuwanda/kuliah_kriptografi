@@ -1,162 +1,58 @@
-\section{Caesar Cipher}
+\section{Pengantar Cipher Klasik}
 
-\subsection{Dari Teori ke Praktik: Modular Arithmetic dalam Aksi}
-
-Dalam Bab III, kita mempelajari aritmetika modular sebagai fondasi matematika kriptografi. Sekarang, kita akan melihat penerapan pertama dan paling sederhana dari konsep ini: \textbf{Caesar Cipher}.
-
-Caesar cipher adalah contoh sempurna bagaimana matematika abstrak menjadi alat praktis:
+Kriptografi klasik adalah kriptografi era sebelum komputer. \textit{Cipher} klasik (\textit{classical cipher}) memiliki tiga ciri utama \cite{munir_slides_itb}:
 \begin{itemize}
-  \item \textbf{Teori (Bab III)}: $a \equiv b \pmod{n}$, operasi modular
-  \item \textbf{Praktik (Bab IV)}: $E_k(x) = (x + k) \bmod 26$
-  \item \textbf{Implementasi}: Kode C yang menerapkan operasi ini
+  \item hanya memproses pesan berupa huruf-huruf alfabet;
+  \item dikerjakan dengan alat tulis (pena dan kertas) atau alat mekanis sederhana;
+  \item termasuk kriptografi \textbf{kunci-simetri}: kunci enkripsi sama dengan kunci dekripsi.
 \end{itemize}
 
-Ini adalah langkah pertama dari teori ke aplikasi—sebuah pola yang akan terus kita lihat dalam cipher yang lebih kompleks.
+Walaupun tidak lagi dipakai untuk mengamankan data, cipher klasik tetap dipelajari karena tiga alasan: (1) memahami konsep dasar kriptografi (plainteks, cipherteks, kunci, enkripsi, dekripsi); (2) menjadi dasar algoritma kriptografi modern; dan (3) memahami kelemahan sistem \textit{cipher}, yaitu bagaimana sebuah cipher dipecahkan.
 
-\subsection{Konsep}
+\subsection{Teknik Substitusi dan Transposisi}
 
-Caesar cipher adalah cipher substitusi paling sederhana: setiap huruf digeser sejumlah $k$ posisi dalam alfabet (0--25). Enkripsi:
+Semua cipher klasik disusun dari dua teknik dasar:
+\begin{enumerate}
+  \item \textbf{Teknik substitusi}: mengganti setiap huruf plainteks dengan huruf cipherteks. Contoh: \texttt{MENGANTUK} $\rightarrow$ \texttt{CQBSIBONW}.
+  \item \textbf{Teknik transposisi}: mengubah susunan (posisi) huruf plainteks tanpa mengganti hurufnya; disebut juga \textit{scrambling}, permutasi, atau pengacakan. Contoh: \texttt{MENGANTUK} $\rightarrow$ \texttt{TNEAKMNGU}.
+\end{enumerate}
+
+Dari dua teknik ini lahir dua kelompok cipher: \crypt{cipher substitusi} (Caesar, substitusi monoalfabetik, Affine, Vigen\`{e}re, Playfair, Hill, Enigma) dan \crypt{cipher transposisi} (columnar, rail fence). Kombinasi keduanya membentuk \crypt{product cipher} atau \textbf{super-enkripsi}:
 \[
-E_k(x) = (x + k) \bmod 26
+\textit{product cipher} = \textit{cipher} \text{ substitusi} + \textit{cipher} \text{ transposisi}
 \]
-Dekripsi:
-\[
-D_k(y) = (y - k) \bmod 26
-\]
+Gagasan inilah yang kelak dipakai cipher modern seperti DES dan AES (Bab~V), tentu dengan operasi yang jauh lebih kompleks.
 
-Huruf A=0, B=1, ..., Z=25. Dengan $k=3$: A$\to$D, B$\to$E, ..., Z$\to$C.
-
-\begin{contoh}
-Plaintext: HELLO, $k=3$. H$\to$K, E$\to$H, L$\to$O, L$\to$O, O$\to$R. Ciphertext: KHOOR.
-\end{contoh}
-
-Caesar cipher dinamai dari Julius Caesar yang menurut sejarahwan menggunakan cipher ini dengan shift tiga posisi untuk melindungi pesan militer \cite{stallings2017}. Cipher ini membentuk fondasi untuk teknik substitusi dan analisis frekuensi.
-
-\subsection{Koneksi ke Matematika Bab III}
-
-Mari kita lihat bagaimana Caesar cipher langsung menerapkan konsep dari Bab III:
-
-\textbf{1. Aritmetika Modular}: 
-\begin{itemize}
-  \item Operasi enkripsi: $(x + k) \bmod 26$ menggunakan modular arithmetic
-  \item Operasi dekripsi: $(y - k) \bmod 26$ juga modular arithmetic
-  \item Modulus 26 karena ada 26 huruf dalam alfabet Inggris
-\end{itemize}
-
-\textbf{2. Invers Modular}:
-\begin{itemize}
-  \item Dekripsi adalah "invers" dari enkripsi
-  \item $(x + k - k) \bmod 26 = x \bmod 26$ — dekripsi berhasil
-  \item Ini adalah contoh sederhana dari konsep invers yang akan penting dalam cipher lebih kompleks
-\end{itemize}
-
-\textbf{3. Representasi $\mathbb{Z}_{26}$}:
-\begin{itemize}
-  \item Huruf diubah menjadi angka 0-25 (elemen $\mathbb{Z}_{26}$)
-  \item Operasi dilakukan dalam $\mathbb{Z}_{26}$
-  \item Hasil dikonversi kembali ke huruf
-\end{itemize}
-
-Meskipun Caesar cipher sangat lemah oleh standar modern, cipher ini memiliki nilai edukasi yang penting. Ruang kunci hanya 25 membuatnya rentan brute force \cite{schneier1996}. Pemahaman Caesar cipher menjadi langkah pertama untuk memahami cipher substitusi dan kriptanalisis dasar.
-
-\subsection{Pemetaan Huruf dan Ruang Kunci}
-
-Caesar cipher memiliki $25$ kunci efektif (shift 1--25), karena $k=0$ atau $k=26$ menghasilkan teks asli. Pemetaan huruf bisa ditulis sebagai tabel (contoh shift $k=3$) \cite{stallings2017}:
-\begin{table}[htbp]
-  \centering
-  \small
-  \begin{tabular}{cccccccccc}
-    \toprule
-    P & A & B & C & D & E & F & G & H & I \\
-    \midrule
-    C & D & E & F & G & H & I & J & K & L \\
-    \bottomrule
-  \end{tabular}
-  \caption{Pemetaan sebagian huruf untuk Caesar dengan $k=3$.}
-\end{table}
+Posisi kriptografi klasik dalam keseluruhan bidang kriptologi ditunjukkan pada Gambar~\ref{fig:hierarki-kriptologi}. Kriptanalisis juga dibagi menjadi klasik dan modern; bab ini membahas keduanya untuk cipher klasik.
 
 \begin{figure}[htbp]
   \centering
-  \begin{tikzpicture}[scale=1]
-    \foreach \i/\ch in {0/A,1/B,2/C,3/D,4/E,5/F,6/G,7/H} {
-      \node[circle, draw, inner sep=2pt] (p\i) at ({90-45*\i}:2) {\ch};
-    }
-    \draw[->, thick] (p0) to[bend left=20] node[midway, right] {$k=3$} (p3);
-  \end{tikzpicture}
-  \caption{Ilustrasi pergeseran Caesar (contoh terbatas A--H).}
+  \includegraphics[width=0.9\textwidth]{bab-04/hierarki-kriptologi}
+  \caption{Hierarki kriptologi: kriptografi klasik terdiri atas cipher substitusi dan transposisi \cite{munir_slides_itb}.}
+  \label{fig:hierarki-kriptologi}
 \end{figure}
 
-Pemetaan huruf sistematis penting untuk implementasi yang efisien. Ruang kunci yang terbatas (25 kemungkinan) membuat Caesar rentan terhadap brute force \cite{trappe2006}.
+\subsection{Pengodean Huruf menjadi Bilangan}
 
-\subsection{Brute Force dan Analisis Keamanan}
+Agar enkripsi dapat dirumuskan secara matematis (memakai aritmetika modulo dari Bab~III), setiap huruf alfabet dikodekan menjadi bilangan bulat 0 sampai 25 seperti Tabel~\ref{tab:kode-huruf}. Pengodean ini dipakai oleh hampir semua cipher pada bab ini.
 
-Karena ruang kunci kecil, semua kemungkinan $k$ dapat dicoba. Misal ciphertext KHOOR:
 \begin{table}[htbp]
   \centering
   \small
-  \begin{tabular}{cc}
+  \setlength{\tabcolsep}{4.5pt}
+  \begin{tabular}{*{13}{c}}
     \toprule
-    $k$ & Hasil dekripsi \\
+    A & B & C & D & E & F & G & H & I & J & K & L & M \\
+    0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
     \midrule
-    1 & JGNNQ \\
-    2 & IFMMP \\
-    3 & HELLO \\
-    4 & GDKKN \\
-    5 & FCJJM \\
+    N & O & P & Q & R & S & T & U & V & W & X & Y & Z \\
+    13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & 23 & 24 & 25 \\
     \bottomrule
   \end{tabular}
-  \caption{Brute force sederhana untuk Caesar.}
+  \caption{Pengodean huruf alfabet menjadi bilangan $0$--$25$ \cite{munir_slides_itb}.}
+  \label{tab:kode-huruf}
 \end{table}
 
-Brute force terhadap Caesar sangat efektif karena ruang kunci kecil \cite{stallings2017}. Demonstrasi brute force berharga untuk memahami mengapa cipher klasik lemah dan mengapa teknik modern diperlukan.
-
-\textbf{Pelajaran untuk Cipher Modern}:
-\begin{itemize}
-  \item \textbf{Ruang kunci harus besar}: Caesar hanya memiliki 25 kemungkinan
-  \item \textbf{Struktur harus kompleks}: Caesar hanya substitusi sederhana
-  \item \textbf{Statistik harus tersembunyi}: Caesar mempertahankan frekuensi huruf
-\end{itemize}
-
-Ini adalah awal dari perjalanan kita memahami mengapa cipher modern seperti AES dirancang jauh lebih kompleks.
-
-\subsection{Implementasi dalam C}
-
-\begin{lstlisting}[style=cstyle, caption={Caesar Cipher dalam C}]
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-
-void caesar_encrypt(char *text, int shift) {
-    int i;
-    for (i = 0; text[i] != '\0'; i++) {
-        if (isalpha(text[i])) {
-            char base = isupper(text[i]) ? 'A' : 'a';
-            text[i] = base + (text[i] - base + shift + 26) % 26;
-        }
-    }
-}
-
-void caesar_decrypt(char *text, int shift) {
-    caesar_encrypt(text, 26 - shift);
-}
-
-int main() {
-    char msg[] = "HELLO CRYPTO";
-    caesar_encrypt(msg, 3);
-    printf("Encrypted: %s\n", msg);   /* KHOOR FUBVWR */
-    caesar_decrypt(msg, 3);
-    printf("Decrypted: %s\n", msg);   /* HELLO CRYPTO */
-    return 0;
-}
-\end{lstlisting}
-
-Implementasi Caesar cipher dalam C menunjukkan bagaimana konsep matematika sederhana dapat diterjemahkan menjadi kode praktis yang fungsional. Fungsi ini menggunakan pendekatan tabel implisit dengan mengkonversi karakter ke indeks numerik (0-25) sebelum melakukan operasi modular. Implementasi ini juga menangani karakter non-alfabet dengan membiarkannya tidak berubah, yang merupakan praktik baik dalam aplikasi nyata.
-
-\textbf{Koneksi ke Implementasi Lanjutan}:
-\begin{itemize}
-  \item Pola implementasi ini akan kita lihat lagi dalam cipher yang lebih kompleks
-  \item Teknik modular arithmetic akan digunakan dalam Vigenère, Affine, dan Hill cipher
-  \item Prinsip enkripsi/dekripsi invers akan menjadi fundamental dalam semua cipher
-\end{itemize}
-
-Dalam implementasi produksi, fungsi seperti ini sering dioptimasi dengan menggunakan lookup table untuk pergeseran huruf daripada menghitung operasi modular untuk setiap karakter. Optimasi ini sangat penting untuk aplikasi yang memproses volume teks besar, seperti enkripsi file atau streaming data. Selain itu, implementasi yang robust harus menangani berbagai encoding karakter (ASCII, UTF-8) dan kasus edge seperti input kosong atau karakter tidak valid.
+\begin{catatan}
+Pada bab ini plainteks ditulis dengan huruf kecil dan cipherteks dengan huruf kapital, mengikuti konvensi slide kuliah. Spasi dan tanda baca biasanya dibuang sebelum enkripsi.
+\end{catatan}
