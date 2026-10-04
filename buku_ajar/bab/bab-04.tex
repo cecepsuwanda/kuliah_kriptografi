@@ -1,6 +1,5 @@
-﻿% \documentclass[../main]{subfiles}
-\ifSubfilesClassLoaded{\setcounter{chapter}{3}}{}
-% \begin{document}
+\documentclass[main.tex]{subfiles}
+\begin{document}
 
 \chapter{Algoritma Kriptografi Klasik}
 
@@ -27,8 +26,6 @@ Bab ini mengikuti alur slide kuliah: dimulai dari Caesar cipher dan cipher trans
 \input{bab/bab-04/section-4-10}
 \input{bab/bab-04/section-4-10a-model-serangan}
 \input{bab/bab-04/section-4-11}
-% Kriptanalisis diferensial/linear mendalam di luar tingkat "mengenal" --- tidak diinput
-% \input{bab/bab-04/section-4-arsip-kriptanalisis-modern}
 
 % ============================================================
 % AKTIVITAS PEMBELAJARAN
@@ -84,7 +81,7 @@ Bab ini mengikuti alur slide kuliah: dimulai dari Caesar cipher dan cipher trans
     \item Substitusi monoalfabetik
     \item Transposisi
   \end{enumerate}
-  
+
   \item Serangan yang efektif untuk memecahkan Caesar cipher:
   \begin{enumerate}
     \item Kasiski examination
@@ -193,7 +190,7 @@ Dalam Bab V, kita akan melihat evolusi dari cipher klasik ke algoritma modern:
 \textbf{Koneksi dengan Bab IV}:
 \begin{itemize}
   \item \textbf{Masalah Caesar}: Ruang kunci kecil $\rightarrow$ \textbf{Solusi AES}: Ruang kunci $2^{128}$, $2^{192}$, $2^{256}$
-  \item \textbf{Masalah monoalfabetik dan VigenÃ¨re}: Statistik bahasa bocor ke cipherteks $\rightarrow$ \textbf{Solusi DES/AES}: \textit{diffusion} dan \textit{confusion}
+  \item \textbf{Masalah monoalfabetik dan Vigen\`{e}re}: Statistik bahasa bocor ke cipherteks $\rightarrow$ \textbf{Solusi DES/AES}: \textit{diffusion} dan \textit{confusion}
   \item \textbf{Masalah Affine dan Hill}: Cipher linear sehingga rentan \textit{known-plaintext attack} $\rightarrow$ \textbf{Solusi AES}: S-box nonlinear dan operasi dalam $\mathrm{GF}(2^8)$
   \item \textbf{Gagasan super-enkripsi}: substitusi + transposisi $\rightarrow$ \textbf{Cipher modern}: putaran berulang substitusi dan permutasi (jaringan Feistel, SPN)
   \item \textbf{Masalah OTP}: kunci acak sepanjang pesan sulit dibangkitkan dan didistribusikan $\rightarrow$ \textbf{Solusi stream cipher}: kunci pendek direntangkan menjadi \textit{keystream} yang aman secara komputasi
@@ -217,8 +214,5 @@ Setelah Bab V, Anda akan mengerti mengapa cipher klasik tidak lagi digunakan dal
   \bibliographystyle{plain}
   \bibliography{../references}
 }{}
-\% end{document}
 
-
-
-
+\end{document}
