@@ -1,6 +1,6 @@
-\documentclass[../main]{subfiles}
+﻿% \documentclass[../main]{subfiles}
 \ifSubfilesClassLoaded{\setcounter{chapter}{3}}{}
-\begin{document}
+% \begin{document}
 
 \chapter{Algoritma Kriptografi Klasik}
 
@@ -15,20 +15,20 @@ Bab ini mengikuti alur slide kuliah: dimulai dari Caesar cipher dan cipher trans
 % ============================================================
 % MATERI POKOK
 % ============================================================
-\input{bab-04/section-4-1}
-\input{bab-04/section-4-2}
-\input{bab-04/section-4-3}
-\input{bab-04/section-4-4}
-\input{bab-04/section-4-5}
-\input{bab-04/section-4-6}
-\input{bab-04/section-4-7}
-\input{bab-04/section-4-8}
-\input{bab-04/section-4-9}
-\input{bab-04/section-4-10}
-\input{bab-04/section-4-10a-model-serangan}
-\input{bab-04/section-4-11}
+\input{bab/bab-04/section-4-1}
+\input{bab/bab-04/section-4-2}
+\input{bab/bab-04/section-4-3}
+\input{bab/bab-04/section-4-4}
+\input{bab/bab-04/section-4-5}
+\input{bab/bab-04/section-4-6}
+\input{bab/bab-04/section-4-7}
+\input{bab/bab-04/section-4-8}
+\input{bab/bab-04/section-4-9}
+\input{bab/bab-04/section-4-10}
+\input{bab/bab-04/section-4-10a-model-serangan}
+\input{bab/bab-04/section-4-11}
 % Kriptanalisis diferensial/linear mendalam di luar tingkat "mengenal" --- tidak diinput
-% \input{bab-04/section-4-arsip-kriptanalisis-modern}
+% \input{bab/bab-04/section-4-arsip-kriptanalisis-modern}
 
 % ============================================================
 % AKTIVITAS PEMBELAJARAN
@@ -185,15 +185,15 @@ Setelah mempelajari cipher klasik dan kelemahannya, kita siap untuk memasuki \te
 
 Dalam Bab V, kita akan melihat evolusi dari cipher klasik ke algoritma modern:
 \begin{itemize}
-  \item \textbf{Stream Cipher}: LFSR, RC4, A5/1 — evolusi dari cipher klasik berurutan
-  \item \textbf{Block Cipher}: DES (Feistel) dan AES (SPN) — pendekatan terstruktur
-  \item \textbf{Mode Operasi}: ECB, CBC, CFB, OFB, CTR — mengatasi keterbatasan block cipher
+  \item \textbf{Stream Cipher}: LFSR, RC4, A5/1 â€” evolusi dari cipher klasik berurutan
+  \item \textbf{Block Cipher}: DES (Feistel) dan AES (SPN) â€” pendekatan terstruktur
+  \item \textbf{Mode Operasi}: ECB, CBC, CFB, OFB, CTR â€” mengatasi keterbatasan block cipher
 \end{itemize}
 
 \textbf{Koneksi dengan Bab IV}:
 \begin{itemize}
   \item \textbf{Masalah Caesar}: Ruang kunci kecil $\rightarrow$ \textbf{Solusi AES}: Ruang kunci $2^{128}$, $2^{192}$, $2^{256}$
-  \item \textbf{Masalah monoalfabetik dan Vigenère}: Statistik bahasa bocor ke cipherteks $\rightarrow$ \textbf{Solusi DES/AES}: \textit{diffusion} dan \textit{confusion}
+  \item \textbf{Masalah monoalfabetik dan VigenÃ¨re}: Statistik bahasa bocor ke cipherteks $\rightarrow$ \textbf{Solusi DES/AES}: \textit{diffusion} dan \textit{confusion}
   \item \textbf{Masalah Affine dan Hill}: Cipher linear sehingga rentan \textit{known-plaintext attack} $\rightarrow$ \textbf{Solusi AES}: S-box nonlinear dan operasi dalam $\mathrm{GF}(2^8)$
   \item \textbf{Gagasan super-enkripsi}: substitusi + transposisi $\rightarrow$ \textbf{Cipher modern}: putaran berulang substitusi dan permutasi (jaringan Feistel, SPN)
   \item \textbf{Masalah OTP}: kunci acak sepanjang pesan sulit dibangkitkan dan didistribusikan $\rightarrow$ \textbf{Solusi stream cipher}: kunci pendek direntangkan menjadi \textit{keystream} yang aman secara komputasi
@@ -217,4 +217,8 @@ Setelah Bab V, Anda akan mengerti mengapa cipher klasik tidak lagi digunakan dal
   \bibliographystyle{plain}
   \bibliography{../references}
 }{}
-\end{document}
+\% end{document}
+
+
+
+

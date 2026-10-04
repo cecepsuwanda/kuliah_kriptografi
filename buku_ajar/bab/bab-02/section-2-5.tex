@@ -1,146 +1,32 @@
-\section{Keluarga Algoritma: Simetris, Asimetris, dan Fungsi Hash}
+\section{Kriptologi: Kriptografi dan Kriptanalisis}
 
-\subsection{Kriptografi Simetris (Secret-Key)}
+Banyak orang menganggap bahwa kriptografi hanyalah tentang membuat kode rahasia. Namun, dalam perspektif akademis, kriptografi adalah bagian dari bidang yang lebih luas yang disebut \textbf{Kriptologi}.
 
-Menggunakan \textbf{satu kunci} yang sama untuk enkripsi dan dekripsi (Gambar~\ref{fig:diagram-simetris}). Kunci harus dijaga kerahasiaannya dan dibagikan secara aman antara Alice dan Bob.
+\subsection{Hubungan antara Kriptografi dan Kriptanalisis}
 
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}[font=\small,
-  proc/.style={draw, fill=cyan!25, minimum width=2.6cm, minimum height=1.1cm, align=center}]
-  \node (p1) {Plainteks, $P$};
-  \node[proc, right=0.8cm of p1] (enc) {Enkripsi\\$E_K(P) = C$};
-  \node[proc, right=2.8cm of enc] (dec) {Dekripsi\\$D_K(C) = P$};
-  \node[right=0.8cm of dec] (p2) {Plainteks, $P$};
-  \node[above=0.8cm of enc] (k1) {Kunci rahasia, $K$};
-  \node[above=0.8cm of dec] (k2) {Kunci rahasia, $K$};
-  \draw[arrow] (p1) -- (enc);
-  \draw[arrow] (enc) -- node[above] {Cipherteks, $C$} (dec);
-  \draw[arrow] (dec) -- (p2);
-  \draw[arrow] (k1) -- (enc);
-  \draw[arrow] (k2) -- (dec);
-\end{tikzpicture}
-\caption{Kriptografi simetris: kunci yang sama dipakai untuk enkripsi dan dekripsi (digambar ulang dari \cite{munir_slides_itb}).}
-\label{fig:diagram-simetris}
-\end{figure}
+Kriptologi adalah studi ilmiah mengenai keamanan informasi yang terbagi menjadi dua cabang utama yang saling berlawanan namun saling melengkapi:
 
-\begin{itemize}
-  \item \textbf{Contoh}: Caesar, Vigenère, DES, AES
-  \item \textbf{Kelebihan}: Cepat, efisien untuk data besar
-  \item \textbf{Kekurangan}: Masalah distribusi kunci---bagaimana Alice dan Bob berbagi kunci tanpa Eve tahu?
-\end{itemize}
+\begin{enumerate}
+    \item \textbf{Kriptografi (\textit{Cryptography})}: Ilmu dan seni untuk membangun sistem penyandian yang aman. Fokus utamanya adalah menciptakan algoritma yang mampu menjaga kerahasiaan, integritas, dan otentikasi pesan.
+    \item \textbf{Kriptanalisis (\textit{Cryptanalysis})}: Ilmu dan seni untuk memecahkan cipherteks menjadi plainteks tanpa mengetahui kunci yang digunakan. Fokus utamanya adalah mencari celah, kelemahan, atau pola dalam algoritma untuk membobol keamanan.
+\end{enumerate}
 
-Kriptografi simetris menawarkan keunggulan kecepatan yang signifikan dibandingkan dengan kriptografi asimetris karena menggunakan kunci yang jauh lebih pendek dan hanya satu kunci untuk proses enkripsi dan dekripsi. Menurut Keyfactor, kecepatan ini membuat kriptografi simetris ideal untuk aplikasi di mana performa adalah prioritas utama, seperti enkripsi data dalam jumlah besar atau komunikasi real-time. Namun, risiko utama simetris terletak pada transmisi kunci di mana setiap pembagian kunci membawa risiko intersepsi oleh pihak ketiga yang tidak diinginkan.
+Hubungan antara keduanya adalah sebuah siklus evolusi. Ketika seorang kriptografer menciptakan cipher baru yang dianggap aman, para kriptanalis akan mencoba memecahkannya. Jika berhasil, maka cipher tersebut dinyatakan tidak aman, dan kriptografer harus menciptakan metode baru yang lebih kuat. Itulah sebabnya kriptanalisis sering disebut sebagai "lawan" sekaligus "guru" bagi kriptografi.
 
-Implementasi kriptografi simetris secara luas digunakan dalam perbankan untuk mengenkripsi informasi kartu kredit atau data pribadi lainnya yang diperlukan untuk transaksi. Selain itu, kriptografi simetris juga umum digunakan untuk enkripsi data yang disimpan di perangkat ketika data tidak sedang ditransfer, memberikan perlindungan yang efisien untuk data diam. Algoritma seperti AES (Advanced Encryption Standard) telah menjadi standar industri untuk enkripsi simetris karena kombinasi keamanan dan performanya yang excellent.
+\subsection{Sejarah Singkat Kriptanalisis}
 
-\subsection{Kriptografi Asimetris (Public-Key)}
+Kriptanalisis sudah ada sejak abad ke-9, jauh sebelum komputer ditemukan. Salah satu tokoh paling berpengaruh adalah \textbf{Al-Kindi}, seorang ilmuwan Arab yang pertama kali memperkenalkan teknik \textbf{analisis frekuensi}. Ia menyadari bahwa dalam setiap bahasa, huruf-huruf tertentu muncul lebih sering daripada huruf lainnya. Dengan menghitung frekuensi kemunculan karakter dalam cipherteks, Al-Kindi dapat menebak huruf apa yang disandikan.
 
-Menggunakan \textbf{pasangan kunci}: kunci publik (dapat dibagikan) dan kunci privat (rahasia). Pada Gambar~\ref{fig:diagram-asimetris}, siapa pun dapat mengenkripsi dengan kunci publik $K_1$, tetapi hanya pemilik kunci privat $K_2$ yang dapat mendekripsi.
+Sejarah mencatat bahwa keberhasilan kriptanalisis seringkali mengubah jalannya sejarah dunia. Contoh paling nyata adalah pemecahan kode \textit{Enigma} oleh pihak Sekutu pada Perang Dunia II, yang diperkirakan telah memperpendek durasi perang dan menyelamatkan jutaan nyawa.
+
+\subsection{Kriptografi di Indonesia}
+
+Di Indonesia, pengelolaan keamanan informasi dan sandi dikelola oleh lembaga negara yang kompeten, yaitu \textbf{Badan Siber dan Sandi Negara (BSSN)}. BSSN bertanggung jawab atas koordinasi keamanan siber dan kriptografi nasional. Selain itu, terdapat \textbf{Politeknik Siber dan Sandi Negara (PSSN)} sebagai lembaga pendidikan khusus yang mencetak tenaga ahli di bidang sandi dan keamanan siber.
+
+Bagi mahasiswa yang tertarik mendalami sejarah kriptografi secara fisik, Indonesia memiliki \textbf{Museum Sandi} di Yogyakarta. Museum ini merupakan satu-satunya museum sandi di dunia yang menyimpan berbagai koleksi alat sandi bersejarah, mulai dari alat manual hingga mesin sandi mekanik yang pernah digunakan dalam perjuangan kemerdekaan dan pemerintahan Indonesia.
 
 \begin{figure}[htbp]
-\centering
-\begin{tikzpicture}[font=\small,
-  proc/.style={draw, fill=cyan!25, minimum width=2.6cm, minimum height=1.1cm, align=center}]
-  \node (p1) {Plainteks, $P$};
-  \node[proc, right=0.8cm of p1] (enc) {Enkripsi\\$E_{K_1}(P) = C$};
-  \node[proc, right=2.8cm of enc] (dec) {Dekripsi\\$D_{K_2}(C) = P$};
-  \node[right=0.8cm of dec] (p2) {Plainteks, $P$};
-  \node[above=0.8cm of enc] (k1) {Kunci publik, $K_1$};
-  \node[above=0.8cm of dec] (k2) {Kunci privat, $K_2$};
-  \draw[arrow] (p1) -- (enc);
-  \draw[arrow] (enc) -- node[above] {Cipherteks, $C$} (dec);
-  \draw[arrow] (dec) -- (p2);
-  \draw[arrow] (k1) -- (enc);
-  \draw[arrow] (k2) -- (dec);
-\end{tikzpicture}
-\caption{Kriptografi asimetris: enkripsi dengan kunci publik, dekripsi dengan kunci privat pasangannya (digambar ulang dari \cite{munir_slides_itb}).}
-\label{fig:diagram-asimetris}
-\end{figure}
-
-\begin{itemize}
-  \item \textbf{Contoh}: RSA, ElGamal
-  \item \textbf{Kelebihan}: Tidak perlu pertukaran kunci rahasia di kanal terbuka
-  \item \textbf{Kekurangan}: Lebih lambat dibanding simetris, membutuhkan operasi matematika berat
-\end{itemize}
-
-Kriptografi asimetris menawarkan keamanan yang superior karena menggunakan dua kunci berbeda—kunci publik yang hanya digunakan untuk enkripsi pesan dan aman untuk dimiliki siapa pun, serta kunci privat untuk dekripsi yang tidak perlu dibagikan. Menurut Keyfactor, karena kunci privat tidak pernah dibagikan, ini membantu memastikan hanya penerima yang dimaksud yang dapat mendekripsi pesan terenkripsi dan menciptakan tanda tangan digital yang tidak dapat dipalsukan. Keamanan ini membuat asimetris ideal untuk aplikasi di mana verifikasi identitas diperlukan.
-
-Penggunaan umum kriptografi asimetris termasuk tanda tangan digital untuk mengkonfirmasi identitas seseorang yang menandatangani dokumen dan blockchain untuk mengkonfirmasi identitas guna mengotorisasi transaksi cryptocurrency. Public Key Infrastructure (PKI) juga menggunakan kriptografi asimetris untuk mengelola kunci enkripsi melalui penerbitan dan manajemen sertifikat digital. Meskipun lebih lambat, keamanan yang ditawarkan membuat asimetris sangat penting untuk aplikasi di mana identitas dan kepercayaan adalah prioritas utama.
-
-\subsection{Perbandingan dan Enkripsi Hibrida}
-
-\begin{table}[htbp]
-\centering
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Aspek} & \textbf{Simetris} & \textbf{Asimetris} \\
-\hline
-Jumlah kunci & 1 (rahasia) & 2 (publik + privat) \\
-\hline
-Kecepatan & Cepat & Lebih lambat \\
-\hline
-Distribusi kunci & Sulit & Lebih mudah \\
-\hline
-Penggunaan umum & Enkripsi data besar & Pertukaran kunci, tanda tangan \\
-\hline
-\end{tabular}
-\caption{Perbandingan Kriptografi Simetris dan Asimetris}
-\end{table}
-
-\begin{catatan}
-Dalam praktik, sistem modern sering menggunakan \textbf{enkripsi hibrida}: menggunakan asimetris untuk pertukaran kunci, lalu simetris untuk enkripsi data (misalnya TLS/SSL).
-\end{catatan}
-
-Pendekatan hibrida menggabungkan keunggulan kedua jenis kriptografi untuk menciptakan sistem yang aman dan efisien secara bersamaan. Menurut Keyfactor, sebagian besar implementasi hibrida menggunakan kriptografi simetris untuk mengenkripsi sebagian besar informasi dan kemudian menggunakan kriptografi asimetris untuk mengenkripsi kunci enkripsi/dekripsi simetris. SSL/TLS adalah contoh klasik di mana kriptografi asimetris digunakan untuk mengenkripsi kunci enkripsi simetris sekali pakai, yang kemudian digunakan untuk mengenkripsi/mendekripsi konten sesi browsing internet.
-
-Sistem chat mobile juga menggunakan pendekatan hibrida dengan kriptografi asimetris untuk memverifikasi identitas peserta di awal percakapan dan kemudian kriptografi simetris untuk mengenkripsi konten percakapan yang berkelanjutan. Kombinasi ini memastikan keamanan identitas dan kecepatan komunikasi, menjadikannya solusi ideal untuk aplikasi komunikasi modern yang membutuhkan kedua aspek tersebut.
-
-\subsection{Fungsi Hash (Preview)}
-
-Selain simetris dan asimetris, keluarga ketiga yang penting adalah \textbf{fungsi hash} kriptografi: memampatkan pesan berukuran sembarang menjadi \textit{message digest} berukuran tetap, bersifat \textit{irreversible} (tidak dapat dikembalikan menjadi pesan semula) \cite{munir_slides_itb}. Contoh nama yang sering dijumpai: MD5 (sudah tidak direkomendasikan untuk keamanan), SHA-1, SHA-2, SHA-3. Kegunaan utama pada tahap ini: memeriksa \textbf{integritas} pesan; detail dan MAC/tanda tangan dibahas di Bab~VII.
-
-Gambar~\ref{fig:fungsi-hash} memperlihatkan dua sifat penting: masukan sepanjang apa pun menghasilkan nilai hash berukuran tetap, dan perubahan satu atau dua huruf saja menghasilkan nilai hash yang sama sekali berbeda. Sifat kedua inilah yang membuat hash dapat mendeteksi perubahan pesan.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.55\textwidth]{bab-02/hash-masukan-nilai}\\[2pt]
-{\small (a) Masukan berbeda panjang menghasilkan nilai hash berukuran tetap}\\[8pt]
-\includegraphics[width=0.55\textwidth]{bab-02/hash-perubahan-kecil}\\[2pt]
-{\small (b) Perubahan kecil pada masukan mengubah nilai hash secara total}
-\caption{Sifat fungsi hash kriptografis \cite{munir_slides_itb}.}
-\label{fig:fungsi-hash}
-\end{figure}
-
-\subsection{Memilih Primitif yang Tepat}
-
-\textbf{Kebiasaan profesional}: tentukan dulu tujuan proteksi (kerahasiaan, integritas, otentikasi, atau kombinasi), baru pilih primitif kriptografi yang tepat \cite{munir_slides_itb}. Aturan praktisnya:
-\begin{itemize}
-  \item \textbf{Simetris}: enkripsi data berukuran besar atau sesi berkecepatan tinggi (at rest maupun in transit setelah kunci sesi tersedia).
-  \item \textbf{Asimetris}: distribusi/pertukaran kunci, tanda tangan digital,
-        dan otentikasi identitas; bukan untuk mengenkripsi file besar secara langsung.
-  \item \textbf{Hibrida}: asimetris untuk menyepakati kunci, simetris untuk data (pola TLS).
-  \item \textbf{Fungsi hash}: memeriksa integritas atau menyimpan kata sandi; bukan untuk kerahasiaan yang perlu didekripsi.
-\end{itemize}
-
-\subsection{Kesalahan Umum: Enkripsi Bukan Encoding, Hashing, atau Tokenisasi}
-
-\begin{catatan}
-\begin{itemize}
-  \item \textbf{Encoding} (misalnya Base64) mengubah representasi agar mudah
-        ditransmisikan. Encoding \textbf{bukan} kerahasiaan; siapa pun dapat mendekode.
-  \item \textbf{Hashing} menghasilkan ringkasan satu arah untuk integritas atau penyimpanan kata sandi---\textbf{bukan} enkripsi karena tidak ada dekripsi.
-  \item \textbf{Tokenisasi} mengganti data sensitif dengan token referensi pada sistem terpisah---berbeda dari enkripsi dengan kunci.
-  \item \textbf{Enkripsi} mengubah plaintext menjadi ciphertext dengan kunci, dan dapat dikembalikan melalui dekripsi oleh pihak yang berhak.
-\end{itemize}
-Jangan menyamakan keempatnya; kekeliruan ini sering menimbulkan desain yang ``terlihat aman'' tetapi tidak melindungi tujuan yang dimaksud.
-\end{catatan}
-
-Gambar~\ref{fig:enkripsi-bukan-encoding} merangkum perbedaan tersebut, ditambah tanda tangan digital, beserta tujuan proteksi masing-masing.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{bab-02/enkripsi-bukan-encoding}
-\caption{Encoding, hashing, enkripsi, tokenisasi, dan tanda tangan: contoh algoritma dan tujuan proteksinya \cite{munir_slides_itb}.}
-\label{fig:enkripsi-bukan-encoding}
+  \centering
+  \includegraphics[width=0.6\textwidth]{referensi/01-Pengantar-Kriptografi-2026/images/llm/page_065_img_01.png}
+  \caption{Museum Sandi Yogyakarta: Pusat pelestarian sejarah kriptografi di Indonesia.}
 \end{figure}

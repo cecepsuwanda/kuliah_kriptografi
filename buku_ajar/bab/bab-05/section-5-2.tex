@@ -1,117 +1,316 @@
-\section{AES (Advanced Encryption Standard)}
+﻿\section{Advanced Encryption Standard (AES) / Rijndael}
 
-\subsection{Overview}
+\subsection{Latar Belakang dan Sayembara AES}
 
-AES menggantikan DES sebagai standar enkripsi simetris modern \cite{fips197}. Dipilih melalui kompetisi NIST (1997--2000), pemenangnya Rijndael (Daemen, Rijmen). AES menggunakan blok 128 bit dan kunci 128, 192, atau 256 bit; berbasis substitution-permutation network (SPN).
+Menyadari keterbatasan fatal dari DES (khususnya ruang kunci 56-bit yang terlalu pendek dan kerentanan terhadap serangan brute-force) serta lambatnya performa 3DES, pada tanggal 2 Januari 1997 National Institute of Standards and Technology (NIST) secara resmi mengumumkan sayembara terbuka internasional untuk memilih pengganti DES, yang dinamakan \textbf{Advanced Encryption Standard (AES)}.
 
-\subsection{Struktur AES}
-
-AES bukan Feistel. Setiap round terdiri dari:
-\begin{itemize}
-  \item \textbf{SubBytes}: Substitusi byte dengan S-box
-  \item \textbf{ShiftRows}: Menggeser baris state
-  \item \textbf{MixColumns}: Operasi linear pada kolom
-  \item \textbf{AddRoundKey}: XOR dengan subkey
-\end{itemize}
-
-Jumlah round: 10 (kunci 128 bit), 12 (192 bit), 14 (256 bit).
-
-AES menggunakan SPN dengan confusion (SubBytes) dan diffusion (ShiftRows, MixColumns) \cite{fips197}. Operasi bekerja pada $\mathrm{GF}(2^8)$.
-
-\subsection{State dan Urutan Round}
-
-AES bekerja pada \textbf{state} 4x4 byte (128 bit). Byte plaintext diisikan kolom demi kolom:
-\begin{table}[htbp]
+\begin{figure}[htbp]
   \centering
-  \small
-  \begin{tabular}{cccc}
-    \toprule
-    $b_0$ & $b_4$ & $b_8$ & $b_{12}$ \\
-    $b_1$ & $b_5$ & $b_9$ & $b_{13}$ \\
-    $b_2$ & $b_6$ & $b_{10}$ & $b_{14}$ \\
-    $b_3$ & $b_7$ & $b_{11}$ & $b_{15}$ \\
-    \bottomrule
-  \end{tabular}
-  \caption{Representasi state AES (kolom per kolom).}
-\end{table}
+  \includegraphics[width=0.45\textwidth]{bab-05/potret-daemen-rijmen}
+  \caption{Vincent Rijmen dan Joan Daemen, dua kriptografer asal Belgia pencipta algoritma Rijndael (AES).}
+  \label{fig:daemen-rijmen}
+\end{figure}
 
-Urutan round AES-128 \cite{fips197}:
+Kriteria evaluasi ketat yang ditetapkan NIST meliputi:
 \begin{enumerate}
-  \item \textbf{Initial AddRoundKey}
-  \item 9 round: SubBytes $\rightarrow$ ShiftRows $\rightarrow$ MixColumns $\rightarrow$ AddRoundKey
-  \item Final round: SubBytes $\rightarrow$ ShiftRows $\rightarrow$ AddRoundKey (tanpa MixColumns)
+  \item \textbf{Keamanan}: Ketahanan mutlak terhadap kriptanalisis matematis (khususnya diferensial dan linear) serta ketiadaan pintu belakang (\textit{backdoor}) atau kunci lemah.
+  \item \textbf{Efisiensi Komputasi}: Kecepatan enkripsi dan dekripsi yang tinggi baik pada implementasi perangkat lunak (software) maupun perangkat keras (hardware/ASIC/FPGA).
+  \item \textbf{Kebutuhan Memori Rendah}: Fleksibilitas implementasi pada lingkungan dengan sumber daya terbatas, seperti \textit{smart cards}, mikrokontroler 8-bit, dan perangkat IoT.
 \end{enumerate}
 
+Sayembara ini menarik 15 proposal algoritma dari seluruh dunia. Pada Oktober 2000, setelah proses evaluasi publik multi-tahap selama tiga tahun, NIST memilih algoritma \textbf{Rijndael}â€”karya Dr. Vincent Rijmen dan Dr. Joan Daemen dari Katholieke Universiteit Leuven, Belgiaâ€”sebagai pemenang. Rijndael kemudian distandarisasi sebagai \textbf{FIPS PUB 197} pada 26 November 2001.
 
-\subsection{Operasi Detil AES}
+\subsection{Spesifikasi Dasar dan Representasi State AES}
 
-\subsubsection{SubBytes}
-SubBytes melakukan substitusi non-linear pada setiap byte menggunakan S-box AES \cite{fips197}. S-box dibangun dari inversi di $\mathrm{GF}(2^8)$ dan transformasi affine.
+Berbeda dengan rancangan aslinya (di mana Rijndael mendukung variasi ukuran blok dan panjang kunci 128, 192, dan 256 bit secara bebas), standar resmi FIPS 197 menetapkan bahwa \textbf{ukuran blok AES harus tepat 128 bit} ($N_b = 4$ kata 32-bit).
 
-\subsubsection{ShiftRows}
-ShiftRows menggeser baris: baris 0 tidak digeser, baris 1 digeser 1 byte, baris 2 digeser 2 byte, baris 3 digeser 3 byte. Menciptakan diffusion.
+Standar AES mendefinisikan tiga varian berdasarkan panjang kunci:
+\begin{enumerate}
+  \item \textbf{AES-128}: Kunci 128 bit ($N_k = 4$), diproses melalui $N_r = 10$ putaran.
+  \item \textbf{AES-192}: Kunci 192 bit ($N_k = 6$), diproses melalui $N_r = 12$ putaran.
+  \item \textbf{AES-256}: Kunci 256 bit ($N_k = 8$), diproses melalui $N_r = 14$ putaran.
+\end{enumerate}
 
-\subsubsection{MixColumns}
-MixColumns melakukan operasi linear pada setiap kolom di $\mathrm{GF}(2^8)$ \cite{fips197}. Tidak diterapkan pada round terakhir.
+\subsubsection{Representasi Matriks Status (State Matrix)}
 
-\subsubsection{AddRoundKey}
-AddRoundKey melakukan XOR state dengan round key. Round key dari key schedule (RotWord, SubWord, Rcon) \cite{fips197}.
+Blok data 128 bit (16 byte) dipetakan ke dalam sebuah matriks dua dimensi berukuran $4 \times 4$ byte yang disebut \textbf{State}, yang diisi secara urutan kolom-utama (\textit{column-major order}):
+\begin{equation}
+  \mathbf{S} = \begin{bmatrix}
+    s_{0,0} & s_{0,1} & s_{0,2} & s_{0,3} \\
+    s_{1,0} & s_{1,1} & s_{1,2} & s_{1,3} \\
+    s_{2,0} & s_{2,1} & s_{2,2} & s_{2,3} \\
+    s_{3,0} & s_{3,1} & s_{3,2} & s_{3,3}
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+    b_0 & b_4 & b_8 & b_{12} \\
+    b_1 & b_5 & b_9 & b_{13} \\
+    b_2 & b_6 & b_{10} & b_{14} \\
+    b_3 & b_7 & b_{11} & b_{15}
+  \end{bmatrix}
+\end{equation}
+di mana $b_0, b_1, \dots, b_{15}$ adalah 16 byte plainteks masukan. Seluruh operasi transformasi dalam satu putaran AES memanipulasi byte-byte di dalam matriks State ini secara langsung.
 
-\subsection{Key Schedule AES}
+\subsection{Arsitektur SPN dan Struktur Global AES}
 
-AES-128 menghasilkan 11 round key (44 word). Proses kunci \cite{fips197}:
-\begin{itemize}
-  \item \textbf{RotWord}: rotasi 1 byte.
-  \item \textbf{SubWord}: substitusi S-box.
-  \item \textbf{Rcon}: konstanta round.
-\end{itemize}
-Secara ringkas, untuk setiap word $w_i$:
-\[
-w_i =
-\begin{cases}
-w_{i-4} \oplus \text{SubWord}(\text{RotWord}(w_{i-1})) \oplus \text{Rcon} & i \equiv 0 \pmod{4} \\
-w_{i-4} \oplus w_{i-1} & \text{lainnya}
-\end{cases}
-\]
+Berbeda dengan DES yang mengadopsi Jaringan Feistel (hanya separuh blok yang diproses pada tiap putaran), AES mengadopsi arsitektur \textbf{Substitution-Permutation Network (SPN)}. Pada SPN, seluruh 128 bit blok data diproses dan ditransformasikan secara simultan pada setiap putaran.
 
-\begin{table}[htbp]
+\begin{figure}[htbp]
   \centering
-  \small
-  \begin{tabular}{cccc}
-    \toprule
-    Rcon[1] & Rcon[2] & Rcon[3] & Rcon[4] \\
-    \midrule
-    01 & 02 & 04 & 08 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Contoh konstanta Rcon (hex) untuk AES-128.}
-\end{table}
+  \includegraphics[width=0.8\textwidth]{bab-05/aes-128-struktur-global}
+  \caption{Struktur alur global enkripsi AES-128: AddRoundKey awal, 9 putaran utama, dan 1 putaran akhir.}
+  \label{fig:aes-struktur-global}
+\end{figure}
 
+Alur enkripsi AES terdiri dari tiga fase:
+\begin{enumerate}
+  \item \textbf{Putaran Awal (Round 0)}:
+  Hanya melakukan operasi pra-pemutaran: \texttt{AddRoundKey} antara State dan subkunci awal $W[0..3]$ (\textit{key whitening}).
+  
+  \item \textbf{Putaran Standar (Putaran 1 sampai $N_r - 1$)}:
+  Setiap putaran mengaplikasikan empat transformasi berurutan:
+  \begin{enumerate}
+    \item \texttt{SubBytes}: Substitusi non-linear byte demi byte untuk menciptakan \textbf{confusion}.
+    \item \texttt{ShiftRows}: Permutasi linear pergeseran baris untuk menciptakan \textbf{diffusion} antar-kolom.
+    \item \texttt{MixColumns}: Pencampuran aljabar linear dalam kolom untuk menciptakan \textbf{diffusion} intra-kolom.
+    \item \texttt{AddRoundKey}: Penggabungan XOR State dengan subkunci putaran $W[4r .. 4r+3]$.
+  \end{enumerate}
 
-\subsection{Keamanan AES}
+  \item \textbf{Putaran Akhir (Putaran $N_r$)}:
+  Terdiri dari tiga transformasi: \texttt{SubBytes} $\to$ \texttt{ShiftRows} $\to$ \texttt{AddRoundKey}. \textbf{Transformasi \texttt{MixColumns} sengaja ditiadakan pada putaran terakhir} agar struktur enkripsi dan dekripsi memiliki sifat simetri struktural.
+\end{enumerate}
 
-AES dianggap aman terhadap serangan praktis \cite{stallings2017}. Gunakan library teruji; hindari implementasi manual yang tidak constant-time \cite{ferguson2010}.
+\subsection{Empat Transformasi Utama Enkripsi AES}
 
-\begin{catatan}
-Keamanan AES dapat runtuh jika implementasi bocor melalui \textit{side-channel} (timing, cache). Gunakan library yang sudah teruji dan hindari implementasi manual yang tidak \textit{constant-time} \cite{ferguson2010}.
+\subsubsection{1. Transformasi SubBytes}
+
+\texttt{SubBytes} adalah satu-satunya transformasi \textbf{non-linear} di dalam AES. Setiap byte $s_{r,c}$ di dalam matriks State dipetakan secara independen ke byte baru $s'_{r,c}$ menggunakan tabel substitusi 8-bit yang disebut \textbf{S-box} AES.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{bab-05/aes-subbytes-diagram}
+    \caption{Transformasi SubBytes pada matriks State.}
+    \label{fig:aes-subbytes}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{bab-05/aes-sbox-substitusi}
+    \caption{Pemetaan nilai byte ke dalam baris dan kolom S-box.}
+    \label{fig:aes-sbox-sub}
+  \end{minipage}
+\end{figure}
+
+S-box AES dirancang secara aljabar ketat untuk memaksimalkan non-linearitas dan meminimalkan korelasi diferensial/linear melalui dua langkah matematis:
+\begin{enumerate}
+  \item Menghitung invers multiplikatif dari byte $a$ di dalam medan Galois $\mathrm{GF}(2^8)$ dengan polinomial reduksi $m(x) = x^8 + x^4 + x^3 + x + 1$. Elemen nol ($00_{16}$) dipetakan ke dirinya sendiri ($00_{16}^{-1} = 00_{16}$).
+  \item Menerapkan transformasi affine di atas $\mathrm{GF}(2)$ terhadap bit-bit invers:
+  \begin{equation}
+    b'_i = b_i \oplus b_{(i+4)\bmod 8} \oplus b_{(i+5)\bmod 8} \oplus b_{(i+6)\bmod 8} \oplus b_{(i+7)\bmod 8} \oplus c_i
+  \end{equation}
+  di mana $c = 63_{16} = (01100011)_2$ adalah vektor konstanta.
+\end{enumerate}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{bab-05/aes-sbox-tabel}
+  \caption{Tabel lengkap S-box AES (dalam notasi heksadesimal).}
+  \label{fig:aes-sbox-tabel}
+\end{figure}
+
+\textit{Contoh Substitusi}: Jika byte State bernilai $\text{53}_{16}$, kita mencari baris ke-$5$ dan kolom ke-$3$ pada tabel S-box, yang menghasilkan byte substitusi $\text{ED}_{16}$.
+
+\subsubsection{2. Transformasi ShiftRows}
+
+Transformasi \texttt{ShiftRows} melakukan pergeseran siklis ke kiri (\textit{circular left shift}) terhadap byte-byte pada setiap baris matriks State:
+\begin{itemize}
+  \item \textbf{Baris 0}: Tidak digeser sama sekali (geser 0 byte).
+  \item \textbf{Baris 1}: Digeser siklis ke kiri sejauh \textbf{1 byte}.
+  \item \textbf{Baris 2}: Digeser siklis ke kiri sejauh \textbf{2 byte}.
+  \item \textbf{Baris 3}: Digeser siklis ke kiri sejauh \textbf{3 byte}.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{bab-05/aes-shiftrows-diagram}
+  \caption{Transformasi ShiftRows: pergeseran siklis baris 0, 1, 2, dan 3.}
+  \label{fig:aes-shiftrows}
+\end{figure}
+
+Secara matematis, elemen baru $s'_{r,c}$ didefinisikan sebagai:
+\begin{equation}
+  s'_{r,c} = s_{r, (c + r) \bmod 4} \quad \text{untuk } 0 \le r, c < 4
+\end{equation}
+Tujuan utama ShiftRows adalah memindahkan byte-byte yang awalnya berada pada kolom yang sama ke empat kolom yang berbeda, sehingga difusi antar-kolom dapat dicapai pada transformasi MixColumns berikutnya.
+
+\subsubsection{3. Transformasi MixColumns}
+
+Transformasi \texttt{MixColumns} beroperasi pada setiap kolom State secara independen. Setiap kolom 4-byte diperlakukan sebagai sebuah vektor polinomial berderajat empat atas medan $\mathrm{GF}(2^8)$ dan dikalikan modulo $x^4 + 1$ dengan polinomial tetap:
+\begin{equation}
+  a(x) = \{03\}x^3 + \{01\}x^2 + \{01\}x + \{02\}
+\end{equation}
+
+Operasi ini dinyatakan dalam perkalian matriks kolom:
+\begin{equation}
+  \begin{bmatrix}
+    s'_{0,c} \\
+    s'_{1,c} \\
+    s'_{2,c} \\
+    s'_{3,c}
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+    02 & 03 & 01 & 01 \\
+    01 & 02 & 03 & 01 \\
+    01 & 01 & 02 & 03 \\
+    03 & 01 & 01 & 02
+  \end{bmatrix}
+  \begin{bmatrix}
+    s_{0,c} \\
+    s_{1,c} \\
+    s_{2,c} \\
+    s_{3,c}
+  \end{bmatrix}
+\end{equation}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{bab-05/aes-mixcolumns-diagram}
+  \caption{Transformasi MixColumns: perkalian matriks linear di medan Galois $\mathrm{GF}(2^8)$.}
+  \label{fig:aes-mixcolumns}
+\end{figure}
+
+Perkalian matriks di atas melibatkan operasi aritmatika di dalam medan hingga $\mathrm{GF}(2^8)$:
+\begin{itemize}
+  \item Operasi penjumlahan bersesuaian dengan XOR ($\oplus$).
+  \item Perkalian dengan konstanta $01_{16}$ adalah identitas ($01 \cdot b = b$).
+  \item Perkalian dengan $02_{16}$ (dikenal sebagai fungsi $\mathrm{xtime}(b)$) dihitung dengan menggeser byte $b$ satu bit ke kiri; jika bit teratas ($b_7$) bernilai $1$, kurangkan (XOR) dengan konstanta irreducible $1\text{B}_{16}$:
+  \begin{equation}
+    \mathrm{xtime}(b) = (b \ll 1) \oplus ((b \ \& \ 0x80) \ ? \ 0x1B : 0x00)
+  \end{equation}
+  \item Perkalian dengan $03_{16}$ dihitung dari kombinasi: $03 \cdot b = (02 \cdot b) \oplus b = \mathrm{xtime}(b) \oplus b$.
+\end{itemize}
+
+MixColumns bersama dengan ShiftRows menjamin bahwa setelah hanya \textbf{dua putaran AES}, setiap bit plainteks telah menyebar dan mempengaruhi seluruh 128 bit State (full diffusion).
+
+\subsubsection{4. Transformasi AddRoundKey}
+
+Transformasi \texttt{AddRoundKey} adalah satu-satunya tahap dalam putaran AES yang memasukkan pengaruh kunci rahasia. Pada tahap ini, seluruh 16 byte State digabungkan dengan 16 byte subkunci putaran (\textit{Round Key}) melalui operasi bitwise XOR:
+\begin{equation}
+  s'_{r,c} = s_{r,c} \oplus k_{r,c} \quad \text{untuk } 0 \le r, c < 4
+\end{equation}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{bab-05/aes-addroundkey-diagram}
+  \caption{Transformasi AddRoundKey: XOR bitwise antara State dan subkunci putaran.}
+  \label{fig:aes-addroundkey}
+\end{figure}
+
+\subsection{Algoritma Key Expansion AES}
+
+Kunci utama $K$ diekspansi oleh algoritma \textbf{Key Expansion} menjadi larik kata linier 32-bit $W[0 .. 4(N_r + 1) - 1]$. Untuk AES-128, dibutuhkan $4 \times (10 + 1) = 44$ kata (176 byte).
+
+\begin{enumerate}
+  \item Empat kata pertama $W[0], W[1], W[2], W[3]$ diisi secara langsung dari 16 byte kunci utama.
+  \item Setiap kata berikutnya $W[i]$ untuk $i \ge 4$ diturunkan secara rekursif:
+  \begin{equation}
+    W[i] = \begin{cases}
+      W[i - 4] \oplus g(W[i - 1]) & \text{jika } i \bmod 4 = 0 \\
+      W[i - 4] \oplus W[i - 1] & \text{jika } i \bmod 4 \ne 0
+    \end{cases}
+  \end{equation}
+\end{enumerate}
+
+Fungsi non-linear $g(W)$ menerima kata 32-bit $W = (b_0, b_1, b_2, b_3)$ dan melakukan tiga operasi:
+\begin{enumerate}
+  \item \textbf{RotWord}: Rotasi siklis satu byte ke kiri: $(b_0, b_1, b_2, b_3) \to (b_1, b_2, b_3, b_0)$.
+  \item \textbf{SubWord}: Mengaplikasikan S-box AES pada masing-masing dari keempat byte tersebut: $(S[b_1], S[b_2], S[b_3], S[b_0])$.
+  \item \textbf{XOR dengan Round Constant (Rcon)}: Menjumlahkan byte terdepan dengan konstanta putaran:
+  \begin{equation}
+    \text{Rcon}[j] = (\mathrm{RC}[j], 00_{16}, 00_{16}, 00_{16})
+  \end{equation}
+  di mana nilai $\mathrm{RC}[j]$ dalam heksadesimal adalah: $\mathrm{RC}[1] = 01$, $\mathrm{RC}[2] = 02$, $\mathrm{RC}[3] = 04$, $\mathrm{RC}[4] = 08$, $\mathrm{RC}[5] = 10$, $\mathrm{RC}[6] = 20$, $\mathrm{RC}[7] = 40$, $\mathrm{RC}[8] = 80$, $\mathrm{RC}[9] = 1\text{B}$, $\mathrm{RC}[10] = 36$.
+\end{enumerate}
+
+\begin{catatan}[Perbedaan Key Expansion pada AES-256]
+Pada varian AES-256 ($N_k = 8$), untuk menjaga non-linearitas pada jadwal kunci yang panjang, terdapat aturan tambahan: jika $i \bmod 8 = 4$, maka sebelum operasi XOR diterapkan transformasi $\text{SubWord}$:
+\begin{equation}
+  W[i] = W[i - 8] \oplus \text{SubWord}(W[i - 1])
+\end{equation}
 \end{catatan}
 
-\subsection{Implementasi dan Optimasi}
+\subsection{Proses Dekripsi AES}
 
-Implementasi AES dapat menggunakan T-tables (software) atau sirkuit dedicated (hardware) \cite{fips197}.
+Dekripsi pada AES bukan sekadar membalik urutan subkunci sebagaimana pada jaringan Feistel, melainkan harus mengaplikasikan fungsi-fungsi invers dari setiap transformasi SPN dalam urutan terbalik:
 
-\begin{table}[htbp]
+\begin{figure}[htbp]
   \centering
-  \small
-  \begin{tabular}{lcc}
-    \toprule
-    Metode Implementasi & Kecepatan & Penggunaan Memori \\
-    \midrule
-    Naive & Lambat & Rendah \\
-    T-tables & Cepat & Sedang \\
-    Bitslicing & Sangat Cepat & Tinggi \\
-    Hardware & Paling Cepat & Rendah \\
-    \bottomrule
-  \end{tabular}
-  \caption{Perbandingan metode implementasi AES.}
-\end{table}
+  \includegraphics[width=0.85\textwidth]{bab-05/aes-dekripsi-inv-cipher}
+  \caption{Struktur alur dekripsi AES (Inverse Cipher): InvShiftRows, InvSubBytes, AddRoundKey, dan InvMixColumns.}
+  \label{fig:aes-dekripsi}
+\end{figure}
+
+Transformasi invers tersebut meliputi:
+\begin{enumerate}
+  \item \textbf{InvShiftRows}: Menggeser baris-baris State ke kanan secara siklis (kebalikan dari ShiftRows).
+  \item \textbf{InvSubBytes}: Memetakan setiap byte State menggunakan tabel \textbf{Inverse S-box} (Tabel~\ref{fig:aes-inv-sbox}), yang dibentuk dari invers affine diikuti invers perkalian di $\mathrm{GF}(2^8)$.
+  \item \textbf{InvMixColumns}: Mengalikan setiap kolom State dengan matriks invers modulo $x^4 + 1$:
+  \begin{equation}
+    \begin{bmatrix}
+      s'_{0,c} \\ s'_{1,c} \\ s'_{2,c} \\ s'_{3,c}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+      0\text{E} & 0\text{B} & 0\text{D} & 09 \\
+      09 & 0\text{E} & 0\text{B} & 0\text{D} \\
+      0\text{D} & 09 & 0\text{E} & 0\text{B} \\
+      0\text{B} & 0\text{D} & 09 & 0\text{E}
+    \end{bmatrix}
+    \begin{bmatrix}
+      s_{0,c} \\ s_{1,c} \\ s_{2,c} \\ s_{3,c}
+    \end{bmatrix}
+  \end{equation}
+  \item \textbf{AddRoundKey}: Identik dengan tahap enkripsi, karena operasi XOR adalah invers bagi dirinya sendiri ($X \oplus K \oplus K = X$).
+\end{enumerate}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{bab-05/aes-inv-sbox-tabel}
+  \caption{Tabel lengkap Inverse S-box AES untuk proses dekripsi.}
+  \label{fig:aes-inv-sbox}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{bab-05/aes-inv-shiftrows}
+    \caption{Transformasi InvShiftRows (pergeseran ke kanan).}
+    \label{fig:aes-inv-shiftrows}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{bab-05/aes-inv-mixcolumns}
+    \caption{Transformasi InvMixColumns dengan koefisien matriks invers.}
+    \label{fig:aes-inv-mixcolumns}
+  \end{minipage}
+\end{figure}
+
+\subsection{Analisis Keamanan AES dan Ancaman Saluran Samping}
+
+Sejak distandarisasi pada tahun 2001, AES telah melalui penelitian kriptanalisis yang sangat intensif oleh para pakar dunia. Hingga kini, \textbf{belum ditemukan serangan analitis praktis yang mampu memecahkan AES penuh (10 round untuk AES-128 atau 14 round untuk AES-256)}. Serangan analitis terbaik yang diketahui (seperti serangan \textit{biclique}) hanya mampu mereduksi kompleksitas komputasi secara marginal (misalnya dari $2^{128}$ menjadi $2^{126.1}$ untuk AES-128), yang masih berada jauh di luar batas jangkauan komputasi umat manusia.
+
+Namun, kerentanan praktis AES sering kali muncul dari cacat \textbf{implementasi perangkat lunak}:
+\begin{itemize}
+  \item \textbf{Cache-Timing Attacks}: Implementasi naive yang menggunakan tabel pencarian (\textit{T-tables}) di memori RAM rentan terhadap serangan analisis waktu akses cache prosesor. Penyerang lokal dapat mengukur durasi cache hit/miss untuk merekonstruksi kunci AES.
+  \item \textbf{Mitigasi Standar Industri}:
+  \begin{enumerate}
+    \item Menggunakan instruksi perangkat keras khusus prosesor seperti \textbf{Intel/AMD AES-NI} atau \textbf{ARM Cryptography Extensions}. Instruksi ini mengeksekusi putaran AES secara terenkapsulasi di dalam sirkuit silikon CPU dengan waktu eksekusi konstan (\textit{constant-time}) tanpa melalui tabel RAM.
+    \item Pada CPU tanpa AES-NI, implementasi harus menggunakan teknik \textit{bitslicing} atau fungsi aljabar murni tanpa tabel pencarian memori.
+  \end{enumerate}
+\end{itemize}
+

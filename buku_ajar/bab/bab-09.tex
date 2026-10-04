@@ -1,33 +1,33 @@
-\documentclass[../main]{subfiles}
+﻿% \documentclass[../main]{subfiles}
 \ifSubfilesClassLoaded{\setcounter{chapter}{8}}{}
-\begin{document}
+% \begin{document}
 
-\chapter{Pembangkit Bilangan Acak dan Steganografi}
+\chapter{Protokol dan Manajemen Kunci}
 
 \begin{subcpmk}
-  \item Sub-CPMK 6.1: Membedakan PRNG dan TRNG serta menguji keacakan deret bit
-  \item Sub-CPMK 7.1: Mengimplementasikan metode LSB untuk steganografi pada citra digital
+  \item Sub-CPMK 1.4: Mengenal peran protokol SSL/TLS dan PKI sebagai aplikasi algoritma modern
+  \item Sub-CPMK 2.2: Menjelaskan urgensi kriptografi di TI lewat studi kasus HTTPS/TLS
 \end{subcpmk}
+
+\noindent\textit{Rujukan:} Munir \cite{munir_slides_itb}; Boneh \cite{boneh_cs255}; Stallings \cite{stallings2017}.
 
 % ============================================================
 % MATERI POKOK
 % ============================================================
-\input{bab-09/section-9-1}
-\input{bab-09/section-9-2}
-\input{bab-09/section-9-3}
+\input{bab/bab-09/section-9-1}
+\input{bab/bab-09/section-9-2}
+\input{bab/bab-09/section-9-3}
 
 % ============================================================
 % AKTIVITAS PEMBELAJARAN
 % ============================================================
 
 \begin{aktivitas}
-  \item \textbf{RNG}: Bandingkan output \texttt{rand()} dengan CSPRNG (\texttt{/dev/urandom} atau OpenSSL). Amati pola dengan visualisasi sederhana.
-  
-  \item \textbf{Praktikum C}: Implementasikan LCG dan uji periode untuk parameter berbeda.
-  
-  \item \textbf{Steganografi}: Implementasikan LSB embedding pada citra BMP/PNG. Sembunyikan pesan pendek, ekstrak, dan verifikasi.
-  
-  \item \textbf{Steganalis}: Diberikan citra asli dan citra dengan LSB stego, bandingkan histogram atau statistik LSB.
+  \item \textbf{Analisis}: Buka sertifikat situs web HTTPS (browser: klik ikon gembok $\to$ sertifikat). Identifikasi issuer, subject, chain of trust.
+
+  \item \textbf{Studi Kasus}: Analisis bagaimana HTTPS (TLS) melindungi transaksi e-commerce. Jelaskan peran sertifikat.
+
+  \item \textbf{Diskusi}: Apa risiko jika kunci privat CA root bocor? Apa itu certificate revocation (CRL/OCSP)?
 \end{aktivitas}
 
 % ============================================================
@@ -35,17 +35,13 @@
 % ============================================================
 
 \begin{latihan}
-  \item Bedakan PRNG dan TRNG. Kapan masing-masing digunakan?
-  
-  \item Mengapa LCG tidak aman untuk kriptografi? Apa prinsip Blum Blum Shub?
-  
-  \item Jelaskan uji keacakan NIST. Apakah lolos uji menjamin keamanan kriptografis?
-  
-  \item Jelaskan metode LSB untuk steganografi. Berapa kapasitas maksimum untuk citra 800×600 RGB?
-  
-  \item Bedakan steganografi dan watermarking.
-  
-  \item Implementasikan dalam C/Python: LSB embedding pada file citra.
+  \item Jelaskan chain of trust. Mengapa klien memerlukan daftar CA root tepercaya?
+
+  \item Sebutkan fase-fase dalam siklus hidup kunci (generasi, distribusi, penyimpanan, rotasi, pencabutan).
+
+  \item Bagaimana TLS menggabungkan kriptografi simetris dan asimetris? Apa peran Diffie-Hellman?
+
+  \item Apa peran sertifikat digital dalam TLS? Apa yang terjadi jika sertifikat tidak divalidasi?
 \end{latihan}
 
 % ============================================================
@@ -53,18 +49,9 @@
 % ============================================================
 
 \begin{asesmen}
-\textbf{Instrumen Penilaian untuk Sub-CPMK 6.1, 7.1}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 1.4, 2.2}
 
-\textbf{A. Essay}
-
-\begin{enumerate}
-  \item Bedakan PRNG dan TRNG. Mengapa \texttt{rand()} tidak boleh dipakai untuk kunci?
-  \item Jelaskan prinsip LSB steganografi. Apa kelemahannya terhadap steganalis?
-\end{enumerate}
-
-\textbf{B. Implementasi}
-
-Implementasikan dalam C/Python: program yang menyembunyikan pesan teks dalam citra BMP/PNG dengan metode LSB, lalu mengekstrak kembali. Uji dengan citra dan pesan contoh.
+Jelaskan dalam essay: (a) Peran PKI dan chain of trust dalam TLS; (b) Mengapa validasi sertifikat penting terhadap MITM; (c) Mengapa HTTPS penting bagi privasi dan transaksi elektronik.
 \end{asesmen}
 
 % ============================================================
@@ -72,11 +59,10 @@ Implementasikan dalam C/Python: program yang menyembunyikan pesan teks dalam cit
 % ============================================================
 
 \begin{checklist}
-  \item Saya dapat membedakan PRNG dan TRNG
-  \item Saya memahami LCG dan Blum Blum Shub
-  \item Saya memahami pentingnya uji keacakan dan CSPRNG untuk kriptografi
-  \item Saya dapat mengimplementasikan metode LSB untuk steganografi pada citra
-  \item Saya memahami perbedaan steganografi dan watermarking
+  \item Saya memahami PKI dan komponennya (CA, RA, revocation)
+  \item Saya dapat menjelaskan chain of trust dan validasi sertifikat
+  \item Saya memahami peran TLS dalam keamanan komunikasi (HTTPS)
+  \item Saya dapat menganalisis siklus hidup manajemen kunci
 \end{checklist}
 
 % ============================================================
@@ -84,17 +70,17 @@ Implementasikan dalam C/Python: program yang menyembunyikan pesan teks dalam cit
 % ============================================================
 
 \begin{rangkuman}
-Bab ini membahas pembangkit bilangan acak (TRNG vs PRNG, uji keacakan, Blum Blum Shub) dan steganografi (LSB, kapasitas, deteksi). RNG krusial untuk keamanan kriptografi; steganografi menyembunyikan informasi dalam media lain.
+Bab ini membahas protokol keamanan (TLS/SSL, SSH, PGP) dan manajemen kunci (PKI, siklus hidup kunci, RNG). TLS menggabungkan semua komponen kriptografi dalam sistem komunikasi aman. PKI menyediakan infrastruktur untuk distribusi dan verifikasi kunci publik.
 
 \textbf{Poin Kunci:}
 \begin{itemize}
-  \item TRNG: sumber fisik, tidak dapat diprediksi; PRNG: algoritma deterministik
-  \item Uji keacakan: NIST SP 800-22, statistical tests
-  \item Blum Blum Shub: CSPRNG yang dapat dibuktikan keamanannya
-  \item LSB steganografi: embedding dalam bit tidak signifikan
+  \item TLS: handshake (RSA/DH), sertifikat X.509, cipher suite, record layer
+  \item PKI: CA hierarchy, chain of trust, certificate revocation
+  \item Manajemen kunci: generasi, distribusi, rotasi, pencabutan
+  \item RNG: TRNG vs PRNG, keacakan untuk keamanan kriptografi
 \end{itemize}
 
-\textbf{Kata Kunci}: \crypt{TRNG}, \crypt{PRNG}, \crypt{Blum Blum Shub}, \crypt{Steganografi}, \crypt{LSB}, \crypt{Keacakan}
+\textbf{Kata Kunci}: \crypt{TLS}, \crypt{SSL}, \crypt{PKI}, \crypt{Sertifikat Digital}, \crypt{Chain of Trust}, \crypt{Manajemen Kunci}, \crypt{RNG}
 \end{rangkuman}
 
 % ============================================================
@@ -102,40 +88,7 @@ Bab ini membahas pembangkit bilangan acak (TRNG vs PRNG, uji keacakan, Blum Blum
 % ============================================================
 
 \begin{transition}
-Setelah mempelajari kriptanalisis dan topik lanjutan, kita siap untuk memasuki \textbf{Bab X: Evaluasi dan Integrasi Kompetensi}.
-
-Dalam Bab X, kita akan mengintegrasikan semua pengetahuan yang telah dipelajari:
-\begin{itemize}
-  \item \textbf{Integrasi Konsep}: Menghubungkan semua bab dalam sistem lengkap
-  \item \textbf{Studi Kasus}: Menganalisis sistem keamanan nyata
-  \item \textbf{Evaluasi Kompetensi}: Validasi pencapaian semua Sub-CPMK
-  \item \textbf{Refleksi Pembelajaran}: Persiapan untuk aplikasi lanjutan
-\end{itemize}
-
-\textbf{Integrasi Semua Bab (II-IX)}:
-\begin{itemize}
-  \item \textbf{Bab II}: Layanan keamanan — fondasi kebutuhan keamanan
-  \item \textbf{Bab III}: Matematika — alat untuk implementasi
-  \item \textbf{Bab IV-V}: Cipher — teknik enkripsi klasik dan modern
-  \item \textbf{Bab VI}: Kunci publik — solusi distribusi kunci
-  \item \textbf{Bab VII}: Hash dan MAC — integrity dan authenticity
-  \item \textbf{Bab VIII}: Protokol — implementasi praktis
-  \item \textbf{Bab IX}: Kriptanalisis — perspektif keamanan
-\end{itemize}
-
-\textbf{Sistem Keamanan Lengkap}:
-\begin{enumerate}
-  \item \textbf{Identifikasi}: Sertifikat digital dan PKI
-  \item \textbf{Enkripsi}: AES untuk data, RSA untuk kunci
-  \item \textbf{Integrity}: SHA-256 dan HMAC
-  \item \textbf{Authenticity}: Tanda tangan digital
-  \item \textbf{Protokol}: TLS untuk komunikasi
-  \item \textbf{Manajemen}: Siklus hidup kunci
-\end{enumerate}
-
-\textbf{Preview}: Di Bab X, kita akan melihat bagaimana semua komponen kriptografi bekerja sama dalam sistem keamanan nyata. Kita akan menganalisis studi kasus seperti HTTPS, email aman, dan sistem pembayaran. Kita juga akan mengevaluasi pemahaman kita tentang semua konsep dan mempersiapkan diri untuk aplikasi kriptografi dalam dunia nyata atau penelitian lebih lanjut.
-
-Setelah Bab X, Anda akan memiliki pemahaman komprehensif tentang kriptografi — dari matematika dasar hingga implementasi praktis, dari desain cipher hingga analisis keamanan. Ini adalah fondasi yang kuat untuk karir di keamanan siber atau penelitian lanjutan dalam bidang kriptografi.
+Setelah mengenal PKI/TLS dan urgensi di TI, lanjut ke \textbf{Bab X: Evaluasi, Refleksi, dan Integrasi Kompetensi} (UTS/UAS sesuai CPMK-1 dan CPMK-2). Materi RNG/steganografi tersedia sebagai lampiran opsional.
 \end{transition}
 
 \ifSubfilesClassLoaded{
@@ -143,4 +96,8 @@ Setelah Bab X, Anda akan memiliki pemahaman komprehensif tentang kriptografi —
   \bibliographystyle{plain}
   \bibliography{../references}
 }{}
-\end{document}
+\% end{document}
+
+
+
+

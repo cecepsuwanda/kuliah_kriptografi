@@ -1,600 +1,537 @@
-\section{Key Management dan Lifecycle}
+﻿\section{Advanced Hash Functions dan Modern Constructions}
 
-\subsection{Fundamental Key Management}
+\subsection{Evolusi dari Merkle-DamgÃ¥rd ke Sponge Construction}
 
-Key management adalah proses lengkap untuk mengelola cryptographic keys sepanjang lifecycle mereka \cite{nist800_57}. Key management yang buruk dapat mengkompromikan cipher yang paling kuat sekalipun.
+Hash functions modern telah berevolusi dari Merkle-DamgÃ¥rd construction ke sponge construction yang lebih fleksibel dan aman \cite{bertoni2011}. SHA-3 (Keccak) adalah contoh pertama yang menggunakan sponge construction.
 
-\textbf{Key Lifecycle Stages}:
+\textbf{Merkle-DamgÃ¥rd Construction}:
+\begin{itemize}
+  \item Digunakan oleh MD5, SHA-1, SHA-2
+  \item Vulnerable terhadap length extension attacks
+  \item Fixed output size
+\end{itemize}
+
+\textbf{Sponge Construction}:
+\begin{itemize}
+  \item Digunakan oleh SHA-3, BLAKE2
+  \item Resistensi terhadap length extension
+  \item Flexible output size
+  \item Dapat digunakan untuk hash dan PRF
+\end{itemize}
+
+\subsection{SHA-3 (Keccak) dan Sponge Construction}
+
+SHA-3 menggunakan sponge construction dengan fungsi keccak-f yang beroperasi pada state 1600-bit \cite{keccak2015}.
+
+\subsubsection{Sponge Construction Fundamentals}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=0.8]
+    % Absorbing phase
+    \node[draw, rounded corners] (state1) at (0,2) {State};
+    \node[draw, rounded corners] (input1) at (-2,2) {Input};
+    \draw[->] (input1) -- (state1) node[midway, above] {XOR};
+    
+    % Permutation
+    \node[draw, rounded corners] (perm1) at (0,0.5) {Keccak-f};
+    \draw[->] (state1) -- (perm1);
+    
+    % Squeezing phase
+    \node[draw, rounded corners] (state2) at (3,2) {State};
+    \node[draw, rounded corners] (output1) at (5,2) {Output};
+    \draw[->] (state2) -- (output1) node[midway, above] {Extract};
+    
+    % Permutation
+    \node[draw, rounded corners] (perm2) at (3,0.5) {Keccak-f};
+    \draw[->] (perm2) -- (state2);
+    
+    % Labels
+    \node[above] at (0,2.8) {Absorbing};
+    \node[above] at (3,2.8) {Squeezing};
+  \end{tikzpicture}
+  \caption{Sponge construction: absorbing dan squeezing phases.}
+\end{figure}
+
+\textbf{Operasi Sponge}:
 \begin{enumerate}
-  \item \textbf{Generation}: Membuat kunci yang aman dan acak
-  \item \textbf{Distribution}: Mengirim kunci ke pihak yang berwenang
-  \item \textbf{Storage}: Menyimpan kunci dengan aman
-  \item \textbf{Usage}: Menggunakan kunci sesuai kebijakan
-  \item \textbf{Rotation}: Mengganti kunci secara berkala
-  \item \textbf{Revocation}: Mencabut kunci yang dikompromikan
-  \item \textbf{Destruction}: Menghapus kunci secara permanen
+  \item \textbf{Absorbing}: Input di-XOR ke state, kemudian di-permutasi
+  \item \textbf{Squeezing}: Output diekstrak dari state, kemudian di-permutasi
 \end{enumerate}
 
-\subsection{Cryptographically Secure Random Number Generation}
+\subsubsection{Keccak-f Permutation}
 
-Kunci kriptografi harus dihasilkan menggunakan CSPRNG (Cryptographically Secure Pseudo-Random Number Generator) \cite{nist800_90a}.
+Keccak-f adalah fungsi permutation yang terdiri dari 24 round, setiap round memiliki 5 langkah:
 
-\subsubsection{NIST SP 800-90A Standards}
-
-\begin{lstlisting}[style=cstyle, caption={CSPRNG Implementation}]
+\begin{lstlisting}[style=cstyle, caption={Keccak-f[1600] Implementation}]
 #include <stdint.h>
-#include <openssl/rand.h>
+#include <string.h>
 
-// NIST SP 800-90A Hash-based DRBG
+#define STATE_SIZE 200  // 1600 bits = 200 bytes
+#define RHO_SIZE 24
+
 typedef struct {
-    uint8_t value[64];     // Internal state
-    uint8_t reseed_counter; // Reseed counter
-    uint8_t security_strength; // 128, 192, or 256 bits
-} HashDRBG;
+    uint64_t state[25];  // 5x5x64-bit array
+} KeccakState;
 
-// Initialize DRBG with entropy
-void hash_drbg_init(HashDRBG *drbg, const uint8_t *entropy, size_t entropy_len) {
-    // Concatenate entropy, nonce, and personalization string
-    uint8_t seed_material[64];
-    memcpy(seed_material, entropy, entropy_len);
+// Theta step - linear diffusion
+void keccak_theta(KeccakState *s) {
+    uint64_t C[5], D[5];
     
-    // Add nonce (timestamp or counter)
-    uint64_t nonce = get_timestamp();
-    memcpy(seed_material + entropy_len, &nonce, 8);
-    
-    // Hash to create initial state
-    sha256(seed_material, entropy_len + 8, drbg->value);
-    
-    drbg->reseed_counter = 1;
-    drbg->security_strength = 256; // 256-bit security
-}
-
-// Generate random bytes
-int hash_drbg_generate(HashDRBG *drbg, uint8_t *output, size_t output_len,
-                      const uint8_t *additional_input, size_t add_input_len) {
-    // Check reseed requirement
-    if (drbg->reseed_counter > 10000) {
-        return -1; // Need reseed
+    // Compute column parity
+    for (int x = 0; x < 5; x++) {
+        C[x] = s->state[x] ^ s->state[x + 5] ^ s->state[x + 10] ^ 
+               s->state[x + 15] ^ s->state[x + 20];
     }
     
-    // Generate pseudo-random bits
-    uint8_t temp[64];
-    
-    // Hash-based generation function
-    sha256(drbg->value, 64, temp);
-    
-    // Copy output
-    memcpy(output, temp, output_len);
-    
-    // Update internal state
-    uint8_t update_input[64 + add_input_len];
-    memcpy(update_input, temp, 64);
-    if (additional_input) {
-        memcpy(update_input + 64, additional_input, add_input_len);
+    // Compute D
+    for (int x = 0; x < 5; x++) {
+        D[x] = C[(x + 4) % 5] ^ rotate_left(C[(x + 1) % 5], 1);
     }
     
-    sha256(update_input, 64 + add_input_len, drbg->value);
-    
-    drbg->reseed_counter++;
-    return 0;
-}
-
-// Reseed with fresh entropy
-void hash_drbg_reseed(HashDRBG *drbg, const uint8_t *entropy, size_t entropy_len) {
-    uint8_t seed_material[64 + 64]; // Current state + new entropy
-    
-    memcpy(seed_material, drbg->value, 64);
-    memcpy(seed_material + 64, entropy, entropy_len);
-    
-    sha256(seed_material, 64 + entropy_len, drbg->value);
-    drbg->reseed_counter = 1;
-}
-
-// Usage example
-void generate_aes_key() {
-    HashDRBG drbg;
-    uint8_t entropy[32];
-    uint8_t aes_key[32];
-    
-    // Get entropy from system
-    get_entropy(entropy, 32);
-    
-    // Initialize DRBG
-    hash_drbg_init(&drbg, entropy, 32);
-    
-    // Generate AES-256 key
-    if (hash_drbg_generate(&drbg, aes_key, 32, NULL, 0) == 0) {
-        printf("Generated AES-256 key: ");
-        for (int i = 0; i < 32; i++) {
-            printf("%02x", aes_key[i]);
+    // Apply to state
+    for (int x = 0; x < 5; x++) {
+        for (int y = 0; y < 5; y++) {
+            s->state[x + 5*y] ^= D[x];
         }
-        printf("\n");
+    }
+}
+
+// Rho and Pi steps - bit rotation and permutation
+void keccak_rho_pi(KeccakState *s) {
+    uint64_t temp[25];
+    memcpy(temp, s->state, sizeof(temp));
+    
+    // Rotation offsets for Keccak-f[1600]
+    const int rho_offsets[25] = {
+        0, 1, 190, 28, 146, 91, 109, 335, 208, 177,
+        113, 200, 230, 228, 132, 154, 41, 229, 90, 240,
+        174, 143, 201, 8, 102
+    };
+    
+    // Apply Rho and Pi
+    for (int x = 0; x < 5; x++) {
+        for (int y = 0; y < 5; y++) {
+            int new_x = y;
+            int new_y = (2*x + 3*y) % 5;
+            int index = x + 5*y;
+            int new_index = new_x + 5*new_y;
+            
+            s->state[new_index] = rotate_left(temp[index], rho_offsets[index]);
+        }
+    }
+}
+
+// Chi step - non-linear substitution
+void keccak_chi(KeccakState *s) {
+    uint64_t temp[5];
+    
+    for (int y = 0; y < 5; y++) {
+        // Copy row
+        for (int x = 0; x < 5; x++) {
+            temp[x] = s->state[x + 5*y];
+        }
+        
+        // Apply Chi
+        for (int x = 0; x < 5; x++) {
+            s->state[x + 5*y] = temp[x] ^ 
+                              ((~temp[(x + 1) % 5]) & temp[(x + 2) % 5]);
+        }
+    }
+}
+
+// Iota step - round constant
+void keccak_iota(KeccakState *s, int round) {
+    // Round constants for Keccak-f[1600]
+    const uint64_t RC[24] = {
+        0x0000000000000001, 0x0000000000008082, 0x800000000000808A,
+        0x8000000080008000, 0x000000000000808B, 0x0000000080000001,
+        0x8000000080008081, 0x8000000000008009, 0x000000000000008A,
+        0x0000000000000088, 0x0000000080008009, 0x000000008000000A,
+        0x000000008000808B, 0x800000000000008B, 0x8000000000008089,
+        0x8000000000008003, 0x8000000000008002, 0x8000000000000080,
+        0x000000008000000A, 0x800000008000000A, 0x8000000080008081,
+        0x8000000000008080, 0x0000000080000002, 0x8000000000000083
+    };
+    
+    s->state[0] ^= RC[round];
+}
+
+// Full Keccak-f permutation
+void keccak_f(KeccakState *s) {
+    for (int round = 0; round < 24; round++) {
+        keccak_theta(s);
+        keccak_rho_pi(s);
+        keccak_chi(s);
+        keccak_iota(s, round);
     }
 }
 \end{lstlisting}
 
-\subsubsection{Entropy Sources}
+\subsubsection{SHA-3 Implementation}
+
+\begin{lstlisting}[style=cstyle, caption={SHA-3-256 Implementation}]
+void sha3_256(const uint8_t *input, size_t input_len, uint8_t *output) {
+    KeccakState state;
+    memset(&state, 0, sizeof(state));
+    
+    // Rate and capacity for SHA3-256
+    const int rate = 1088;  // 1088 bits = 136 bytes
+    const int capacity = 512; // 512 bits = 64 bytes
+    const int block_size = rate / 8;
+    
+    size_t processed = 0;
+    
+    // Absorbing phase
+    while (processed < input_len) {
+        // Copy input block to state
+        int block_len = (input_len - processed > block_size) ? 
+                        block_size : (input_len - processed);
+        
+        for (int i = 0; i < block_len; i++) {
+            ((uint8_t*)state.state)[i] ^= input[processed + i];
+        }
+        
+        // Apply permutation
+        keccak_f(&state);
+        
+        processed += block_len;
+    }
+    
+    // Padding
+    uint8_t padding[block_size];
+    memset(padding, 0, block_size);
+    padding[0] = 0x06;  // SHA-3 padding
+    padding[block_size - 1] |= 0x80;
+    
+    // XOR padding to state
+    for (int i = 0; i < block_size; i++) {
+        ((uint8_t*)state.state)[i] ^= padding[i];
+    }
+    
+    // Final permutation
+    keccak_f(&state);
+    
+    // Squeezing phase - extract 256-bit hash
+    memcpy(output, state.state, 32);
+}
+
+// SHA-3 extendable output function
+void sha3_xof(const uint8_t *input, size_t input_len, 
+              uint8_t *output, size_t output_len) {
+    KeccakState state;
+    memset(&state, 0, sizeof(state));
+    
+    // Same absorbing phase as SHA-3
+    // ... (same as above)
+    
+    // Squeezing phase - extract requested output length
+    const int rate = 1088;
+    const int block_size = rate / 8;
+    
+    size_t extracted = 0;
+    while (extracted < output_len) {
+        int copy_len = (output_len - extracted > block_size) ? 
+                      block_size : (output_len - extracted);
+        
+        memcpy(output + extracted, state.state, copy_len);
+        extracted += copy_len;
+        
+        if (extracted < output_len) {
+            keccak_f(&state);
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{BLAKE2 dan BLAKE3}
+
+BLAKE2 adalah keluarga hash functions yang dirancang untuk performa tinggi dengan keamanan setara SHA-3 \cite{aumasson2013}. BLAKE3 adalah versi terbaru yang paralel dan tree-based.
+
+\subsubsection{BLAKE2b Implementation}
+
+\begin{lstlisting}[style=cstyle, caption={BLAKE2b Compression Function}]
+#include <stdint.h>
+#include <string.h>
+
+#define BLAKE2B_BLOCK_SIZE 128
+#define BLAKE2B_OUT_SIZE 64
+
+typedef struct {
+    uint64_t h[8];
+    uint64_t t[2];
+    uint64_t f;
+} Blake2bState;
+
+// Initialization vectors
+static const uint64_t IV[8] = {
+    0x6a09e667f3bcc908, 0xbb67ae8584caa73b,
+    0x3c6ef372fe94f82b, 0xa54ff53a5f1d36f1,
+    0x510e527fade682d1, 0x9b05688c2b3e6c1f,
+    0x1f83d9abfb41bd6b, 0x5be0cd19137e2179
+};
+
+// G function
+static inline uint64_t rotl(uint64_t x, int n) {
+    return (x << n) | (x >> (64 - n));
+}
+
+static inline void G(uint64_t *v, int a, int b, int c, int d, int x, int y) {
+    v[a] = v[a] + v[b] + x;
+    v[d] = rotl(v[d] ^ v[a], 16);
+    v[c] = v[c] + v[d];
+    v[b] = rotl(v[b] ^ v[c], 12);
+    v[a] = v[a] + v[b] + y;
+    v[d] = rotl(v[d] ^ v[a], 8);
+    v[c] = v[c] + v[d];
+    v[b] = rotl(v[b] ^ v[c], 7);
+}
+
+// Blake2b compression function
+void blake2b_compress(Blake2bState *S, const uint8_t *block, 
+                     uint64_t t0, uint64_t t1, int last) {
+    uint64_t v[16];
+    
+    // Initialize working vector
+    memcpy(v, IV, sizeof(IV));
+    memcpy(v + 8, S->h, sizeof(S->h));
+    
+    v[12] ^= S->t[0];
+    v[13] ^= S->t[1];
+    v[14] ^= last ? 0xFFFFFFFFFFFFFFFF : 0;
+    
+    // Load message block
+    uint64_t m[16];
+    for (int i = 0; i < 16; i++) {
+        m[i] = ((uint64_t*)block)[i];
+    }
+    
+    // 12 rounds
+    const int sigma[12][16] = {
+        {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
+        {14, 10, 4, 8, 9, 15, 13, 6, 1, 12, 0, 2, 11, 7, 5, 3},
+        // ... (10 more rounds)
+    };
+    
+    for (int round = 0; round < 12; round++) {
+        // Column round
+        G(v, 0, 4, 8, 12, m[sigma[round][0]], m[sigma[round][1]]);
+        G(v, 1, 5, 9, 13, m[sigma[round][2]], m[sigma[round][3]]);
+        G(v, 2, 6, 10, 14, m[sigma[round][4]], m[sigma[round][5]]);
+        G(v, 3, 7, 11, 15, m[sigma[round][6]], m[sigma[round][7]]);
+        
+        // Diagonal round
+        G(v, 0, 5, 10, 15, m[sigma[round][8]], m[sigma[round][9]]);
+        G(v, 1, 6, 11, 12, m[sigma[round][10]], m[sigma[round][11]]);
+        G(v, 2, 7, 8, 13, m[sigma[round][12]], m[sigma[round][13]]);
+        G(v, 3, 4, 9, 14, m[sigma[round][14]], m[sigma[round][15]]);
+    }
+    
+    // Update hash state
+    for (int i = 0; i < 8; i++) {
+        S->h[i] ^= v[i] ^ v[i + 8];
+    }
+}
+
+// Blake2b hash function
+void blake2b(const uint8_t *input, size_t input_len, 
+             uint8_t *output, size_t out_len) {
+    Blake2bState S;
+    
+    // Initialize hash state
+    memcpy(S.h, IV, sizeof(IV));
+    S.h[0] ^= 0x01010000 ^ out_len;  // Output length
+    
+    S.t[0] = 0;
+    S.t[1] = 0;
+    S.f = 0;
+    
+    // Process full blocks
+    size_t processed = 0;
+    while (processed + BLAKE2B_BLOCK_SIZE <= input_len) {
+        blake2b_compress(&S, input + processed, 
+                        processed, processed >> 63, 0);
+        S.t[0] += BLAKE2B_BLOCK_SIZE;
+        if (S.t[0] < BLAKE2B_BLOCK_SIZE) S.t[1]++;
+        processed += BLAKE2B_BLOCK_SIZE;
+    }
+    
+    // Process final block
+    uint8_t final_block[BLAKE2B_BLOCK_SIZE];
+    size_t remaining = input_len - processed;
+    memcpy(final_block, input + processed, remaining);
+    memset(final_block + remaining, 0, BLAKE2B_BLOCK_SIZE - remaining);
+    
+    S.t[0] += remaining;
+    if (S.t[0] < remaining) S.t[1]++;
+    
+    blake2b_compress(&S, final_block, S.t[0], S.t[1], 1);
+    
+    // Extract output
+    memcpy(output, S.h, out_len);
+}
+\end{lstlisting}
+
+\subsubsection{BLAKE3 Tree Hashing}
+
+BLAKE3 menggunakan tree structure untuk parallel processing:
+
+\begin{lstlisting}[style=cstyle, caption={BLAKE3 Tree Structure}]
+typedef struct {
+    uint8_t hash[32];
+    uint64_t len;
+    uint8_t flags;
+} Blake3Chunk;
+
+// Blake3 chunk processing
+void blake3_chunk_hash(const uint8_t *input, size_t len, 
+                       uint8_t *output, uint8_t flags) {
+    Blake3State state;
+    blake3_init(&state, flags);
+    
+    // Process in 1024-byte chunks
+    for (size_t i = 0; i < len; i += 1024) {
+        size_t chunk_len = (len - i > 1024) ? 1024 : (len - i);
+        blake3_update(&state, input + i, chunk_len);
+    }
+    
+    blake3_finalize(&state, output);
+}
+
+// Parallel tree hashing
+void blake3_parallel_hash(const uint8_t *input, size_t len, 
+                          uint8_t *output, int threads) {
+    if (len <= 1024 || threads == 1) {
+        blake3_chunk_hash(input, len, output, 0);
+        return;
+    }
+    
+    // Split input into chunks
+    size_t chunk_size = (len + threads - 1) / threads;
+    uint8_t *chunk_hashes = malloc(threads * 32);
+    
+    // Process chunks in parallel (simplified)
+    #pragma omp parallel for
+    for (int i = 0; i < threads; i++) {
+        size_t start = i * chunk_size;
+        size_t end = (start + chunk_size > len) ? len : start + chunk_size;
+        
+        blake3_chunk_hash(input + start, end - start, 
+                         chunk_hashes + i * 32, 
+                         (i == threads - 1) ? 1 : 0);  // Last chunk flag
+    }
+    
+    // Combine chunk hashes
+    if (threads == 1) {
+        memcpy(output, chunk_hashes, 32);
+    } else {
+        blake3_parallel_hash(chunk_hashes, threads * 32, output, threads / 2);
+    }
+    
+    free(chunk_hashes);
+}
+\end{lstlisting}
+
+\subsection{HMAC Security Proofs}
+
+HMAC (Hash-based Message Authentication Code) memiliki bukti keamanan formal yang kuat \cite{bellare1996}.
+
+\subsubsection{HMAC Construction}
+
+\begin{lstlisting}[style=cstyle, caption={HMAC Implementation}]
+void hmac_sha256(const uint8_t *key, size_t key_len,
+                 const uint8_t *message, size_t msg_len,
+                 uint8_t *output) {
+    uint8_t ipad[64], opad[64];
+    uint8_t inner_hash[32], outer_hash[32];
+    
+    // Prepare key
+    uint8_t k[64];
+    if (key_len <= 64) {
+        memcpy(k, key, key_len);
+        memset(k + key_len, 0, 64 - key_len);
+    } else {
+        sha256(key, key_len, k);
+        memset(k + 32, 0, 32);
+    }
+    
+    // Create inner and outer pads
+    for (int i = 0; i < 64; i++) {
+        ipad[i] = k[i] ^ 0x36;  // Inner pad
+        opad[i] = k[i] ^ 0x5c;  // Outer pad
+    }
+    
+    // Inner hash: H(K ^ ipad || message)
+    uint8_t inner_input[64 + msg_len];
+    memcpy(inner_input, ipad, 64);
+    memcpy(inner_input + 64, message, msg_len);
+    sha256(inner_input, 64 + msg_len, inner_hash);
+    
+    // Outer hash: H(K ^ opad || inner_hash)
+    uint8_t outer_input[64 + 32];
+    memcpy(outer_input, opad, 64);
+    memcpy(outer_input + 64, inner_hash, 32);
+    sha256(outer_input, 96, outer_hash);
+    
+    memcpy(output, outer_hash, 32);
+}
+
+// HMAC security analysis
+void hmac_security_analysis() {
+    // HMAC is secure even if:
+    // 1. Hash function is a PRF (pseudorandom function)
+    // 2. Hash function is collision-resistant
+    // 3. Key is properly randomized
+    
+    // Security bounds:
+    // - Forgery probability: <= q^2 / 2^n (q = queries, n = hash output)
+    // - Key recovery: Requires 2^n work (same as brute force)
+    
+    printf("HMAC Security Properties:\n");
+    printf("- Pseudorandomness: Yes\n");
+    printf("- Collision resistance: Yes (inherited from hash)\n");
+    printf("- Key recovery: 2^256 work for HMAC-SHA256\n");
+    printf("- Forgery: q^2/2^256 for q queries\n");
+}
+\end{lstlisting}
+
+\subsection{Performance Comparison}
 
 \begin{table}[htbp]
   \centering
   \small
-  \begin{tabular}{ll}
+  \begin{tabular}{lccc}
     \toprule
-    Entropy Source & Quality \\
+    Hash Function & Output Size & Throughput (MB/s) & Security Level \\
     \midrule
-    Hardware RNG (Intel RDRAND) & Tinggi \\
-    /dev/urandom (Linux) & Tinggi \\
-    CryptGenRandom (Windows) & Tinggi \\
-    Mouse/keyboard timing & Sedang \\
-    Network timing & Rendah \\
+    SHA-256 & 256 bit & 650 & 128-bit \\
+    SHA-3-256 & 256 bit & 300 & 128-bit \\
+    BLAKE2b & 256 bit & 1200 & 128-bit \\
+    BLAKE3 & 256 bit & 3000 & 128-bit \\
     \bottomrule
   \end{tabular}
-  \caption{Kualitas entropy sources.}
+  \caption{Perbandingan performa hash functions modern.}
 \end{table}
 
-\subsection{Key Derivation Functions (KDF)}
+\subsection{Applications and Use Cases}
 
-KDF mengubah kunci master atau password menjadi kunci-kunci turunan dengan properti yang diinginkan \cite{nist800_108}.
-
-\subsubsection{HKDF (HMAC-based Key Derivation Function)}
-
-\begin{lstlisting}[style=cstyle, caption={HKDF Implementation}]
-#include <openssl/hmac.h>
-
-// HKDF Extract phase
-void hkdf_extract(const uint8_t *salt, size_t salt_len,
-                  const uint8_t *ikm, size_t ikm_len,
-                  uint8_t *prk) {
-    // If salt is empty, use zeros
-    uint8_t actual_salt[salt_len ? salt_len : 32];
-    if (salt_len == 0) {
-        memset(actual_salt, 0, 32);
-    } else {
-        memcpy(actual_salt, salt, salt_len);
-    }
-    
-    // PRK = HMAC(salt, IKM)
-    HMAC(EVP_sha256(), actual_salt, salt_len ? salt_len : 32,
-         ikm, ikm_len, prk, NULL);
-}
-
-// HKDF Expand phase
-void hkdf_expand(const uint8_t *prk, size_t prk_len,
-                 const uint8_t *info, size_t info_len,
-                 uint8_t *okm, size_t L) {
-    uint8_t t[32];  // HMAC output
-    uint8_t t_prev[32] = {0};
-    int iterations = (L + 31) / 32;
-    
-    for (int i = 1; i <= iterations; i++) {
-        // T(i) = HMAC(PRK, T(i-1) || info || i)
-        uint8_t input[32 + info_len + 1];
-        int input_len = 0;
-        
-        if (i > 1) {
-            memcpy(input, t_prev, 32);
-            input_len += 32;
-        }
-        
-        memcpy(input + input_len, info, info_len);
-        input_len += info_len;
-        
-        input[input_len] = i;
-        input_len++;
-        
-        HMAC(EVP_sha256(), prk, prk_len, input, input_len, t, NULL);
-        
-        // Copy to output
-        int copy_len = (L - (i-1)*32 < 32) ? (L - (i-1)*32) : 32;
-        memcpy(okm + (i-1)*32, t, copy_len);
-        
-        memcpy(t_prev, t, 32);
-    }
-}
-
-// Complete HKDF
-void hkdf(const uint8_t *salt, size_t salt_len,
-          const uint8_t *ikm, size_t ikm_len,
-          const uint8_t *info, size_t info_len,
-          uint8_t *okm, size_t L) {
-    uint8_t prk[32];
-    
-    hkdf_extract(salt, salt_len, ikm, ikm_len, prk);
-    hkdf_expand(prk, 32, info, info_len, okm, L);
-}
-
-// Usage example: Derive multiple keys from master key
-void derive_keys_from_master() {
-    uint8_t master_key[32];
-    uint8_t salt[16];
-    uint8_t derived_keys[64]; // Two 32-bit keys
-    
-    // Get master key and salt
-    get_entropy(master_key, 32);
-    get_entropy(salt, 16);
-    
-    // Derive encryption key and MAC key
-    hkdf(salt, 16, master_key, 32, 
-         (uint8_t*)"encryption key", 15, derived_keys, 32);
-    hkdf(salt, 16, master_key, 32, 
-         (uint8_t*)"mac key", 7, derived_keys + 32, 32);
-    
-    printf("Encryption key: ");
-    for (int i = 0; i < 32; i++) printf("%02x", derived_keys[i]);
-    printf("\nMAC key: ");
-    for (int i = 32; i < 64; i++) printf("%02x", derived_keys[i]);
-    printf("\n");
-}
-\end{lstlisting}
-
-\subsection{Key Storage and Protection}
-
-\subsubsection{Hardware Security Modules (HSM)}
-
-HSM adalah perangkat keras yang dirancang khusus untuk melindungi dan mengelola kunci kriptografi \cite{nist800_57}.
-
-\begin{lstlisting}[style=cstyle, caption={HSM Interface}]
-typedef struct {
-    int hsm_id;
-    uint8_t master_key[32];
-    bool tamper_evident;
-} HSM;
-
-// HSM key generation (inside secure boundary)
-int hsm_generate_key(HSM *hsm, uint8_t *key_id, uint8_t *public_key) {
-    if (!hsm->tamper_evident) {
-        return -1; // HSM compromised
-    }
-    
-    // Generate key inside HSM
-    uint8_t private_key[32];
-    generate_key_pair(private_key, public_key);
-    
-    // Store private key encrypted with master key
-    uint8_t encrypted_private[32];
-    aes_encrypt(private_key, 32, hsm->master_key, encrypted_private);
-    
-    // Store in secure memory
-    secure_store_key(key_id, encrypted_private, 32);
-    
-    return 0;
-}
-
-// HSM signing operation
-int hsm_sign(HSM *hsm, uint8_t *key_id, uint8_t *message, size_t msg_len,
-              uint8_t *signature) {
-    if (!hsm->tamper_evident) {
-        return -1;
-    }
-    
-    // Retrieve and decrypt private key
-    uint8_t encrypted_private[32];
-    uint8_t private_key[32];
-    
-    retrieve_key(key_id, encrypted_private, 32);
-    aes_decrypt(encrypted_private, 32, hsm->master_key, private_key);
-    
-    // Perform signing inside HSM
-    ecdsa_sign(private_key, message, msg_len, signature);
-    
-    // Clear sensitive data
-    secure_zero_memory(private_key, 32);
-    
-    return 0;
-}
-\end{lstlisting}
-
-\subsubsection{Software Key Protection}
-
-\begin{lstlisting}[style=cstyle, caption={Software Key Protection}]
-#include <windows.h>
-#include <dpapi.h>
-
-// Windows DPAPI for key protection
-void protect_key_dpapi(const uint8_t *key, size_t key_len, uint8_t *protected) {
-    DATA_BLOB blob_in, blob_out;
-    
-    blob_in.pbData = (BYTE*)key;
-    blob_in.cbData = key_len;
-    
-    // Encrypt with user-specific key
-    if (CryptProtectData(&blob_in, L"Encryption Key", NULL, NULL, NULL, 
-                          CRYPTPROTECT_UI_FORBIDDEN, &blob_out)) {
-        memcpy(protected, blob_out.pbData, blob_out.cbData);
-        LocalFree(blob_out.pbData);
-    }
-}
-
-// Linux keyring using libsecret
-#include <libsecret/secret.h>
-
-void store_key_in_keyring(const char *key_name, const uint8_t *key, size_t key_len) {
-    SecretService *service = secret_service_get_sync(SECRET_SERVICE_NONE);
-    
-    SecretValue *value = secret_value_new((const gchar*)key, key_len, "text/plain");
-    
-    secret_service_store_sync(service, NULL, SECRET_SCHEMA_COMPAT_NETWORK,
-                             NULL, key_name, NULL, NULL, SECRET_VALUE_ALL, value, NULL, NULL);
-    
-    g_object_unref(value);
-    g_object_unref(service);
-}
-
-// Memory protection (mlock)
-void protect_key_in_memory(uint8_t *key, size_t key_len) {
-    // Lock memory to prevent swapping
-    if (mlock(key, key_len) != 0) {
-        perror("mlock failed");
-        return;
-    }
-    
-    // Mark memory as non-dumpable (Linux specific)
-    if (madvise(key, key_len, MADV_DONTDUMP) != 0) {
-        perror("madvise failed");
-    }
-    
-    // Use secure memory allocation
-    uint8_t *secure_key = (uint8_t*)malloc_secure(key_len);
-    memcpy(secure_key, key, key_len);
-    
-    // Clear original key
-    secure_zero_memory(key, key_len);
-}
-\end{lstlisting}
-
-\subsection{Key Rotation and Revocation}
-
-\subsubsection{Automated Key Rotation}
-
-\begin{lstlisting}[style=cstyle, caption={Key Rotation System}]
-typedef struct {
-    uint8_t key_id[16];
-    uint8_t key[32];
-    time_t created;
-    time_t expires;
-    bool is_active;
-} KeyEntry;
-
-typedef struct {
-    KeyEntry *keys;
-    size_t capacity;
-    size_t count;
-    time_t rotation_interval;
-} KeyManager;
-
-// Initialize key manager
-void key_manager_init(KeyManager *km, size_t capacity, time_t rotation_interval) {
-    km->keys = calloc(capacity, sizeof(KeyEntry));
-    km->capacity = capacity;
-    km->count = 0;
-    km->rotation_interval = rotation_interval;
-}
-
-// Generate and store new key
-void key_manager_rotate(KeyManager *km) {
-    time_t now = time(NULL);
-    
-    // Find expired keys
-    for (size_t i = 0; i < km->count; i++) {
-        if (km->keys[i].expires < now) {
-            km->keys[i].is_active = false;
-        }
-    }
-    
-    // Generate new key
-    if (km->count < km->capacity) {
-        KeyEntry *new_key = &km->keys[km->count];
-        
-        // Generate unique key ID
-        generate_uuid(new_key->key_id);
-        
-        // Generate cryptographic key
-        generate_random_bytes(new_key->key, 32);
-        
-        new_key->created = now;
-        new_key->expires = now + km->rotation_interval;
-        new_key->is_active = true;
-        
-        km->count++;
-        
-        printf("Generated new key: ");
-        for (int i = 0; i < 16; i++) printf("%02x", new_key->key_id[i]);
-        printf(" (expires: %ld)\n", new_key->expires);
-    }
-}
-
-// Get active key for encryption
-int key_manager_get_active_key(KeyManager *km, uint8_t *key_id, uint8_t *key) {
-    time_t now = time(NULL);
-    
-    for (size_t i = 0; i < km->count; i++) {
-        if (km->keys[i].is_active && km->keys[i].expires > now) {
-            memcpy(key_id, km->keys[i].key_id, 16);
-            memcpy(key, km->keys[i].key, 32);
-            return 0;
-        }
-    }
-    
-    return -1; // No active key found
-}
-
-// Background rotation thread
-void *key_rotation_thread(void *arg) {
-    KeyManager *km = (KeyManager*)arg;
-    
-    while (1) {
-        sleep(km->rotation_interval);
-        key_manager_rotate(km);
-    }
-    
-    return NULL;
-}
-\end{lstlisting}
-
-\subsubsection{Key Revocation}
-
-\begin{lstlisting}[style=cstyle, caption={Key Revocation System}]
-typedef struct {
-    uint8_t key_id[16];
-    time_t revoked_at;
-    char reason[256];
-} RevokedKey;
-
-typedef struct {
-    RevokedKey *revoked_keys;
-    size_t count;
-    size_t capacity;
-} RevocationList;
-
-// Revoke key
-void revoke_key(RevocationList *rl, const uint8_t *key_id, const char *reason) {
-    if (rl->count < rl->capacity) {
-        RevokedKey *rk = &rl->revoked_keys[rl->count];
-        
-        memcpy(rk->key_id, key_id, 16);
-        rk->revoked_at = time(NULL);
-        strncpy(rk->reason, reason, 255);
-        rk->reason[255] = '\0';
-        
-        rl->count++;
-        
-        printf("Key revoked: ");
-        for (int i = 0; i < 16; i++) printf("%02x", key_id[i]);
-        printf(" (%s)\n", reason);
-    }
-}
-
-// Check if key is revoked
-bool is_key_revoked(RevocationList *rl, const uint8_t *key_id) {
-    for (size_t i = 0; i < rl->count; i++) {
-        if (memcmp(rl->revoked_keys[i].key_id, key_id, 16) == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
-// Publish revocation list (CRL)
-void publish_crl(RevocationList *rl, const char *filename) {
-    FILE *f = fopen(filename, "w");
-    if (!f) return;
-    
-    fprintf(f, "# Certificate Revocation List\n");
-    fprintf(f, "# Generated: %s", ctime(&(time_t){time(NULL)}));
-    
-    for (size_t i = 0; i < rl->count; i++) {
-        RevokedKey *rk = &rl->revoked_keys[i];
-        fprintf(f, "REVOKED: ");
-        for (int j = 0; j < 16; j++) fprintf(f, "%02x", rk->key_id[j]);
-        fprintf(f, " %ld %s\n", rk->revoked_at, rk->reason);
-    }
-    
-    fclose(f);
-}
-\end{lstlisting}
-
-\subsection{Key Escrow and Recovery}
-
-\subsubsection{Secret Sharing}
-
-Shamir's Secret Sharing membagi kunci menjadi beberapa bagian yang dapat direkonstruksi dengan threshold tertentu \cite{shamir1979}.
-
-\begin{lstlisting}[style=cstyle, caption={Shamir's Secret Sharing}]
-#include <stdint.h>
-#include <stdlib.h>
-
-#define FIELD_SIZE 257  // Prime field
-
-// Polynomial evaluation
-uint16_t evaluate_polynomial(uint16_t *coeffs, int degree, uint16_t x) {
-    uint16_t result = 0;
-    
-    for (int i = degree; i >= 0; i--) {
-        result = (result * x + coeffs[i]) % FIELD_SIZE;
-    }
-    
-    return result;
-}
-
-// Generate shares
-void generate_shares(uint16_t secret, int threshold, int num_shares, 
-                    uint16_t *x_coords, uint16_t *y_coords) {
-    // Generate random polynomial
-    uint16_t coeffs[threshold];
-    coeffs[0] = secret;
-    
-    for (int i = 1; i < threshold; i++) {
-        coeffs[i] = random_uint16() % FIELD_SIZE;
-    }
-    
-    // Evaluate polynomial at different x coordinates
-    for (int i = 0; i < num_shares; i++) {
-        x_coords[i] = i + 1;  // Use 1, 2, 3, ... as x coordinates
-        y_coords[i] = evaluate_polynomial(coeffs, threshold - 1, x_coords[i]);
-    }
-}
-
-// Lagrange interpolation for reconstruction
-uint16_t reconstruct_secret(uint16_t *x_coords, uint16_t *y_coords, 
-                           int threshold) {
-    uint16_t secret = 0;
-    
-    for (int i = 0; i < threshold; i++) {
-        uint16_t numerator = 1;
-        uint16_t denominator = 1;
-        
-        // Calculate Lagrange basis polynomial
-        for (int j = 0; j < threshold; j++) {
-            if (i != j) {
-                numerator = (numerator * (-x_coords[j])) % FIELD_SIZE;
-                denominator = (denominator * (x_coords[i] - x_coords[j])) % FIELD_SIZE;
-            }
-        }
-        
-        // Add contribution
-        uint16_t contribution = y_coords[i] * numerator * mod_inverse(denominator, FIELD_SIZE);
-        secret = (secret + contribution) % FIELD_SIZE;
-    }
-    
-    return secret;
-}
-
-// Usage example
-void secret_sharing_example() {
-    uint16_t secret = 12345;  // Secret to protect
-    int threshold = 3;       // Need 3 shares to reconstruct
-    int num_shares = 5;       // Generate 5 shares total
-    
-    uint16_t x_coords[5], y_coords[5];
-    
-    // Generate shares
-    generate_shares(secret, threshold, num_shares, x_coords, y_coords);
-    
-    printf("Generated shares:\n");
-    for (int i = 0; i < num_shares; i++) {
-        printf("Share %d: (%d, %d)\n", i+1, x_coords[i], y_coords[i]);
-    }
-    
-    // Reconstruct with first 3 shares
-    uint16_t reconstructed = reconstruct_secret(x_coords, y_coords, threshold);
-    printf("Reconstructed secret: %d\n", reconstructed);
-}
-\end{lstlisting}
-
-\subsection{Best Practices and Guidelines}
-
-\textbf{Key Management Best Practices}:
+\textbf{SHA-3 Applications}:
 \begin{itemize}
-  \item \textbf{Use CSPRNG}: Generate keys with cryptographically secure random numbers
-  \item \textbf{Minimum Key Lengths}: AES-256, RSA-4096, ECC-384 for new systems
-  \item \textbf{Regular Rotation}: Rotate keys every 90-365 days for high-value systems
-  \item \textbf{Secure Storage}: Use HSM or encrypted storage for private keys
-  \item \textbf{Access Control}: Implement principle of least privilege
-  \item \textbf{Audit Logging}: Log all key operations
-  \item \textbf{Backup}: Secure backup of key material
-  \item \textbf{Revocation}: Have clear revocation procedures
+  \item \textbf{Digital Signatures}: DSA, ECDSA dengan SHA-3
+  \item \textbf{Password Hashing}: Argon2 menggunakan BLAKE2b
+  \item \textbf{Blockchain}: Ethereum menggunakan Keccak-256
+  \item \textbf{Random Number Generation}: CSPRNG dengan SHA-3
+\end{itemize}
+
+\textbf{BLAKE3 Applications}:
+\begin{itemize}
+  \item \textbf{File Verification}: Fast integrity checking
+  \item \textbf{Version Control}: Git considering BLAKE3
+  \item \textbf{Distributed Systems}: Merkle trees for data verification
+  \item \textbf{Backup Systems}: Incremental backup verification
 \end{itemize}
 
 \begin{catatan}
-Key management is often the weakest link in cryptographic systems. Even the strongest algorithms can be compromised through poor key management practices. Implement defense in depth: use hardware security modules, regular audits, and proper procedures.
+Advanced hash functions seperti SHA-3 dan BLAKE3 memberikan keamanan dan performa yang superior dibandingkan hash functions klasik. Pemilihan hash function yang tepat tergantung pada kebutuhan aplikasi: keamanan maksimal (SHA-3), performa tinggi (BLAKE2), atau parallel processing (BLAKE3).
 \end{catatan}
+

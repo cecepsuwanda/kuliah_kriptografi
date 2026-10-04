@@ -1,0 +1,6 @@
+Jalankan perintah di bawah ini :
+1. baca dan pahami seluruh file mengenai buku ajar di C:\Matakuliah\kuliah_kriptografi\buku_ajar
+2. baca dan pahami seluruh file referensi di C:\Matakuliah\kuliah_kriptografi\referensi
+3. baca dan pahami silabus C:\Matakuliah\kuliah_kriptografi\rps_silabus\silabus_kriptografi.tex
+4. susun buku ajar sesuai silabus dengan menggunakan seluruh materi dan gambar dari referensi
+5. langkah 4 dilakukan dengan bertahap per-bab

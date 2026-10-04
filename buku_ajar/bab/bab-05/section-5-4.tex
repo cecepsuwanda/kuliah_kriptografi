@@ -1,23 +1,44 @@
-\section{Implementasi AES dalam C}
+﻿\section{Contoh Trace Lengkap AES-128 (Satu Round)}
 
-\subsection{Struktur AES dan Komponen Utama}
+\subsection{Setup Contoh}
 
-AES (Advanced Encryption Standard) menggunakan struktur Substitution-Permutation Network (SPN) dengan blok 128 bit dan kunci 128/192/256 bit \cite{fips197}. Setiap round terdiri dari empat operasi:
+Untuk memahami AES secara mendalam, kita akan melakukan trace lengkap satu round AES-128 dengan nilai konkret. Ini akan menunjukkan bagaimana setiap operasi (SubBytes, ShiftRows, MixColumns, AddRoundKey) mengubah state.
 
-\begin{enumerate}
-  \item \textbf{SubBytes}: Substitusi non-linear menggunakan S-box AES
-  \item \textbf{ShiftRows}: Permutasi baris untuk diffusion
-  \item \textbf{MixColumns}: Operasi linear dalam $\mathrm{GF}(2^8)$
-  \item \textbf{AddRoundKey}: XOR dengan round key
-\end{enumerate}
-
-\subsection{Representasi Data AES}
-
-Dalam implementasi C, state AES direpresentasikan sebagai matriks 4x4 bytes:
+\textbf{Input}:
 \begin{itemize}
-  \item Input: 16 bytes plaintext
-  \item State: Matriks 4x4 bytes $s_{r,c}$ (baris $r$, kolom $c$)
-  \item Output: 16 bytes ciphertext
+  \item Plaintext: \texttt{00 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF}
+  \item Key: \texttt{00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F}
+\end{itemize}
+
+\subsection{State Awal (Setelah AddRoundKey Round 0)}
+
+State direpresentasikan sebagai matriks 4x4 (kolom-major order):
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{00} & \textbf{44} & \textbf{88} & \textbf{CC} \\
+    \hline
+    \textbf{11} & \textbf{55} & \textbf{99} & \textbf{DD} \\
+    \hline
+    \textbf{22} & \textbf{66} & \textbf{AA} & \textbf{EE} \\
+    \hline
+    \textbf{33} & \textbf{77} & \textbf{BB} & \textbf{FF} \\
+    \hline
+  \end{tabular}
+  \caption{State awal setelah AddRoundKey dengan round key 0.}
+\end{table}
+
+\subsection{Step 1: SubBytes}
+
+Setiap byte disubstitusi menggunakan S-box AES. Beberapa contoh substitusi:
+\begin{itemize}
+  \item \texttt{00} $\rightarrow$ \texttt{63} (S-box[0x00] = 0x63)
+  \item \texttt{11} $\rightarrow$ \texttt{82} (S-box[0x11] = 0x82)
+  \item \texttt{22} $\rightarrow$ \texttt{C9} (S-box[0x22] = 0xC9)
+  \item \texttt{33} $\rightarrow$ \texttt{7B} (S-box[0x33] = 0x7B)
 \end{itemize}
 
 \begin{table}[htbp]
@@ -25,91 +46,50 @@ Dalam implementasi C, state AES direpresentasikan sebagai matriks 4x4 bytes:
   \small
   \begin{tabular}{|c|c|c|c|}
     \hline
-    $s_{0,0}$ & $s_{0,1}$ & $s_{0,2}$ & $s_{0,3}$ \\
+    \textbf{63} & \textbf{09} & \textbf{CD} & \textbf{BA} \\
     \hline
-    $s_{1,0}$ & $s_{1,1}$ & $s_{1,2}$ & $s_{1,3}$ \\
+    \textbf{82} & \textbf{74} & \textbf{60} & \textbf{3A} \\
     \hline
-    $s_{2,0}$ & $s_{2,1}$ & $s_{2,2}$ & $s_{2,3}$ \\
+    \textbf{C9} & \textbf{E9} & \textbf{D0} & \textbf{E0} \\
     \hline
-    $s_{3,0}$ & $s_{3,1}$ & $s_{3,2}$ & $s_{3,3}$ \\
+    \textbf{7B} & \textbf{C3} & \textbf{66} & \textbf{16} \\
     \hline
   \end{tabular}
-  \caption{Representasi state AES 4x4.}
+  \caption{State setelah SubBytes.}
 \end{table}
 
-\subsection{S-Box AES}
+\subsection{Step 2: ShiftRows}
 
-S-Box AES adalah substitusi non-linear 8-bit yang dirancang untuk resistensi terhadap analisis linear dan differential \cite{daemen2001}. S-Box dihasilkan dari inversi multiplicative dalam $\mathrm{GF}(2^8)$ diikuti dengan transformasi affine.
-
-\begin{lstlisting}[style=cstyle, caption={S-Box AES dalam C}]
-static const uint8_t sbox[256] = {
-    0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
-    0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
-    0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0,
-    0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
-    // ... (256 values total)
-    0x70, 0x3f, 0xe6, 0xb1, 0x98, 0x11, 0x69, 0xd9,
-    0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55,
-    0x28, 0xdf, 0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6
-};
-
-void sub_bytes(uint8_t state[4][4]) {
-    for (int r = 0; r < 4; r++) {
-        for (int c = 0; c < 4; c++) {
-            state[r][c] = sbox[state[r][c]];
-        }
-    }
-}
-\end{lstlisting}
-
-\subsection{Operasi AES dalam C}
-
-\subsubsection{ShiftRows}
-
-ShiftRows menggeser setiap baris ke kiri dengan jumlah yang berbeda:
+Setiap baris digeser ke kiri dengan jumlah berbeda:
 \begin{itemize}
   \item Baris 0: tidak digeser
-  \item Baris 1: digeser 1 posisi
-  \item Baris 2: digeser 2 posisi  
-  \item Baris 3: digeser 3 posisi
+  \item Baris 1: geser 1 posisi $\rightarrow$ [82, 74, 60, 3A] menjadi [74, 60, 3A, 82]
+  \item Baris 2: geser 2 posisi $\rightarrow$ [C9, E9, D0, E0] menjadi [D0, E0, C9, E9]
+  \item Baris 3: geser 3 posisi $\rightarrow$ [7B, C3, 66, 16] menjadi [16, 7B, C3, 66]
 \end{itemize}
 
-\begin{lstlisting}[style=cstyle, caption={ShiftRows dalam C}]
-void shift_rows(uint8_t state[4][4]) {
-    uint8_t temp;
-    
-    // Row 1: shift 1
-    temp = state[1][0];
-    state[1][0] = state[1][1];
-    state[1][1] = state[1][2];
-    state[1][2] = state[1][3];
-    state[1][3] = temp;
-    
-    // Row 2: shift 2
-    temp = state[2][0];
-    state[2][0] = state[2][2];
-    state[2][2] = temp;
-    temp = state[2][1];
-    state[2][1] = state[2][3];
-    state[2][3] = temp;
-    
-    // Row 3: shift 3
-    temp = state[3][0];
-    state[3][0] = state[3][3];
-    state[3][3] = state[3][2];
-    state[3][2] = state[3][1];
-    state[3][1] = temp;
-}
-\end{lstlisting}
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{63} & \textbf{09} & \textbf{CD} & \textbf{BA} \\
+    \hline
+    \textbf{74} & \textbf{60} & \textbf{3A} & \textbf{82} \\
+    \hline
+    \textbf{D0} & \textbf{E0} & \textbf{C9} & \textbf{E9} \\
+    \hline
+    \textbf{16} & \textbf{7B} & \textbf{C3} & \textbf{66} \\
+    \hline
+  \end{tabular}
+  \caption{State setelah ShiftRows.}
+\end{table}
 
-\subsubsection{MixColumns}
+\subsection{Step 3: MixColumns}
 
-MixColumns melakukan operasi linear dalam $\mathrm{GF}(2^8)$ menggunakan matriks tetap:
+Setiap kolom dikalikan dengan matriks MixColumns dalam GF($2^8$). Untuk kolom pertama [63, 74, D0, 16]:
+
 \[
-\begin{bmatrix}
-s'_{0,c} \\ s'_{1,c} \\ s'_{2,c} \\ s'_{3,c}
-\end{bmatrix}
-=
 \begin{bmatrix}
 02 & 03 & 01 & 01 \\
 01 & 02 & 03 & 01 \\
@@ -118,222 +98,108 @@ s'_{0,c} \\ s'_{1,c} \\ s'_{2,c} \\ s'_{3,c}
 \end{bmatrix}
 \cdot
 \begin{bmatrix}
-s_{0,c} \\ s_{1,c} \\ s_{2,c} \\ s_{3,c}
+63 \\ 74 \\ D0 \\ 16
+\end{bmatrix}
+=
+\begin{bmatrix}
+5F \\ 72 \\ 64 \\ 15
 \end{bmatrix}
 \]
 
-\begin{lstlisting}[style=cstyle, caption={MixColumns dalam C}]
-// Galois Field multiplication
-uint8_t gmul(uint8_t a, uint8_t b) {
-    uint8_t p = 0;
-    for (int counter = 0; counter < 8; counter++) {
-        if ((b & 1) != 0) {
-            p ^= a;
-        }
-        uint8_t hi_bit_set = (a & 0x80);
-        a <<= 1;
-        if (hi_bit_set) {
-            a ^= 0x1b; // x^8 + x^4 + x^3 + x + 1
-        }
-        b >>= 1;
-    }
-    return p;
-}
+\textbf{Perhitungan detail untuk elemen pertama}:
+\begin{align*}
+s'_{0,0} &= (02 \cdot 63) \oplus (03 \cdot 74) \oplus (01 \cdot D0) \oplus (01 \cdot 16) \\
+&= C6 \oplus 9C \oplus D0 \oplus 16 \\
+&= 5F
+\end{align*}
 
-void mix_columns(uint8_t state[4][4]) {
-    uint8_t temp[4];
-    
-    for (int c = 0; c < 4; c++) {
-        temp[0] = gmul(0x02, state[0][c]) ^ gmul(0x03, state[1][c]) ^ 
-                 gmul(0x01, state[2][c]) ^ gmul(0x01, state[3][c]);
-        temp[1] = gmul(0x01, state[0][c]) ^ gmul(0x02, state[1][c]) ^ 
-                 gmul(0x03, state[2][c]) ^ gmul(0x01, state[3][c]);
-        temp[2] = gmul(0x01, state[0][c]) ^ gmul(0x01, state[1][c]) ^ 
-                 gmul(0x02, state[2][c]) ^ gmul(0x03, state[3][c]);
-        temp[3] = gmul(0x03, state[0][c]) ^ gmul(0x01, state[1][c]) ^ 
-                 gmul(0x01, state[2][c]) ^ gmul(0x02, state[3][c]);
-        
-        for (int r = 0; r < 4; r++) {
-            state[r][c] = temp[r];
-        }
-    }
-}
-\end{lstlisting}
+dimana perkalian dalam GF($2^8$) menggunakan polynomial irreducible $x^8 + x^4 + x^3 + x + 1$ (0x11B).
 
-\subsubsection{AddRoundKey}
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{5F} & \textbf{9F} & \textbf{16} & \textbf{38} \\
+    \hline
+    \textbf{72} & \textbf{E6} & \textbf{5D} & \textbf{D4} \\
+    \hline
+    \textbf{64} & \textbf{AF} & \textbf{4E} & \textbf{A4} \\
+    \hline
+    \textbf{15} & \textbf{22} & \textbf{8B} & \textbf{2C} \\
+    \hline
+  \end{tabular}
+  \caption{State setelah MixColumns.}
+\end{table}
 
-AddRoundKey melakukan XOR antara state dan round key:
-\begin{lstlisting}[style=cstyle, caption={AddRoundKey dalam C}]
-void add_round_key(uint8_t state[4][4], uint8_t round_key[4][4]) {
-    for (int r = 0; r < 4; r++) {
-        for (int c = 0; c < 4; c++) {
-            state[r][c] ^= round_key[r][c];
-        }
-    }
-}
-\end{lstlisting}
+\subsection{Step 4: AddRoundKey}
 
-\subsection{Key Schedule AES}
+State di-XOR dengan round key 1. Misalkan round key 1 adalah:
 
-Key schedule menghasilkan 11 round keys dari 128-bit kunci untuk AES-128:
-\begin{lstlisting}[style=cstyle, caption={Key Schedule AES-128}]
-// Rcon untuk AES-128
-static const uint8_t rcon[10] = {
-    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36
-};
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{D6} & \textbf{AA} & \textbf{74} & \textbf{FD} \\
+    \hline
+    \textbf{D2} & \textbf{63} & \textbf{9C} & \textbf{CA} \\
+    \hline
+    \textbf{E0} & \textbf{97} & \textbf{43} & \textbf{B4} \\
+    \hline
+    \textbf{04} & \textbf{02} & \textbf{38} & \textbf{51} \\
+    \hline
+  \end{tabular}
+  \caption{Round key 1 (dari key expansion).}
+\end{table}
 
-// RotWord: rotate 32-bit word left by 8 bits
-uint32_t rot_word(uint32_t word) {
-    return (word << 8) | (word >> 24);
-}
+XOR state dengan round key:
 
-// SubWord: apply S-box to each byte
-uint32_t sub_word(uint32_t word) {
-    return (sbox[(word >> 24) & 0xff] << 24) |
-           (sbox[(word >> 16) & 0xff] << 16) |
-           (sbox[(word >> 8) & 0xff] << 8) |
-           (sbox[word & 0xff]);
-}
+\begin{align*}
+\text{State}[0][0] &= 5F \oplus D6 = 89 \\
+\text{State}[1][0] &= 72 \oplus D2 = A0 \\
+\text{State}[2][0] &= 64 \oplus E0 = 84 \\
+\text{State}[3][0] &= 15 \oplus 04 = 11
+\end{align*}
 
-void key_expansion(uint8_t key[16], uint8_t round_keys[11][16]) {
-    uint32_t *words = (uint32_t*)key;
-    uint32_t temp;
-    
-    // Copy original key as first round key
-    memcpy(round_keys[0], key, 16);
-    
-    // Generate remaining round keys
-    for (int i = 4; i < 44; i++) {
-        temp = words[i - 1];
-        
-        if (i % 4 == 0) {
-            temp = sub_word(rot_word(temp)) ^ rcon[i/4 - 1];
-        }
-        
-        words[i] = words[i - 4] ^ temp;
-        
-        // Copy to round keys (every 4 words = 16 bytes)
-        if ((i + 1) % 4 == 0) {
-            memcpy(round_keys[(i + 1)/4], &words[i - 3], 16);
-        }
-    }
-}
-\end{lstlisting}
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{89} & \textbf{35} & \textbf{62} & \textbf{C5} \\
+    \hline
+    \textbf{A0} & \textbf{85} & \textbf{C1} & \textbf{1E} \\
+    \hline
+    \textbf{84} & \textbf{38} & \textbf{0D} & \textbf{10} \\
+    \hline
+    \textbf{11} & \textbf{20} & \textbf{B3} & \textbf{7D} \\
+    \hline
+  \end{tabular}
+  \caption{State setelah AddRoundKey (akhir round 1).}
+\end{table}
 
-\subsection{Implementasi AES-128 Lengkap}
+\subsection{Ringkasan Transformasi}
 
-\begin{lstlisting}[style=cstyle, caption={AES-128 Enkripsi Lengkap}]
-#include <stdint.h>
-#include <string.h>
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lp{8cm}}
+    \toprule
+    \textbf{Operasi} & \textbf{Tujuan} \\
+    \midrule
+    SubBytes & Substitusi non-linear untuk confusion \\
+    ShiftRows & Permutasi untuk diffusion antar kolom \\
+    MixColumns & Mixing linear dalam GF($2^8$) untuk diffusion dalam kolom \\
+    AddRoundKey & Kombinasi dengan kunci untuk key-dependent transformation \\
+    \bottomrule
+  \end{tabular}
+  \caption{Ringkasan tujuan setiap operasi AES.}
+\end{table}
 
-// S-Box, Rcon, gmul, sub_bytes, shift_rows, mix_columns, add_round_key, key_expansion
-// ... (functions defined above)
+\noindent\textit{Catatan:}
+Trace lengkap ini menunjukkan bagaimana AES mengubah plaintext melalui kombinasi
+operasi non-linear (SubBytes), permutasi (ShiftRows), mixing (MixColumns), dan
+key addition (AddRoundKey). Setiap operasi berkontribusi pada confusion dan
+diffusion yang membuat AES sangat aman.
 
-void aes_encrypt(uint8_t plaintext[16], uint8_t ciphertext[16], uint8_t key[16]) {
-    uint8_t state[4][4];
-    uint8_t round_keys[11][16];
-    
-    // Key expansion
-    key_expansion(key, round_keys);
-    
-    // Copy plaintext to state
-    for (int r = 0; r < 4; r++) {
-        for (int c = 0; c < 4; c++) {
-            state[r][c] = plaintext[r * 4 + c];
-        }
-    }
-    
-    // Initial round
-    add_round_key(state, (uint8_t(*)[4])round_keys[0]);
-    
-    // Main rounds (1-9)
-    for (int round = 1; round <= 9; round++) {
-        sub_bytes(state);
-        shift_rows(state);
-        mix_columns(state);
-        add_round_key(state, (uint8_t(*)[4])round_keys[round]);
-    }
-    
-    // Final round (no MixColumns)
-    sub_bytes(state);
-    shift_rows(state);
-    add_round_key(state, (uint8_t(*)[4])round_keys[10]);
-    
-    // Copy state to ciphertext
-    for (int r = 0; r < 4; r++) {
-        for (int c = 0; c < 4; c++) {
-            ciphertext[r * 4 + c] = state[r][c];
-        }
-    }
-}
-
-int main() {
-    uint8_t plaintext[16] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
-                            0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
-    uint8_t key[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-                      0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-    uint8_t ciphertext[16];
-    
-    aes_encrypt(plaintext, ciphertext, key);
-    
-    printf("Plaintext:  ");
-    for (int i = 0; i < 16; i++) printf("%02x ", plaintext[i]);
-    printf("\nCiphertext: ");
-    for (int i = 0; i < 16; i++) printf("%02x ", ciphertext[i]);
-    printf("\n");
-    
-    return 0;
-}
-\end{lstlisting}
-
-\subsection{Optimasi Implementasi}
-
-Implementasi AES dapat dioptimasi dengan beberapa teknik:
-
-\begin{itemize}
-  \item \textbf{Tabel Lookup}: Pre-compute MixColumns dan SubBytes
-  \item \textbf{Bit-slicing}: Proses multiple bytes secara paralel
-  \item \textbf{Hardware Acceleration}: Gunakan AES-NI instruction
-  \item \textbf{Constant-time}: Hindari branching berdasarkan data
-\end{itemize}
-
-\begin{lstlisting}[style=cstyle, caption={Optimasi dengan Tabel Lookup}]
-// Pre-computed tables for rounds 1-9
-static uint32_t te0[256], te1[256], te2[256], te3[256];
-static uint32_t te4[256]; // For inverse
-
-void init_tables() {
-    for (int i = 0; i < 256; i++) {
-        uint8_t s = sbox[i];
-        te0[i] = (gmul(0x02, s) << 24) | (s << 16) | (s << 8) | gmul(0x03, s);
-        te1[i] = (te0[i] << 8) | (te0[i] >> 24);
-        te2[i] = (te1[i] << 8) | (te1[i] >> 24);
-        te3[i] = (te2[i] << 8) | (te2[i] >> 24);
-    }
-}
-
-// Optimized round (combines SubBytes, ShiftRows, MixColumns)
-void aes_round_optimized(uint32_t *state, uint32_t *round_key) {
-    state[0] ^= te0[(state[0] >> 24) & 0xff] ^
-             te1[(state[1] >> 16) & 0xff] ^
-             te2[(state[2] >> 8) & 0xff] ^
-             te3[state[3] & 0xff] ^
-             round_key[0];
-    // ... similar for state[1], state[2], state[3]
-}
-\end{lstlisting}
-
-\subsection{Keamanan Implementasi}
-
-Implementasi AES yang aman harus memperhatikan:
-
-\begin{itemize}
-  \item \textbf{Constant-time operations}: Hindari timing attacks
-  \item \textbf{Side-channel resistance}: Lindungi dari power analysis
-  \item \textbf{Memory safety}: Hindari buffer overflow
-  \item \textbf{Key protection}: Lindungi kunci dari memory dump
-\end{itemize}
-
-\begin{catatan}
-Implementasi di atas adalah untuk tujuan edukasi. Untuk produksi, gunakan library yang telah diaudit keamanannya seperti OpenSSL, libsodium, atau implementasi hardware dengan AES-NI.
-\end{catatan}

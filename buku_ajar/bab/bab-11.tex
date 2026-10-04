@@ -1,0 +1,52 @@
+﻿% \documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{\setcounter{chapter}{10}}{}
+% \begin{document}
+
+\chapter{Evaluasi, Refleksi, dan Integrasi Kompetensi}
+
+Bab ini berisi asesmen komprehensif untuk mengukur pencapaian \textbf{CPMK-1} (mengenal algoritma klasik dan modern) dan \textbf{CPMK-2} (memahami konsep dan urgensi di TI).
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab/bab-11/section-11-1}
+\input{bab/bab-11/section-11-2}
+\input{bab/bab-11/section-11-3}
+\input{bab/bab-11/section-11-4}
+
+% ============================================================
+% RANGKUMAN PERJALANAN PEMBELAJARAN
+% ============================================================
+
+\begin{rangkuman}
+Selamat! Anda telah menyelesaikan jalur pembelajaran Kriptografi sesuai silabus OBE.
+
+\textbf{Apa yang Telah Anda Pelajari}:
+\begin{itemize}
+  \item Konsep, CIA, dan urgensi kriptografi di TI (Sub-CPMK 2.1--2.2)
+  \item Matematika pengantar: modulo, prima, invers (2.3)
+  \item Cipher klasik dan gagasan frekuensi analisis (1.1)
+  \item Stream/block, DES, AES, mode operasi (1.2)
+  \item RSA, DH, ElGamal, pengantar ECC (1.3)
+  \item Hash, MAC, tanda tangan, PKI/TLS (1.4) dan studi kasus urgensi
+\end{itemize}
+
+\textbf{Sumber belajar}: Munir, Stallings, HAC, Schneier, Stinson, Katz, NIST, Boneh (lihat Daftar Pustaka / silabus Bagian~10).
+\end{rangkuman}
+
+\begin{transition}
+\textbf{Selamat Menyelesaikan Perjalanan Kriptografi!}
+
+Lanjutkan dengan membaca sumber daring silabus (slide Munir ITB, HAC, NIST, Boneh CS255) dan praktik demo ringan. Materi RNG/steganografi tersedia di lampiran opsional.
+\end{transition}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+\% end{document}
+
+
+
+

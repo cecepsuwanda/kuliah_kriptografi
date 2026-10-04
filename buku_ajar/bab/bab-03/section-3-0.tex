@@ -1,29 +1,31 @@
 \section{Peta Matematika untuk Kriptografi}
 
+Kriptografi adalah disiplin ilmu yang mengubah pesan menjadi bentuk yang tidak dapat dipahami tanpa kunci yang tepat. Untuk memastikan bahwa transformasi ini tidak dapat dibalikkan oleh penyerang, kriptografi tidak mengandalkan "kerahasiaan algoritma", melainkan pada kekerasan matematis. Keamanan sebuah cipher diukur dari tingkat kesulitan komputasi untuk memecahkannya tanpa kunci, sebuah konsep yang berakar pada teori kompleksitas.
+
 \subsection{Mengapa Matematika Penting dalam Kriptografi?}
 
-Keamanan kriptografi modern dibangun di atas fondasi matematika. Setiap algoritma yang akan kita pelajari---mulai dari Caesar hingga RSA---mengandalkan prinsip matematika tertentu:
+Matematika memberikan bahasa formal untuk mendefinisikan operasi enkripsi dan dekripsi. Tanpa landasan matematika, kita tidak dapat membuktikan apakah suatu algoritma benar-benar aman atau hanya "terlihat aman". Sebagai contoh, beberapa algoritma yang terlihat rumit secara prosedural ternyata sangat lemah terhadap analisis statistik sederhana jika tidak memiliki dasar matematis yang kuat.
 
+Berikut adalah keterkaitan antara konsep matematika spesifik dengan algoritma kriptografi:
 \begin{itemize}
-  \item \textbf{Caesar cipher} menggunakan \textbf{aritmetika modular} sederhana
-  \item \textbf{Vigen\`{e}re cipher} menerapkan operasi modular berulang
-  \item \textbf{RSA} mengandalkan \textbf{teori bilangan} (faktorisasi prima)
-  \item \textbf{AES} menggunakan \textbf{aljabar abstrak} (Galois Field)
+  \item \textbf{Aritmetika Modular}: Digunakan dalam hampir semua cipher, mulai dari Caesar yang sederhana hingga algoritma modern. Ia memastikan bahwa hasil operasi tetap berada dalam rentang tertentu (misalnya, 0--25 untuk alfabet).
+  \item \textbf{Teori Bilangan (Bilangan Prima)}: Menjadi jantung keamanan RSA. Keamanan RSA bergantung pada fakta bahwa mengalikan dua bilangan prima besar adalah mudah, tetapi memfaktorkan hasil kalinya kembali menjadi dua prima asli adalah masalah yang sangat sulit secara komputasi.
+  \item \textbf{Aljabar Abstrak (Galois Field)}: Digunakan dalam AES untuk memastikan bahwa setiap operasi transformasi data memiliki invers yang tepat dan efisien, sehingga proses dekripsi dapat dilakukan secara konsisten.
+  \item \textbf{Probabilitas dan Statistik}: Digunakan dalam kriptanalisis untuk mendeteksi pola dalam cipherteks (analisis frekuensi) dan dalam pengujian primality (seperti Miller-Rabin).
 \end{itemize}
 
-Dengan matematika, kita dapat menjelaskan tidak hanya ``bagaimana'' suatu cipher bekerja, tetapi juga ``mengapa'' cipher tersebut aman (atau tidak aman).
+\subsection{Lima Domain Matematika Kriptografi}
 
-\subsection{Lima Kelompok Materi}
+Untuk menguasai kriptografi, mahasiswa perlu memahami lima domain matematika utama yang saling berkaitan \cite{munir_slides_itb}:
 
-Materi matematika yang relevan untuk kriptografi dapat dikelompokkan menjadi lima \cite{munir_slides_itb}:
 \begin{enumerate}
-  \item \textbf{Teori bilangan}: integer dan aritmetika modulo, algoritma Euclid, kekongruenan, relatif prima, invers modulo, dan bilangan prima. Inilah inti bab ini (Bagian~\ref{sec:aritmetika-modular} sampai pangkat modular), dan menjadi dasar cipher klasik serta RSA.
-  \item \textbf{Probabilitas dan statistik}: dasar analisis frekuensi pada cipher klasik, uji primalitas probabilistik (Miller--Rabin), dan perhitungan peluang menebak kunci.
-  \item \textbf{Kompleksitas algoritma}: mengukur biaya serangan dan operasi, misalnya brute force atas kunci $k$ bit membutuhkan hingga $2^k$ percobaan, pangkat modular dapat dihitung dalam $O(\log b)$ langkah, sedangkan faktorisasi bilangan besar dipercaya sulit.
-  \item \textbf{Teori informasi}: entropi sebagai ukuran ketidakpastian; menjelaskan mengapa cipherteks yang baik tampak acak dan mengapa redundansi bahasa memudahkan kriptanalisis.
-  \item \textbf{Aljabar abstrak}: grup, ring, dan field; dasar operasi pada AES dan kriptografi kurva eliptik (ECC). Bab ini menyajikannya sebagai pengayaan di bagian akhir.
+    \item \textbf{Teori Bilangan}: Membahas integer, aritmetika modulo, algoritma Euclid, kekongruenan, relatif prima, invers modulo, dan bilangan prima. Ini adalah fondasi utama bagi cipher klasik dan RSA.
+    \item \textbf{Probabilitas dan Statistik}: Menyediakan alat untuk analisis frekuensi pada cipher klasik, uji primalitas probabilistik, serta perhitungan peluang keberhasilan serangan brute-force.
+    \item \textbf{Latar Belakang Kompleksitas}: Mengukur "biaya" dari sebuah serangan. Misalnya, serangan brute-force terhadap kunci $k$-bit membutuhkan hingga $2^{k-1}$ percobaan rata-rata. Kompleksitas algoritma (seperti $O(\log b)$ untuk pangkat modular) menentukan efisiensi implementasi.
+    \item \textbf{Teori Informasi}: Menggunakan konsep entropi untuk mengukur tingkat ketidakpastian. Domain ini menjelaskan mengapa cipherteks yang baik harus tampak seperti \textit{random noise} dan bagaimana redundansi bahasa memudahkan kriptanalisis.
+    \item \textbf{Aljabar Abstrak}: Mempelajari struktur grup, ring, dan field. Konsep ini adalah landasan bagi operasi pada AES dan Kriptografi Kurva Eliptik (ECC).
 \end{enumerate}
 
 \begin{catatan}
-Teori bilangan dasar sudah dipelajari di Matematika Diskrit, sedangkan probabilitas sudah dipelajari di Probabilitas dan Statistik. Bab ini mengulang secara ringkas dengan fokus pada penggunaannya dalam kriptografi.
+Meskipun beberapa materi ini telah dipelajari dalam mata kuliah Matematika Diskrit atau Probabilitas dan Statistik, dalam bab ini materi tersebut akan dibahas kembali dengan fokus khusus pada aplikasinya dalam keamanan informasi.
 \end{catatan}

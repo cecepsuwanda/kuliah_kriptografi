@@ -1,55 +1,37 @@
-\section{Cara Menggunakan Buku Ajar}
+\section{Panduan Penggunaan Buku Ajar}
 
-Pembelajaran disarankan dilakukan secara berurutan dari Bab I hingga Bab X (dan bab tambahan jika tersedia), karena setiap konsep dibangun di atas materi sebelumnya. Bab II menjadi fondasi teoretis, Bab III memperkuat matematika kriptografi, dan bab-bab berikutnya berfokus pada implementasi serta analisis keamanan yang lebih kompleks.
+Agar mendapatkan manfaat maksimal dari buku ini, mahasiswa sangat disarankan untuk mengikuti alur pembelajaran secara berurutan dari Bab I hingga Bab X. Struktur buku ini tidak bersifat modular yang terpisah-pisah, melainkan saling membangun (\textit{cumulative learning}); setiap bab menyediakan kepingan pengetahuan yang menjadi prasyarat bagi bab berikutnya.
 
 \subsection{Alur Pembelajaran yang Kohesif}
 
-Setiap bab dirancang untuk menjadi landasan bagi bab berikutnya:
+Setiap bab dirancang untuk menjadi fondasi bagi bab selanjutnya dengan logika sebagai berikut:
 \begin{itemize}
-  \item \textbf{Bab II} memberikan \textit{big picture} keamanan informasi yang menjawab "mengapa kita perlu kriptografi?"
-  \item \textbf{Bab III} menjawab "bagaimana matematika membuat kriptografi mungkin?" dengan fondasi yang akan digunakan langsung di Bab IV
-  \item \textbf{Bab IV} menerapkan matematika Bab III dalam cipher klasik, mempersiapkan Anda untuk algoritma modern di Bab V
-  \item \textbf{Bab V-VII} membangun dari cipher klasik ke algoritma modern, dengan matematika yang semakin kompleks
-  \item \textbf{Bab VIII-IX} mengintegrasikan semua konsep dalam protokol dan analisis keamanan nyata
+  \item \textbf{Bab II}: Memberikan \textit{big picture} mengenai keamanan informasi. Bab ini menjawab pertanyaan mendasar: "Mengapa kriptografi sangat krusial di era digital?" dan mengenalkan layanan keamanan (CIA).
+  \item \textbf{Bab III}: Menjawab pertanyaan "Bagaimana matematika membuat kriptografi menjadi mungkin?". Di sini, mahasiswa dibekali alat matematika (modulo, prima, invers) yang akan digunakan secara intensif di seluruh bab algoritma.
+  \item \textbf{Bab IV}: Menerapkan alat matematika Bab III ke dalam \textit{cipher} klasik. Ini adalah tahap transisi dari teori ke praktik sederhana, sekaligus mengenalkan cara berpikir seorang kriptanalis melalui analisis frekuensi.
+  \item \textbf{Bab V--VII}: Membangun kompleksitas dari cipher klasik menuju algoritma modern (Simetris $\to$ Asimetris $\to$ Hash). Di sini, mahasiswa akan melihat bagaimana matematika yang lebih abstrak (seperti \textit{Finite Fields}) digunakan untuk menciptakan keamanan yang sangat kuat.
+  \item \textbf{Bab VIII--IX}: Mengintegrasikan semua komponen (kunci publik, hash, tanda tangan) ke dalam protokol keamanan nyata (seperti TLS/HTTPS) dan mengevaluasinya dari perspektif serangan kriptanalisis modern.
 \end{itemize}
 
-\subsection{Struktur OBE untuk Pembelajaran Terukur}
+\subsection{Navigasi Struktur OBE}
 
-Gunakan struktur OBE di setiap bab sebagai panduan belajar. Komponen utama yang perlu diikuti adalah:
+Sesuai dengan prinsip \textit{Outcome-Based Education}, setiap bab memiliki struktur baku yang harus diikuti agar proses belajar terukur. Gunakan komponen berikut sebagai navigasi belajar Anda:
 \begin{itemize}
-  \item \textbf{Sub-CPMK}: target kompetensi yang harus dicapai
-  \item \textbf{Materi Pokok}: teori, contoh numerik, dan kode C
-  \item \textbf{Aktivitas Pembelajaran}: praktikum, diskusi, atau studi kasus
-  \item \textbf{Latihan}: penguatan konsep sebelum asesmen
-  \item \textbf{Asesmen}: alat ukur pencapaian Sub-CPMK
-  \item \textbf{Checklist}: evaluasi diri setelah belajar
+  \item \textbf{Sub-CPMK}: Bacalah bagian ini pertama kali. Ini adalah "janji" kompetensi yang harus Anda miliki setelah menyelesaikan bab tersebut.
+  \item \textbf{Materi Pokok}: Pelajari teori, perhatikan penurunan rumus matematis, dan analisis contoh-contoh numerik yang diberikan.
+  \item \textbf{Aktivitas Pembelajaran}: Jangan melewatkan bagian ini. Aktivitas (praktikum/diskusi) adalah jembatan yang mengubah pengetahuan teoretis menjadi keterampilan praktis.
+  \item \textbf{Latihan dan Refleksi}: Kerjakan soal latihan untuk menguji pemahaman Anda sebelum melangkah ke tahap asesmen.
+  \item \textbf{Asesmen}: Gunakan instrumen ini untuk mengukur sejauh mana Anda telah mencapai Sub-CPMK.
+  \item \textbf{Checklist Pencapaian}: Lakukan evaluasi diri menggunakan checklist ini. Jika ada poin yang belum bisa Anda centang, tinjau kembali bagian materi yang relevan.
 \end{itemize}
 
-\subsection{Koneksi Teori dan Praktik}
+\subsection{Keseimbangan Teori, Praktik, dan Analisis}
 
-Setiap bab dirancang dengan keseimbangan antara:
-\begin{itemize}
-  \item \textbf{Teori}: Konsep matematis dan prinsip kriptografi
-  \item \textbf{Implementasi}: Kode C yang menunjukkan bagaimana teori bekerja dalam praktik
-  \item \textbf{Analisis}: Mengapa suatu desain aman atau tidak
-\end{itemize}
+Buku ini menghindari pendekatan "hafalan algoritma". Sebaliknya, setiap topik dibahas melalui tiga dimensi:
+\begin{enumerate}
+    \item \textbf{Teori}: Apa prinsip dasarnya dan mengapa prinsip itu bekerja?
+    \item \textbf{Implementasi}: Bagaimana prinsip tersebut diterjemahkan menjadi kode program (C/Python)?
+    \item \textbf{Analisis}: Apa kelemahan desain tersebut dan bagaimana cara menyerangnya?
+\end{enumerate}
 
-Agar pembelajaran konsisten, alokasikan waktu belajar secara proporsional antara membaca materi, praktik, latihan, dan refleksi. Grafik berikut bersifat ilustratif dan dapat disesuaikan dengan kebutuhan belajar masing-masing mahasiswa.
-
-\begin{figure}[htbp]
-  \centering
-  \begin{tikzpicture}
-    \draw[->] (0,0) -- (0,4.5);
-    \draw[->] (0,0) -- (7,0);
-    \filldraw[blue!30] (0.8,0) rectangle (1.8,3.2);
-    \filldraw[green!30] (2.3,0) rectangle (3.3,2.8);
-    \filldraw[orange!30] (3.8,0) rectangle (4.8,1.6);
-    \filldraw[gray!30] (5.3,0) rectangle (6.3,1.0);
-    \node at (1.3,-0.4) {Materi};
-    \node at (2.8,-0.4) {Praktik};
-    \node at (4.3,-0.4) {Latihan};
-    \node at (5.8,-0.4) {Refleksi};
-    \node[rotate=90] at (-0.5,2.2) {Proporsi waktu};
-  \end{tikzpicture}
-  \caption{Ilustrasi proporsi waktu belajar per komponen (dapat disesuaikan).}
-\end{figure}
+Mahasiswa disarankan untuk mengalokasikan waktu belajar secara proporsional antara membaca teori, mencoba implementasi kode, mengerjakan latihan, dan melakukan refleksi terhadap materi yang telah dipelajari.

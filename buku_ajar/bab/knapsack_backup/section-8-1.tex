@@ -1,0 +1,33 @@
+﻿% Section 7.1: Persoalan Knapsack & Barisan Superincreasing
+\section{Persoalan Knapsack dan Barisan Superincreasing}
+
+\vspace{0.5cm}
+\noindent\colorbox{blue!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{\textbf{\large Sub-CPMK yang Dicakup dalam Bab Ini:}}}
+\vspace{0.3cm}
+\begin{itemize}[leftmargin=*, itemsep=5pt]
+  \item Mahasiswa mampu menjelaskan konsep Subset Sum Problem dan karakteristik barisan superincreasing sebagai dasar sistem kriptografi Knapsack.
+\end{itemize}
+\vspace{0.5cm}
+
+\subsection{Subset Sum Problem}
+Dasar keamanan dari kriptografi Knapsack adalah sebuah persoalan matematika yang dikenal sebagai \crypt{Subset Sum Problem}. Persoalan ini dinyatakan sebagai berikut:
+Diberikan sebuah himpunan bilangan bulat $S = \{s_1, s_2, \dots, s_n\}$ dan sebuah target jumlah $T$, apakah terdapat subset dari $S$ yang jika dijumlahkan hasilnya tepat sama dengan $T$?
+
+Secara komputasi, persoalan ini tergolong sebagai \crypt{NP-complete}, yang berarti tidak ada algoritma yang diketahui dapat menyelesaikannya dalam waktu polinomial untuk input yang besar, kecuali jika $P=NP$.
+
+\subsection{Barisan Superincreasing}
+Kunci untuk membuat sistem Knapsack yang dapat didekripsi secara efisien adalah menggunakan \crypt{Barisan Superincreasing}. Sebuah barisan $\{s_1, s_2, \dots, s_n\}$ dikatakan superincreasing jika setiap elemen lebih besar dari jumlah semua elemen sebelumnya:
+\[ s_i > \sum_{j=1}^{i-1} s_j \quad \text{untuk semua } i > 1 \]
+
+\textbf{Sifat Penting}: Jika sebuah barisan adalah superincreasing, maka Subset Sum Problem dapat diselesaikan dengan sangat mudah dan cepat menggunakan algoritma \textit{greedy} (dari elemen terbesar ke terkecil).
+
+\begin{aktivitas}
+  \item Diberikan barisan $S = \{2, 5, 11, 21, 45, 89, 179\}$.
+  \item 1. Buktikan bahwa barisan ini adalah superincreasing.
+  \item 2. Jika target $T = 126$, tentukan subset mana yang menghasilkan jumlah tersebut!
+\end{aktivitas}
+
+\begin{latihan}
+  \item Buatlah sebuah barisan superincreasing dengan 5 elemen yang dimulai dari angka 3. Tunjukkan bahwa barisan tersebut memenuhi syarat superincreasing!
+\end{latihan}
+

@@ -1,28 +1,32 @@
-\section{Steganografi dan Watermarking}
+﻿\section{Manajemen Kunci}
 
-\subsection{Konsep Steganografi}
+\subsection{Siklus Hidup Kunci}
 
-Steganografi menyembunyikan keberadaan pesan rahasia di dalam media pembawa (cover) sehingga tidak terlihat oleh pengamat biasa \cite{stallings2017}. Berbeda dengan kriptografi yang membuat pesan tidak terbaca, steganografi menyembunyikan fakta bahwa ada pesan. Keduanya dapat dikombinasikan: enkripsi dulu, lalu sembunyikan dalam cover.
+Manajemen kunci memerlukan pendekatan komprehensif untuk keamanan dan ketersediaan \cite{stallings2017}.
 
-\subsection{Metode LSB (Least Significant Bit)}
+\begin{itemize}
+  \item \textbf{Generasi}: Kunci harus dihasilkan dengan sumber acak yang aman (CSPRNG)
+  \item \textbf{Distribusi}: Kunci simetris dikirim melalui kanal aman atau pertukaran Diffie-Hellman
+  \item \textbf{Penyimpanan}: Kunci privat disimpan terenkripsi, dilindungi password atau HSM
+  \item \textbf{Penggunaan}: Hindari penggunaan ulang kunci untuk tujuan berbeda
+  \item \textbf{Pembaruan}: Rotasi kunci secara berkala
+  \item \textbf{Pencabutan}: Jika kunci bocor, cabut dan ganti segera
+\end{itemize}
 
-LSB mengganti bit paling tidak signifikan dari setiap byte sampel dengan bit pesan rahasia \cite{stallings2017}. Pada citra 24-bit (RGB), satu pixel = 3 byte; mengganti LSB setiap byte mengubah nilai pixel sangat sedikit (max $\pm 1$) sehingga tidak terlihat mata.
 
-Kapasitas: 1 bit per byte sampel. Untuk citra 640×480 RGB: $640 \times 480 \times 3 = 921{,}600$ bit $\approx$ 115 KB pesan rahasia.
+\subsection{Distribusi Kunci}
 
-\begin{lstlisting}[style=cstyle, caption={Prinsip LSB embedding (pseudocode)}]
-// Embed: ganti LSB byte cover dengan bit pesan
-for i = 0 to len(pesan)-1:
-    cover_byte = (cover_byte & 0xFE) | bit_pesan[i]
+\subsection{Arsitektur PKI}
 
-// Extract: baca LSB
-bit_pesan[i] = cover_byte & 1
-\end{lstlisting}
+PKI (Public Key Infrastructure) menyediakan kerangka untuk distribusi dan validasi kunci publik \cite{stallings2017}. Komponen:
+\begin{itemize}
+  \item \textbf{Certificate Authority (CA)}: Menerbitkan dan menandatangani sertifikat digital
+  \item \textbf{Registration Authority (RA)}: Mendaftarkan identitas pemohon sertifikat
+  \item \textbf{Validation Authority (VA)}: Memvalidasi permohonan sertifikat
+  \item \textbf{Certificate Database}: Menyimpan dan mengelola sertifikat yang diterbitkan
+  \item \textbf{Certificate Revocation}: Mencabut dan mendistribusikan daftar sertifikat yang dicabut
+  \item \textbf{Key Management}: Menyimpan dan melindungi kunci CA
+\end{itemize}
 
-\subsection{Watermarking}
+Format sertifikat mengikuti X.509 \cite{stallings2017}. Distribusi kunci simetris: Diffie-Hellman (TLS), hybrid encryption (RSA + AES), atau Key Distribution Center (KDC) untuk skema terpusat.
 
-Watermarking menyisipkan informasi (watermark) ke dalam media untuk kepemilikan atau integritas \cite{stallings2017}. Berbeda dengan steganografi: watermark sering dibuat robust terhadap modifikasi (kompresi, resize) sehingga masih dapat dideteksi. Steganografi lebih fokus pada kapasitas dan ketidakamatan.
-
-\subsection{Steganalis}
-
-Steganalis bertujuan mendeteksi atau mengekstrak pesan tersembunyi \cite{stallings2017}. Teknik: analisis statistik (distribusi LSB), deteksi anomali, machine learning. LSB naif dapat terdeteksi karena distribusi bit berubah. Steganografi robust menggunakan spread spectrum atau transform domain (DCT, DWT).

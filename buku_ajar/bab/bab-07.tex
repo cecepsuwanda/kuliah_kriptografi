@@ -1,89 +1,28 @@
-\documentclass[../main]{subfiles}
+﻿% \documentclass[../main]{subfiles}
 \ifSubfilesClassLoaded{\setcounter{chapter}{6}}{}
-\begin{document}
+% \begin{document}
 
-\chapter{Fungsi Hash dan Tanda Tangan Digital}
+\chapter{Kriptografi Knapsack dan Sejarah Kriptanalisis}
 
 \begin{subcpmk}
-  \item Sub-CPMK 1.4: Mengenal fungsi hash, MAC, tanda tangan digital, dan peran sertifikat (X.509) sebagai aplikasi algoritma modern
+  \item Sub-CPMK 1.4: Mahasiswa mampu menganalisis prinsip kerja sistem kriptografi Knapsack (Merkle-Hellman), memahami konsep barisan superincreasing, serta mengidentifikasi kelemahan sistem tersebut melalui analisis kriptanalisis Adi Shamir.
 \end{subcpmk}
 
-\noindent\textit{Rujukan:} Stallings \cite{stallings2017}; NIST \cite{nist}.
+\noindent\textit{Rujukan:} Referensi Knapsack 2026, HAC Bab~8 \cite{hac_online}.
 
 % ============================================================
 % MATERI POKOK
 % ============================================================
-\input{bab-07/section-7-1}
-\input{bab-07/section-7-1a-contoh-hash}
-\input{bab-07/section-7-2}
-\input{bab-07/section-7-2a}
-\input{bab-07/section-7-3}
-% section-7-4 (hash advanced) di luar tingkat pengenalan --- tidak diinput
-% \input{bab-07/section-7-4}
-
-% ============================================================
-% AKTIVITAS PEMBELAJARAN
-% ============================================================
-
-\begin{aktivitas}
-  \item \textbf{Demo}: Hitung SHA-256 suatu file (OpenSSL); ubah satu byte dan bandingkan hash.
-  \item \textbf{Diskusi}: Bedakan hash, MAC/HMAC, dan tanda tangan digital.
-  \item \textbf{Observasi}: Amati struktur sertifikat X.509 di browser.
-\end{aktivitas}
-
-% ============================================================
-% LATIHAN DAN REFLEKSI
-% ============================================================
-
-\begin{latihan}
-  \item Jelaskan ketiga sifat fungsi hash (preimage, second preimage, collision resistance) secara singkat.
-  \item Apa perbedaan hash, MAC, dan tanda tangan digital?
-  \item Mengapa pesan di-hash sebelum ditandatangani?
-  \item Apa peran sertifikat X.509 secara konsep?
-\end{latihan}
-
-% ============================================================
-% ASESMEN
-% ============================================================
-
-\begin{asesmen}
-\textbf{Instrumen Penilaian untuk Sub-CPMK 1.4}
-
-\textbf{A. Essay}
-
-\begin{enumerate}
-  \item Jelaskan peran fungsi hash dalam tanda tangan digital.
-  \item Bedakan MAC dan hash. Mengapa HMAC digunakan untuk autentikasi?
-  \item Jelaskan gagasan sertifikat X.509 dan chain of trust.
-\end{enumerate}
-\end{asesmen}
-
-% ============================================================
-% CHECKLIST KOMPETENSI
-% ============================================================
-
-\begin{checklist}
-  \item Saya mengenal sifat fungsi hash dan gagasan collision
-  \item Saya mengenal MAC/HMAC secara konsep
-  \item Saya mengenal tanda tangan digital dan sertifikat X.509 secara pengenalan
-\end{checklist}
+\input{bab/bab-07/section-7-1}
+\input{bab/bab-07/section-7-2}
+\input{bab/bab-07/section-7-3}
 
 % ============================================================
 % RANGKUMAN
 % ============================================================
 
 \begin{rangkuman}
-Bab ini membahas fungsi hash (MD5, SHA-1/256/3), MAC/HMAC, dan tanda tangan digital (RSA-Sig, DSA, ECDSA). Fungsi hash menyediakan integrity, MAC menyediakan integrity+authenticity, dan tanda tangan digital menyediakan non-repudiation.
-
-\textbf{Poin Kunci:}
-\begin{itemize}
-  \item Fungsi hash: one-way, collision resistance, fixed output
-  \item MAC: $MAC_k(m) = H(k \| m)$ untuk integrity dan authenticity
-  \item Tanda tangan digital: $Sig = Sign_{priv}(H(m))$, verifikasi dengan kunci publik
-  \item Sertifikat X.509: membungkus kunci publik dengan identitas
-\end{itemize}
-
-\textbf{Kata Kunci}: \crypt{Fungsi Hash}, \crypt{SHA-256}, \crypt{MAC}, \crypt{HMAC}, \crypt{Tanda Tangan Digital}, \crypt{RSA-Sig}, \crypt{DSA}, \crypt{Sertifikat Digital}
+Bab ini membahas kriptografi Knapsack, salah satu upaya awal dalam menciptakan sistem kunci publik. Kita mempelajari bagaimana persoalan \crypt{Subset Sum Problem} yang bersifat NP-complete digunakan sebagai dasar keamanan, bagaimana barisan \crypt{superincreasing} mempermudah dekripsi, dan bagaimana analisis matematis Adi Shamir berhasil mematahkan keamanan sistem Merkle-Hellman.
 \end{rangkuman}
 
 % ============================================================
@@ -91,7 +30,9 @@ Bab ini membahas fungsi hash (MD5, SHA-1/256/3), MAC/HMAC, dan tanda tangan digi
 % ============================================================
 
 \begin{transition}
-Setelah mengenal hash dan tanda tangan, kita masuk \textbf{Bab VIII: Protokol dan Manajemen Kunci} (Sub-CPMK 1.4 dan 2.2): PKI, SSL/TLS, dan urgensi HTTPS di TI.
+Setelah mempelajari bagaimana sebuah sistem kriptografi bisa runtuh akibat kriptanalisis yang tepat (seperti pada Knapsack), kita akan mempelajari komponen keamanan yang tidak hanya menjaga kerahasiaan, tetapi juga integritas data dan autentikasi pesan.
+
+Dalam \textbf{Bab VIII: Fungsi Hash, MAC, dan Tanda Tangan Digital}, kita akan membahas bagaimana menciptakan "sidik jari digital" yang unik untuk data dan bagaimana memastikan bahwa pesan tidak diubah selama pengiriman.
 \end{transition}
 
 \ifSubfilesClassLoaded{
@@ -99,4 +40,4 @@ Setelah mengenal hash dan tanda tangan, kita masuk \textbf{Bab VIII: Protokol da
   \bibliographystyle{plain}
   \bibliography{../references}
 }{}
-\end{document}
+\% end{document}

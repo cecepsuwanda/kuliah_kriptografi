@@ -1,117 +1,108 @@
-\section{Implementasi RSA dalam C}
+\section{Pertukaran Kunci Diffie-Hellman dan ElGamal}
 
-Implementasi RSA yang aman memerlukan perhatian pada side-channel dan operasi constant-time \cite{ferguson2010}. Untuk pembelajaran gunakan bilangan kecil; untuk produksi gunakan library (OpenSSL, GMP).
+\begin{subcpmk}
+  \item Mahasiswa mampu menganalisis protokol pertukaran kunci Diffie-Hellman, menguraikan landasan matematis \textit{Discrete Logarithm Problem} (DLP), mengevaluasi kerentanan terhadap serangan \textit{Man-in-the-Middle}, serta mengimplementasikan algoritma enkripsi ElGamal.
+\end{subcpmk}
 
-\subsection{Implementasi Edukatif dengan Bilangan Kecil}
+\noindent\textit{Rujukan:} Munir \cite{munir2019,munir_slides_itb}; HAC Bab~8 \cite{hac_online}; Katz \& Lindell \cite{katz2020}; Boneh \cite{boneh_cs255}.
 
-Implementasi sederhana berguna untuk memahami konsep dasar RSA:
-\begin{lstlisting}[style=cstyle, caption={RSA Sederhana dengan Bilangan Kecil (C)}]
-#include <stdio.h>
+\subsection{Masalah Logaritma Diskret (\textit{Discrete Logarithm Problem} - DLP)}
 
-long long mod_pow(long long base, long long exp, long long mod) {
-    long long result = 1;
-    base = base % mod;
-    while (exp > 0) {
-        if (exp % 2 == 1) result = (result * base) % mod;
-        exp /= 2;
-        base = (base * base) % mod;
-    }
-    return result;
-}
+Keamanan sebagian besar sistem kunci publik, termasuk Diffie-Hellman dan ElGamal, tidak didasarkan pada faktorisasi (seperti RSA), melainkan pada kesulitan menghitung logaritma diskret.
 
-int main() {
-    long long p = 61, q = 53;
-    long long n = p * q;
-    long long phi = (p-1) * (q-1);
-    long long e = 17;
-    long long d = 2753;  /* e^(-1) mod phi, precomputed */
-    
-    long long m = 65;  /* plaintext */
-    long long c = mod_pow(m, e, n);
-    long long m2 = mod_pow(c, d, n);
-    
-    printf("Plaintext: %lld\n", m);
-    printf("Ciphertext: %lld\n", c);
-    printf("Decrypted: %lld\n", m2);
-    return 0;
-}
-\end{lstlisting}
+\textbf{Definisi DLP}: Misalkan $p$ adalah bilangan prima besar dan $g$ adalah generator dari grup multiplikatif $\mathbb{Z}_p^*$. Jika diberikan nilai $y = g^x \pmod{p}$, maka mencari nilai $x$ sedemikian sehingga persamaan tersebut terpenuhi adalah masalah yang sangat sulit secara komputasi apabila $p$ cukup besar.
 
-Kode di atas hanya untuk pembelajaran; tidak memiliki padding aman atau constant-time operations.
+Operasi $g^x \pmod{p}$ (eksponensiasi modular) adalah \textit{one-way function}: sangat mudah dihitung menggunakan algoritma \textit{square-and-multiply}, namun sangat sulit untuk dibalikkan (mencari $x$ dari $y$) jika $p$ dipilih dengan benar (misal: $p$ adalah \textit{safe prime}).
 
-\subsection{Implementasi Produksi dengan OpenSSL}
+\subsection{Protokol Pertukaran Kunci Diffie-Hellman (DH)}
 
-Untuk RSA nyata, gunakan API OpenSSL berbasis \code{EVP\_PKEY} dan padding OAEP/PSS \cite{rfc8017}.
+\crypt{Diffie-Hellman Key Exchange} (DH) bukanlah algoritma enkripsi, melainkan protokol yang memungkinkan dua pihak yang tidak saling mengenal untuk menyepakati sebuah \crypt{Shared Secret} (kunci rahasia bersama) melalui saluran komunikasi publik yang tidak aman.
 
-\begin{lstlisting}[style=cstyle, caption={Cuplikan EVP untuk RSA-OAEP (ringkas)}]
-EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
-EVP_PKEY_encrypt_init(ctx);
-EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_OAEP_PADDING);
-EVP_PKEY_CTX_set_rsa_oaep_md(ctx, EVP_sha256());
-EVP_PKEY_encrypt(ctx, out, &outlen, in, inlen);
-\end{lstlisting}
-
-\begin{lstlisting}[style=cstyle, caption={Cuplikan EVP untuk RSA-PSS (ringkas)}]
-EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
-EVP_PKEY_sign_init(ctx);
-EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PSS_PADDING);
-EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256());
-EVP_PKEY_sign(ctx, sig, &siglen, msg, msglen);
-\end{lstlisting}
-
-
-\subsection{Keamanan Implementasi dan Side-Channel Attacks}
-
-Implementasi RSA yang aman harus memperhatikan berbagai aspek keamanan:
+\subsubsection{Parameter Publik}
+Sebelum memulai, kedua pihak menyepakati dua parameter publik:
 \begin{itemize}
-  \item \textbf{Random Number Generation}: Gunakan RNG kriptografis yang kuat untuk kunci dan salt.
-  \item \textbf{Constant-Time Operations}: Implementasi operasi modular yang waktu eksekusinya konstan.
-  \item \textbf{Blinding}: Gunakan cryptographic blinding untuk melindungi dari timing attacks.
-  \item \textbf{Memory Security}: Hapus sensitif data dari memory setelah digunakan.
-  \item \textbf{Input Validation}: Validasi semua input sebelum diproses.
+    \item $p$: Bilangan prima besar (modulus).
+    \item $g$: Generator atau akar primitif dari $p$ (berarti $g^1, g^2, \dots, g^{p-1} \pmod{p}$ menghasilkan seluruh elemen dari $1$ sampai $p-1$).
 \end{itemize}
 
-Timing attacks (Kocher, 1995) dapat mendeduksi kunci dari waktu dekripsi. Gunakan constant-time dan blinding \cite{ferguson2010}.
-
-\subsection{Cryptographic Blinding}
-
-Cryptographic blinding melindungi dari timing attacks.
-
-Implementasi blinding dalam RSA:
+\subsubsection{Langkah-Langkah Protokol}
 \begin{enumerate}
-  \item Pilih nilai acak $r$ untuk setiap operasi dekripsi
-  \item Hitung $c' = c \cdot r^e \bmod n$
-  \item Lakukan dekripsi: $m' = (c')^d \bmod n$
-  \item Hilangkan blinding: $m = m' \cdot r^{-1} \bmod n$
+    \item \textbf{Sisi Alice}:
+    \begin{itemize}
+        \item Membangkitkan kunci privat $a$ secara acak ($1 < a < p-1$).
+        \item Menghitung kunci publik $A = g^a \pmod{p}$.
+        \item Mengirimkan $A$ kepada Bob.
+    \end{itemize}
+    \item \textbf{Sisi Bob}:
+    \begin{itemize}
+        \item Membangkitkan kunci privat $b$ secara acak ($1 < b < p-1$).
+        \item Menghitung kunci publik $B = g^b \pmod{p}$.
+        \item Mengirimkan $B$ kepada Alice.
+    \end{itemize}
+    \item \textbf{Penghitungan Kunci Bersama (\textit{Shared Secret})}:
+    \begin{itemize}
+        \item Alice menghitung $S = B^a \pmod{p}$.
+        \item Bob menghitung $S = A^b \pmod{p}$.
+    \end{itemize}
 \end{enumerate}
 
+\textbf{Pembuktian Kesamaan Kunci}:
+Sesuai dengan hukum eksponen, kedua pihak akan mendapatkan nilai $S$ yang sama karena:
+\[ S = (g^b)^a \equiv g^{ba} \equiv g^{ab} \equiv (g^a)^b \pmod{p} \]
 
-\subsection{Optimasi Performa dengan Chinese Remainder Theorem}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{bab-06/diffie-hellman-diagram}
+  \caption{Alur pertukaran kunci Diffie-Hellman: dari pemilihan parameter publik hingga tercapainya \textit{shared secret} $g^{ab} \pmod{p}$.}
+  \label{fig:dh-diagram}
+\end{figure}
 
-Optimasi CRT memberikan percepatan hingga 4x untuk dekripsi.
+\subsection{Kriptografi Hibrida (\textit{Hybrid Cryptography})}
 
-\begin{lstlisting}[style=cstyle, caption={Optimasi CRT untuk RSA Dekripsi}]
-// Precompute CRT parameters
-long long dP = d % (p-1);
-long long dQ = d % (q-1);
-long long qInv = mod_inverse(q, p);
+Karena komputasi eksponensiasi modular jauh lebih lambat dibandingkan operasi XOR atau substitusi pada cipher simetris, DH tidak digunakan untuk mengenkripsi pesan besar. Sebagai gantinya, digunakan pendekatan \textbf{Hibrida}:
+\begin{enumerate}
+    \item \textbf{Fase Kunci}: Menggunakan Diffie-Hellman (atau RSA) untuk menyepakati satu kunci simetris pendek (misal: 256-bit untuk AES).
+    \item \textbf{Fase Data}: Menggunakan kunci simetris tersebut untuk mengenkripsi data massal menggunakan AES.
+\end{enumerate}
+Alur ini menggabungkan \textit{keamanan distribusi kunci} dari kriptografi asimetris dengan \textit{efisiensi performa} dari kriptografi simetris.
 
-// CRT-based decryption
-long long m1 = mod_pow(c, dP, p);
-long long m2 = mod_pow(c, dQ, q);
-long long h = ((qInv * (m1 - m2)) % p) * q;
+\subsection{Serangan Man-in-the-Middle (MitM)}
 
-long long m = (m2 + h) % n;
-\end{lstlisting}
+Kelemahan fundamental DH standar adalah \textbf{ketiadaan autentikasi}. Protokol ini tidak menjamin bahwa pihak yang berkomunikasi adalah benar-benar orang yang dimaksud. Penyerang (Mallory) dapat melakukan serangan MitM:
+\begin{enumerate}
+    \item Mallory mencegat $A$ dari Alice, lalu mengirimkan $A' = g^{m_1} \pmod{p}$ miliknya sendiri kepada Bob.
+    \item Mallory mencegat $B$ dari Bob, lalu mengirimkan $B' = g^{m_2} \pmod{p}$ miliknya sendiri kepada Alice.
+\end{enumerate}
+Hasilnya, Alice menyepakati kunci $S_1 = g^{m_2 a}$ dengan Mallory, dan Bob menyepakati kunci $S_2 = g^{m_1 b}$ dengan Mallory. Mallory kini dapat mendekripsi semua pesan dari Alice, membacanya, mengubahnya, lalu mengenkripsi ulang dengan $S_2$ sebelum dikirim ke Bob.
 
+\subsection{Algoritma Enkripsi ElGamal}
 
-\subsection{Validasi dan Testing}
+ElGamal adalah pengembangan dari protokol Diffie-Hellman menjadi sistem enkripsi kunci publik yang lengkap.
 
-Implementasi RSA harus divalidasi secara menyeluruh sebelum digunakan dalam produksi:
-\begin{itemize}
-  \item \textbf{Known Answer Tests}: Uji dengan vektor test yang telah dipublikasikan.
-  \item \textbf{Randomized Tests}: Uji dengan input acak untuk mendeteksi bug.
-  \item \textbf{Side-Channel Tests}: Uji resistensi terhadap timing dan cache attacks.
-  \item \textbf{Performance Tests}: Uji throughput dan latensi untuk berbagai ukuran kunci.
-\end{itemize}
+\subsubsection{Pembangkitan Kunci}
+1. Pilih bilangan prima besar $p$ dan generator $g$.
+2. Pilih kunci privat $x$ secara acak ($1 < x < p-1$).
+3. Hitung kunci publik $y = g^x \pmod{p}$.
+\textbf{Kunci Publik}: $(p, g, y)$, \textbf{Kunci Privat}: $x$.
 
+\subsubsection{Enkripsi}
+Untuk mengirim pesan $M$ kepada pemilik kunci:
+1. Pilih bilangan acak efemer $k$ sedemikian sehingga $\gcd(k, p-1) = 1$.
+2. Hitung pasangan cipherteks $(c_1, c_2)$:
+   \[ c_1 = g^k \pmod{p}, \quad c_2 = M \cdot y^k \pmod{p} \]
+
+\subsubsection{Dekripsi}
+Penerima memulihkan pesan $M$ dengan menghitung:
+\[ M = c_2 \cdot (c_1^x)^{-1} \pmod{p} \]
+Karena $c_1^x = (g^k)^x = (g^x)^k = y^k$, maka $c_2 \cdot (y^k)^{-1} = (M \cdot y^k) \cdot (y^k)^{-1} = M \pmod{p}$.
+
+\begin{aktivitas}
+  \item \textbf{Simulasi DH}: Lakukan pertukaran kunci Diffie-Hellman dengan parameter $p=23$ dan $g=5$. Alice memilih $a=6$ dan Bob memilih $b=15$. Hitung kunci publik masing-masing dan tentukan nilai \textit{shared secret} $S$ yang dihasilkan.
+\end{aktivitas}
+
+\begin{latihan}
+  \item Jelaskan mengapa pemilihan generator $g$ yang salah dapat melemahkan keamanan protokol Diffie-Hellman!
+  \item Buktikan secara matematis bahwa enkripsi ElGamal memberikan kerahasiaan pesan berdasarkan kesulitan DLP!
+  \item Dalam serangan MitM pada DH, bagaimana penggunaan sertifikat digital yang ditandatangani oleh \textit{Certificate Authority} (CA) dapat mencegah Mallory menyamar sebagai Bob?
+  \item Hitunglah enkripsi pesan $M=10$ menggunakan algoritma ElGamal dengan parameter $p=23, g=5, x=6, k=3$!
+\end{latihan}

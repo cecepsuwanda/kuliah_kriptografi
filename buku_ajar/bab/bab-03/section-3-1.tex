@@ -1,173 +1,47 @@
-\section{Aritmetika Modular}
-\label{sec:aritmetika-modular}
+\section{Aritmetika Modular dan Kongruensi}
 
-\subsection{Peran Aritmetika Modular dalam Kriptografi}
+Aritmetika modular, yang sering disebut sebagai "matematika jam", adalah fondasi dari hampir semua operasi kriptografi. Konsep ini memungkinkan kita untuk bekerja dengan himpunan bilangan yang terbatas, yang sangat penting untuk implementasi digital di mana memori dan ukuran register memiliki batas tertentu.
 
-Aritmetika modular adalah alat teori bilangan yang paling sering muncul dalam kriptografi. Rumus-rumus berikut akan Anda jumpai lagi di bab-bab berikutnya:
+\subsection{Operasi Modulo}
 
-\begin{itemize}
-  \item \textbf{Caesar cipher}: $E(x) = (x + k) \bmod 26$ — pergeseran huruf sederhana
-  \item \textbf{Vigenère cipher}: $E(x_i) = (x_i + k_i) \bmod 26$ — pergeseran bergantian kunci
-  \item \textbf{RSA}: $c = m^e \bmod n$ — enkripsi kunci publik
-  \item \textbf{Diffie-Hellman}: $g^{ab} \bmod p$ — pertukaran kunci
-  \item \textbf{AES}: Operasi dalam $\mathrm{GF}(2^8)$ — aritmetika modular byte
-\end{itemize}
+Operasi modulo adalah operasi yang menghasilkan sisa bagi dari pembagian dua bilangan bulat. Jika kita memiliki dua bilangan bulat $a$ dan $n$ (dengan $n > 0$), maka $a \pmod{n}$ adalah sisa bagi dari $a$ dibagi oleh $n$. Secara formal, menurut algoritma pembagian, terdapat bilangan bulat unik $q$ (kuosien) dan $r$ (sisa) sedemikian sehingga:
+\[ a = qn + r \quad \text{dengan } 0 \le r < n \]
+Nilai $r$ inilah yang disebut sebagai $a \pmod{n}$.
 
-Konsep pada bagian ini langsung diterapkan di Bab~IV (cipher klasik) dan bab-bab berikutnya.
+\textbf{Contoh 1}:
+$17 \pmod{5} = 2$, karena $17 = 3 \cdot 5 + 2$.
 
-\subsection{Definisi Kongruensi}
-
-Dua bilangan bulat $a$ dan $b$ dikatakan \textbf{kongruen modulo $n$} jika $n$ membagi $(a - b)$. Ditulis:
-\[
-a \equiv b \pmod{n} \quad \Leftrightarrow \quad n \mid (a - b)
-\]
-
-\begin{contoh}
-$17 \equiv 2 \pmod{5}$ karena $17 - 2 = 15$ habis dibagi 5. Dengan kata lain, $17 \bmod 5 = 2$.
-\end{contoh}
-
-Aritmetika modular membentuk fondasi matematis untuk banyak algoritma kriptografi modern, terutama RSA \cite{stallings2017,rosulek2021}. Operasi modular memungkinkan hasil selalu berada dalam rentang tertentu dan menciptakan masalah satu arah: mengalikan atau memangkatkan mudah, tetapi membalik tanpa kunci sangat sulit. Sifat ini ideal untuk kriptografi.
-
-Analogi jam sering digunakan untuk menjelaskan konsep modular arithmetic di mana jam analog dengan 12 jam secara alami menggunakan operasi modulo 12. Jika jam menunjukkan pukul 11 dan kita ingin mengetahui waktu setelah 4 jam, hasilnya adalah pukul 3, bukan pukul 15, karena dalam sistem 12-jam kita "melilit kembali" setelah mencapai 12. Konsep melilit kembali (wrap-around) ini adalah esensi dari aritmetika modular dan sangat penting dalam kriptografi di mana kita ingin membatasi hasil operasi dalam rentang tertentu.
-
-\subsection{Representasi \texorpdfstring{$\mathbb{Z}_n$}{Z\_n} dan Bilangan Negatif}
-
-Hasil operasi modulo $n$ direpresentasikan sebagai kelas sisa dalam himpunan $\mathbb{Z}_n$ \cite{shoup2009,stanford_numbertheory}. Secara eksplisit, $\mathbb{Z}_n = \{0, 1, \ldots, n-1\}$. Dalam implementasi, nilai negatif sering dinormalisasi dengan:
-\[
-a \bmod n = ((a \bmod n) + n) \bmod n
-\]
-sehingga hasil selalu berada di rentang $0$ sampai $n-1$.
-
-\begin{contoh}
-$-3 \bmod 11 = 8$ karena $-3 \equiv 8 \pmod{11}$.
-\end{contoh}
-
-\begin{figure}[htbp]
-  \centering
-  \begin{tikzpicture}[scale=1]
-    \foreach \i in {0,...,11} {
-      \node[circle, draw, inner sep=2pt] (n\i) at ({90-30*\i}:2) {\i};
-    }
-    \draw[->, thick] (n0) to[bend left=20] node[midway, right] {$+5$} (n5);
-  \end{tikzpicture}
-  \caption{Representasi jam aritmetika modular (mod 12).}
-\end{figure}
-
-Dalam implementasi kriptografi, representasi $\mathbb{Z}_n$ sangat penting untuk memastikan konsistensi hasil operasi dan mencegah error yang disebabkan oleh nilai negatif atau overflow. Normalisasi nilai negatif dengan menambahkan modulus sebelum mengambil modulo lagi memastikan bahwa semua hasil berada dalam rentang yang diharapkan. Pendekatan ini sangat penting dalam implementasi algoritma RSA di mana operasi modular dilakukan berulang kali pada bilangan yang sangat besar.
-
-\subsection{Operasi Dasar}
-
-Aritmetika modular memenuhi sifat-sifat \cite{trappe2006}:
-\begin{itemize}
-  \item $(a + b) \bmod n = ((a \bmod n) + (b \bmod n)) \bmod n$
-  \item $(a - b) \bmod n = ((a \bmod n) - (b \bmod n) + n) \bmod n$
-  \item $(a \cdot b) \bmod n = ((a \bmod n) \cdot (b \bmod n)) \bmod n$
-\end{itemize}
-
-\begin{contoh}
-$(8 - 13) \bmod 11 = (-5) \bmod 11 = 6$.
-\end{contoh}
-
-Sifat distributif aritmetika modular memungkinkan optimasi komputasi yang signifikan dalam implementasi kriptografi, terutama saat bekerja dengan bilangan yang sangat besar seperti dalam RSA. Dengan mengurangi setiap operan terlebih dahulu sebelum melakukan operasi aritmetika, kita dapat mencegah overflow dan meningkatkan efisiensi perhitungan. Teknik ini sangat penting dalam implementasi praktis di mana kita harus melakukan operasi modular berulang kali tanpa kehilangan presisi atau performa.
-
-\subsection{Relatif Prima}
-
-Dua bilangan bulat $a$ dan $b$ disebut \textbf{relatif prima} (koprima) jika faktor persekutuan terbesarnya sama dengan 1, yaitu $\gcd(a, b) = 1$ \cite{munir_slides_itb}. Dengan kata lain, $a$ dan $b$ tidak memiliki faktor bersama selain 1.
-
-\begin{contoh}
-$23$ dan $40$ relatif prima karena $\gcd(23, 40) = 1$. Sebaliknya, $20$ dan $26$ tidak relatif prima karena $\gcd(20, 26) = 2$.
-\end{contoh}
-
-Konsep ini menentukan kapan sebuah bilangan memiliki invers modulo $n$ (subbagian berikutnya), dan cara menghitung $\gcd$ secara efisien dibahas pada algoritma Euclid.
-
-\subsection{Invers Modular}
-
-Jika $a \cdot x \equiv 1 \pmod{n}$, maka $x$ adalah \textbf{invers modular} dari $a$ modulo $n$, ditulis $x = a^{-1} \pmod{n}$.
-
-\begin{konsep}
-Invers modular dari $a$ modulo $n$ hanya ada jika $\gcd(a, n) = 1$. Jika $\gcd(a, n) \neq 1$, maka $a$ tidak memiliki invers modulo $n$.
-\end{konsep}
-
-\begin{contoh}
-$3^{-1} \equiv 7 \pmod{10}$ karena $3 \cdot 7 = 21 \equiv 1 \pmod{10}$.
-\end{contoh}
-
-\begin{table}[htbp]
-  \centering
-  \small
-  \begin{tabular}{cc}
-    \toprule
-    $a$ & $a^{-1} \bmod 11$ \\
-    \midrule
-    1 & 1 \\
-    2 & 6 \\
-    3 & 4 \\
-    4 & 3 \\
-    5 & 9 \\
-    6 & 2 \\
-    7 & 8 \\
-    8 & 7 \\
-    9 & 5 \\
-    10 & 10 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Invers modular untuk modulus 11.}
-\end{table}
-
-Invers modular merupakan konsep fundamental dalam kriptografi kunci publik \cite{shoup2009}. Algoritma Euclid diperluas menyediakan metode efisien untuk menghitung invers modular tanpa brute force yang tidak praktis untuk bilangan besar. Kemampuan menghitung invers modular dengan cepat sangat penting untuk generasi kunci RSA.
-
-\begin{contoh}
-Kumpulan contoh singkat \cite{munir_slides_itb}:
-\begin{enumerate}[label=(\roman*)]
-  \item $23 \bmod 5 = 3$, karena $23 = 4 \cdot 5 + 3$.
-  \item $-41 \bmod 9 = 4$, karena $41 \bmod 9 = 5$ dan $9 - 5 = 4$ (periksa: $-41 = -5 \cdot 9 + 4$).
-  \item $17 \equiv 2 \pmod{3}$, karena $3 \mid (17 - 2)$.
-  \item $-7 \equiv 15 \pmod{11}$, karena $11 \mid (-7 - 15) = -22$.
-  \item $4^{-1} \equiv 7 \pmod{9}$, karena $4 \cdot 7 = 28 \equiv 1 \pmod{9}$.
-  \item $23^{-1} \equiv -3 \equiv 7 \pmod{10}$, karena $23 \cdot (-3) = -69 \equiv 1 \pmod{10}$.
+\textbf{Contoh 2 (Bilangan Negatif)}:
+Dalam kriptografi, kita sering menemui hasil operasi yang negatif (terutama saat dekripsi). Untuk menghitung $-a \pmod{n}$, kita harus memastikan hasilnya tetap berada dalam rentang $[0, n-1]$. Rumusnya adalah:
+\[ -a \pmod{n} = n - (|a| \pmod{n}) \]
+Sebagai contoh, hitung $-14 \pmod{5}$:
+\begin{enumerate}
+    \item $|-14| \pmod{5} = 4$ (karena $14 = 2 \cdot 5 + 4$).
+    \item Maka, $-14 \pmod{5} = 5 - 4 = 1$.
 \end{enumerate}
-\end{contoh}
+Verifikasi: $-14 = (-3 \cdot 5) + 1$. Sisa baginya adalah 1.
 
-\subsection{Pembagian Modular}
+\subsection{Kongruensi Modular}
 
-Pembagian modular didefinisikan melalui invers: 
-\[
-\frac{a}{b} \bmod n \equiv a \cdot b^{-1} \bmod n
-\]
-dengan syarat $\gcd(b, n) = 1$ \cite{rosulek2021}. Jika syarat tidak terpenuhi, pembagian modular tidak terdefinisi.
+Dua bilangan bulat $a$ dan $b$ dikatakan \textbf{kongruen modulo $n$} jika keduanya memberikan sisa yang sama saat dibagi $n$. Secara notasi, hal ini ditulis sebagai:
+\[ a \equiv b \pmod{n} \]
+Kondisi ini ekuivalen dengan pernyataan bahwa $n$ membagi habis selisih antara $a$ dan $b$, atau dalam notasi matematika: $n \mid (a - b)$.
 
-\begin{contoh}
-$4 / 3 \bmod 11 = 4 \cdot 4 \bmod 11 = 5$, karena $3^{-1} \equiv 4 \pmod{11}$.
-Sebaliknya, $2 / 6 \bmod 10$ tidak terdefinisi karena $\gcd(6, 10) = 2$.
-\end{contoh}
+\textbf{Contoh}:
+$23 \equiv 8 \pmod{5}$ karena $23 - 8 = 15$, dan $15$ habis dibagi oleh $5$.
 
-Pembagian modular sangat penting dalam protokol kriptografi modern seperti Diffie-Hellman key exchange dan skema tanda tangan digital. Dalam implementasi praktis, pembagian modular harus dilakukan dengan hati-hati untuk memastikan bahwa pembagi memiliki invers modular sebelum melakukan operasi. Kegagalan memeriksa syarat $\gcd(b, n) = 1$ dapat menyebabkan error runtime atau hasil yang tidak diharapkan dalam aplikasi kriptografi.
-
-\subsection{Aplikasi dalam Cipher Klasik}
-
-Sebagai preview ke Bab IV, mari kita lihat bagaimana modular arithmetic diterapkan dalam cipher klasik:
-
-\textbf{Caesar Cipher}: $E(x) = (x + k) \bmod 26$
+Sifat-sifat kongruensi modular yang sering digunakan dalam kriptografi meliputi:
 \begin{itemize}
-  \item $x$ adalah posisi huruf (A=0, B=1, ..., Z=25)
-  \item $k$ adalah kunci (pergeseran)
-  \item Operasi modulo 26 memastikan hasil tetap dalam range A-Z
+    \item \textbf{Penjumlahan}: Jika $a \equiv b \pmod{n}$ dan $c \equiv d \pmod{n}$, maka $(a + c) \equiv (b + d) \pmod{n}$.
+    \item \textbf{Perkalian}: Jika $a \equiv b \pmod{n}$ dan $c \equiv d \pmod{n}$, maka $(a \cdot c) \equiv (b \cdot d) \pmod{n}$.
+    \item \textbf{Pemangkatan}: Jika $a \equiv b \pmod{n}$, maka $a^k \equiv b^k \pmod{n}$ untuk setiap bilangan bulat positif $k$.
 \end{itemize}
 
-\textbf{Dekripsi Caesar}: $D(y) = (y - k) \bmod 26$
-\begin{itemize}
-  \item Invers dari enkripsi adalah operasi pengurangan modular
-  \item Karena $(x + k - k) \bmod 26 = x \bmod 26$, dekripsi berhasil
-\end{itemize}
+\subsection{Relevansi dalam Kriptografi}
 
-Contoh: Enkripsi "HELLO" dengan $k=3$:
-\begin{itemize}
-  \item H (7) $\rightarrow$ (7+3) $\bmod 26$ = 10 = K
-  \item E (4) $\rightarrow$ (4+3) $\bmod 26$ = 7 = H
-  \item L (11) $\rightarrow$ (11+3) $\bmod 26$ = 14 = O
-  \item L (11) $\rightarrow$ (11+3) $\bmod 26$ = 14 = O
-  \item O (14) $\rightarrow$ (14+3) $\bmod 26$ = 17 = R
-  \item Hasil: "KHOOR"
-\end{itemize}
-
-Ini adalah contoh sederhana bagaimana matematika yang kita pelajari langsung diterapkan dalam kriptografi. Dalam Bab IV, kita akan mengimplementasikan ini dalam bahasa Python dan C, memecahkannya dengan \textit{exhaustive key search}, dan melihat cipher yang lebih kompleks.
+Mengapa kita menggunakan aritmetika modular?
+\begin{enumerate}
+    \item \textbf{Keterbatasan Memori}: Dalam komputer, kita tidak bisa menyimpan angka yang tak terhingga besarnya. Modulo memastikan hasil perhitungan selalu berada dalam rentang yang ditentukan (misal: $0 \dots 2^{256}-1$).
+    \item \textbf{Sifat Satu-Arah (\textit{One-way})}: Operasi modulo bersifat "menghilangkan informasi". Jika kita tahu $r = a \pmod{n}$, kita tidak bisa menentukan nilai $a$ yang asli karena ada tak hingga banyaknya nilai $a$ yang menghasilkan sisa $r$. Hal ini menjadi basis bagi fungsi satu-arah yang digunakan dalam kriptografi.
+    \item \textbf{Pemetaan Karakter}: Untuk cipher klasik, kita memetakan huruf A--Z ke angka $0 \dots 25$. Modulo 26 memastikan bahwa setelah huruf 'Z' (25), operasi pergeseran akan kembali ke huruf 'A' (0).
+\end{enumerate}

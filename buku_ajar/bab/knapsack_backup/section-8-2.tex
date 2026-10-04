@@ -1,0 +1,64 @@
+﻿% Section 7.2: Sistem Merkle-Hellman
+\section{Sistem Kriptografi Merkle-Hellman}
+
+\vspace{0.5cm}
+\noindent\colorbox{blue!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{\textbf{\large Sub-CPMK yang Dicakup dalam Bab Ini:}}}
+\vspace{0.3cm}
+\begin{itemize}[leftmargin=*, itemsep=5pt]
+Mahasiswa mampu mengimplementasikan proses pembuatan kunci, enkripsi, dan dekripsi pada sistem Merkle-Hellman Knapsack.
+\end{itemize}
+\vspace{0.5cm}
+
+Sistem Merkle-Hellman berupaya menyembunyikan barisan superincreasing (yang mudah dipecahkan) menjadi barisan biasa (yang sulit dipecahkan) menggunakan operasi perkalian modular.
+
+\subsection{Pembuatan Kunci}
+\begin{enumerate}
+    \item Pilih sebuah barisan superincreasing privat $S = \{s_1, s_2, \dots, s_n\}$.
+    \item Pilih dua bilangan bulat $m$ dan $q$ sedemikian sehingga $q > \sum s_i$ dan $\text{gcd}(m, q) = 1$.
+    \item Hitung kunci publik $P = \{p_1, p_2, \dots, p_n\}$ dengan rumus:
+    \[ p_i = (s_i \cdot m) \pmod{q} \]
+\end{enumerate}
+\textbf{Kunci Privat}: $(S, m, q)$ \\
+\textbf{Kunci Publik}: $P$
+
+\subsection{Enkripsi}
+Untuk mengenkripsi pesan biner $M = (m_1, m_2, \dots, m_n)$ di mana $m_i \in \{0, 1\}$, hitung jumlah $T$:
+\[ T = \sum_{i=1}^{n} m_i \cdot p_i \]
+Ciphertext yang dikirim adalah nilai $T$.
+
+\subsection{Dekripsi}
+Penerima menggunakan kunci privat $(m, q)$ untuk mengubah $T$ kembali menjadi jumlah superincreasing $T'$:
+\begin{enumerate}
+    \item Hitung invers modular $m^{-1} \pmod{q}$.
+    \item Hitung $T' = (T \cdot m^{-1}) \pmod{q}$.
+    \item Karena $T'$ sekarang adalah jumlah dari barisan superincreasing $S$, gunakan algoritma \textit{greedy} untuk menemukan bit $m_i$.
+\end{enumerate}
+
+\subsection{Implementasi Python}
+Berikut adalah contoh sederhana pembuatan barisan superincreasing dan proses enkripsi Knapsack.
+
+\begin{pycode}
+def generate_superincreasing(n):
+    s = [1]
+    for i in range(1, n):
+        s.append(sum(s) + 1)
+    return s
+
+# Contoh sederhana
+S = generate_superincreasing(5) # [1, 2, 4, 8, 16]
+m, q = 7, 32 # gcd(7, 32)=1, q > sum(S)=31
+P = [(s * m) % q for s in S] # Kunci Publik
+
+message = [1, 0, 1, 1, 0] # M
+T = sum(m_i * p_i for m_i, p_i in zip(message, P))
+print(f"Ciphertext T: {T}")
+\end{pycode}
+
+\begin{aktivitas}
+Lakukan proses enkripsi dan dekripsi Merkle-Hellman secara manual dengan $S = \{2, 5, 11, 21, 45\}$, $m=7, q=101$. Coba enkripsi pesan biner $(1, 0, 1, 0, 1)$.
+\end{aktivitas}
+
+\begin{latihan}
+Jika diketahui kunci publik $P = \{15, 27, 51, 95, 187\}$ dan $q=256$, apakah Anda bisa menemukan barisan superincreasing yang mendasarinya tanpa mengetahui $m$? Jelaskan mengapa hal ini sulit.
+\end{latihan}
+

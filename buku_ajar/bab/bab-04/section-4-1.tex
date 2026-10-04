@@ -1,58 +1,59 @@
-\section{Pengantar Cipher Klasik}
+\section{Dasar-dasar Kriptanalisis dan Model Serangan}
 
-Kriptografi klasik adalah kriptografi era sebelum komputer. \textit{Cipher} klasik (\textit{classical cipher}) memiliki tiga ciri utama \cite{munir_slides_itb}:
-\begin{itemize}
-  \item hanya memproses pesan berupa huruf-huruf alfabet;
-  \item dikerjakan dengan alat tulis (pena dan kertas) atau alat mekanis sederhana;
-  \item termasuk kriptografi \textbf{kunci-simetri}: kunci enkripsi sama dengan kunci dekripsi.
-\end{itemize}
+Kriptanalisis adalah disiplin ilmu yang mempelajari cara-cara memecahkan sistem kriptografi tanpa memiliki kunci enkripsi. Jika kriptografi bertujuan untuk mengamankan pesan, maka kriptanalisis bertujuan untuk menemukan celah dalam sistem tersebut guna memulihkan plainteks atau, yang lebih berbahaya, memulihkan kunci rahasianya.
 
-Walaupun tidak lagi dipakai untuk mengamankan data, cipher klasik tetap dipelajari karena tiga alasan: (1) memahami konsep dasar kriptografi (plainteks, cipherteks, kunci, enkripsi, dekripsi); (2) menjadi dasar algoritma kriptografi modern; dan (3) memahami kelemahan sistem \textit{cipher}, yaitu bagaimana sebuah cipher dipecahkan.
+\subsection{Tujuan Serangan Kriptanalisis}
 
-\subsection{Teknik Substitusi dan Transposisi}
+Seorang kriptanalis tidak selalu memiliki target yang sama. Tingkat keberhasilan sebuah serangan dapat dikategorikan berdasarkan hasilnya:
 
-Semua cipher klasik disusun dari dua teknik dasar:
 \begin{enumerate}
-  \item \textbf{Teknik substitusi}: mengganti setiap huruf plainteks dengan huruf cipherteks. Contoh: \texttt{MENGANTUK} $\rightarrow$ \texttt{CQBSIBONW}.
-  \item \textbf{Teknik transposisi}: mengubah susunan (posisi) huruf plainteks tanpa mengganti hurufnya; disebut juga \textit{scrambling}, permutasi, atau pengacakan. Contoh: \texttt{MENGANTUK} $\rightarrow$ \texttt{TNEAKMNGU}.
+    \item \textbf{Pemulihan Plainteks (\textit{Plaintext Recovery})} \\
+    Penyerang berhasil mendapatkan isi pesan asli dari satu atau beberapa cipherteks tertentu. Meskipun berhasil, penyerang mungkin belum mengetahui kuncinya, sehingga ia tidak dapat mendekripsi pesan lain yang menggunakan kunci berbeda.
+
+    \item \textbf{Pemulihan Kunci (\textit{Key Recovery})} \\
+    Ini adalah tingkat keberhasilan tertinggi. Penyerang berhasil menemukan kunci rahasia yang digunakan. Dengan kunci ini, seluruh komunikasi masa lalu dan masa depan yang menggunakan kunci yang sama dapat didekripsi dengan seketika.
+
+    \item \textbf{Pemalsuan (\textit{Forgery})} \\
+    Penyerang mampu menciptakan cipherteks yang tampak valid dan akan didekripsi menjadi pesan yang diinginkan penyerang, meskipun ia tidak memiliki kunci. Hal ini sangat berbahaya dalam sistem tanda tangan digital.
+
+    \item \textbf{Pembedaan (\textit{Distinguishing Attack})} \\
+    Penyerang dapat membedakan apakah sebuah aliran data adalah cipherteks yang dihasilkan oleh algoritma tertentu atau sekadar deretan bit acak. Meskipun tidak mendapatkan plainteks, ini membuktikan bahwa cipher tersebut tidak memiliki \textit{perfect secrecy}.
 \end{enumerate}
 
-Dari dua teknik ini lahir dua kelompok cipher: \crypt{cipher substitusi} (Caesar, substitusi monoalfabetik, Affine, Vigen\`{e}re, Playfair, Hill, Enigma) dan \crypt{cipher transposisi} (columnar, rail fence). Kombinasi keduanya membentuk \crypt{product cipher} atau \textbf{super-enkripsi}:
-\[
-\textit{product cipher} = \textit{cipher} \text{ substitusi} + \textit{cipher} \text{ transposisi}
-\]
-Gagasan inilah yang kelak dipakai cipher modern seperti DES dan AES (Bab~V), tentu dengan operasi yang jauh lebih kompleks.
+\subsection{Prinsip Kerckhoffs dan Paradigma Keamanan}
 
-Posisi kriptografi klasik dalam keseluruhan bidang kriptologi ditunjukkan pada Gambar~\ref{fig:hierarki-kriptologi}. Kriptanalisis juga dibagi menjadi klasik dan modern; bab ini membahas keduanya untuk cipher klasik.
+Dalam merancang sistem kriptografi, terdapat satu aturan emas yang harus dipatuhi, yaitu \textbf{Prinsip Kerckhoffs}:
+\begin{quote}
+    \textit{``Sistem kriptografi harus tetap aman, meskipun segala sesuatu tentang sistem tersebut diketahui oleh musuh, kecuali kuncinya.''}
+\end{quote}
+
+Prinsip ini secara tegas menolak pendekatan \textit{security through obscurity} (keamanan melalui kerahasiaan algoritma). Mengandalkan kerahasiaan algoritma dianggap sebagai kegagalan desain karena:
+\begin{itemize}
+    \item \textbf{Risiko Kebocoran}: Algoritma dapat bocor melalui pengkhianatan internal, pencurian dokumen, atau spionase.
+    \item \textbf{Reverse Engineering}: Algoritma yang tertanam dalam perangkat keras atau perangkat lunak dapat dibongkar dan dipahami melalui teknik \textit{reverse engineering}.
+    \item \textbf{Kebutuhan Audit}: Algoritma yang dipublikasikan secara terbuka dapat diuji, dikritik, dan diverifikasi oleh komunitas kriptografer dunia. Hanya algoritma yang telah "disiksa" oleh publik dan tetap bertahan yang layak digunakan untuk mengamankan data sensitif.
+\end{itemize}
+
+\subsection{Model Serangan Berdasarkan Informasi Penyerang}
+
+Kekuatan serangan sangat bergantung pada informasi apa saja yang dimiliki oleh penyerang. Dalam kriptanalisis, kita mengenal beberapa model serangan utama:
+
+\begin{enumerate}
+    \item \textbf{\textit{Ciphertext-Only Attack} (COA)} \\
+    Penyerang hanya memiliki akses ke satu atau lebih cipherteks. Ini adalah model tersulit. Penyerang harus mengandalkan statistik bahasa (seperti analisis frekuensi) atau kelemahan struktural cipher.
+
+    \item \textbf{\textit{Known-Plaintext Attack} (KPA)} \\
+    Penyerang memiliki beberapa pasang plainteks dan cipherteks yang bersesuaian. Misalnya, penyerang tahu bahwa setiap pesan selalu dimulai dengan kata \texttt{"DEAR"}. Informasi ini memudahkan penyerang untuk mengisolasi nilai kunci.
+
+    \item \textbf{\textit{Chosen-Plaintext Attack} (CPA)} \\
+    Penyerang dapat memilih plainteks apa saja dan mendapatkan cipherteks-nya dari sistem. Ini sering terjadi pada sistem enkripsi otomatis. Penyerang bisa mencoba pola-pola tertentu untuk melihat bagaimana cipher bereaksi.
+
+    \item \textbf{\textit{Chosen-Ciphertext Attack} (CCA)} \\
+    Penyerang dapat memilih cipherteks apa saja dan mendapatkan hasil dekripsinya (plainteks). Ini adalah model serangan paling kuat, sering digunakan untuk menyerang sistem kunci publik (asimetris).
+\end{enumerate}
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.9\textwidth]{bab-04/hierarki-kriptologi}
-  \caption{Hierarki kriptologi: kriptografi klasik terdiri atas cipher substitusi dan transposisi \cite{munir_slides_itb}.}
-  \label{fig:hierarki-kriptologi}
+  \includegraphics[width=0.7\textwidth]{referensi/01-Pengantar-Kriptografi-2026/images/llm/page_006_img_01.png}
+  \caption{Model komunikasi aman yang terganggu oleh penyusup (Eve).}
 \end{figure}
-
-\subsection{Pengodean Huruf menjadi Bilangan}
-
-Agar enkripsi dapat dirumuskan secara matematis (memakai aritmetika modulo dari Bab~III), setiap huruf alfabet dikodekan menjadi bilangan bulat 0 sampai 25 seperti Tabel~\ref{tab:kode-huruf}. Pengodean ini dipakai oleh hampir semua cipher pada bab ini.
-
-\begin{table}[htbp]
-  \centering
-  \small
-  \setlength{\tabcolsep}{4.5pt}
-  \begin{tabular}{*{13}{c}}
-    \toprule
-    A & B & C & D & E & F & G & H & I & J & K & L & M \\
-    0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
-    \midrule
-    N & O & P & Q & R & S & T & U & V & W & X & Y & Z \\
-    13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & 23 & 24 & 25 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Pengodean huruf alfabet menjadi bilangan $0$--$25$ \cite{munir_slides_itb}.}
-  \label{tab:kode-huruf}
-\end{table}
-
-\begin{catatan}
-Pada bab ini plainteks ditulis dengan huruf kecil dan cipherteks dengan huruf kapital, mengikuti konvensi slide kuliah. Spasi dan tanda baca biasanya dibuang sebelum enkripsi.
-\end{catatan}

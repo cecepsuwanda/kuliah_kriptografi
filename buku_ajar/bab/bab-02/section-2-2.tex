@@ -1,40 +1,49 @@
-\section{Model Komunikasi Aman dan Ancaman}
+\section{Terminologi Dasar Kriptografi}
 
-\subsection{Model Komunikasi Kriptografi}
+Sebelum mempelajari algoritma yang kompleks, sangat penting untuk menyepakati terminologi yang digunakan dalam studi kriptografi. Ketidakkonsistenan dalam istilah seringkali menjadi hambatan bagi pemula dalam memahami mekanisme kerja sebuah cipher.
 
-Model standar melibatkan:
-\begin{itemize}
-  \item \textbf{Alice (Pengirim)}: Mengirim plaintext, melakukan enkripsi
-  \item \textbf{Bob (Penerima)}: Menerima ciphertext, melakukan dekripsi
-  \item \textbf{Eve (Penyerang)}: Mencoba mencuri dengar (\textit{eavesdropping}) atau memodifikasi pesan
-  \item \textbf{Kanal}: Saluran komunikasi (pos, telepon, jaringan seluler, internet) yang mungkin tidak aman
-\end{itemize}
+\subsection{Pesan dan Bentuk Datanya}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{bab-02/alice-eve-bob-enkripsi}
-\caption{Model komunikasi: Alice mengenkripsi plainteks, Bob mendekripsi cipherteks, dan Eve yang menyadap kanal hanya melihat cipherteks \cite{munir_slides_itb}.}
-\label{fig:alice-eve-bob}
-\end{figure}
+Dalam kriptografi, informasi yang ingin diamankan disebut sebagai \textbf{pesan} (\textit{message}). Pesan tidak hanya terbatas pada teks, tetapi mencakup segala bentuk data digital.
 
-Tujuan kriptografi adalah memastikan komunikasi aman meskipun kanal tidak terpercaya (Gambar~\ref{fig:alice-eve-bob}). Dalam dunia nyata, ``Alice'' dan ``Bob'' tidak selalu manusia: keduanya dapat berupa manusia dengan mesin (misalnya IVR telepon), mesin dengan mesin (klien--server), browser dengan server web, aplikasi perbankan daring, router, atau layanan DNS \cite{munir_slides_itb}. Intinya sama: dua pihak berkomunikasi melalui kanal publik yang rentan disadap atau dimanipulasi.
-
-\subsection{Empat Masalah yang Memunculkan Kebutuhan Kriptografi}
-
-Empat skenario berikut merangkum mengapa kriptografi diperlukan \cite{munir_slides_itb}:
 \begin{enumerate}
-  \item \textbf{Case~1 --- Penyadapan}: Bagaimana Alice memastikan pesan tidak dapat dibaca oleh Eve yang menguping kanal? $\rightarrow$ masalah \textbf{kerahasiaan} (\textit{confidentiality}).
-  \item \textbf{Case~2 --- Penyamaran}: Bagaimana Bob memastikan pesan benar-benar dari Alice, bukan dari Carol yang menyamar? $\rightarrow$ masalah \textbf{otentikasi} (\textit{authentication}).
-  \item \textbf{Case~3 --- Manipulasi}: Bagaimana Bob memastikan pesan masih utuh dan tidak diubah di perjalanan? $\rightarrow$ masalah \textbf{keutuhan} (\textit{integrity}).
-  \item \textbf{Case~4 --- Penyangkalan}: Bagaimana Bob mencegah Alice menyangkal telah mengirim pesan? $\rightarrow$ masalah \textbf{nir-penyangkalan} (\textit{non-repudiation}).
+    \item \textbf{Plainteks (\textit{Plaintext})} \\
+    Data atau informasi asli yang dapat dibaca dan dimengerti maknanya, baik secara visual maupun audial.
+    \begin{itemize}
+        \item \textit{Plain-text}: Teks seperti "Rapat pukul 10 pagi".
+        \item \textit{Plain-image}: Gambar foto asli.
+        \item \textit{Plain-audio/video}: Rekaman suara atau video asli.
+    \end{itemize}
+
+    \item \textbf{Cipherteks (\textit{Ciphertext})} \\
+    Pesan yang telah melalui proses penyandian sehingga tidak bermakna lagi bagi pihak yang tidak memiliki kunci. Nama lain dari cipherteks adalah \textbf{kriptogram} (\textit{cryptogram}).
 \end{enumerate}
 
-\begin{catatan}
-Keempat masalah di atas menjadi kerangka layanan keamanan. Sebelum mendefinisikan layanan secara formal, bagian berikutnya menegaskan \textbf{urgensi} masalah tersebut di teknologi informasi; setelah itu layanan keamanan dibahas secara rinci. Kriptografi menyediakan mekanisme (enkripsi, hash/MAC, tanda tangan digital, protokol autentikasi) untuk menjawab masing-masing masalah.
-\end{catatan}
+\subsection{Algoritma dan Kunci}
 
-\subsection{Ancaman Keamanan}
+Proses mengubah plainteks menjadi cipherteks dan sebaliknya melibatkan dua komponen utama: algoritma dan kunci.
 
-Keempat masalah tersebut muncul karena kanal publik dapat disadap dan dimanipulasi. Eve dapat sekadar menguping (serangan pasif) atau ikut campur dengan memblokir, mengubah, memalsukan, dan mengirim ulang pesan (serangan aktif). Jenis-jenis ancaman ini beserta contohnya, mulai dari penyadapan dengan Wireshark sampai \textit{man-in-the-middle attack}, dibahas pada Subbab~\ref{sec:serangan-pasif-aktif}.
+\begin{enumerate}
+    \item \textbf{Cipher} \\
+    Algoritma atau aturan (\textit{rule}) yang digunakan untuk melakukan proses enkripsi dan dekripsi. Cipher bisa berupa prosedur langkah-demi-langkah (algoritma) atau fungsi matematika.
+    \item \textbf{Kunci (\textit{Key})} \\
+    Parameter rahasia yang digunakan oleh algoritma cipher. Tanpa kunci yang benar, cipherteks tidak dapat dikembalikan menjadi plainteks meskipun algoritma cipher-nya diketahui. Kunci dapat berupa bilangan bulat, string, atau deretan bit.
+\end{enumerate}
 
-{\sloppy Untuk mengatasi ancaman tersebut, kriptografi menyediakan mekanisme: \textbf{confidentiality} (kerahasiaan), \textbf{integrity} (keutuhan), \textbf{availability} (ketersediaan), dan \textbf{non-repudiation} (ketidakbantahan), dilengkapi \textbf{authentication} (otentikasi pihak).\par} Tiga layanan pertama dikenal sebagai CIA triad; non-repudiation dan authenticity melengkapi model untuk transaksi yang memerlukan kepercayaan dan bukti. Setelah melihat mengapa masalah ini mendesak di TI, detail setiap layanan dibahas pada bagian layanan keamanan.
+\subsection{Proses Utama: Enkripsi dan Dekripsi}
+
+Siklus kerja kriptografi terdiri dari dua proses utama:
+
+\begin{itemize}
+    \item \textbf{Enkripsi (\textit{Encryption/Enciphering})}: Proses mengubah plainteks menjadi cipherteks menggunakan kunci tertentu.
+    \item \textbf{Dekripsi (\textit{Decryption/Deciphering})}: Proses mengembalikan cipherteks menjadi plainteks semula menggunakan kunci tertentu.
+\end{itemize}
+
+Secara matematis, jika $P$ adalah plainteks, $C$ adalah cipherteks, $K$ adalah kunci, $E$ adalah fungsi enkripsi, dan $D$ adalah fungsi dekripsi, maka:
+\[ C = E_K(P) \quad \text{dan} \quad P = D_K(C) \]
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{referensi/01-Pengantar-Kriptografi-2026/images/llm/page_036_img_01.png}
+  \caption{Alur umum proses enkripsi dan dekripsi.}
+\end{figure}

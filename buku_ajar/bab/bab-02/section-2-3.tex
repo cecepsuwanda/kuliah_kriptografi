@@ -1,79 +1,47 @@
-\section{Urgensi Kriptografi dalam Teknologi Informasi}
+\section{Model Komunikasi Aman dan Ancaman}
 
-\subsection{Mengapa Komunikasi Publik Rentan?}
+Untuk memahami bagaimana kriptografi diterapkan, kita harus terlebih dahulu memahami model komunikasi antara pihak-pihak yang terlibat dan potensi ancaman yang mengintai di tengah-tengah saluran komunikasi tersebut.
 
-Hampir semua komunikasi modern---surat elektronik, SMS, browser web, perbankan daring---melewati kanal publik (internet, jaringan seluler, infrastruktur bersama). Tanpa proteksi kriptografi, pesan dapat disadap, diubah, atau dipalsukan. Karena itu kriptografi menjadi inti banyak teknologi keamanan siber: memahami perannya penting untuk memahami cara mengamankan ruang siber \cite{munir_slides_itb,stallings2017}.
+\subsection{Model Komunikasi Sederhana}
 
-\subsection{Kasus Ilustratif: Kebocoran dan Serangan}
+Dalam skenario paling dasar, terdapat dua pihak yang ingin berkomunikasi: \textbf{Alice} (Pengirim) dan \textbf{Bob} (Penerima). Alice ingin mengirimkan sebuah pesan $P$ (plainteks) kepada Bob melalui saluran komunikasi publik (internet, email, SMS).
 
-Beberapa kasus berikut bersifat ilustratif (bukan laporan forensik lengkap). Tujuannya menunjukkan bahwa kegagalan melindungi data berdampak nyata pada privasi, kepercayaan publik, dan ekonomi digital \cite{munir_slides_itb}:
-\begin{itemize}
-  \item \textbf{Kebocoran data pribadi berulang}: data peserta asuransi kesehatan, pengguna e-commerce, atau nasabah lembaga keuangan yang bocor ke publik menekankan pentingnya enkripsi, kontrol akses, dan tata kelola data.
-  \item \textbf{Penyadapan atau akses tidak sah terhadap fasilitas komunikasi}: menggarisbawahi kebutuhan confidentiality pada kanal diplomatik maupun korporat.
-  \item \textbf{Peretasan situs lembaga atau ransomware}: dokumen rahasia atau data nasabah berisiko diekspos atau dienkripsi paksa oleh penyerang---menunjukkan bahwa keamanan tidak hanya soal firewall, tetapi juga proteksi kriptografi dan manajemen kunci.
-\end{itemize}
+Proses komunikasi aman secara ideal mengikuti alur:
+\[ \text{Alice} \xrightarrow{\text{Enkripsi dengan Kunci } K} \text{Cipherteks } C \xrightarrow{\text{Saluran Publik}} \text{Bob} \xrightarrow{\text{Dekripsi dengan Kunci } K} \text{Plainteks } P \]
 
-\begin{konsep}
-Pelajaran utama: tanpa kerahasiaan, integritas, dan otentikasi yang memadai, data di kanal publik maupun di penyimpanan mudah menjadi sasaran. Kriptografi bukan satu-satunya solusi keamanan, tetapi merupakan fondasi teknis yang sulit digantikan.
-\end{konsep}
+Kunci $K$ harus dijaga kerahasiaannya. Jika Bob dan Alice menggunakan kunci yang sama, mereka menggunakan kriptografi \textbf{simetris}. Jika mereka menggunakan sepasang kunci (publik dan privat), mereka menggunakan kriptografi \textbf{asimetris}.
 
-\subsection{Enkripsi At Rest dan In Transit}
+\subsection{Sosok Penyusup (\textit{Intruder})}
 
-Dua aplikasi utama enkripsi dalam praktik TI \cite{munir_slides_itb}:
-\begin{itemize}
-  \item \textbf{Encryption at rest}: melindungi data yang disimpan (disk, basis data, berkas dokumen) agar tetap rahasia jika media fisik atau salinan cadangan dicuri.
-  \item \textbf{Encryption in transit} (\textit{on motion}): melindungi pesan
-        yang dikirim melalui jaringan.
-        Contoh familiar adalah enkripsi ujung-ke-ujung pada aplikasi pesan
-        atau HTTPS/TLS pada browser.
-\end{itemize}
+Dalam dunia nyata, saluran komunikasi publik tidak pernah benar-benar privat. Selalu ada pihak ketiga yang mencoba mengintersepsi komunikasi, yang dalam literatur kriptografi sering disebut sebagai \textbf{Penyusup} (\textit{Intruder}) atau \textbf{Adversary}. Nama-nama tokoh seperti \textbf{Eve} (dari \textit{Eavesdropper}), \textbf{Mallory} (dari \textit{Malicious}), atau \textbf{Trudy} sering digunakan untuk menggambarkan peran ini.
 
-Gambar~\ref{fig:at-rest-in-transit} memberi contoh keduanya dari aplikasi sehari-hari.
+Penyusup dapat melakukan berbagai jenis serangan, tergantung pada kemampuannya:
 
-\begin{figure}[htbp]
-\centering
-\begin{minipage}[b]{0.42\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{bab-02/encrypt-document}\\[2pt]
-  {\small (a) At rest: enkripsi berkas dokumen dengan kata sandi}
-\end{minipage}\hfill
-\begin{minipage}[b]{0.48\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{bab-02/whatsapp-e2e}\\[2pt]
-  {\small (b) In transit: enkripsi ujung-ke-ujung pada aplikasi pesan}
-\end{minipage}
-\caption{Contoh encryption at rest dan encryption in transit \cite{munir_slides_itb}.}
-\label{fig:at-rest-in-transit}
-\end{figure}
-
-\begin{catatan}
-Sistem modern sering menggabungkan keduanya: data dienkripsi saat disimpan \textit{dan} saat dikirim. TLS (Bab~VIII) adalah contoh proteksi in transit; mode penyimpanan seperti XTS (Bab~V) berkaitan dengan proteksi at rest.
-\end{catatan}
-
-\subsection{Lembaga Terkait Kriptografi di Indonesia}
-
-Di Indonesia, pengembangan kapasitas sandi dan keamanan siber melibatkan lembaga negara dan pendidikan antara lain \cite{munir_slides_itb,bssn_official}:
 \begin{enumerate}
-  \item \textbf{Badan Siber dan Sandi Negara (BSSN)} --- \url{https://bssn.go.id} --- lembaga yang menggabungkan fungsi sandi negara dan aspek aplikasi informatika terkait keamanan siber.
-  \item \textbf{Politeknik Siber dan Sandi Negara (PSSN)} --- \url{https://poltekssn.ac.id} --- pendidikan tinggi kedinasan di bidang siber dan sandi.
+    \item \textbf{Penyadapan Pasif (\textit{Passive Attack})} \\
+    Penyusup hanya mengamati dan merekam aliran data tanpa mengubah isi pesan. Contoh utamanya adalah \textit{eavesdropping}. Tujuan serangan ini adalah untuk mendapatkan informasi rahasia (melanggar \textit{confidentiality}).
+
+    \item \textbf{Penyadapan Aktif (\textit{Active Attack})} \\
+    Penyusup tidak hanya membaca pesan, tetapi juga memodifikasi, menghapus, atau menyisipkan pesan palsu ke dalam saluran komunikasi.
+    \begin{itemize}
+        \item \textbf{Modifikasi}: Mengubah isi pesan $P$ menjadi $P'$ sehingga Bob menerima informasi yang salah (melanggar \textit{integrity}).
+        \item \textbf{Impersonasi (\textit{Masquerading})}: Menyamar menjadi Alice untuk mengirim pesan palsu kepada Bob (melanggar \textit{authentication}).
+        \item \textbf{Replay Attack}: Merekam pesan sah dari Alice dan mengirimkannya kembali kepada Bob di waktu lain untuk memicu aksi tertentu.
+    \end{itemize}
 \end{enumerate}
 
-Museum Sandi di Yogyakarta (\url{https://museum.lemsaneg.go.id/}, Jl.~Faridan Muridan Noto No.~21, Kota Baru) menyimpan koleksi alat sandi yang pernah digunakan di Indonesia dan menjadi referensi sejarah praktis bagi mahasiswa yang ingin melihat artefak kriptografi klasik secara langsung \cite{munir_slides_itb}. Salah satu koleksinya adalah mesin sandi SN-101 (Gambar~\ref{fig:museum-sandi}).
+\subsection{Kapasitas Serangan: Model Kriptanalisis}
+
+Seorang penyusup dapat memiliki tingkat pengetahuan yang berbeda terhadap sistem kriptografi yang digunakan:
+\begin{itemize}
+    \item \textbf{Ciphertext-Only Attack (COA)}: Penyusup hanya memiliki akses ke beberapa contoh cipherteks. Ini adalah tingkat kesulitan tertinggi.
+    \item \textbf{Known-Plaintext Attack (KPA)}: Penyusup memiliki beberapa pasang plainteks dan cipherteks yang bersesuaian.
+    \item \textbf{Chosen-Plaintext Attack (CPA)}: Penyusup dapat memilih plainteks apa saja dan mendapatkan cipherteks-nya.
+    \item \textbf{Chosen-Ciphertext Attack (CCA)}: Penyusup dapat memilih cipherteks apa saja dan mendapatkan hasil dekripsinya.
+\end{itemize}
 
 \begin{figure}[htbp]
-\centering
-\begin{minipage}[b]{0.48\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{bab-02/museum-sandi}\\[2pt]
-  {\small (a) Gedung Museum Sandi, Yogyakarta}
-\end{minipage}\hfill
-\begin{minipage}[b]{0.44\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{bab-02/mesin-sandi-sn101}\\[2pt]
-  {\small (b) Mesin sandi SN-101}
-\end{minipage}
-\caption{Museum Sandi dan salah satu koleksi alat sandinya \cite{munir_slides_itb}.}
-\label{fig:museum-sandi}
+  \includegraphics[width=0.6\textwidth]{referensi/01-Pengantar-Kriptografi-2026/images/llm/page_006_img_01.png}
+  \caption{Ilustrasi komunikasi Alice dan Bob yang disadap oleh Eve.}
 \end{figure}
-
-Bagian berikutnya merinci \textbf{layanan keamanan informasi} yang menjawab empat masalah Alice--Bob dan ancaman yang telah dibahas.

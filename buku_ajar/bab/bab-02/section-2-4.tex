@@ -1,81 +1,56 @@
-\section{Layanan Keamanan Informasi}
+\section{Perbandingan Kriptografi Klasik vs Modern}
 
-Empat masalah Alice--Bob (penyadapan, penyamaran, manipulasi, penyangkalan) dijawab oleh layanan keamanan yang didukung kriptografi \cite{munir_slides_itb,rfc4949,nist_cia}: \textbf{confidentiality}, \textbf{authentication}/\textbf{authenticity}, \textbf{integrity}, dan \textbf{non-repudiation}, dilengkapi \textbf{availability} dalam model CIA. Kasus kebocoran data dan serangan pada bagian urgensi memperkuat motivasi bahwa layanan ini bukan sekadar istilah teoretis, melainkan kebutuhan praktis. Tiga layanan pertama CIA triad dikenal luas; non-repudiation dan authenticity melengkapi model untuk transaksi yang memerlukan kepercayaan dan bukti hukum.
+Seiring dengan perkembangan teknologi komputasi, metode pengamanan informasi telah berevolusi dari penggunaan kertas dan pena menuju algoritma digital yang sangat kompleks. Perubahan ini bukan sekadar perubahan media, tetapi perubahan paradigma dalam cara data diproses dan diamankan.
 
-\subsection{Confidentiality (Kerahasiaan)}
+\subsection{Kriptografi Klasik (\textit{Old Cryptography})}
 
-Memastikan informasi hanya dapat diakses oleh pihak yang berwenang. Plaintext tidak boleh terbaca oleh Eve meskipun dia memiliki ciphertext. \textbf{Cara mencapai}: enkripsi dengan kunci yang hanya diketahui Alice dan Bob \cite{stallings2017}. Gambar~\ref{fig:layanan-kerahasiaan} menunjukkan plainteks yang menjadi tidak bermakna setelah dienkripsi.
+Kriptografi klasik merujuk pada metode penyandian yang digunakan sebelum era komputer digital. Karakteristik utamanya adalah:
+\begin{itemize}
+    \item \textbf{Unit Pengolahan}: Beroperasi pada level karakter (huruf atau angka).
+    \item \textbf{Alat}: Menggunakan alat fisik sederhana seperti kertas, pena, cakram alfabet, atau mesin mekanik (seperti Enigma).
+    \item \textbf{Metode}: Didominasi oleh teknik substitusi (mengganti satu huruf dengan huruf lain) dan transposisi (mengubah posisi huruf).
+    \item \textbf{Keamanan}: Sangat rentan terhadap kriptanalisis statistik, terutama analisis frekuensi huruf, karena struktur bahasa asli tetap terjaga dalam cipherteks.
+\end{itemize}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{bab-02/kerahasiaan-plain-cipher}
-\caption{Kerahasiaan: plainteks (a) dienkripsi menjadi cipherteks (b) yang tidak dapat dipahami pihak yang tidak berhak \cite{munir_slides_itb}.}
-\label{fig:layanan-kerahasiaan}
-\end{figure}
+Contoh cipher klasik antara lain: Caesar Cipher, Vigenère Cipher, Playfair Cipher, dan Hill Cipher. Saat ini, seluruh cipher klasik dianggap tidak aman dan hanya digunakan untuk tujuan pendidikan.
 
-Confidentiality merupakan fondasi keamanan informasi. Akses ke informasi harus dikontrol untuk mencegah pembagian data tidak sah. Implementasi efektif memerlukan enkripsi data, kontrol akses, dan autentikasi. Ancaman terhadap confidentiality mencakup serangan siber maupun kesalahan manusia seperti berbagi kredensial atau kegagalan mengenkripsi komunikasi.
+\subsection{Kriptografi Modern}
 
-\subsection{Integrity (Keutuhan)}
+Kriptografi modern adalah sistem penyandian yang dirancang untuk dijalankan pada komputer digital dengan keamanan yang terukur secara matematis. Karakteristik utamanya adalah:
+\begin{itemize}
+    \item \textbf{Unit Pengolahan}: Beroperasi pada level bit (biner $0$ dan $1$).
+    \item \textbf{Alat}: Menggunakan prosesor digital dan memori untuk melakukan operasi logika (XOR, AND, OR) dan aritmetika modular yang sangat cepat.
+    \item \textbf{Metode}: Menggunakan kombinasi kompleks antara substitusi dan permutasi dalam banyak putaran (\textit{rounds}) untuk menciptakan efek difusi dan konfusi yang maksimal.
+    \item \textbf{Keamanan}: Keamanannya didasarkan pada masalah matematika yang "sulit" (misal: faktorisasi bilangan prima besar atau logaritma diskret) sehingga tidak bisa dipecahkan dalam waktu yang masuk akal bahkan dengan superkomputer.
+\end{itemize}
 
-Memastikan informasi tidak diubah selama transmisi. Bob harus yakin pesan yang diterima sama persis dengan yang dikirim Alice. \textbf{Cara mencapai}: fungsi hash, Message Authentication Code (MAC), atau tanda tangan digital. Perubahan kecil pun harus terdeteksi, seperti satu digit suhu atau satu bagian foto pada Gambar~\ref{fig:layanan-integritas}.
+Contoh kriptografi modern antara lain: AES, RSA, SHA-256, dan ECC.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{bab-02/integritas-pesan-diubah}
-\caption{Integritas: pesan teks dan citra yang diubah sedikit tampak hampir sama dengan aslinya \cite{munir_slides_itb}.}
-\label{fig:layanan-integritas}
-\end{figure}
+\subsection{Tabel Perbandingan Ringkas}
 
-Integrity memastikan data tetap tepercaya dan bebas dari perusakan. Setiap perubahan tidak sah terhadap data harus terdeteksi dan dicegah. Pelanggaran integrity dapat menyebabkan keputusan bisnis yang salah atau kehilangan kepercayaan. Teknologi hash, tanda tangan digital, dan MAC menyediakan mekanisme verifikasi yang diperlukan.
-
-\subsection{Availability (Ketersediaan)}
-
-Memastikan sistem dan data dapat diakses oleh pihak yang berwenang ketika diperlukan. Serangan denial-of-service (DoS) mengancam availability dengan membuat layanan tidak dapat diakses.
-
-Kriptografi secara tidak langsung mendukung availability melalui proteksi terhadap serangan yang menargetkan infrastruktur. Manajemen kunci dan redundansi sistem juga berperan menjaga ketersediaan layanan kriptografi. Dalam praktik, availability sering ditangani melalui kombinasi kebijakan operasional, redundansi jaringan, dan mitigasi DoS.
-
-\subsection{Non-Repudiation (Ketidakbantahan)}
-
-Memastikan pihak yang melakukan tindakan tidak dapat menyangkal bahwa ia telah melakukannya. Alice tidak dapat menyangkal telah mengirim pesan; Bob tidak dapat menyangkal telah menerimanya. \textbf{Cara mencapai}: tanda tangan digital, sertifikat digital, log audit. Gambar~\ref{fig:layanan-nirpenyangkalan} mengilustrasikan nasabah yang menyangkal instruksi transfernya sendiri.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.6\textwidth]{bab-02/nirpenyangkalan-transfer}
-\caption{Non-repudiation: tanpa bukti kriptografis, A dapat menyangkal telah meminta transfer ke B \cite{munir_slides_itb}.}
-\label{fig:layanan-nirpenyangkalan}
-\end{figure}
-
-Non-repudiation penting untuk transaksi hukum, kontrak elektronik, dan pembayaran daring. Tanda tangan digital memberikan bukti matematis yang tidak dapat dipalsukan tentang asal dan integritas pesan. Sertifikat digital dari CA tepercaya mendukung verifikasi identitas dalam skala global \cite{stallings2017}.
-
-\subsection{Authenticity (Keaslian)}
-
-Authenticity memastikan pengirim pesan benar-benar pihak yang mengklaim. Bob yakin pesan berasal dari Alice, bukan Eve yang berpura-pura. \textbf{Cara mencapai}: tanda tangan digital, sertifikat digital, protokol autentikasi.
-
-\begin{figure}[!htb]
-\centering
-\includegraphics[width=0.5\textwidth]{bab-02/autentikasi-penyamaran}
-\caption{Autentikasi: pihak ketiga di tengah mengirim sinyal palsu seolah-olah berasal dari A, sehingga B perlu memverifikasi asal pesan \cite{munir_slides_itb}.}
-\label{fig:layanan-autentikasi}
-\end{figure}
-
-Gambar~\ref{fig:layanan-autentikasi} menggambarkan masalah ini secara sederhana: B menerima sinyal asap, tetapi tidak dapat memastikan apakah sinyal itu dari A atau dari penyamar.
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{|l|>{\raggedright\arraybackslash}p{4.8cm}|>{\raggedright\arraybackslash}p{4.5cm}|}
-\toprule
-\textbf{Layanan} & \textbf{Definisi} & \textbf{Mekanisme Kriptografi} \\
-\midrule
-Confidentiality & Hanya pihak berwenang mengakses & Enkripsi \\
-Integrity & Data tidak diubah tanpa izin & Hash, MAC \\
-Availability & Data/sistem dapat diakses saat dibutuhkan & Manajemen kunci, redundansi \\
-Non-repudiation & Tindakan tidak dapat disangkal & Tanda tangan digital \\
-Authenticity & Identitas pengirim/penerima terverifikasi & Sertifikat, protokol auth \\
-\bottomrule
+\begin{tabular}{|l|p{5cm}|p{5cm}|}
+\hline
+\textbf{Kriteria} & \textbf{Kriptografi Klasik} & \textbf{Kriptografi Modern} \\
+\hline
+Unit Data & Huruf / Karakter & Bit / Byte (Biner) \\
+\hline
+Media & Kertas, Pena, Mekanik & Komputer Digital \\
+\hline
+Prinsip Utama & Substitusi \& Transposisi Sederhana & Operasi Logika, Aljabar Abstrak, Teori Bilangan \\
+\hline
+Analisis Keamanan & Frekuensi Huruf & Kompleksitas Komputasi (NP-Hard) \\
+\hline
+Status Keamanan & Kadaluarsa (Tidak Aman) & Standar Industri (Sangat Aman) \\
+\hline
 \end{tabular}
-\caption{Layanan keamanan informasi dan mekanisme kriptografi.}
+\caption{Perbandingan antara paradigma kriptografi klasik dan modern.}
 \end{table}
 
-\begin{contoh}
-Dalam pembayaran daring: confidentiality melindungi data kartu kredit; integrity memastikan jumlah transaksi tidak diubah; authenticity memastikan pembayaran dari pemilik kartu yang sah; non-repudiation mencegah penyangkalan transaksi.
-\end{contoh}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{referensi/01-Pengantar-Kriptografi-2026/images/llm/page_072_img_01.png}
+  \caption{Infografis perbedaan antara enkripsi, hashing, dan tokenisasi (Kriptografi Modern).}
+\end{figure}

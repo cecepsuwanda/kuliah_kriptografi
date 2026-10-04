@@ -1,0 +1,102 @@
+\section{Infrastruktur Kunci Publik (PKI) dan Protokol TLS}
+
+\begin{subcpmk}
+  \item Mahasiswa mampu menganalisis arsitektur \textit{Public Key Infrastructure} (PKI), membuktikan mekanisme \textit{Chain of Trust} pada sertifikat X.509, serta menguraikan detail teknis \textit{handshake} pada protokol TLS untuk menjamin kerahasiaan, integritas, dan autentikasi komunikasi data.
+\end{subcpmk}
+
+\noindent\textit{Rujukan:} Stallings \cite{stallings2017}; Boneh \cite{boneh_cs255}; RFC 8446 (TLS 1.3); RFC 5280 (X.509).
+
+\subsection{Public Key Infrastructure (PKI)}
+
+Kriptografi asimetris memberikan solusi untuk pertukaran kunci, namun memunculkan masalah baru: \textbf{Bagaimana kita tahu bahwa kunci publik yang kita terima benar-benar milik orang yang kita maksud?} Serangan \textit{Man-in-the-Middle} (MITM) dapat dengan mudah memalsukan identitas jika kunci publik dikirimkan tanpa mekanisme verifikasi. \textit{Public Key Infrastructure} (PKI) adalah kerangka kerja yang mengelola pembuatan, distribusi, penyimpanan, dan pencabutan sertifikat digital untuk memecahkan masalah kepercayaan ini.
+
+\subsubsection{Komponen Utama PKI}
+
+PKI terdiri dari beberapa entitas fungsional:
+\begin{enumerate}
+    \item \textbf{Certificate Authority (CA)}: Entitas terpercaya yang menerbitkan sertifikat digital. CA menandatangani kunci publik pengguna menggunakan kunci privat CA sendiri, memberikan jaminan bahwa kunci tersebut sah.
+    \item \textbf{Registration Authority (RA)}: Bertindak sebagai "front-end" bagi CA. RA memverifikasi identitas pemohon sertifikat sebelum meneruskan permintaan ke CA untuk ditandatangani.
+    \item \textbf{Certificate Repository}: Database publik yang menyimpan sertifikat digital dan daftar sertifikat yang telah dicabut (\textit{Certificate Revocation List} - CRL).
+    \item \textbf{End Entity}: Pengguna akhir (individu atau organisasi) yang memiliki pasangan kunci publik-privat.
+\end{enumerate}
+
+\subsubsection{Sertifikat Digital X.509}
+
+Standar industri untuk sertifikat digital adalah X.509. Sebuah sertifikat X.509 secara esensial adalah dokumen elektronik yang mengikat identitas pengguna dengan kunci publiknya. Struktur utamanya meliputi:
+\begin{itemize}
+    \item \textbf{Version}: Versi standar X.509.
+    \item \textbf{Serial Number}: Identifikasi unik sertifikat yang diberikan oleh CA.
+    \item \textbf{Signature Algorithm}: Algoritma yang digunakan CA untuk menandatangani sertifikat (misal: sha256WithRSAEncryption).
+    \item \textbf{Issuer}: Identitas CA yang menerbitkan sertifikat.
+    \item \textbf{Validity Period}: Masa berlaku sertifikat (\textit{Not Before} dan \textit{Not After}).
+    \item \textbf{Subject}: Identitas pemilik sertifikat (Nama, Organisasi, Negara).
+    \item \textbf{Subject Public Key Info}: Kunci publik pemilik dan algoritma yang digunakan.
+    \item \textbf{CA Signature}: Tanda tangan digital CA atas seluruh data di atas.
+\end{itemize}
+
+\subsection{Chain of Trust dan Validasi Sertifikat}
+
+Dalam skala internet, tidak mungkin bagi setiap klien untuk mengenal semua CA di dunia. Solusinya adalah \textbf{Chain of Trust} (Rantai Kepercayaan) yang bersifat hierarkis.
+
+\subsubsection{Hierarki CA}
+
+\begin{enumerate}
+    \item \textbf{Root CA}: CA tingkat tertinggi yang sertifikatnya bersifat \textit{self-signed}. Root CA biasanya disimpan secara offline dalam \textit{Hardware Security Module} (HSM) untuk keamanan maksimal.
+    \item \textbf{Intermediate CA}: CA yang sertifikatnya ditandatangani oleh Root CA atau Intermediate CA lainnya. Intermediate CA digunakan untuk menerbitkan sertifikat pengguna akhir, sehingga jika terjadi kebocoran, Root CA tetap aman.
+    \item \textbf{End-Entity Certificate}: Sertifikat akhir yang digunakan oleh server web (HTTPS).
+\end{enumerate}
+
+\subsubsection{Proses Verifikasi Rantai}
+
+Saat browser mengunjungi situs HTTPS, server mengirimkan rantai sertifikat. Browser melakukan validasi sebagai berikut:
+\begin{enumerate}
+    \item Memeriksa tanda tangan sertifikat server menggunakan kunci publik Intermediate CA.
+    \item Memeriksa tanda tangan Intermediate CA menggunakan kunci publik Root CA.
+    \item Memeriksa apakah Root CA tersebut ada dalam \textbf{Trust Store} (daftar CA root terpercaya yang sudah terinstal di sistem operasi atau browser).
+\end{enumerate}
+
+Jika salah satu mata rantai terputus atau Root CA tidak dikenal, browser akan menampilkan peringatan \textit{"Your connection is not private"}.
+
+\subsection{Protokol Transport Layer Security (TLS)}
+
+TLS adalah protokol kriptografi yang memberikan keamanan pada lapisan transport. Versi terbaru, TLS 1.3, melakukan simplifikasi signifikan dibandingkan TLS 1.2 untuk meningkatkan kecepatan dan keamanan.
+
+\subsubsection{The TLS Handshake (TLS 1.3)}
+
+Tujuan utama \textit{handshake} adalah menyepakati kunci sesi simetris (\textit{session key}) dan mengautentikasi server.
+
+\begin{enumerate}
+    \item \textbf{Client Hello}: Klien mengirimkan daftar \textit{cipher suites} yang didukung, versi TLS, dan \textit{Key Share} (parameter Diffie-Hellman publik klien).
+    \item \textbf{Server Hello}: Server memilih \textit{cipher suite}, versi TLS, mengirimkan \textit{Key Share} publik server, dan mengirimkan sertifikat X.509 server.
+    \item \textbf{Authentication}: Klien memvalidasi sertifikat server melalui \textit{Chain of Trust}.
+    \item \textbf{Key Generation}: Klien dan server masing-masing menghitung kunci sesi simetris menggunakan algoritma Diffie-Hellman berdasarkan \textit{Key Share} yang dipertukarkan.
+    \item \textbf{Encrypted Data}: Setelah \textit{handshake} selesai, seluruh data aplikasi dienkripsi menggunakan kunci sesi tersebut (misal dengan AES-GCM).
+\end{enumerate}
+
+\subsubsection{Perfect Forward Secrecy (PFS)}
+
+Salah satu fitur terpenting dalam TLS modern adalah \textbf{Perfect Forward Secrecy}. PFS dicapai dengan menggunakan \textit{Ephemeral Diffie-Hellman} (DHE atau ECDHE).
+
+Dalam skema RSA tradisional, jika kunci privat server bocor di masa depan, penyerang yang telah merekam lalu lintas terenkripsi di masa lalu dapat mendekripsi semuanya. Dengan PFS, kunci sesi dibuat secara sementara untuk setiap sesi dan segera dihapus setelah sesi berakhir. Kebocoran kunci privat server di masa depan tidak akan bisa digunakan untuk mendekripsi sesi masa lalu karena kunci privat server hanya digunakan untuk \textbf{autentikasi}, bukan untuk enkripsi kunci sesi.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[scale=0.8, every node/.style={draw, rounded corners, font=\small}]
+    % Entities
+    \node (client) at (0,0) [minimum width=2cm] {Client};
+    \node (server) at (6,0) [minimum width=2cm] {Server};
+
+    % Steps
+    \draw[->] (client) -- (server) node[midway, above] {ClientHello (+ KeyShare)};
+    \draw[<-] (server) -- (client) node[midway, above] {ServerHello (+ KeyShare + Cert)};
+    \draw[<-] (server) -- (client) node[midway, above] {Server Finished};
+    \draw[->] (client) -- (server) node[midway, above] {Client Finished};
+
+    % Data
+    \draw[thick, <->] (client) -- (server) node[midway, below] {Encrypted Application Data};
+
+    % Annotations
+    \node[draw=none] at (3,-1.5) {\textbf{TLS 1.3 Handshake Flow}};
+  \end{tikzpicture}
+  \caption{Alur sederhana TLS 1.3 Handshake: Pertukaran Key Share untuk kunci sesi dan verifikasi sertifikat untuk autentikasi.}
+\end{figure}

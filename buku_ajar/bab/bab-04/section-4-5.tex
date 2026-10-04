@@ -1,125 +1,41 @@
-\section{Affine Cipher}
-\label{sec:affine}
+\section{Serangan Saluran Samping (\textit{Side-Channel Attacks})}
 
-\subsection{Konsep}
+Kriptanalisis tradisional seringkali mengasumsikan bahwa algoritma adalah sebuah "kotak hitam" yang hanya menerima input dan memberikan output. Namun, dalam dunia nyata, algoritma dijalankan pada perangkat keras fisik (CPU, FPGA, Smart Card) yang mengonsumsi energi, memancarkan panas, dan memakan waktu. \textbf{Serangan Saluran Samping} (\textit{Side-Channel Attacks} atau SCA) memanfaatkan kebocoran informasi fisik ini untuk mendapatkan kunci rahasia.
 
-Affine cipher adalah perluasan Caesar cipher: selain digeser, setiap huruf juga dikalikan dengan sebuah konstanta \cite{munir_slides_itb,stallings2017}.
-\[
-\text{Enkripsi: } C \equiv mP + b \pmod{n} \qquad
-\text{Dekripsi: } P \equiv m^{-1}(C - b) \pmod{n}
-\]
-Kuncinya adalah pasangan $(m, b)$, dengan keterangan:
+SCA tidak menyerang kelemahan matematis algoritma, melainkan menyerang \textbf{implementasi fisik} dari algoritma tersebut.
+
+\subsection{Kategori Serangan Saluran Samping}
+
+Terdapat beberapa metode SCA yang umum digunakan oleh penyerang tingkat lanjut:
+
 \begin{enumerate}
-  \item $n$ adalah ukuran alfabet ($n = 26$ untuk huruf alfabet);
-  \item $m$ bilangan bulat yang relatif prima dengan $n$, yaitu $\gcd(m, n) = 1$;
-  \item $b$ adalah jumlah pergeseran;
-  \item Caesar cipher adalah kasus khusus Affine cipher dengan $m = 1$;
-  \item $m^{-1}$ adalah balikan (invers) $m$ modulo $n$, yaitu $m \cdot m^{-1} \equiv 1 \pmod{n}$, yang dihitung dengan algoritma Euclidean diperluas (Bab~III).
+    \item \textbf{Timing Attack (Analisis Waktu)} \\
+    Penyerang mengukur durasi waktu yang dibutuhkan sistem untuk melakukan operasi kriptografi. Jika implementasi algoritma memiliki percabangan (\textit{branching}) yang bergantung pada nilai bit kunci (misal: operasi perkalian yang hanya dilakukan jika bit kunci $= 1$), maka waktu eksekusi akan berbeda untuk setiap kunci. Dengan mengukur perbedaan waktu dalam skala mikrodetik, penyerang dapat menyusun bit-bit kunci satu per satu.
+
+    \item \textbf{Power Analysis (Analisis Konsumsi Daya)} \\
+    Setiap instruksi CPU yang dijalankan mengonsumsi jumlah listrik yang berbeda. Penyerang menggunakan osiloskop untuk mengukur fluktuasi tegangan listrik pada perangkat.
+    \begin{itemize}
+        \item \textbf{Simple Power Analysis (SPA)}: Menganalisis satu jejak konsumsi daya untuk mengidentifikasi pola instruksi yang sedang berjalan.
+        \item \textbf{Differential Power Analysis (DPA)}: Menggunakan teknik statistik untuk menganalisis ribuan jejak konsumsi daya dari operasi enkripsi yang berbeda guna mengekstrak kunci rahasia melalui korelasi statistik.
+    \end{itemize}
+
+    \item \textbf{Electromagnetic Analysis (EMA)} \\
+    Sirkuit elektronik yang bekerja memancarkan radiasi elektromagnetik. Penyerang menggunakan antena sensitif di dekat chip untuk menangkap emisi ini, yang seringkali memiliki pola yang sama dengan konsumsi daya, tetapi bisa dilakukan tanpa kontak fisik langsung dengan perangkat.
+
+    \item \textbf{Fault Injection (Injeksi Kesalahan)} \\
+    Penyerang sengaja memicu gangguan fisik pada perangkat (misal: menggunakan laser, lonjakan tegangan, atau suhu ekstrem) saat proses enkripsi berlangsung. Gangguan ini memaksa sistem membuat kesalahan komputasi. Dengan membandingkan cipherteks yang benar dengan cipherteks yang salah (\textit{faulty ciphertext}), penyerang dapat mendeduksi nilai kunci.
 \end{enumerate}
 
-Syarat $\gcd(m, 26) = 1$ diperlukan agar $m^{-1}$ ada dan dekripsi mungkin dilakukan. Nilai $m$ yang memenuhi hanya 12, yaitu 1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, dan 25.
+\subsection{Strategi Mitigasi dan Hardening}
 
-\begin{contoh}
-Plainteks \texttt{kripto} $= (10, 17, 8, 15, 19, 14)$, $n = 26$, kunci $m = 7$ (relatif prima dengan 26) dan $b = 10$. Enkripsi $C \equiv 7P + 10 \pmod{26}$:
-\begin{align*}
-p_1 = 10 &\rightarrow c_1 \equiv 7 \cdot 10 + 10 = 80 \equiv 2 \pmod{26} && (\texttt{C}) \\
-p_2 = 17 &\rightarrow c_2 \equiv 7 \cdot 17 + 10 = 129 \equiv 25 \pmod{26} && (\texttt{Z}) \\
-p_3 = 8 &\rightarrow c_3 \equiv 7 \cdot 8 + 10 = 66 \equiv 14 \pmod{26} && (\texttt{O}) \\
-p_4 = 15 &\rightarrow c_4 \equiv 7 \cdot 15 + 10 = 115 \equiv 11 \pmod{26} && (\texttt{L}) \\
-p_5 = 19 &\rightarrow c_5 \equiv 7 \cdot 19 + 10 = 143 \equiv 13 \pmod{26} && (\texttt{N}) \\
-p_6 = 14 &\rightarrow c_6 \equiv 7 \cdot 14 + 10 = 108 \equiv 4 \pmod{26} && (\texttt{E})
-\end{align*}
-Cipherteks: \texttt{CZOLNE}.
-
-\textbf{Dekripsi}: hitung dulu $7^{-1} \bmod 26$ dengan memecahkan $7x \equiv 1 \pmod{26}$. Solusinya $x = 15$ sebab $7 \cdot 15 = 105 \equiv 1 \pmod{26}$. Jadi $P \equiv 15(C - 10) \pmod{26}$:
-\begin{align*}
-c_1 = 2 &\rightarrow p_1 \equiv 15 \cdot (2 - 10) = -120 \equiv 10 \pmod{26} && (\texttt{k}) \\
-c_2 = 25 &\rightarrow p_2 \equiv 15 \cdot (25 - 10) = 225 \equiv 17 \pmod{26} && (\texttt{r}) \\
-c_3 = 14 &\rightarrow p_3 \equiv 15 \cdot (14 - 10) = 60 \equiv 8 \pmod{26} && (\texttt{i})
-\end{align*}
-dan seterusnya, sehingga plainteks \texttt{kripto} terungkap kembali.
-\end{contoh}
+Untuk melindungi sistem dari SCA, pengembang harus menerapkan teknik \textit{hardening} pada tingkat implementasi:
+\begin{itemize}
+    \item \textbf{Constant-Time Implementation}: Menulis kode sedemikian rupa sehingga waktu eksekusi selalu sama, terlepas dari nilai kunci atau plainteks. Ini menghilangkan celah bagi \textit{timing attack}.
+    \item \textbf{Blinding}: Menambahkan angka acak ke dalam perhitungan internal sehingga konsumsi daya dan waktu tidak lagi berkorelasi langsung dengan kunci rahasia.
+    \item \textbf{Hardware Shielding}: Menggunakan pelindung fisik (seperti lapisan logam atau resin) untuk meredam emisi elektromagnetik dan mencegah akses fisik ke chip.
+    \item \textbf{Redundancy Checks}: Menjalankan operasi dua kali dan membandingkan hasilnya untuk mendeteksi adanya \textit{fault injection}.
+\end{itemize}
 
 \begin{catatan}
-\textbf{Kakas daring.} Affine cipher dapat dicoba di \url{https://cryptii.com/pipes/affine-cipher}. Kakas ini menyebut $m$ sebagai \textit{slope} ($a$) dan $b$ sebagai \textit{intercept}.
+SCA membuktikan bahwa algoritma yang secara matematis terbukti aman (seperti AES) tetap dapat ditembus jika implementasi fisiknya ceroboh. Inilah alasan mengapa perangkat keamanan kritis seperti \textit{Hardware Security Modules} (HSM) atau chip kartu kredit memiliki proteksi fisik yang sangat ketat.
 \end{catatan}
-
-\subsection{Pengayaan: Kriptanalisis Affine Cipher}
-
-Affine cipher mudah dipecahkan dengan \crypt{known-plaintext attack}, yaitu bila sebagian plainteks pesan diketahui. Misalkan kriptanalis mempunyai dua plainteks $P_1$ dan $P_2$ yang berkoresponden dengan cipherteks $C_1$ dan $C_2$. Kunci $m$ dan $b$ diperoleh dari sistem kekongruenan
-\[
-C_1 \equiv mP_1 + b \pmod{n}, \qquad C_2 \equiv mP_2 + b \pmod{n}.
-\]
-
-\begin{contoh}
-Kriptanalis mengetahui bahwa cipherteks \texttt{C} berkoresponden dengan plainteks \texttt{k}, dan cipherteks \texttt{E} dengan plainteks \texttt{o}:
-\begin{align*}
-2 &\equiv 10m + b \pmod{26} && \text{(i)} \\
-4 &\equiv 14m + b \pmod{26} && \text{(ii)}
-\end{align*}
-Mengurangkan (i) dari (ii) menghasilkan $2 \equiv 4m \pmod{26}$, yang dipenuhi $m = 7$ (sebab $28 \equiv 2$; solusi lain, $m = 20$, ditolak karena tidak relatif prima dengan 26). Substitusi $m = 7$ ke (i): $2 \equiv 70 + b \pmod{26}$, sehingga $b \equiv -68 \equiv 10 \pmod{26}$. Kunci $(m, b) = (7, 10)$ ditemukan.
-\end{contoh}
-
-Jika pasangan plainteks--cipherteks tidak tersedia, Affine cipher masih dapat diserang dengan \textit{exhaustive key search}: hanya ada 12 nilai $m$ dan 26 nilai $b$, sehingga cukup mencoba $12 \times 26 = 312$ kunci (termasuk kunci trivial $m=1, b=0$). Jumlah ini sangat kecil untuk komputer, bahkan untuk dikerjakan manual.
-
-Salah satu cara memperbesar faktor kerja \textit{exhaustive key search} adalah mengenkripsi \textbf{blok huruf}, bukan huruf individual. Misalnya pesan \texttt{kriptografi} dipecah menjadi blok 4 huruf \texttt{krip togr afi}, yang ekivalen dengan bilangan 10170815, 19140617, dan 000508. Nilai terbesar sebuah blok adalah 25252525 (\texttt{ZZZZ}), sehingga $n = 25252525$ dapat dipakai sebagai modulus. Dengan $m = 21035433$ (relatif prima dengan $n$) dan $b = 23210025$:
-\begin{align*}
-C &\equiv 21035433\,P + 23210025 \pmod{25252525}, \\
-P &\equiv 11837547\,(C - 23210025) \pmod{25252525},
-\end{align*}
-dengan $11837547 = 21035433^{-1} \bmod 25252525$. Ruang kunci menjadi sangat besar, meskipun cipher tetap rentan terhadap \textit{known-plaintext attack}.
-
-\subsection{Implementasi dalam C}
-
-Kode~\ref{lst:affine-c} memakai algoritma Euclidean diperluas untuk menghitung $m^{-1} \bmod 26$, lalu menerapkan rumus enkripsi dan dekripsi pada setiap huruf.
-
-\begin{ccode}[caption={Affine cipher dalam C}, label={lst:affine-c}]
-#include <stdio.h>
-#include <ctype.h>
-
-long long extended_gcd(long long a, long long b, long long *x, long long *y) {
-    if (b == 0) { *x = 1; *y = 0; return a; }
-    long long x1, y1;
-    long long g = extended_gcd(b, a % b, &x1, &y1);
-    *x = y1;
-    *y = x1 - (a / b) * y1;
-    return g;
-}
-
-int mod_inverse(int a, int m) {
-    long long x, y;
-    if (extended_gcd(a, m, &x, &y) != 1) return -1;   /* tidak punya invers */
-    int inv = (int)(x % m);
-    return inv < 0 ? inv + m : inv;
-}
-
-void affine_encrypt(char *text, int m, int b) {
-    for (int i = 0; text[i] != '\0'; i++) {
-        if (isalpha((unsigned char)text[i])) {
-            char base = isupper((unsigned char)text[i]) ? 'A' : 'a';
-            int p = text[i] - base;
-            text[i] = base + (m * p + b) % 26;
-        }
-    }
-}
-
-void affine_decrypt(char *text, int m, int b) {
-    int m_inv = mod_inverse(m, 26);
-    for (int i = 0; text[i] != '\0'; i++) {
-        if (isalpha((unsigned char)text[i])) {
-            char base = isupper((unsigned char)text[i]) ? 'A' : 'a';
-            int c = text[i] - base;
-            text[i] = base + (m_inv * (c - b + 26)) % 26;
-        }
-    }
-}
-
-int main(void) {
-    char msg[] = "kripto";
-    affine_encrypt(msg, 7, 10);
-    printf("%s\n", msg);   /* czolne */
-    affine_decrypt(msg, 7, 10);
-    printf("%s\n", msg);   /* kripto */
-    return 0;
-}
-\end{ccode}

@@ -1,21 +1,21 @@
 \section{Tujuan Buku Ajar}
 
-Buku ajar ini disusun sebagai panduan untuk mempelajari \crypt{Kriptografi} sesuai RPS OBE: mahasiswa diharapkan \textbf{mengenal} algoritma klasik dan modern (CPMK-1) serta \textbf{memahami} konsep dan urgensi kriptografi di TI (CPMK-2). Materi mengikuti silabus dan referensi Bagian~10 (Munir, Stallings, HAC, NIST, Boneh, dll.).
+Buku ajar ini disusun sebagai panduan komprehensif untuk mempelajari \crypt{Kriptografi} dengan pendekatan \textit{Outcome-Based Education} (OBE). Tujuan utamanya adalah membekali mahasiswa dengan kompetensi untuk mengenal algoritma kriptografi klasik dan modern (CPMK-1) serta memahami konsep fundamental dan urgensi keamanan informasi dalam bidang Teknologi Informasi (CPMK-2).
 
-Dalam kerangka OBE, tujuan buku ajar diterjemahkan ke dalam \textit{learning outcomes} yang terukur \cite{adelaide_learning_outcomes,stanford_learning_outcomes}.
+Materi dalam buku ini dirancang secara sistematis dengan mengacu pada silabus mata kuliah, standar NIST, serta referensi otoritatif seperti karya Rinaldi Munir, William Stallings, dan Boneh-Shoup.
 
-Secara ringkas, buku ini menargetkan kompetensi berikut:
+Dalam kerangka OBE, tujuan buku ajar ini diterjemahkan ke dalam \textit{learning outcomes} yang terukur. Setelah mempelajari buku ini, mahasiswa diharapkan mencapai kompetensi berikut:
 \begin{enumerate}
-  \item Memahami konsep dasar kriptografi dan urgensi keamanan informasi di TI
-  \item Mengenal landasan matematika pengantar (modulo, prima, invers)
-  \item Mengenal cipher klasik dan gagasan kriptanalisis frekuensi
-  \item Mengenal kriptografi modern simetris dan asimetris, serta hash/MAC/TLS pada tingkat pengenalan
-  \item Menghubungkan materi dengan CPMK dan CPL pada RPS
+  \item \textbf{Pemahaman Konseptual}: Mampu menjelaskan prinsip dasar kriptografi, urgensi keamanan informasi, dan peran kriptografi dalam ekosistem TI.
+  \item \textbf{Penguasaan Fondasi}: Mengenal dan menerapkan landasan matematika pengantar seperti aritmetika modular, sifat bilangan prima, dan invers modular sebagai alat implementasi cipher.
+  \item \textbf{Analisis Cipher Klasik}: Mengenal mekanisme kerja cipher klasik dan memahami gagasan kriptanalisis berbasis frekuensi huruf.
+  \item \textbf{Kriptografi Modern}: Mengenal struktur dan prinsip kerja kriptografi simetris (Block \& Stream Cipher), kriptografi asimetris (Public Key), serta fungsi hash, MAC, dan protokol TLS.
+  \item \textbf{Korelasi Kompetensi}: Mampu menghubungkan setiap topik bahasan dengan Sub-CPMK dan Capaian Pembelajaran Lulusan (CPL) yang telah ditetapkan dalam RPS.
 \end{enumerate}
 
 \subsection{Peta Perjalanan Pembelajaran}
 
-Kriptografi adalah disiplin ilmu yang memadukan matematika teoritis, algoritma praktis, dan implementasi teknis. Perjalanan pembelajaran dalam buku ini dirancang secara spiral: setiap konsep matematika yang dipelajari akan langsung diaplikasikan dalam algoritma kriptografi, yang kemudian diimplementasikan dalam bahasa C.
+Kriptografi bukanlah sekadar menghafal algoritma, melainkan sebuah disiplin ilmu yang memadukan matematika teoritis, algoritma praktis, dan implementasi teknis. Perjalanan pembelajaran dalam buku ini dirancang secara spiral: setiap konsep matematika yang dipelajari tidak akan berdiri sendiri, melainkan langsung diaplikasikan dalam algoritma kriptografi, yang kemudian diimplementasikan dalam bahasa pemrograman (C/Python) untuk memberikan pemahaman konkret.
 
 \begin{figure}[htbp]
   \centering
@@ -23,9 +23,9 @@ Kriptografi adalah disiplin ilmu yang memadukan matematika teoritis, algoritma p
     \node[draw, rounded corners, fill=blue!10, text width=3cm, align=center] (teori) {Konsep Dasar\\Keamanan Informasi};
     \node[draw, rounded corners, fill=green!10, text width=3cm, align=center, right=of teori] (matematika) {Matematika\\Kriptografi};
     \node[draw, rounded corners, fill=orange!10, text width=3cm, align=center, right=of matematika] (algoritma) {Algoritma\\Klasik \& Modern};
-    \node[draw, rounded corners, fill=red!10, text width=3cm, align=center, below=of matematika] (implementasi) {Implementasi\\Bahasa C};
+    \node[draw, rounded corners, fill=red!10, text width=3cm, align=center, below=of matematika] (implementasi) {Implementasi\\Bahasa C/Python};
     \node[draw, rounded corners, fill=purple!10, text width=3cm, align=center, left=of implementasi] (analisis) {Analisis\\Keamanan};
-    
+
     \draw[->, thick] (teori) -- (matematika);
     \draw[->, thick] (matematika) -- (algoritma);
     \draw[->, thick] (algoritma) -- (implementasi);
@@ -35,17 +35,16 @@ Kriptografi adalah disiplin ilmu yang memadukan matematika teoritis, algoritma p
   \caption{Siklus pembelajaran kriptografi: dari teori ke praktik dan kembali ke analisis.}
 \end{figure}
 
-\subsection{Mengapa Matematika Penting dalam Kriptografi?}
+\subsection{Urgensi Matematika dalam Kriptografi}
 
-Banyak mahasiswa bertanya mengapa harus mempelajari matematika yang kompleks untuk belajar kriptografi. Jawabannya sederhana: \textbf{keamanan kriptografi dibangun di atas kekuatan matematika}. Setiap algoritma kriptografi modern—mulai dari RSA hingga AES—didasarkan pada prinsip-prinsip matematika yang membuatnya aman terhadap serangan.
+Seringkali muncul pertanyaan: mengapa harus mempelajari matematika yang kompleks untuk belajar kriptografi? Jawabannya adalah karena \textbf{keamanan kriptografi dibangun di atas kekuatan matematika}. Keamanan sebuah algoritma tidak ditentukan oleh seberapa rumit kodenya, melainkan oleh tingkat kesulitan matematis untuk memecahkannya tanpa kunci.
 
+Sebagai gambaran, berikut adalah keterkaitan antara cabang matematika dengan implementasi kriptografi:
 \begin{itemize}
-  \item \textbf{Aritmetika modular} menjadi fondasi cipher klasik seperti Caesar dan Vigenère
-  \item \textbf{Teori bilangan} (prima, faktorisasi) menjadi dasar keamanan RSA
-  \item \textbf{Aljabar abstrak} (grup, field) digunakan dalam desain AES
-  \item \textbf{Probabilitas dan statistik} digunakan dalam kriptanalisis
+  \item \textbf{Aritmetika Modular}: Menjadi mesin utama bagi hampir semua cipher, mulai dari Caesar yang sederhana hingga RSA yang kompleks.
+  \item \textbf{Teori Bilangan}: Konsep bilangan prima dan faktorisasi menjadi jantung keamanan RSA; sementara Logaritma Diskret menjadi basis Diffie-Hellman dan ElGamal.
+  \item \textbf{Aljabar Abstrak}: Penggunaan \textit{Finite Fields} (Galois Field) digunakan untuk memastikan efisiensi dan keamanan transformasi data pada AES.
+  \item \textbf{Probabilitas dan Statistik}: Menjadi alat utama bagi kriptanalis untuk mendeteksi pola dalam cipherteks (misal: analisis frekuensi).
 \end{itemize}
 
-Dalam buku ini, setiap konsep matematika akan selalu disertai dengan contoh penerapan langsung dalam algoritma kriptografi, sehingga Anda dapat melihat relevansinya secara nyata.
-
-Secara konseptual, kriptografi berperan menjaga kerahasiaan, integritas, dan keaslian informasi---tiga tujuan yang umum dipakai dalam keamanan informasi \cite{rfc4949}. Dengan memahami konsep dan implementasi yang disajikan, mahasiswa diharapkan mampu mengaitkan teori kriptografi dengan kebutuhan keamanan data di dunia nyata.
+Dengan pendekatan ini, setiap konsep matematika yang disajikan dalam buku ini akan selalu disertai dengan contoh penerapan langsung, sehingga mahasiswa dapat melihat relevansinya secara nyata dalam menjaga keamanan data di dunia digital.

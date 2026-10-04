@@ -1,28 +1,28 @@
-\section{Rubrik Penilaian Komprehensif}
+﻿\section{Steganografi dan Watermarking}
 
-Penilaian komprehensif memerlukan pendekatan sistematis dan objektif. Rubrik yang baik mencakup \cite{stallings2017}:
-\begin{itemize}
-  \item \textbf{Kriteria penilaian}: Kriteria harus jelas, terukur, dan dapat diukur secara konsisten.
-  \item \textbf{Feedback konstruktif}: Memberikan umpan balik yang mendalam dan konstruktif untuk perbaikan.
-  \item \textbf{Authenticity}: Memastikan keaslian penilaian dan mencegah plagiarisme.
-  \item \textbf{Fairness}: Menjamin proses penilaian yang adil dan transparan.
-\end{itemize}
+\subsection{Konsep Steganografi}
 
+Steganografi menyembunyikan keberadaan pesan rahasia di dalam media pembawa (cover) sehingga tidak terlihat oleh pengamat biasa \cite{stallings2017}. Berbeda dengan kriptografi yang membuat pesan tidak terbaca, steganografi menyembunyikan fakta bahwa ada pesan. Keduanya dapat dikombinasikan: enkripsi dulu, lalu sembunyikan dalam cover.
 
-\subsection{Metode Penilaian}
+\subsection{Metode LSB (Least Significant Bit)}
 
-Berbagai metode penilaian dapat digunakan untuk mengukur pencapaian:
-\begin{itemize}
-  \item \textbf{Observasi}: Pengamatan langsung proses pembelajaran dan partisipasi mahasiswa.
-  \item \textbf{Portofolio}: Evaluasi karya mahasiswa untuk menunjukkan kemajuan praktikum.
-  \item \textbf{Presentasi}: Presentasi hasil proyek atau penelitian.
-  \item \textbf{Tes Tertulis}: Uji pemahaman dengan soal esai atau praktikum.
-  \item \textbf{Peer Review}: Evaluasi kerja mahasiswa oleh teman sekelas.
-  \item \textbf{Self-Assessment}: Refleksi diri dari pembelajaran.
-\end{itemize}
+LSB mengganti bit paling tidak signifikan dari setiap byte sampel dengan bit pesan rahasia \cite{stallings2017}. Pada citra 24-bit (RGB), satu pixel = 3 byte; mengganti LSB setiap byte mengubah nilai pixel sangat sedikit (max $\pm 1$) sehingga tidak terlihat mata.
 
-Sesuai silabus: Tugas (15\%), Kuis (10\%), Praktikum pengenalan (20\%), Makalah mini (15\%), UTS (20\%), UAS (20\%).
+Kapasitas: 1 bit per byte sampel. Untuk citra 640Ã—480 RGB: $640 \times 480 \times 3 = 921{,}600$ bit $\approx$ 115 KB pesan rahasia.
 
-\textbf{Kriteria nilai}: A (85--100), B (70--84), C (60--69), D (50--59), E (<50).
+\begin{lstlisting}[style=cstyle, caption={Prinsip LSB embedding (pseudocode)}]
+// Embed: ganti LSB byte cover dengan bit pesan
+for i = 0 to len(pesan)-1:
+    cover_byte = (cover_byte & 0xFE) | bit_pesan[i]
 
-Pemetaan ringkas: Tugas/Kuis $\rightarrow$ Sub-CPMK 2.1--2.3, 1.1; Praktikum $\rightarrow$ 1.1--1.2; Makalah $\rightarrow$ CPMK-1 \& CPMK-2; UTS $\rightarrow$ CPMK-2 + 1.1--1.2; UAS $\rightarrow$ CPMK-1 \& CPMK-2 (termasuk 1.3--1.4).
+// Extract: baca LSB
+bit_pesan[i] = cover_byte & 1
+\end{lstlisting}
+
+\subsection{Watermarking}
+
+Watermarking menyisipkan informasi (watermark) ke dalam media untuk kepemilikan atau integritas \cite{stallings2017}. Berbeda dengan steganografi: watermark sering dibuat robust terhadap modifikasi (kompresi, resize) sehingga masih dapat dideteksi. Steganografi lebih fokus pada kapasitas dan ketidakamatan.
+
+\subsection{Steganalis}
+
+Steganalis bertujuan mendeteksi atau mengekstrak pesan tersembunyi \cite{stallings2017}. Teknik: analisis statistik (distribusi LSB), deteksi anomali, machine learning. LSB naif dapat terdeteksi karena distribusi bit berubah. Steganografi robust menggunakan spread spectrum atau transform domain (DCT, DWT).

@@ -1,156 +1,42 @@
-\section{Pengantar Kriptografi}
+\section{Pengantar dan Urgensi Kriptografi}
 
-\subsection{Definisi dan Sejarah}
+Kriptografi bukan sekadar teknik menyembunyikan pesan, melainkan fondasi dari seluruh sistem keamanan informasi modern. Di era transformasi digital, di mana data berpindah melalui saluran komunikasi publik (internet, satelit, jaringan seluler), risiko terjadinya intersepsi, manipulasi, dan pencurian identitas menjadi ancaman yang nyata.
 
-Kriptografi berasal dari bahasa Yunani: \textit{krypt\'{o}s} (tersembunyi) dan \textit{gr\'{a}phein} (menulis), sehingga secara harfiah berarti ``tulisan rahasia''. Secara umum, \crypt{kriptografi} adalah ilmu dan seni untuk menjaga keamanan pesan \cite{schneier1996}. Definisi yang lebih teknis menekankan aspek matematika: kriptografi mempelajari teknik-teknik matematika yang berhubungan dengan kerahasiaan, integritas data, serta otentikasi \cite{menezes1996,munir_slides_itb}.
+\subsection{Layanan Keamanan Informasi (CIA Triad)}
 
-Sejarah kriptografi sejalan dengan peradaban manusia dan lama diasosiasikan dengan militer, diplomasi, serta kegiatan mata-mata. Secara garis besar era tersebut dapat digambarkan sebagai berikut \cite{munir_slides_itb,stallings2017}:
+Dalam dunia keamanan siber, tujuan utama dari penggunaan kriptografi adalah untuk menjamin tersedianya layanan keamanan tertentu. Tiga layanan utama yang sering disebut sebagai \textit{CIA Triad} adalah:
+
+\begin{enumerate}
+    \item \textbf{Kerahasiaan (\textit{Confidentiality})} \\
+    Menjamin bahwa informasi hanya dapat diakses oleh pihak yang berwenang. Dalam kriptografi, hal ini dicapai dengan mengubah \textit{plainteks} menjadi \textit{cipherteks} sehingga pihak ketiga (penyadap) yang mengintersepsi pesan tidak dapat memahami isinya.
+
+    \item \textbf{Integritas Data (\textit{Data Integrity})} \\
+    Menjamin bahwa informasi tidak diubah, dimanipulasi, atau dirusak selama proses transmisi atau penyimpanan. Kriptografi menggunakan fungsi hash untuk mendeteksi perubahan sekecil apa pun pada data.
+
+    \item \textbf{Ketersediaan (\textit{Availability})} \\
+    Menjamin bahwa sistem dan data tersedia saat dibutuhkan oleh pihak yang berwenang. Meskipun kriptografi lebih fokus pada kerahasiaan dan integritas, manajemen kunci yang buruk dapat menyebabkan kehilangan data secara permanen, yang melanggar prinsip ketersediaan.
+\end{enumerate}
+
+Selain CIA, terdapat dua layanan krusial lainnya:
 \begin{itemize}
-  \item \textbf{Antik}: hieroglif non-standar di Mesir (sekitar 1900~SM), tablet Mesopotamia (sekitar 1500~SM), Scytale di Sparta, Atbash pada tradisi Ibrani, serta Caesar cipher di Romawi.
-  \item \textbf{Era Arab (abad ke-9)}: Al-Kindi merumuskan teknik analisis frekuensi untuk memecahkan pesan tersandi---cikal bakal kriptanalisis sistematis.
-  \item \textbf{Abad Pertengahan hingga Renaisans}: cipher polialfabetik seperti Vigen\`{e}re (abad ke-16).
-  \item \textbf{Perang Dunia I--II}: pemecahan Telegram Zimmermann; mesin Enigma (Jerman) dan upaya pemecahannya di Bletchley Park.
-  \item \textbf{Era Modern}: landasan matematika setelah Shannon (1949); DES (1977), RSA (1977), AES (2001), serta protokol seperti TLS.
+    \item \textbf{Otentikasi (\textit{Authentication})}: Proses memverifikasi identitas pengirim atau penerima pesan untuk memastikan bahwa pihak yang berkomunikasi adalah benar-benar orang yang mereka klaim.
+    \item \textbf{Nir-penyangkalan (\textit{Non-repudiation})}: Menjamin bahwa pengirim pesan tidak dapat menyangkal telah mengirimkan pesan tersebut, dan penerima tidak dapat menyangkal telah menerima pesan. Hal ini biasanya dicapai menggunakan tanda tangan digital.
 \end{itemize}
 
-Bukti awal penggunaan kriptografi ditemukan dalam hieroglif non-standar pada dinding makam Kerajaan Lama Mesir sekitar 1900~SM. Tablet tanah liat Mesopotamia sekitar 1500~SM mengenkripsi resep glasir keramik yang bernilai komersial. Di Yunani, Sparta memakai \textit{scytale} (transposisi dengan tongkat); di Romawi, Julius Caesar menggeser huruf alfabet sebagai sandi militer. Para sarjana Ibrani memakai Atbash sekitar 600--500~SM. Gambar~\ref{fig:artefak-kriptografi} memperlihatkan tiga artefak dari era yang berbeda.
+\subsection{Urgensi Kriptografi dalam Teknologi Informasi}
 
-\begin{figure}[htbp]
-\centering
-\begin{minipage}[c]{0.5\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{bab-02/hieroglif-mesir}\\[2pt]
-  {\small (a) Hieroglif Mesir Kuno}\\[14pt]
-  \includegraphics[width=0.9\linewidth]{bab-02/scytale}\\[2pt]
-  {\small (b) Scytale Sparta}
-\end{minipage}\hfill
-\begin{minipage}[c]{0.4\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{bab-02/mesin-enigma}\\[2pt]
-  {\small (c) Mesin Enigma}
-\end{minipage}
-\caption{Artefak kriptografi klasik: hieroglif non-standar, scytale untuk transposisi, dan mesin rotor Enigma \cite{munir_slides_itb}.}
-\label{fig:artefak-kriptografi}
-\end{figure}
-
-Pada abad ke-9, ilmuwan Arab \textbf{Al-Kindi} (Abu Yusuf Ya'qub ibn Ishaq al-Kindi) menulis risalah tentang seni memecahkan kode dan menemukan bahwa frekuensi kemunculan huruf dalam bahasa dapat dipakai untuk memecahkan cipherteks---teknik yang kelak disebut \textbf{analisis frekuensi} \cite{munir_slides_itb}. Sejarah kriptanalisis juga mencatat pemecahan Telegram Zimmermann yang mendorong Amerika Serikat memasuki Perang Dunia~I, serta peran Enigma pada Perang Dunia~II.
-
-Evolusi kriptografi modern dimulai setelah Perang Dunia~II dengan landasan teori informasi dan munculnya cipher kunci publik. Internet komersial pada 1990-an menuntut standar enkripsi yang luas, yang pada akhirnya mendorong penggantian DES oleh AES melalui kompetisi publik NIST.
-
-\subsection{Kriptografi Klasik dan Modern}
+Pentingnya kriptografi dapat dilihat dari berbagai kasus kebocoran data dan penyadapan yang terjadi di dunia nyata. Tanpa kriptografi, hampir semua aktivitas digital kita akan menjadi sangat rentan:
 
 \begin{itemize}
-  \item \textbf{Kriptografi klasik} (\textit{ancient}/\textit{old cryptography}): enkripsi huruf dan angka dengan kertas dan pena, sebelum komputer digital. Contoh: Caesar, Vigen\`{e}re, Playfair, Hill, Enigma. Hampir semua cipher klasik sudah berhasil dikriptanalisis dan tidak aman untuk dipakai melindungi data nyata \cite{munir_slides_itb}.
-  \item \textbf{Kriptografi modern}: enkripsi/dekripsi data digital (teks, audio, citra, video) dengan komputer. Contoh keluarga algoritma: DES/3DES, AES, RSA, ElGamal, ECC, Diffie--Hellman, MD5/SHA, serta protokol TLS.
+    \item \textbf{Transaksi Perbankan Online}: Tanpa enkripsi (seperti TLS/HTTPS), password dan nomor kartu kredit akan terkirim dalam bentuk teks polos yang dapat dibaca oleh siapa saja di jaringan Wi-Fi publik.
+    \item \textbf{Komunikasi Pribadi}: Aplikasi pesan instan seperti WhatsApp menggunakan \textit{end-to-end encryption} agar penyedia layanan sekalipun tidak dapat membaca isi percakapan pengguna.
+    \item \textbf{Keamanan Negara}: Penyadapan dokumen diplomatik atau komunikasi militer dapat menyebabkan krisis politik dan ancaman kedaulatan nasional.
 \end{itemize}
 
-Dalam buku ini, cipher klasik dipelajari di Bab~IV sebagai fondasi konsep dan latihan kriptanalisis dasar; algoritma modern menjadi fokus Bab~V--VIII.
-
-\subsection{Kriptologi}
-
-\begin{konsep}
-\textbf{Kriptologi} (\textit{cryptology}) adalah studi yang mencakup \textbf{kriptografi} (ilmu/seni menjaga keamanan pesan) dan \textbf{kriptanalisis} (ilmu/seni memecahkan cipherteks tanpa mengetahui kunci). Keduanya saling mendorong: desain cipher yang kuat lahir dari pemahaman terhadap cara cipher dipecahkan \cite{munir_slides_itb,stallings2017}.
-\end{konsep}
-
-Hubungan kedua cabang tersebut diringkas pada Gambar~\ref{fig:kriptologi}.
+Kasus-kasus seperti kebocoran data BPJS Kesehatan, Tokopedia, hingga penyadapan komunikasi kenegaraan menunjukkan bahwa kriptografi bukan sekadar pilihan teknis, melainkan kebutuhan strategis untuk melindungi privasi individu dan keamanan nasional.
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.65\textwidth]{bab-02/kriptologi}
-\caption{Kriptologi mencakup kriptografi dan kriptanalisis yang saling mendorong \cite{munir_slides_itb}.}
-\label{fig:kriptologi}
-\end{figure}
-
-\subsection{Terminologi Dasar}
-
-\begin{table}[htbp]
-\centering
-\begin{tabular}{|l|>{\raggedright\arraybackslash}p{8cm}|}
-\hline
-\textbf{Istilah} & \textbf{Definisi} \\
-\hline
-Plaintext (plainteks) & Pesan asli sebelum enkripsi; dapat berupa teks, citra, audio, atau video \\
-\hline
-Ciphertext (cipherteks) & Pesan yang telah disandikan sehingga tidak bermakna bagi pihak yang tidak berhak; disebut juga kriptogram \\
-\hline
-Cipher & Algoritma untuk enkripsi dan dekripsi pesan \\
-\hline
-Key (kunci) & Nilai rahasia yang mengontrol operasi enkripsi/dekripsi \\
-\hline
-Enkripsi & Proses mengubah plaintext menjadi ciphertext \\
-\hline
-Dekripsi & Proses mengubah ciphertext kembali ke plaintext \\
-\hline
-Pengirim / penerima & Pihak yang mengenkripsi dan mendekripsi pesan \\
-\hline
-Penyusup (\textit{intruder}) & Pihak yang mencoba menyadap, mengubah, atau memalsukan pesan \\
-\hline
-Kriptanalisis & Studi untuk memecahkan cipher tanpa mengetahui kunci \\
-\hline
-\end{tabular}
-\caption{Terminologi Dasar Kriptografi}
-\end{table}
-
-Plaintext tidak harus berupa teks. Gambar~\ref{fig:plain-cipher-image} menunjukkan citra yang dienkripsi: cipherteksnya tampak seperti derau acak sehingga isi citra asli tidak dapat dikenali.
-
-\begin{figure}[htbp]
-\centering
-\begin{minipage}[b]{0.38\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{bab-02/plain-image}\\[2pt]
-  {\small (a) Plain-image}
-\end{minipage}\qquad
-\begin{minipage}[b]{0.38\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{bab-02/cipher-image}\\[2pt]
-  {\small (b) Cipher-image}
-\end{minipage}
-\caption{Enkripsi citra: plaintext berupa gambar menjadi cipherteks yang tampak acak \cite{munir_slides_itb}.}
-\label{fig:plain-cipher-image}
+  \includegraphics[width=0.8\textwidth]{referensi/01-Pengantar-Kriptografi-2026/images/llm/page_014_img_02.png}
+  \caption{Ilustrasi layanan keamanan: Integritas data dalam aliran bit digital.}
 \end{figure}
-
-\begin{konsep}
-Dalam model dasar kriptografi, Alice mengirim pesan kepada Bob. Eve (\textit{eavesdropper}) mencoba mencuri dengar. Enkripsi memastikan Eve tidak dapat memahami isi pesan meskipun berhasil menangkap ciphertext.
-\end{konsep}
-
-\subsection{Prinsip Kerckhoffs}
-
-\begin{konsep}
-\textbf{Prinsip Kerckhoffs}: keamanan sistem kriptografi tidak boleh bergantung pada kerahasiaan algoritma; algoritma boleh (bahkan sebaiknya) dipublikasikan. Yang harus dirahasiakan hanyalah \textbf{kunci} \cite{munir_slides_itb,schneier1996}.
-\end{konsep}
-
-Prinsip ini menjelaskan mengapa standar modern (AES, RSA, SHA) bersifat terbuka dan ditinjau komunitas: kekuatan terletak pada ruang kunci yang besar dan desain yang tahan analisis, bukan pada ``algoritma rahasia''.
-
-\subsection{Sistem Kriptografi (Cryptosystem)}
-
-Secara formal, suatu \textbf{sistem kriptografi} dapat digambarkan sebagai lima komponen \((\mathcal{M}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})\) \cite{menezes1996,munir_slides_itb}:
-\begin{itemize}
-  \item \(\mathcal{M}\): himpunan pesan (plaintext space)
-  \item \(\mathcal{C}\): himpunan ciphertext
-  \item \(\mathcal{K}\): himpunan kunci
-  \item \(\mathcal{E}\): himpunan fungsi enkripsi \(E: \mathcal{M} \times \mathcal{K} \to \mathcal{C}\)
-  \item \(\mathcal{D}\): himpunan fungsi dekripsi \(D: \mathcal{C} \times \mathcal{K} \to \mathcal{M}\)
-\end{itemize}
-
-Gambar~\ref{fig:enkripsi-ocean} memperlihatkan kelima komponen bekerja: plainteks ``Kirim senjata perang'' dienkripsi dengan kunci \texttt{ocean} menjadi cipherteks, lalu didekripsi dengan kunci yang sama menjadi plainteks semula.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{bab-02/enkripsi-dekripsi-ocean}
-\caption{Enkripsi \(E_K(P) = C\) dan dekripsi \(D_K(C) = P\) dengan kunci \texttt{ocean} \cite{munir_slides_itb}.}
-\label{fig:enkripsi-ocean}
-\end{figure}
-
-\begin{contoh}
-Pada Caesar cipher (alfabet 26 huruf): \(\mathcal{M} = \mathcal{C}\) adalah huruf alfabet, \(\mathcal{K} = \{0,1,\ldots,25\}\), \(E_k(m) = (m+k) \bmod 26\), dan \(D_k(c) = (c-k) \bmod 26\). Detail dan implementasi dibahas di Bab~IV; konsep modulo diperkenalkan di Bab~III.
-\end{contoh}
-
-\subsection{Lanjut di Bagian Berikutnya}
-
-Setelah pengantar ini, bagian berikutnya di Bab~II membahas:
-\begin{itemize}
-  \item \textbf{Model komunikasi dan ancaman} (Alice--Bob--Eve serta empat masalah keamanan)
-  \item \textbf{Urgensi di TI} (kasus nyata, enkripsi at rest vs in transit)
-  \item \textbf{Layanan keamanan} yang menjawab empat masalah tersebut
-  \item \textbf{Keluarga algoritma} (simetris, asimetris, hash) secara konseptual
-\end{itemize}

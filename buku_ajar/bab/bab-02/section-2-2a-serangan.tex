@@ -1,4 +1,4 @@
-\section{Serangan Pasif dan Serangan Aktif}
+﻿\section{Serangan Pasif dan Serangan Aktif}
 \label{sec:serangan-pasif-aktif}
 
 Pihak ketiga yang mengganggu komunikasi Alice dan Bob melakukan \textbf{serangan} (\textit{attack}), yaitu setiap usaha untuk menemukan kunci, menemukan plainteks dari cipherteks, atau memanipulasi komunikasi. Berdasarkan keterlibatan penyerang dalam komunikasi, serangan dibagi menjadi dua: \textbf{serangan pasif} dan \textbf{serangan aktif} \cite{munir_slides_itb,stallings2017}. Pengelompokan serangan menurut informasi yang dimiliki penyerang (\textit{ciphertext-only}, \textit{known-plaintext}, \textit{chosen-plaintext}, dan seterusnya) dibahas di Bab~IV setelah cipher klasik dipelajari.
@@ -178,3 +178,4 @@ Contoh serangan aktif yang paling berbahaya adalah \crypt{man-in-the-middle atta
 \end{figure}
 
 MITM sangat berbahaya pada tahap pertukaran kunci. Pada Gambar~\ref{fig:mitm}b, User~A dan User~B bertukar kunci publik untuk membentuk kunci rahasia bersama dengan protokol Diffie--Hellman (Bab~VI). Penyerang mencegat kedua kunci publik dan menggantinya dengan kunci publiknya sendiri. Akibatnya, A dan B masing-masing berbagi kunci rahasia dengan penyerang, bukan satu sama lain, padahal keduanya yakin telah memiliki kunci bersama. Inilah sebabnya kunci publik harus diautentikasi, misalnya dengan sertifikat digital dan PKI (Bab~VIII).
+

@@ -1,0 +1,96 @@
+\section{Simulasi dan Analisis Mekanisme Fungsi Hash}
+
+\begin{subcpmk}
+  \item Mahasiswa mampu menguraikan mekanisme kerja fungsi kompresi, melakukan simulasi perhitungan hash sederhana secara manual, dan menganalisis bagaimana struktur internal fungsi hash (seperti pada SHA-256) mencapai properti \textit{confusion} dan \textit{diffusion}.
+\end{subcpmk}
+
+\noindent\textit{Rujukan:} Stallings \cite{stallings2017}; NIST FIPS PUB 180-4 (Secure Hash Standard).
+
+\subsection{Konsep Fungsi Kompresi dan Konstruksi Merkle-Damgård}
+
+Hampir semua fungsi hash modern, termasuk keluarga SHA (Secure Hash Algorithm), menggunakan struktur yang disebut \textbf{Konstruksi Merkle-Damgård}. Prinsip utamanya adalah memproses pesan yang panjang dengan cara membaginya menjadi blok-blok berukuran tetap, lalu mengompresi setiap blok secara berurutan.
+
+\textbf{Mekanisme Kerja}:
+\begin{enumerate}
+    \item \textbf{Padding}: Pesan asli ditambah dengan bit tambahan agar panjangnya menjadi kelipatan ukuran blok (misal: 512 bit untuk SHA-256).
+    \item \textbf{Inisialisasi}: Menentukan nilai awal \textit{state} ($H_0$), yang disebut sebagai \textit{Initialization Vector} (IV).
+    \item \textbf{Iterasi Kompresi}: Setiap blok pesan $M_i$ diproses bersama \textit{state} sebelumnya $H_{i-1}$ melalui sebuah \textbf{Fungsi Kompresi} $C$:
+    \begin{equation}
+      H_i = C(H_{i-1}, M_i)
+    \end{equation}
+    \item \textbf{Finalisasi}: Nilai $H_n$ dari blok terakhir menjadi hasil akhir \textit{message digest}.
+\end{enumerate}
+
+\subsection{Simulasi Manual: Algoritma Hash Sederhana (Toy Hash)}
+
+Untuk memahami bagaimana fungsi kompresi bekerja, kita akan mensimulasikan sebuah algoritma hash sederhana dengan parameter berikut:
+\begin{itemize}
+    \item \textbf{Input}: Pesan 4-bit ($M$) dan State 4-bit ($H$).
+    \item \textbf{Fungsi Kompresi}: $H_{out} = (H_{in} \oplus M) + (H_{in} \lll 1) \pmod{16}$.
+    \item \textbf{IV}: $H_0 = 0000_2$ (desimal 0).
+\end{itemize}
+
+\textbf{Skenario}: Enkripsi karakter "A" (ASCII 65 $\rightarrow$ biner \texttt{0100 0001}).
+Pesan dibagi menjadi dua blok 4-bit: $M_1 = 0100_2$ (4) dan $M_2 = 0001_2$ (1).
+
+\begin{enumerate}
+    \item \textbf{Langkah 1 (Proses Blok $M_1$)}:
+    \begin{itemize}
+        \item $H_{in} = 0$
+        \item $H \oplus M = 0000_2 \oplus 0100_2 = 0100_2$ (4)
+        \item $H \lll 1 = 0000_2 \text{ rotasi kiri 1} = 0000_2$ (0)
+        \item $H_1 = (4 + 0) \pmod{16} = 4$ (\texttt{0100})
+    \end{itemize}
+
+    \item \textbf{Langkah 2 (Proses Blok $M_2$)}:
+    \begin{itemize}
+        \item $H_{in} = 4$
+        \item $H \oplus M = 0100_2 \oplus 0001_2 = 0101_2$ (5)
+        \item $H \lll 1 = 0100_2 \text{ rotasi kiri 1} = 1000_2$ (8)
+        \item $H_2 = (5 + 8) \pmod{16} = 13$ (\texttt{1101})
+    \end{itemize}
+\end{enumerate}
+\textbf{Hasil Akhir}: Digest adalah $\text{D}_{16}$ (\texttt{1101}).
+
+\subsection{Analisis Efek Longsoran (\textit{Avalanche Effect}) dalam Simulasi}
+
+Mari kita analisis apa yang terjadi jika kita mengubah satu bit pada input. Ubah "A" (\texttt{0100 0001}) menjadi "C" (\texttt{0100 0011}). Maka $M_1 = 4$ (tetap), tetapi $M'_2 = 0011_2$ (3).
+
+\begin{itemize}
+    \item \textbf{Langkah 1}: $H_1 = 0100_2$ (tetap).
+    \item \textbf{Langkah 2}:
+    \begin{itemize}
+        \item $H \oplus M' = 0100_2 \oplus 0011_2 = 0111_2$ (7)
+        \item $H \lll 1 = 1000_2$ (8)
+        \item $H_{out} = (7 + 8) \pmod{16} = 15$ (\texttt{1111})
+    \end{itemize}
+\end{itemize}
+\textbf{Hasil Akhir}: Digest berubah dari \texttt{1101} (D) menjadi \texttt{1111} (F). Meskipun simulasi ini sangat sederhana, ia menunjukkan bagaimana satu perubahan bit pada input merambat melalui operasi XOR dan rotasi untuk menghasilkan output yang berbeda.
+
+\subsection{Bedah Struktur Internal SHA-256}
+
+SHA-256 mengimplementasikan konsep di atas dengan skala jauh lebih besar (64 putaran kompresi per blok). Dalam satu putaran, SHA-256 menggunakan operasi logika untuk mencapai \textit{confusion} dan \textit{diffusion}:
+
+\begin{equation}
+  T_1 = h + \Sigma_1(e) + Ch(e,f,g) + K_t + W_t
+\end{equation}
+\begin{equation}
+  T_2 = \Sigma_0(a) + Maj(a,b,c)
+\end{equation}
+
+\textbf{Analisis Komponen}:
+\begin{itemize}
+    \item \textbf{Confusion (Non-linearitas)}: Fungsi $Ch$ (\textit{Choose}) dan $Maj$ (\textit{Majority}) memastikan bahwa hubungan antara input dan output tidak linear. Jika fungsi-fungsi ini diganti dengan XOR sederhana, SHA-256 akan mudah dipecahkan dengan aljabar linear.
+    \item \textbf{Diffusion (Penyebaran)}: Fungsi $\Sigma_0$ dan $\Sigma_1$ menggunakan rotasi bit (\textit{right-rotate}) dan \textit{logical shift}. Ini memastikan bahwa satu bit yang berubah pada input akan menyebar ke seluruh bit \textit{state} dalam beberapa putaran.
+    \item \textbf{Message Schedule} ($W_t$): Pesan asli diekspansi menjadi 64 kata. Hal ini memastikan bahwa setiap bit pesan mempengaruhi banyak putaran kompresi.
+\end{itemize}
+
+\begin{aktivitas}
+  \item \textbf{Simulasi Manual}: Coba hitung hash menggunakan algoritma \textit{Toy Hash} di atas untuk pesan biner \texttt{1010 1100}. Tunjukkan langkah-langkah perhitungan setiap bloknya!
+\end{aktivitas}
+
+\begin{latihan}
+  \item Dalam simulasi \textit{Toy Hash}, apa yang terjadi jika kita menghilangkan operasi rotasi ($H \lll 1$)? Apakah efek longsoran masih terjadi? Jelaskan analisis Anda!
+  \item Mengapa penggunaan konstanta $K_t$ yang berbeda pada setiap putaran SHA-256 sangat penting untuk mencegah serangan \textit{slide attack}?
+  \item Jelaskan mengapa Konstruksi Merkle-Damgård rentan terhadap \textit{Length Extension Attack} dan bagaimana standar modern (seperti SHA-3) mengatasinya!
+\end{latihan}

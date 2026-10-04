@@ -1,27 +1,42 @@
-\section{Asesmen Komprehensif}
+﻿\section{Pembangkit Bilangan Acak (RNG)}
 
-Bab ini berisi asesmen untuk mengukur pencapaian \textbf{CPMK-1} dan \textbf{CPMK-2} sesuai silabus \cite{stallings2017,munir2019}.
+\subsection{PRNG vs TRNG}
 
-\subsection{Soal UTS (CPMK-2 dan Sub-CPMK 1.1--1.2 sebagian)}
+\textbf{TRNG (True Random Number Generator)}: Menggunakan sumber fisik yang tidak dapat diprediksi (noise termal, radioaktivitas, gerakan mouse). Output benar-benar acak; cocok untuk seed, kunci, nonce \cite{stallings2017}.
 
-UTS mengukur Sub-CPMK 2.1--2.3 serta pengenalan klasik dan simetris (1.1--1.2). Contoh soal:
-\begin{enumerate}
-  \item Jelaskan layanan keamanan (CIA + non-repudiation) dan urgensi kriptografi di TI (contoh HTTPS/perbankan).
-  \item Hitung invers modular sederhana, misalnya $17^{-1} \pmod{26}$.
-  \item Enkripsi singkat dengan Caesar/Vigen\`{e}re; jelaskan gagasan frequency analysis.
-  \item Bedakan stream cipher dan block cipher; sebutkan gagasan Feistel (DES) dan SPN (AES).
-  \item Bandingkan mode ECB, CBC, dan CTR secara konsep. Mengapa ECB tidak aman?
-\end{enumerate}
+{\sloppy \textbf{PRNG (Pseudo-Random Number Generator)}: Algoritma deterministik yang menghasilkan deret bit yang \textit{tampak} acak dari seed. Diberikan seed sama, output sama. Untuk kriptografi harus \textbf{CSPRNG} (Cryptographically Secure PRNG) \cite{menezes1996}.\par}
 
-\subsection{Soal UAS (CPMK-1 dan CPMK-2, termasuk Sub-CPMK 1.3--1.4)}
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    Sifat & TRNG & PRNG \\
+    \midrule
+    Prediktabilitas & Tidak dapat diprediksi & Deterministik dari seed \\
+    Kecepatan & Biasanya lambat & Cepat \\
+    Penggunaan & Seed, kunci, IV & Keystream, nonce (dari seed) \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perbandingan TRNG dan PRNG.}
+\end{table}
 
-UAS mengukur seluruh jalur silabus, dengan penekanan asimetris, hash/MAC/sig, dan TLS/urgensi. Contoh soal:
-\begin{enumerate}
-  \item Dengan $p=5$, $q=11$, $e=3$, hitung $n$, $\varphi(n)$, $d$, dan enkripsi $m=9$ (RSA pengenalan).
-  \item Jelaskan Diffie--Hellman dan ElGamal secara singkat; sebutkan masalah matematika yang mendasarinya.
-  \item Bedakan hash, MAC, dan tanda tangan digital. Apa peran X.509?
-  \item Jelaskan gagasan TLS/HTTPS dan mengapa validasi sertifikat penting (urgensi di TI).
-  \item Bandingkan ciri kriptografi klasik vs modern serta simetris vs asimetris.
-\end{enumerate}
+\subsection{Linear Congruential Generator (LCG)}
 
-Rubrik dan metode penilaian diuraikan pada section berikut.
+LCG: $x_{n+1} = (a \cdot x_n + c) \bmod m$. Parameter $a$, $c$, $m$ menentukan periode dan kualitas. LCG \textbf{tidak aman} untuk kriptografiâ€”polanya dapat dideteksi dari sedikit output \cite{schneier1996}. Hanya untuk simulasi non-keamanan.
+
+\subsection{Blum Blum Shub (BBS)}
+
+BBS adalah CSPRNG berbasis kesulitan faktorisasi \cite{menezes1996}. Pilih prima $p$, $q$ kongruen 3 mod 4. Seed $x_0$ koprima dengan $n = pq$. Iterasi:
+\[
+x_{i+1} = x_i^2 \bmod n
+\]
+Output: bit paritas dari $x_i$ (atau bit low-order). Aman secara kriptografis tetapi lambat; digunakan untuk kunci, bukan keystream volume tinggi.
+
+\subsection{Uji Keacakan}
+
+NIST SP 800-22 mendefinisikan serangkaian uji statistik untuk mengevaluasi keacakan deret bit \cite{stallings2017}. Contoh uji: frequency (monobit), runs, longest run, spectral, dll. Deret yang lolos uji tidak menjamin keamanan kriptografis, tetapi kegagalan uji mengindikasikan kelemahan.
+
+\begin{catatan}
+Untuk kriptografi, gunakan \texttt{/dev/urandom} (Linux), \texttt{ CryptGenRandom} (Windows), atau API CSPRNG library (OpenSSL \texttt{RAND\_bytes}). Hindari \texttt{rand()} untuk kunci atau nonce \cite{ferguson2010}.
+\end{catatan}

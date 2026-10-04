@@ -1,31 +1,75 @@
-\section{PKI, Chain of Trust, dan Protokol TLS}
+\section{Pengantar Fungsi Hash}
 
-\subsection{Peran Diffie-Hellman dalam TLS}
+\begin{subcpmk}
+  \item Mahasiswa mampu menganalisis prinsip kerja fungsi hash kriptografis, membuktikan secara teoritis properti keamanan (\textit{pre-image}, \textit{second pre-image}, dan \textit{collision resistance}), serta mengevaluasi peran hash dalam menjaga integritas data.
+\end{subcpmk}
 
-Diffie-Hellman memungkinkan dua pihak menyepakati kunci rahasia melalui kanal tidak aman \cite{stallings2017}. Parameter publik: prima $p$, generator $g$. Keamanan bergantung pada kesulitan logaritma diskrit (diperkenalkan di Bab 6).
+\noindent\textit{Rujukan:} Stallings \cite{stallings2017}; HAC Bab~9 \cite{hac_online}; NIST SP 800-107.
+
+\subsection{Definisi dan Karakteristik Fungsi Hash}
+
+\crypt{Fungsi Hash} kriptografis adalah algoritma matematika yang memetakan data dengan ukuran arbitrer (input/pesan $M$) menjadi string karakter dengan panjang tetap (output), yang dikenal sebagai \crypt{hash value}, \crypt{message digest}, atau \crypt{fingerprint}. Secara matematis, fungsi hash $H$ dapat dinyatakan sebagai:
+\begin{equation}
+  h = H(M)
+\end{equation}
+di mana $M \in \{0, 1\}^*$ dan $h \in \{0, 1\}^n$ ($n$ adalah panjang tetap digest).
+
+Berbeda dengan fungsi hash dalam struktur data (seperti \textit{hash map}), fungsi hash \textbf{kriptografis} harus memenuhi persyaratan keamanan yang sangat ketat agar tidak dapat dimanipulasi oleh penyerang.
+
+\subsection{Properti Keamanan Fungsi Hash}
+
+Sebuah fungsi hash dikatakan aman secara kriptografis jika memenuhi tiga properti fundamental berikut:
 
 \begin{enumerate}
-  \item Alice memilih $a$ rahasia, mengirim $A = g^a \bmod p$ ke Bob
-  \item Bob memilih $b$ rahasia, mengirim $B = g^b \bmod p$ ke Alice
-  \item Alice menghitung $K = B^a \bmod p$
-  \item Bob menghitung $K = A^b \bmod p$
-  \item Keduanya memperoleh $K$ yang sama
+    \item \textbf{Pre-image Resistance (One-Wayness)}:
+    Diberikan sebuah nilai hash $h$, secara komputasi tidak mungkin untuk menemukan pesan $M$ sedemikian sehingga $H(M) = h$. Dengan kata lain, fungsi hash harus bersifat satu arah; informasi asli tidak dapat dipulihkan dari digest-nya.
+
+    \item \textbf{Second Pre-image Resistance (Weak Collision Resistance)}:
+    Diberikan sebuah pesan $M_1$, secara komputasi tidak mungkin untuk menemukan pesan berbeda $M_2 \neq M_1$ sedemikian sehingga $H(M_1) = H(M_2)$. Ini menjamin bahwa penyerang tidak dapat memalsukan dokumen yang memiliki hash yang sama dengan dokumen asli.
+
+    \item \textbf{Collision Resistance (Strong Collision Resistance)}:
+    Secara komputasi tidak mungkin untuk menemukan \textit{dua pesan apa pun} $M_1$ dan $M_2$ (di mana $M_1 \neq M_2$) sedemikian sehingga $H(M_1) = H(M_2)$. Properti ini lebih kuat daripada \textit{second pre-image resistance}.
 \end{enumerate}
 
-\subsection{TLS (Transport Layer Security)}
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Properti} & \textbf{Input yang Diketahui} & \textbf{Target Pencarian} \\
+    \midrule
+    Pre-image & $h$ & $M$ sedemikian sehingga $H(M) = h$ \\
+    2nd Pre-image & $M_1$ & $M_2$ sedemikian sehingga $H(M_1) = H(M_2)$ \\
+    Collision & (Kosong) & Pasangan $(M_1, M_2)$ sedemikian sehingga $H(M_1) = H(M_2)$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perbandingan tiga properti keamanan utama fungsi hash.}
+  \label{tab:hash-properties}
+\end{table}
 
-TLS mengamankan komunikasi di internet (HTTPS) \cite{stallings2017}. Menggabungkan pertukaran kunci (DH atau ECDH), autentikasi sertifikat, dan enkripsi simetris (AES-GCM, ChaCha20-Poly1305). Handshake: negosiasi cipher suite, verifikasi sertifikat server, pertukaran kunci sesi, lalu enkripsi aplikasi.
+\subsection{Analisis Efek Longsoran (\textit{Avalanche Effect})}
+
+Salah satu indikator kualitas fungsi hash adalah \textbf{Avalanche Effect}. Sifat ini mensyaratkan bahwa perubahan sekecil apa pun pada input (misal: mengubah satu bit saja) harus menghasilkan perubahan yang drastis dan tidak terprediksi pada output. Secara statistik, rata-rata 50\% dari bit-bit pada output harus berubah.
+
+Jika sebuah fungsi hash tidak memiliki efek longsoran, penyerang dapat menggunakan teknik analisis diferensial untuk menebak struktur input berdasarkan perubahan kecil pada output.
+
+\subsection{Implementasi dan Kegunaan dalam Keamanan Informasi}
+
+Fungsi hash tidak digunakan untuk menyembunyikan data (karena bukan enkripsi), melainkan untuk menjamin \textbf{integritas} dan \textbf{autentikasi}:
 
 \begin{itemize}
-  \item \textbf{Negosiasi cipher suite}: Server dan klien menegosiasi algoritma yang didukung.
-  \item \textbf{Autentikasi server}: Server membuktikan identitas dengan sertifikat digital.
-  \item \textbf{Pertukaran kunci}: Diffie-Hellman atau RSA untuk pertukaran kunci sesi.
-  \item \textbf{Enkripsi data}: AES-GCM atau ChaCha20-Poly1305 untuk data.
-  \item \textbf{Integritas}: AEAD (GCM) atau HMAC untuk integritas.
+    \item \textbf{Verifikasi Integritas Berkas}: Distribusi perangkat lunak sering menyertakan nilai hash (misal: SHA-256) di samping file unduhan. Pengguna dapat menghitung hash file yang diterima; jika hasilnya berbeda satu bit saja, maka file tersebut telah rusak atau dimodifikasi oleh pihak ketiga.
+    \item \textbf{Penyimpanan Kata Sandi Aman}: Sistem modern tidak menyimpan password dalam teks polos. Password di-hash (dan biasanya ditambah \textit{salt}) sebelum disimpan. Saat login, sistem menghitung hash dari password yang dimasukkan pengguna dan membandingkannya dengan hash yang tersimpan.
+    \item \textbf{Komponen Tanda Tangan Digital}: Karena menandatangani pesan besar secara asimetris sangat lambat, yang ditandatangani adalah \textit{hash} dari pesan tersebut. Ini menjamin bahwa pesan belum berubah dan pengirimnya sah.
 \end{itemize}
 
-\subsection{Chain of Trust dan Sertifikat}
+\begin{aktivitas}
+  \item \textbf{Analisis Sensitivitas}: Gunakan alat penghitung hash SHA-256. Hitung hash untuk string \texttt{"Kriptografi\_ITB\_2026"} dan \texttt{"Kriptografi\_ITB\_2027"}. Amati betapa berbedanya kedua hasil tersebut meskipun hanya satu karakter yang berubah. Hitung berapa banyak karakter yang sama antara kedua output tersebut.
+\end{aktivitas}
 
-TLS membutuhkan \textbf{otentikasi server} melalui sertifikat X.509 \cite{stallings2017}. \textbf{Chain of trust}: sertifikat server ditandatangani CA menengah; CA menengah ditandatangani CA root. Klien memvalidasi rantai sampai CA root dalam daftar tepercaya (trust store). Tanpa validasi sertifikat, koneksi rentan man-in-the-middle.
-
-TLS 1.2 dan TLS 1.3 adalah versi saat ini. Forward secrecy: kunci sesi ephemeral sehingga kebocoran kunci privat tidak membeberkan sesi lampau \cite{stallings2017}.
+\begin{latihan}
+  \item Jelaskan perbedaan antara \textit{Second Pre-image Resistance} dan \textit{Collision Resistance}! Mengapa properti kedua lebih sulit untuk dicapai daripada properti pertama?
+  \item Mengapa penggunaan fungsi hash saja tidak cukup untuk mengamankan penyimpanan password terhadap serangan \textit{Rainbow Table}? Jelaskan peran \textit{salting} dalam mengatasi masalah ini!
+  \item Misalkan sebuah fungsi hash memiliki output 16 bit. Berdasarkan \textit{Birthday Paradox}, berapa jumlah input yang harus dicoba oleh penyerang untuk menemukan kolisi dengan peluang 50\%?
+  \item Jika sebuah fungsi hash memiliki \textit{pre-image resistance} yang kuat tetapi tidak memiliki \textit{collision resistance}, apakah fungsi tersebut masih bisa digunakan untuk menyimpan password? Berikan analisis Anda!
+\end{latihan}

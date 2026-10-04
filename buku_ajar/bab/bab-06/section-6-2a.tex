@@ -1,4 +1,4 @@
-\section{Diffie-Hellman, ElGamal, dan Pengantar ECC}
+﻿\section{Diffie-Hellman, ElGamal, dan Pengantar ECC}
 
 \subsection{Diffie-Hellman Key Exchange}
 
@@ -46,8 +46,9 @@ ElGamal bersifat probabilistik (bergantung pada $k$ acak). Keamanan bergantung p
 
 \subsection{Pengantar Elliptic Curve Cryptography (ECC)}
 
-ECC menggunakan grup titik pada kurva eliptik atas field hingga \cite{stallings2017}. Masalah yang mendasari: \textbf{Elliptic Curve Discrete Logarithm Problem (ECDLP)}—diberikan titik $P$ dan $Q = kP$, cari $k$.
+ECC menggunakan grup titik pada kurva eliptik atas field hingga \cite{stallings2017}. Masalah yang mendasari: \textbf{Elliptic Curve Discrete Logarithm Problem (ECDLP)}â€”diberikan titik $P$ dan $Q = kP$, cari $k$.
 
 Keunggulan: keamanan setara dengan ukuran kunci lebih pendek. Kunci ECC 256-bit setara dengan RSA 3072-bit \cite{nist800_56b_r2}. Digunakan dalam TLS, Bitcoin, dll.
 
 Algoritma ECC: ECDH (pertukaran kunci), ECDSA (tanda tangan), ECIES (enkripsi). Implementasi memerlukan aritmetika kurva eliptik; gunakan library (OpenSSL, libsodium) \cite{menezes1996}.
+

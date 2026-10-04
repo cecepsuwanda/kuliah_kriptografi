@@ -1,102 +1,120 @@
 \section{Algoritma RSA}
 
-\subsection{Pembangkitan Kunci}
+\begin{subcpmk}
+  \item Mahasiswa mampu menganalisis derivasi matematis algoritma RSA, membuktikan koreksi dekripsinya melalui Teorema Euler, melakukan proses pembuatan kunci, enkripsi, dan dekripsi secara manual, serta mengevaluasi kompleksitas komputasinya.
+\end{subcpmk}
 
-RSA didasarkan pada teori bilangan: aritmetika modular dan teorema Euler \cite{stallings2017}.
+\noindent\textit{Rujukan:} Munir \cite{munir2019,munir_slides_itb}; HAC Bab~8 \cite{hac_online}; Katz \& Lindell \cite{katz2020}; Boneh \cite{boneh_cs255}.
+
+\subsection{Landasan Matematis: Fungsi Totient dan Teorema Euler}
+
+RSA (Rivest-Shamir-Adleman) adalah algoritma kunci publik pertama yang mengimplementasikan konsep \textit{trapdoor one-way function} menggunakan operasi aritmetika modular. Keamanan RSA bersandar pada \textbf{Integer Factorization Problem} (IFP): fakta bahwa mengalikan dua bilangan prima besar sangat mudah, tetapi memfaktorkan hasil kalinya kembali menjadi dua prima asalnya secara komputasi mustahil untuk bilangan yang sangat besar.
+
+Dua konsep matematika kunci yang mendasari RSA adalah:
 
 \begin{enumerate}
-  \item Pilih dua bilangan prima besar $p$ dan $q$
-  \item Hitung $n = p \cdot q$ dan $\varphi(n) = (p-1)(q-1)$
-  \item Pilih $e$ sehingga $1 < e < \varphi(n)$ dan $\gcd(e, \varphi(n)) = 1$ (biasanya $e = 65537$)
-  \item Hitung $d \equiv e^{-1} \pmod{\varphi(n)}$ (gunakan Euclid diperluas)
-  \item Kunci publik: $(n, e)$; Kunci privat: $(n, d)$
+    \item \textbf{Fungsi Totient Euler $\varphi(n)$}: Fungsi ini menghitung jumlah bilangan bulat positif kurang dari $n$ yang koprima dengan $n$. Jika $n = p \cdot q$ dan $p, q$ adalah bilangan prima, maka:
+    \begin{equation}
+      \varphi(n) = (p-1)(q-1)
+    \end{equation}
+
+    \item \textbf{Teorema Euler}: Jika $\gcd(a, n) = 1$, maka:
+    \begin{equation}
+      a^{\varphi(n)} \equiv 1 \pmod{n}
+    \end{equation}
 \end{enumerate}
 
-Hubungan $ed \equiv 1 \pmod{\varphi(n)}$ menjamin $m^{ed} \equiv m \pmod{n}$ (teorema Euler).
+\subsection{Prosedur Algoritma RSA}
 
-\textbf{Catatan pembangkitan prima} \cite{menezes1996}:
-\begin{itemize}
-  \item $p$ dan $q$ harus berbeda dan dipilih acak menggunakan uji primalitas (mis. Miller-Rabin).
-  \item Ukuran kunci modern umumnya 2048 bit atau lebih.
-  \item Dalam praktik, sering digunakan $\lambda(n) = \text{lcm}(p-1, q-1)$ sebagai pengganti $\varphi(n)$ untuk menghitung $d$.
-\end{itemize}
+Proses RSA terbagi menjadi tiga tahap: pembangkitan kunci, enkripsi, dan dekripsi.
 
+\subsubsection{Pembangkitan Kunci (Key Generation)}
+\begin{enumerate}
+    \item Pilih dua bilangan prima besar $p$ dan $q$ secara acak dan independen.
+    \item Hitung $n = p \cdot q$. Nilai $n$ disebut sebagai \textit{modulus} dan panjangnya dalam bit menentukan kekuatan kunci.
+    \item Hitung $\varphi(n) = (p-1)(q-1)$.
+    \item Pilih bilangan bulat $e$ sedemikian sehingga $1 < e < \varphi(n)$ dan $\gcd(e, \varphi(n)) = 1$. Nilai $e$ adalah \textit{public exponent}. Nilai standar yang umum digunakan adalah $e = 65537$ ($2^{16}+1$) karena efisien untuk komputasi.
+    \item Hitung $d$ sebagai invers multiplikatif modular dari $e$ modulo $\varphi(n)$, sehingga:
+    \begin{equation}
+      e \cdot d \equiv 1 \pmod{\varphi(n)}
+    \end{equation}
+    Nilai $d$ dihitung menggunakan \textbf{Algoritma Euclidean Diperluas} (EEA).
+\end{enumerate}
+\textbf{Kunci Publik}: $(e, n)$ \\
+\textbf{Kunci Privat}: $(d, n)$ atau cukup $(d)$
 
-\subsection{Pemilihan \texorpdfstring{$p$ dan $q$}{p dan q} yang Aman}
+\subsubsection{Enkripsi}
+Untuk pesan $M$ yang dinyatakan sebagai bilangan bulat $0 \le M < n$, cipherteks $C$ dihitung dengan:
+\begin{equation}
+  C = M^e \pmod{n}
+\end{equation}
 
-Kualitas pemilihan $p$ dan $q$ sangat menentukan keamanan RSA. Praktik umum:
-\begin{itemize}
-  \item Gunakan RNG kriptografis untuk memilih kandidat prima yang acak dan independen.
-  \item Pastikan $p \neq q$ dan keduanya cukup besar.
-  \item Gunakan uji primalitas probabilistik yang kuat (mis. Miller-Rabin) dengan parameter yang memadai.
-  \item Hindari pasangan prima yang terlalu dekat satu sama lain untuk mengurangi risiko faktorisasi tertentu.
-\end{itemize}
+\subsubsection{Dekripsi}
+Penerima menggunakan kunci privat $d$ untuk memulihkan pesan $M$ dari cipherteks $C$:
+\begin{equation}
+  M = C^d \pmod{n}
+\end{equation}
 
+\subsection{Pembuktian Koreksi RSA}
 
-\subsection{Peran \texorpdfstring{$\lambda(n)$}{lambda(n)} dan CRT}
+Untuk membuktikan bahwa dekripsi selalu mengembalikan pesan asli, kita harus menunjukkan bahwa $C^d \equiv M \pmod{n}$.
 
-Menghitung $d$ dengan $\lambda(n) = \text{lcm}(p-1, q-1)$ memberi orde lebih kecil tetapi tetap menjamin correctness. CRT mempercepat dekripsi: hitung $m \bmod p$ dan $m \bmod q$, gabungkan dengan Teorema Sisa Cina \cite{stallings2017}.
+\begin{proof}
+Berdasarkan definisi enkripsi:
+\[ C^d \equiv (M^e)^d \equiv M^{ed} \pmod{n} \]
+Karena $e \cdot d \equiv 1 \pmod{\varphi(n)}$, maka terdapat bilangan bulat $k$ sedemikian sehingga $ed = k\varphi(n) + 1$.
+\[ M^{ed} = M^{k\varphi(n) + 1} = (M^{\varphi(n)})^k \cdot M^1 \]
+Menurut Teorema Euler, $M^{\varphi(n)} \equiv 1 \pmod{n}$ (asumsi $M$ koprima dengan $n$):
+\[ M^{ed} \equiv (1)^k \cdot M \equiv M \pmod{n} \]
+Jika $M$ tidak koprima dengan $n$ (kasus yang sangat jarang untuk $p, q$ besar), pembuktian tetap berlaku menggunakan Teorema Sisa Tionghoa (CRT). Jadi, proses dekripsi selalu benar.
+\end{proof}
 
-\[
-d_P = d \bmod (p-1), \quad d_Q = d \bmod (q-1), \quad q^{-1} \bmod p
-\]
+\subsection{Contoh Perhitungan Manual (Small-Scale RSA)}
 
-\subsection{Enkripsi dan Dekripsi}
+Misalkan kita ingin mengimplementasikan RSA dengan bilangan prima kecil:
+\begin{enumerate}
+    \item \textbf{Kunci}: Pilih $p = 11, q = 13 \rightarrow n = 143$.
+    \item \textbf{Totient}: $\varphi(143) = (10)(12) = 120$.
+    \item \textbf{Eksponen Publik}: Pilih $e = 7$ (cek $\gcd(7, 120) = 1 \checkmark$).
+    \item \textbf{Eksponen Privat}: Cari $d$ sehingga $7d \equiv 1 \pmod{120}$.
+    Menggunakan EEA: $120 = 17 \cdot 7 + 1 \rightarrow 1 = 120(1) - 17(7)$.
+    Maka $d \equiv -17 \equiv 103 \pmod{120}$.
+\end{enumerate}
+Kunci Publik: $(7, 143)$, Kunci Privat: $(103, 143)$.
 
-Plaintext $m$ (integer $< n$). Enkripsi:
-\[
-c = m^e \bmod n
-\]
-Dekripsi:
-\[
-m = c^d \bmod n = (m^e)^d \bmod n = m^{ed} \bmod n
-\]
-Karena $ed \equiv 1 \pmod{\varphi(n)}$, maka $m^{ed} \equiv m \pmod{n}$ (teorema Euler).
+\textbf{Proses Enkripsi}: Pesan $M = 9$.
+\[ C = 9^7 \pmod{143} = 4,782,969 \pmod{143} = 48 \]
 
+\textbf{Proses Dekripsi}: Cipherteks $C = 48$.
+\[ M = 48^{103} \pmod{143} = 9 \]
 
-\subsection{Correctness dan Ruang Pesan}
+\subsection{Kompleksitas Komputasi dan Efisiensi}
 
-Secara ringkas, karena $ed = 1 + k\varphi(n)$, maka untuk $m$ yang relatif prima terhadap $n$:
-\[
-m^{ed} = m^{1+k\varphi(n)} \equiv m \cdot (m^{\varphi(n)})^k \equiv m \pmod{n}
-\]
-Untuk kasus umum (termasuk $m$ tidak relatif prima), korektness dijamin oleh Teorema Sisa Cina (CRT) \cite{menezes1996}.
+Operasi utama dalam RSA adalah \textit{modular exponentiation} ($M^e \bmod n$). Jika dilakukan secara naif, kompleksitasnya adalah $\mathcal{O}(e)$, yang tidak praktis untuk $e$ besar. Oleh karena itu, digunakan algoritma \textbf{Square-and-Multiply} (atau \textit{Binary Exponentiation}) yang mereduksi kompleksitas menjadi $\mathcal{O}(\log e)$.
 
-RSA beroperasi pada integer $0 \leq m < n$; pesan harus di-encode dan dipad dengan skema aman (OAEP).
-
-\subsection{Padding RSA (OAEP)}
-
-Textbook RSA bersifat deterministik. RSAES-OAEP menambahkan seed acak serta MGF1 \cite{rfc8017}; menyediakan semantic security dan IND-CCA2.
-
-\begin{table}[htbp]
+\begin{figure}[htbp]
   \centering
-  \small
-  \begin{tabular}{lcc}
-    \toprule
-    Skema & Deterministik & Keamanan Praktis \\
-    \midrule
-    Textbook RSA & Ya & Tidak direkomendasikan \\
-    RSAES-OAEP & Tidak & Direkomendasikan \\
-    \bottomrule
-  \end{tabular}
-  \caption{Perbandingan singkat Textbook RSA vs OAEP.}
-\end{table}
+  \includegraphics[width=0.7\textwidth]{bab-06/rsa-square-multiply-diagram}
+  \caption{Alur kerja algoritma Square-and-Multiply untuk eksponensiasi modular efisien.}
+  \label{fig:rsa-square-multiply}
+\end{figure}
 
-\subsection{Padding RSA untuk Tanda Tangan (PSS)}
+\subsection{Keamanan dan Padding OAEP}
 
-Untuk tanda tangan digital, RSA tidak boleh digunakan dengan padding deterministik. Skema yang direkomendasikan adalah \textbf{RSASSA-PSS} \cite{rfc8017}. PSS menambahkan \textbf{salt} acak dan memakai hash, sehingga tanda tangan tidak deterministik dan lebih tahan terhadap serangan adaptif dibanding skema legacy.
+\textit{Textbook RSA} (RSA tanpa padding) memiliki kelemahan fatal:
+\begin{enumerate}
+    \item \textbf{Deterministik}: Pesan yang sama selalu menghasilkan cipherteks yang sama.
+    \item \textbf{Kerentanan Matematis}: Jika $M$ kecil dan $e=3$, maka $M^3$ mungkin kurang dari $n$, sehingga $M$ dapat ditemukan dengan akar pangkat tiga biasa.
+\end{enumerate}
+Untuk mengatasinya, standar industri menggunakan \textbf{Optimal Asymmetric Encryption Padding (OAEP)}. OAEP menambahkan struktur acak (menggunakan fungsi hash) ke dalam pesan sebelum dienkripsi, sehingga mengubah RSA menjadi skema enkripsi probabilistik: pesan yang sama akan menghasilkan cipherteks berbeda setiap kali dienkripsi.
 
+\begin{aktivitas}
+  \item \textbf{Eksperimen RSA}: Implementasikan algoritma Square-and-Multiply dalam bahasa Python. Bandingkan waktu eksekusi antara metode perkalian berulang naif dengan metode Square-and-Multiply untuk eksponen $e > 10^6$.
+\end{aktivitas}
 
-\subsection{Keamanan}
-
-Keamanan RSA bergantung pada kesulitan memfaktorkan $n = pq$ \cite{menezes1996}. Jika penyerang dapat memfaktorkan $n$, ia dapat menghitung $\varphi(n)$ dan $d$. NIST mensyaratkan kekuatan keamanan minimal 112-bit untuk perlindungan baru; pemetaan panjang modulus RSA ke kekuatan keamanan dijelaskan di SP 800-56B Rev.2 \cite{nist800_56b_r2} dan kebijakan transisinya ada di SP 800-131A Rev.2 \cite{nist800_131a_r2}. Dalam praktik, kunci RSA 2048-bit atau lebih adalah baseline umum saat ini.
-
-\subsection{Serangan dan Mitigasi}
-
-\begin{itemize}
-  \item \textbf{Textbook RSA deterministik}: rentan \textit{chosen-plaintext}. Mitigasi: OAEP.
-  \item \textbf{Small $e$ dan broadcast attack}: mitigasi dengan padding acak.
-  \item \textbf{Padding oracle}: mitigasi dengan OAEP dan implementasi error yang tidak membocorkan informasi.
-  \item \textbf{Side-channel} (timing/power): mitigasi dengan implementasi \textit{constant-time} dan blinding.
-  \item \textbf{Kunci lemah karena RNG buruk}: mitigasi dengan RNG kriptografis dan validasi kunci.
-\end{itemize}
+\begin{latihan}
+  \item Diketahui $p=17, q=19, e=5$. Hitunglah $n, \varphi(n), d$, kunci publik, dan kunci privat!
+  \item Lakukan enkripsi dan dekripsi untuk pesan $M=10$ menggunakan parameter pada soal nomor 1!
+  \item Mengapa pemilihan $e = 65537$ sangat populer dalam implementasi RSA? Jelaskan dari sisi efisiensi biner!
+  \item Jika seorang penyerang berhasil menemukan $\varphi(n)$, apakah ia dapat memecahkan RSA? Jelaskan langkah-langkah yang akan dilakukan penyerang tersebut!
+\end{latihan}

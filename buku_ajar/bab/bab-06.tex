@@ -1,11 +1,11 @@
-\documentclass[../main]{subfiles}
+﻿% \documentclass[../main]{subfiles}
 \ifSubfilesClassLoaded{\setcounter{chapter}{5}}{}
-\begin{document}
+% \begin{document}
 
-\chapter{Kriptografi Asimetris dan RSA}
+\chapter{Kriptografi Asimetris}
 
 \begin{subcpmk}
-  \item Sub-CPMK 1.3: Mengenal kriptografi modern asimetris (RSA, Diffie--Hellman, ElGamal, pengantar ECC)
+  \item Sub-CPMK 1.3: Menganalisis dan mengimplementasikan berbagai algoritma kriptografi asimetris, termasuk RSA, Diffie--Hellman, dan ElGamal, serta memahami konsep dasar ECC dan perbandingannya.
 \end{subcpmk}
 
 \noindent\textit{Rujukan:} Munir \cite{munir2019,munir_slides_itb}; HAC Bab~8 \cite{hac_online}; Katz \& Lindell \cite{katz2020}; Boneh \cite{boneh_cs255}.
@@ -13,72 +13,18 @@
 % ============================================================
 % MATERI POKOK
 % ============================================================
-\input{bab-06/section-6-1}
-\input{bab-06/section-6-1a-contoh-rsa}
-\input{bab-06/section-6-2}
-\input{bab-06/section-6-2a}
-\input{bab-06/section-6-3}
-\input{bab-06/section-6-4}
-\input{bab-06/section-6-4a-contoh-ecc}
-% section-6-5 (side-channel / lanjutan) di luar tingkat pengenalan --- tidak diinput
-% \input{bab-06/section-6-5}
-
-% ============================================================
-% AKTIVITAS PEMBELAJARAN
-% ============================================================
-
-\begin{aktivitas}
-  \item \textbf{Hitung manual}: RSA dengan $p,q$ kecil; Diffie--Hellman dengan $p=23$, $g=5$.
-  \item \textbf{Demo}: Generate key pair RSA (OpenSSL) --- amati konsep, bukan coding penuh.
-  \item \textbf{Diskusi}: Kapan asimetris dipakai bersama simetris (hybrid)?
-\end{aktivitas}
-
-% ============================================================
-% LATIHAN DAN REFLEKSI
-% ============================================================
-
-\begin{latihan}
-  \item Dengan $p=3$, $q=11$, $e=3$: hitung $n$, $\varphi(n)$, $d$, lalu enkripsi $m=5$.
-  \item Sebutkan masalah matematika di balik RSA, DH, dan ECC (pengenalan).
-  \item Uraikan langkah Diffie--Hellman secara singkat.
-  \item Apa perbedaan ElGamal dan RSA pada tingkat konsep?
-\end{latihan}
-
-% ============================================================
-% ASESMEN
-% ============================================================
-
-\begin{asesmen}
-\textbf{Instrumen Penilaian untuk Sub-CPMK 1.3}
-
-\textbf{A. Essay}
-
-\begin{enumerate}
-  \item Jelaskan konsep kunci publik serta peran faktorisasi dan logaritma diskrit.
-  \item Uraikan langkah Diffie--Hellman secara singkat.
-\end{enumerate}
-
-\textbf{B. Perhitungan}
-
-Hitung enkripsi/dekripsi RSA dengan parameter kecil (seperti di latihan).
-\end{asesmen}
-
-% ============================================================
-% CHECKLIST KOMPETENSI
-% ============================================================
-
-\begin{checklist}
-  \item Saya mengenal konsep kunci publik/privat
-  \item Saya mengenal langkah RSA, Diffie--Hellman, dan ElGamal secara pengenalan
-  \item Saya mengenal gagasan ECC tanpa detail implementasi mendalam
-\end{checklist}
+\input{bab/bab-06/section-6-1}
+\input{bab/bab-06/section-6-2}
+\input{bab/bab-06/section-6-3}
+\input{bab/bab-06/section-6-4}
+\input{bab/bab-06/section-6-5}
 
 % ============================================================
 % RANGKUMAN
 % ============================================================
 
 \begin{rangkuman}
-Bab ini membahas kriptografi kunci publik: konsep asimetris, RSA (enkripsi, tanda tangan, hybrid), Diffie-Hellman, ElGamal, dan implementasi C. Kriptografi asimetris memecahkan masalah distribusi kunci dan autentikasi yang menjadi keterbatasan kriptografi simetris.
+Bab ini membahas kriptografi kunci publik: konsep asimetris, RSA (enkripsi, tanda tangan, hybrid), Diffie-Hellman, ElGamal, dan implementasi Python. Kriptografi asimetris memecahkan masalah distribusi kunci dan autentikasi yang menjadi keterbatasan kriptografi simetris.
 
 \textbf{Poin Kunci:}
 \begin{itemize}
@@ -97,40 +43,9 @@ Bab ini membahas kriptografi kunci publik: konsep asimetris, RSA (enkripsi, tand
 % ============================================================
 
 \begin{transition}
-Setelah mempelajari kriptografi kunci publik, kita siap untuk memasuki \textbf{Bab VII: Fungsi Hash, MAC, dan Tanda Tangan Digital}.
+Setelah mempelajari kriptografi kunci publik, kita siap untuk memasuki \textbf{Bab VII: Kriptografi Knapsack dan Sejarah Kriptanalisis}.
 
-Dalam Bab VII, kita akan melengkapi toolkit keamanan informasi dengan komponen-komponen penting:
-\begin{itemize}
-  \item \textbf{Fungsi Hash}: SHA-256, SHA-3 — untuk integrity dan fingerprint data
-  \item \textbf{MAC (Message Authentication Code)}: HMAC — untuk integrity dan authenticity
-  \item \textbf{Tanda Tangan Digital}: RSA-Sig, DSA, ECDSA — untuk non-repudiation
-\end{itemize}
-
-\textbf{Koneksi dengan Bab VI}:
-\begin{itemize}
-  \item \textbf{RSA Enkripsi}: Menyediakan confidentiality
-  \item \textbf{RSA Signature}: Menyediakan integrity dan non-repudiation
-  \item \textbf{Bab VII}: Menjelaskan bagaimana signature bekerja dengan hash
-\end{itemize}
-
-\textbf{Integrasi Semua Layanan Keamanan (Bab II)}:
-\begin{itemize}
-  \item \textbf{Confidentiality}: RSA/AES enkripsi (Bab V-VI)
-  \item \textbf{Integrity}: Fungsi hash dan MAC (Bab VII)
-  \item \textbf{Authenticity}: Sertifikat + tanda tangan (Bab VI-VII)
-  \item \textbf{Non-repudiation}: Tanda tangan digital (Bab VII)
-\end{itemize}
-
-\textbf{Matematika yang Akan Diterapkan}:
-\begin{itemize}
-  \item \textbf{Aljabar Abstrak (Bab III)}: Struktur fungsi hash modern
-  \item \textbf{Teori Informasi}: Konsep collision resistance dan preimage resistance
-  \item \textbf{Aritmetika Modular}: Operasi dalam tanda tangan DSA/ECDSA
-\end{itemize}
-
-\textbf{Preview}: Di Bab VII, kita akan memahami bagaimana fungsi hash seperti SHA-256 dapat menciptakan "fingerprint" digital yang unik untuk setiap data, bagaimana HMAC menggabungkan hash dengan kunci rahasia untuk autentikasi pesan, dan bagaimana tanda tangan digital menggabungkan hash dengan kriptografi kunci publik untuk menciptakan bukti matematis yang tidak dapat dipalsukan.
-
-Setelah Bab VII, Anda akan memiliki pemahaman lengkap tentang semua layanan keamanan informasi fundamental dan bagaimana mereka bekerja sama dalam sistem keamanan modern. Ini akan mempersiapkan Anda untuk memahami protokol lengkap seperti TLS/SSL yang menggabungkan semua komponen ini dalam satu sistem yang kohesif.
+Dalam Bab VII, kita akan mempelajari algoritma kunci-publik yang lebih spesifik namun memiliki nilai sejarah dan analisis kriptanalisis yang penting, yaitu Kriptografi Knapsack (Merkle-Hellman) dan bagaimana serangan Adi Shamir mematahkan sistem tersebut.
 \end{transition}
 
 \ifSubfilesClassLoaded{
@@ -138,4 +53,8 @@ Setelah Bab VII, Anda akan memiliki pemahaman lengkap tentang semua layanan keam
   \bibliographystyle{plain}
   \bibliography{../references}
 }{}
-\end{document}
+\% end{document}
+
+
+
+

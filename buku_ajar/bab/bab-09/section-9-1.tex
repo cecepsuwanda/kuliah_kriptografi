@@ -1,42 +1,32 @@
-\section{Pembangkit Bilangan Acak (RNG)}
+﻿\section{PKI, Chain of Trust, dan Protokol TLS}
 
-\subsection{PRNG vs TRNG}
+\subsection{Peran Diffie-Hellman dalam TLS}
 
-\textbf{TRNG (True Random Number Generator)}: Menggunakan sumber fisik yang tidak dapat diprediksi (noise termal, radioaktivitas, gerakan mouse). Output benar-benar acak; cocok untuk seed, kunci, nonce \cite{stallings2017}.
+Diffie-Hellman memungkinkan dua pihak menyepakati kunci rahasia melalui kanal tidak aman \cite{stallings2017}. Parameter publik: prima $p$, generator $g$. Keamanan bergantung pada kesulitan logaritma diskrit (diperkenalkan di Bab 6).
 
-{\sloppy \textbf{PRNG (Pseudo-Random Number Generator)}: Algoritma deterministik yang menghasilkan deret bit yang \textit{tampak} acak dari seed. Diberikan seed sama, output sama. Untuk kriptografi harus \textbf{CSPRNG} (Cryptographically Secure PRNG) \cite{menezes1996}.\par}
+\begin{enumerate}
+  \item Alice memilih $a$ rahasia, mengirim $A = g^a \bmod p$ ke Bob
+  \item Bob memilih $b$ rahasia, mengirim $B = g^b \bmod p$ ke Alice
+  \item Alice menghitung $K = B^a \bmod p$
+  \item Bob menghitung $K = A^b \bmod p$
+  \item Keduanya memperoleh $K$ yang sama
+\end{enumerate}
 
-\begin{table}[htbp]
-  \centering
-  \small
-  \begin{tabular}{lll}
-    \toprule
-    Sifat & TRNG & PRNG \\
-    \midrule
-    Prediktabilitas & Tidak dapat diprediksi & Deterministik dari seed \\
-    Kecepatan & Biasanya lambat & Cepat \\
-    Penggunaan & Seed, kunci, IV & Keystream, nonce (dari seed) \\
-    \bottomrule
-  \end{tabular}
-  \caption{Perbandingan TRNG dan PRNG.}
-\end{table}
+\subsection{TLS (Transport Layer Security)}
 
-\subsection{Linear Congruential Generator (LCG)}
+TLS mengamankan komunikasi di internet (HTTPS) \cite{stallings2017}. Menggabungkan pertukaran kunci (DH atau ECDH), autentikasi sertifikat, dan enkripsi simetris (AES-GCM, ChaCha20-Poly1305). Handshake: negosiasi cipher suite, verifikasi sertifikat server, pertukaran kunci sesi, lalu enkripsi aplikasi.
 
-LCG: $x_{n+1} = (a \cdot x_n + c) \bmod m$. Parameter $a$, $c$, $m$ menentukan periode dan kualitas. LCG \textbf{tidak aman} untuk kriptografi—polanya dapat dideteksi dari sedikit output \cite{schneier1996}. Hanya untuk simulasi non-keamanan.
+\begin{itemize}
+  \item \textbf{Negosiasi cipher suite}: Server dan klien menegosiasi algoritma yang didukung.
+  \item \textbf{Autentikasi server}: Server membuktikan identitas dengan sertifikat digital.
+  \item \textbf{Pertukaran kunci}: Diffie-Hellman atau RSA untuk pertukaran kunci sesi.
+  \item \textbf{Enkripsi data}: AES-GCM atau ChaCha20-Poly1305 untuk data.
+  \item \textbf{Integritas}: AEAD (GCM) atau HMAC untuk integritas.
+\end{itemize}
 
-\subsection{Blum Blum Shub (BBS)}
+\subsection{Chain of Trust dan Sertifikat}
 
-BBS adalah CSPRNG berbasis kesulitan faktorisasi \cite{menezes1996}. Pilih prima $p$, $q$ kongruen 3 mod 4. Seed $x_0$ koprima dengan $n = pq$. Iterasi:
-\[
-x_{i+1} = x_i^2 \bmod n
-\]
-Output: bit paritas dari $x_i$ (atau bit low-order). Aman secara kriptografis tetapi lambat; digunakan untuk kunci, bukan keystream volume tinggi.
+TLS membutuhkan \textbf{otentikasi server} melalui sertifikat X.509 \cite{stallings2017}. \textbf{Chain of trust}: sertifikat server ditandatangani CA menengah; CA menengah ditandatangani CA root. Klien memvalidasi rantai sampai CA root dalam daftar tepercaya (trust store). Tanpa validasi sertifikat, koneksi rentan man-in-the-middle.
 
-\subsection{Uji Keacakan}
+TLS 1.2 dan TLS 1.3 adalah versi saat ini. Forward secrecy: kunci sesi ephemeral sehingga kebocoran kunci privat tidak membeberkan sesi lampau \cite{stallings2017}.
 
-NIST SP 800-22 mendefinisikan serangkaian uji statistik untuk mengevaluasi keacakan deret bit \cite{stallings2017}. Contoh uji: frequency (monobit), runs, longest run, spectral, dll. Deret yang lolos uji tidak menjamin keamanan kriptografis, tetapi kegagalan uji mengindikasikan kelemahan.
-
-\begin{catatan}
-Untuk kriptografi, gunakan \texttt{/dev/urandom} (Linux), \texttt{ CryptGenRandom} (Windows), atau API CSPRNG library (OpenSSL \texttt{RAND\_bytes}). Hindari \texttt{rand()} untuk kunci atau nonce \cite{ferguson2010}.
-\end{catatan}

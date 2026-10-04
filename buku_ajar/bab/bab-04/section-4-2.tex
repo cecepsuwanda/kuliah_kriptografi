@@ -1,194 +1,48 @@
-\section{Caesar Cipher}
-\label{sec:caesar}
+\section{Teknik Kriptanalisis Klasik}
 
-\subsection{Konsep}
+Kriptanalisis adalah "senjata" utama untuk menguji kekuatan sebuah cipher. Pada era kriptografi klasik, sebagian besar teknik kriptanalisis memanfaatkan redundansi bahasa alami—fakta bahwa huruf-huruf dalam sebuah bahasa tidak muncul dengan peluang yang sama.
 
-Caesar cipher adalah cipher substitusi yang paling terkenal. Cipher ini dinamai dari Julius Caesar yang menurut sejarawan menyandikan pesan militernya dengan menggeser setiap huruf alfabet sejauh tiga huruf ke kanan \cite{stallings2017,munir_slides_itb}:
+\subsection{Analisis Frekuensi}
 
-\begin{center}
-\small
-\setlength{\tabcolsep}{2.6pt}
-\begin{tabular}{l*{26}{c}}
-  Plainteks: & A & B & C & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z \\
-  Cipherteks: & D & E & F & G & H & I & J & K & L & M & N & O & P & Q & R & S & T & U & V & W & X & Y & Z & A & B & C
-\end{tabular}
-\end{center}
+\textit{Analisis frekuensi} adalah teknik dasar yang menghitung kemunculan setiap karakter dalam cipherteks dan membandingkannya dengan distribusi statistik huruf dalam bahasa plainteks.
 
-Dengan pengodean huruf pada Tabel~\ref{tab:kode-huruf}, Caesar cipher dirumuskan dengan aritmetika modulo 26 (Bab~III). Untuk pergeseran umum sejauh $k$ (kunci rahasia):
-\[
-\text{Enkripsi: } c = E_k(p) = (p + k) \bmod 26 \qquad
-\text{Dekripsi: } p = D_k(c) = (c - k) \bmod 26
-\]
-dengan $p$ huruf plainteks dan $c$ huruf cipherteks. Caesar asli memakai $k=3$.
+\textbf{Prinsip Kerja}:
+Pada \textit{cipher substitusi monoalfabetik} (seperti Caesar atau substitusi acak), terdapat hubungan satu-ke-satu antara alfabet plainteks dan cipherteks. Artinya, jika huruf 'A' dipetakan ke 'X', maka setiap kemunculan 'A' akan selalu menjadi 'X'. Akibatnya, distribusi frekuensi huruf pada plainteks hanya \textbf{bergeser} ke huruf lain, tetapi pola distribusinya tetap identik.
 
-\begin{contoh}
-Plainteks: \texttt{temui saya di jembatan merah nanti malam}, $k=3$.
-\begin{itemize}
-  \item $p_1 = \texttt{t} = 19 \rightarrow c_1 = (19+3) \bmod 26 = 22 = \texttt{W}$
-  \item $p_2 = \texttt{e} = 4 \rightarrow c_2 = (4+3) \bmod 26 = 7 = \texttt{H}$
-  \item $p_3 = \texttt{m} = 12 \rightarrow c_3 = (12+3) \bmod 26 = 15 = \texttt{P}$, dan seterusnya.
-\end{itemize}
-Cipherteks: \texttt{WHPXL VDBD GL MHPEDWDQ PHUDK QDQWL PDODP}.
-
-Dekripsi membalik prosesnya: $c_1 = \texttt{W} = 22 \rightarrow p_1 = (22-3) \bmod 26 = 19 = \texttt{t}$, dan seterusnya.
-\end{contoh}
-
-Agar kriptanalisis lebih sulit, batas kata pada cipherteks sebaiknya dihilangkan, misalnya dengan mengelompokkan cipherteks per 4 huruf (\texttt{WHPX LVDB DGLM HPED WDQP HUDK QDQW LPDO DP}) atau membuang semua spasi (\texttt{WHPXLVDBDGLMHPEDWDQPHUDKQDQWLPDODP}).
-
-Tabel substitusi Caesar dapat dibentuk secara mekanis dengan \textit{Caesar wheel} (Gambar~\ref{fig:roda-caesar}): dua cakram alfabet konsentris diputar sejauh $k$ huruf sehingga setiap huruf plainteks pada cakram luar langsung berpasangan dengan huruf cipherteks pada cakram dalam.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.38\textwidth]{bab-04/roda-caesar}
-  \caption{\textit{Caesar wheel} untuk membentuk tabel substitusi huruf \cite{munir_slides_itb}.}
-  \label{fig:roda-caesar}
-\end{figure}
-
-Untuk pesan berupa 256 karakter ASCII (bukan hanya huruf), modulus diganti menjadi 256:
-\[
-c = (p + k) \bmod 256 \qquad p = (c - k) \bmod 256
-\]
-
-\subsection{ROT13}
-
-ROT13 adalah Caesar cipher dengan $k = 13$ yang tersedia sebagai fungsi di sistem operasi Unix (Gambar~\ref{fig:rot13}). Contoh: $\text{ROT13}(\texttt{ROTATE}) = \texttt{EBGNGR}$ dan $\text{ROT13}(\texttt{HELLO}) = \texttt{URYYB}$. Nama ROT13 berasal dari forum \textit{net.jokes} (1980-an), dan sampai sekarang dipakai di forum daring untuk menyamarkan jawaban teka-teki atau kuis.
-
-Karena 13 adalah setengah dari 26, mengenkripsi dua kali dengan ROT13 menghasilkan pesan semula:
-\[
-P = \text{ROT13}(\text{ROT13}(P)) \quad \text{sebab} \quad \text{ROT}_{13}(\text{ROT}_{13}(x)) = \text{ROT}_{26}(x) = x
-\]
-Jadi dekripsi ROT13 cukup dilakukan dengan mengenkripsi ulang cipherteks dengan ROT13.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.55\textwidth]{bab-04/rot13}
-  \caption{ROT13: setiap huruf dipasangkan dengan huruf yang berjarak 13 posisi, sehingga \texttt{HELLO} menjadi \texttt{URYYB} \cite{munir_slides_itb}.}
-  \label{fig:rot13}
-\end{figure}
-
-\subsection{Kriptanalisis Caesar Cipher}
-
-Caesar cipher mudah dipecahkan dengan \crypt{exhaustive key search} (\textit{brute force}) karena hanya ada 26 kunci ($k=0$ menghasilkan teks asli, sehingga efektifnya 25). Caranya:
+\textbf{Langkah-langkah Eksekusi}:
 \begin{enumerate}
-  \item Dekripsi kriptogram dengan setiap $k = 0, 1, \ldots, 25$.
-  \item Periksa hasil mana yang membentuk kata atau kalimat bermakna; $k$ tersebut diduga kunci.
-  \item Pastikan dugaan dengan mendekripsi potongan cipherteks lainnya memakai $k$ yang sama.
+    \item \textbf{Counting}: Hitung jumlah kemunculan setiap huruf dalam cipherteks.
+    \item \textbf{Ranking}: Urutkan huruf dari yang paling sering muncul hingga yang paling jarang.
+    \item \textbf{Mapping}: Bandingkan urutan tersebut dengan tabel frekuensi bahasa target (misal: Bahasa Indonesia). Huruf yang paling sering muncul di cipherteks kemungkinan besar adalah huruf yang paling sering muncul di bahasa asli (misal: 'A' atau 'I').
+    \item \textbf{Verification}: Masukkan pemetaan tersebut ke dalam cipherteks. Jika terbentuk kata-kata yang bermakna, maka pemetaan benar. Jika tidak, coba alternatif huruf dengan frekuensi yang mirip.
 \end{enumerate}
 
-\begin{contoh}
-Kriptogram \texttt{XMZVH}. Hasil dekripsi untuk semua kunci ditunjukkan Tabel~\ref{tab:brute-xmzvh}. Satu-satunya kata bermakna adalah \texttt{CREAM} dengan $k=21$; kunci ini lalu dicobakan pada potongan cipherteks lain.
-\end{contoh}
+\subsection{Pencarian Kunci Menyeluruh (\textit{Exhaustive Key Search})}
 
-\begin{table}[htbp]
-  \centering
-  \small
-  \begin{tabular}{cl@{\hspace{2em}}cl@{\hspace{2em}}cl}
-    \toprule
-    $k$ & Dekripsi & $k$ & Dekripsi & $k$ & Dekripsi \\
-    \midrule
-    0 & XMZVH & 9 & ODQMY & 18 & FUHDP \\
-    1 & WLYUG & 10 & NCPLX & 19 & ETGCO \\
-    2 & VKXTF & 11 & MBOKW & 20 & DSFBN \\
-    3 & UJWSE & 12 & LANJV & \textbf{21} & \textbf{CREAM} \\
-    4 & TIVRD & 13 & KZMIU & 22 & BQDZL \\
-    5 & SHUQC & 14 & JYLHT & 23 & APCYK \\
-    6 & RGTPB & 15 & IXKGS & 24 & ZOBXJ \\
-    7 & QFSOA & 16 & HWJFR & 25 & YNAWI \\
-    8 & PERNZ & 17 & GVIEQ & & \\
-    \bottomrule
-  \end{tabular}
-  \caption{\textit{Exhaustive key search} terhadap kriptogram \texttt{XMZVH} \cite{munir_slides_itb}.}
-  \label{tab:brute-xmzvh}
-\end{table}
+Metode ini, yang lebih dikenal sebagai \textbf{Brute Force}, mencoba semua kemungkinan kunci yang ada hingga ditemukan kunci yang menghasilkan plainteks bermakna.
 
-Dengan cara yang sama, dua cipherteks berikut terpecahkan:
+Efektivitas metode ini sangat bergantung pada \textbf{ruang kunci} (\textit{key space}):
 \begin{itemize}
-  \item \texttt{PHHW PH DIWHU WKH WRJD SDUWB} dengan $k=3$ menjadi \texttt{meet me after the toga party};
-  \item \texttt{VIVBQ SQBI SMBMUC LQ ICTI} dengan $k=8$ menjadi \texttt{nanti kita ketemu di aula}.
+    \item \textbf{Caesar Cipher}: Memiliki ruang kunci sangat kecil (hanya 25 kunci efektif). Brute force dapat dilakukan dalam hitungan detik bahkan secara manual.
+    \item \textbf{Substitusi Monoalfabetik Acak}: Memiliki ruang kunci $26! \approx 4 \times 10^{26}$. Brute force secara praktis tidak mungkin dilakukan, sehingga analisis frekuensi menjadi satu-satunya jalan.
 \end{itemize}
 
-\begin{catatan}
-Bagaimana jika ada dua kunci yang sama-sama menghasilkan kata bermakna? Misalnya kriptogram \texttt{HSPPW} menghasilkan \texttt{dolls} (boneka) untuk $k=4$ dan \texttt{wheel} (roda) untuk $k=11$. Dalam kasus ini, dekripsi potongan cipherteks lain cukup dengan $k=4$ dan $k=11$ saja untuk menyimpulkan kunci yang benar.
-\end{catatan}
+\subsection{Kriptanalisis Polialfabetik: Metode Kasiski}
 
-Kelemahan Caesar memberi tiga pelajaran desain yang terus berlaku sampai cipher modern: ruang kunci harus sangat besar, struktur cipher tidak boleh sesederhana pergeseran, dan statistik bahasa (frekuensi huruf) harus tersembunyi dalam cipherteks.
+Cipher polialfabetik seperti Vigenère dirancang untuk mengalahkan analisis frekuensi dengan memetakan satu huruf plainteks ke huruf cipherteks yang berbeda-beda. Namun, karena kunci digunakan secara berulang (periodik), muncul pola pengulangan.
 
-\subsection{Implementasi dalam Python dan C}
+\textbf{Metode Kasiski} mengeksploitasi periodisitas ini dengan cara:
+\begin{enumerate}
+    \item Mencari rangkaian huruf yang berulang dalam cipherteks.
+    \item Menghitung jarak (jumlah karakter) antar pengulangan tersebut.
+    \item Menentukan panjang kunci $m$ dengan mencari faktor persekutuan terbesar (FPB) dari jarak-jarak tersebut.
+    \item Setelah $m$ diketahui, cipherteks dipecah menjadi $m$ kelompok. Setiap kelompok kini merupakan cipher monoalfabetik yang dapat dipecahkan dengan analisis frekuensi standar.
+\end{enumerate}
 
-Kode~\ref{lst:caesar-py} adalah implementasi Caesar cipher untuk 26 huruf dari slide kuliah. Huruf kapital dan huruf kecil diproses terpisah, sedangkan karakter selain huruf dibiarkan apa adanya.
+\subsection{Serangan Berbasis Pasangan: Known-Plaintext Attack (KPA)}
 
-\begin{pycode}[caption={Caesar cipher 26 huruf dalam Python \cite{munir_slides_itb}}, label={lst:caesar-py}]
-def Caesar_cipher_encrypt(plainteks, k):
-    cipherteks = ""
-    for char in plainteks:
-        if char.isalpha():        # Hanya memproses huruf alfabet saja
-            start = ord('A') if char.isupper() else ord('a')
-            c = (ord(char) - start + k) % 26  # Kodekan huruf ke 0..25, lalu enkripsi
-            c = c + start         # Kembalikan ke posisi semula
-            cipherteks = cipherteks + chr(c)
-        else:
-            cipherteks = cipherteks + char  # Bukan huruf: tidak dienkripsi
-    return cipherteks
+Beberapa cipher, seperti \textit{Hill Cipher}, menyebarkan pengaruh satu huruf ke banyak huruf (difusi), sehingga analisis frekuensi huruf tunggal tidak berguna. Namun, Hill Cipher sangat rentan terhadap \textit{Known-Plaintext Attack} (KPA).
 
-def Caesar_cipher_decrypt(cipherteks, k):
-    plainteks = ""
-    for char in cipherteks:
-        if char.isalpha():
-            start = ord('A') if char.isupper() else ord('a')
-            c = (ord(char) - start - k) % 26  # Dekripsi dengan Caesar cipher
-            c = c + start
-            plainteks = plainteks + chr(c)
-        else:
-            plainteks = plainteks + char
-    return plainteks
-
-print(Caesar_cipher_encrypt("temui saya di jembatan merah nanti malam", 3))
-# whpxl vdbd gl mhpedwdq phudk qdqwl pdodp
-\end{pycode}
-
-Versi 256 karakter ASCII (Kode~\ref{lst:caesar-py256}) lebih sederhana karena setiap karakter, termasuk spasi dan angka, langsung dienkripsi dengan modulo 256.
-
-\begin{pycode}[caption={Caesar cipher 256 karakter ASCII dalam Python \cite{munir_slides_itb}}, label={lst:caesar-py256}]
-def Caesar_cipher_encryptV2(plainteks, k):
-    cipherteks = ""
-    for char in plainteks:
-        c = (ord(char) + k) % 256   # Kodekan karakter ke angka, lalu enkripsi
-        cipherteks = cipherteks + chr(c)
-    return cipherteks
-
-def Caesar_cipher_decryptV2(cipherteks, k):
-    plainteks = ""
-    for char in cipherteks:
-        c = (ord(char) - k) % 256   # Dekripsi dengan Caesar cipher
-        plainteks = plainteks + chr(c)
-    return plainteks
-\end{pycode}
-
-Implementasi C (Kode~\ref{lst:caesar-c}) mengenkripsi string di tempat (\textit{in-place}); dekripsi dengan kunci $k$ sama dengan enkripsi dengan kunci $26-k$.
-
-\begin{ccode}[caption={Caesar cipher dalam C}, label={lst:caesar-c}]
-#include <stdio.h>
-#include <ctype.h>
-
-void caesar_encrypt(char *text, int shift) {
-    for (int i = 0; text[i] != '\0'; i++) {
-        if (isalpha((unsigned char)text[i])) {
-            char base = isupper((unsigned char)text[i]) ? 'A' : 'a';
-            text[i] = base + (text[i] - base + shift) % 26;
-        }
-    }
-}
-
-void caesar_decrypt(char *text, int shift) {
-    caesar_encrypt(text, 26 - shift);
-}
-
-int main(void) {
-    char msg[] = "HELLO CRYPTO";
-    caesar_encrypt(msg, 3);
-    printf("Encrypted: %s\n", msg);   /* KHOOR FUBSWR */
-    caesar_decrypt(msg, 3);
-    printf("Decrypted: %s\n", msg);   /* HELLO CRYPTO */
-    return 0;
-}
-\end{ccode}
+Jika seorang penyerang berhasil mendapatkan beberapa pasangan plainteks ($\mathbf{P}$) dan cipherteks ($\mathbf{C}$) yang bersesuaian, mereka dapat menyusun matriks dan menghitung kunci $\mathbf{K}$ menggunakan operasi invers matriks:
+\[ \mathbf{K} = \mathbf{C} \cdot \mathbf{P}^{-1} \pmod{26} \]
+Ini menunjukkan bahwa meskipun algoritma terlihat kompleks, ketergantungan pada operasi linear membuatnya rentan jika informasi plainteks bocor.

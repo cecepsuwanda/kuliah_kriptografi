@@ -1,432 +1,76 @@
-\section{Side-Channel Attacks dan Countermeasures}
+\section{Kriptografi Hibrida dan Infrastruktur Kunci Publik (PKI)}
 
-\subsection{Pengantar Side-Channel Attacks}
+\begin{subcpmk}
+  \item Mahasiswa mampu menganalisis mekanisme \textit{Hybrid Encryption}, mengevaluasi peran Sertifikat Digital dan \textit{Certificate Authority} (CA), serta memahami alur kerja \textit{Public Key Infrastructure} (PKI) dalam menjamin autentikasi dan integritas kunci publik.
+\end{subcpmk}
 
-Side-channel attacks mengeksploitasi informasi yang bocor dari implementasi fisik kriptografi, bukan kelemahan matematis algoritma itu sendiri \cite{kochert1996}. Informasi ini dapat berupa waktu eksekusi, konsumsi daya, emisi elektromagnetik, atau suara.
+\noindent\textit{Rujukan:} Munir \cite{munir2019,munir_slides_itb}; HAC Bab~8 \cite{hac_online}; Katz \& Lindell \cite{katz2020}; Boneh \cite{boneh_cs255}.
 
-\textbf{Jenis Side-Channel Attacks}:
+\subsection{Konsep Kriptografi Hibrida (\textit{Hybrid Encryption})}
+
+Kriptografi asimetris memberikan solusi elegan untuk masalah distribusi kunci, namun memiliki kelemahan utama berupa beban komputasi yang sangat berat (lambat) dan ekspansi ukuran data yang signifikan. Sebaliknya, kriptografi simetris sangat efisien namun terhambat oleh masalah distribusi kunci.
+
+\textbf{Kriptografi Hibrida} adalah pendekatan praktis yang menggabungkan kedua paradigma tersebut untuk mendapatkan efisiensi performa sekaligus keamanan distribusi kunci. Dalam skema hibrida, kriptografi asimetris digunakan hanya untuk mengamankan pertukaran kunci simetris, sementara data massal dienkripsi menggunakan kriptografi simetris.
+
+\subsubsection{Alur Kerja Enkripsi Hibrida}
+Misalkan Alice ingin mengirimkan berkas besar $M$ kepada Bob secara aman:
+\begin{enumerate}
+    \item \textbf{Pembentukan Kunci Sesi}: Alice membangkitkan sebuah kunci simetris acak $K_{session}$ (misal: kunci AES-256).
+    \item \textbf{Enkripsi Data}: Alice mengenkripsi pesan $M$ menggunakan $K_{session}$: $C_{data} = \text{AES}_{K_{session}}(M)$.
+    \item \textbf{Enkripsi Kunci (Key Wrapping)}: Alice mengenkripsi kunci $K_{session}$ menggunakan kunci publik Bob $K_{pub\_Bob}$: $C_{key} = \text{RSA}_{K_{pub\_Bob}}(K_{session})$.
+    \item \textbf{Transmisi}: Alice mengirimkan pasangan $(C_{key}, C_{data})$ kepada Bob.
+    \item \textbf{Dekripsi Kunci}: Bob menggunakan kunci privatnya $K_{priv\_Bob}$ untuk mendapatkan kembali kunci sesi: $K_{session} = \text{RSA}_{K_{priv\_Bob}}(C_{key})$.
+    \item \textbf{Dekripsi Data}: Bob menggunakan $K_{session}$ untuk mendekripsi data: $M = \text{AES}_{K_{session}}^{-1}(C_{data})$.
+\end{enumerate}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{bab-06/hybrid-encryption-diagram}
+  \caption{Alur kerja kriptografi hibrida: penggunaan RSA untuk mengamankan kunci sesi AES yang kemudian digunakan untuk mengenkripsi data massal.}
+  \label{fig:hybrid-diagram}
+\end{figure}
+
+\subsection{Masalah Kepercayaan dan Sertifikat Digital}
+
+Kriptografi asimetris memecahkan masalah distribusi kunci, tetapi memunculkan masalah baru: \textbf{Autentikasi Kunci}. Bagaimana Alice tahu bahwa kunci publik yang ia terima benar-benar milik Bob, dan bukan milik penyerang (Mallory) yang berpura-pura menjadi Bob?
+
+Untuk mencegah hal ini, digunakan \textbf{Sertifikat Digital} yang berfungsi sebagai "KTP Elektronik" bagi kunci publik. Sertifikat digital adalah dokumen elektronik yang mengikat identitas pemilik (nama, organisasi, domain) dengan kunci publiknya, dan ditandatangani secara digital oleh pihak ketiga yang terpercaya.
+
+\subsubsection{Peran Certificate Authority (CA)}
+\textbf{Certificate Authority} (CA) adalah lembaga otoritas yang dipercaya oleh publik untuk memverifikasi identitas pemilik kunci dan menandatangani sertifikat mereka. Alur kerja sertifikasi adalah sebagai berikut:
+\begin{enumerate}
+    \item Bob mengirimkan permintaan sertifikat (\textit{Certificate Signing Request} - CSR) yang berisi identitasnya dan kunci publiknya kepada CA.
+    \item CA memverifikasi identitas Bob melalui dokumen legal.
+    \item Jika valid, CA membuat sertifikat yang berisi (Identitas Bob $\parallel$ Kunci Publik Bob) dan menandatanganinya dengan kunci privat milik CA: $\text{Sertifikat} = \text{Sign}_{K_{priv\_CA}}(\text{Identitas} \parallel K_{pub\_Bob})$.
+    \item Bob mempublikasikan sertifikat ini. Saat Alice ingin mengirim pesan, ia memverifikasi tanda tangan sertifikat menggunakan kunci publik CA yang sudah tertanam di dalam browser atau sistem operasinya.
+\end{enumerate}
+
+\subsection{Infrastruktur Kunci Publik (\textit{Public Key Infrastructure} - PKI)}
+
+\textbf{PKI} adalah ekosistem menyeluruh yang mencakup kebijakan, proses, peran, dan teknologi yang digunakan untuk mengelola sertifikat digital dan kunci publik dalam skala besar.
+
+Komponen utama PKI meliputi:
 \begin{itemize}
-  \item \textbf{Timing Attacks}: Analisis variasi waktu eksekusi
-  \item \textbf{Power Analysis}: Analisis konsumsi daya
-  \item \textbf{Electromagnetic Analysis}: Analisis emisi EM
-  \item \textbf{Acoustic Cryptanalysis}: Analisis suara
-  \item \textbf{Cache Attacks}: Eksploitasi cache behavior
+    \item \textbf{Root CA}: Otoritas tertinggi yang menandatangani sertifikatnya sendiri (\textit{self-signed}) dan menjadi jangkar kepercayaan (\textit{trust anchor}).
+    \item \textbf{Intermediate CA}: CA yang mendapatkan wewenang dari Root CA untuk menandatangani sertifikat pengguna akhir. Ini memberikan lapisan keamanan tambahan; jika Intermediate CA kompromi, Root CA cukup mencabut wewenangnya tanpa harus mengganti seluruh infrastruktur.
+    \item \textbf{Registration Authority (RA)}: Unit yang bertugas memverifikasi identitas pemohon sertifikat sebelum diteruskan ke CA.
+    \item \textbf{Certificate Revocation List (CRL)}: Daftar sertifikat yang telah dicabut sebelum masa berlakunya habis (misal karena kunci privat bocor). Modern ini digantikan oleh \textbf{OCSP} (\textit{Online Certificate Status Protocol}) untuk verifikasi \textit{real-time}.
 \end{itemize}
 
-\subsection{Timing Attacks}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{bab-06/pki-hierarchy-diagram}
+  \caption{Hierarki kepercayaan pada PKI: dari Root CA $\rightarrow$ Intermediate CA $\rightarrow$ End-Entity (Pengguna).}
+  \label{fig:pki-hierarchy}
+\end{figure}
 
-Timing attacks pertama kali didemonstrasikan oleh Paul Kocher pada tahun 1996 terhadap RSA \cite{kochert1996}. Prinsipnya: waktu eksekusi operasi kriptografi dapat bergantung pada data rahasia (kunci).
+\begin{aktivitas}
+  \item \textbf{Bedah Sertifikat SSL}: Buka browser (Chrome/Firefox), kunjungi situs web resmi (misal: google.com), klik ikon gembok pada address bar, dan lihat detail sertifikatnya. Identifikasi siapa penerbitnya (CA), kapan masa berlakunya, dan algoritma apa yang digunakan untuk tanda tangan digitalnya (misal: SHA-256 dengan RSA).
+\end{aktivitas}
 
-\subsubsection{Timing Attack pada RSA}
-
-Dalam RSA, operasi modular eksponensial $c = m^e \bmod n$ menggunakan algoritma square-and-multiply yang waktu eksekusinya bergantung pada bit-bit kunci.
-
-\begin{lstlisting}[style=cstyle, caption={Vulnerable RSA Implementation}]
-// Vulnerable implementation - timing depends on key bits
-uint64_t mod_exp_vulnerable(uint64_t base, uint64_t exp, uint64_t mod) {
-    uint64_t result = 1;
-    
-    for (int i = 63; i >= 0; i--) {
-        result = (result * result) % mod;  // Always executed
-        
-        if ((exp >> i) & 1) {  // Timing leak!
-            result = (result * base) % mod;  // Only for key bits = 1
-        }
-    }
-    
-    return result;
-}
-
-// Timing attack measurement
-void timing_attack_rsa() {
-    uint64_t ciphertexts[1000];
-    uint64_t timings[1000];
-    
-    // Generate random ciphertexts
-    for (int i = 0; i < 1000; i++) {
-        ciphertexts[i] = random_uint64();
-    }
-    
-    // Measure timing for each ciphertext
-    for (int i = 0; i < 1000; i++) {
-        clock_t start = clock();
-        mod_exp_vulnerable(ciphertexts[i], unknown_key, MODULUS);
-        clock_t end = clock();
-        
-        timings[i] = end - start;
-    }
-    
-    // Analyze timing differences to recover key bits
-    analyze_timings(ciphertexts, timings, 1000);
-}
-\end{lstlisting}
-
-\subsubsection{Countermeasures: Constant-Time Implementation}
-
-\begin{lstlisting}[style=cstyle, caption={Constant-Time RSA Implementation}]
-uint64_t mod_exp_constant_time(uint64_t base, uint64_t exp, uint64_t mod) {
-    uint64_t result = 1;
-    uint64_t temp = base % mod;
-    
-    for (int i = 63; i >= 0; i--) {
-        // Always compute both possibilities
-        uint64_t result_if_bit_0 = (result * result) % mod;
-        uint64_t result_if_bit_1 = (result_if_bit_0 * temp) % mod;
-        
-        // Select based on key bit (constant-time selection)
-        uint64_t mask = -((exp >> i) & 1);  // All 1s if bit=1, all 0s if bit=0
-        result = result_if_bit_0 ^ (mask & (result_if_bit_1 ^ result_if_bit_0));
-        
-        // Always update temp
-        temp = (temp * temp) % mod;
-    }
-    
-    return result;
-}
-
-// Alternative: Always perform multiplication
-uint64_t mod_exp_always_multiply(uint64_t base, uint64_t exp, uint64_t mod) {
-    uint64_t result = 1;
-    
-    for (int i = 63; i >= 0; i--) {
-        result = (result * result) % mod;
-        
-        // Always multiply, but conditionally apply result
-        uint64_t temp = (result * base) % mod;
-        uint64_t mask = (exp >> i) & 1;
-        result = result + mask * (temp - result);
-    }
-    
-    return result;
-}
-\end{lstlisting}
-
-\subsection{Power Analysis}
-
-Power analysis attacks mengukur konsumsi daya selama eksekusi operasi kriptografi \cite{kochert1999}. Ada dua jenis utama:
-
-\begin{itemize}
-  \item \textbf{Simple Power Analysis (SPA)}: Analisis satu trace daya
-  \item \textbf{Differential Power Analysis (DPA)}: Analisis statistik multiple traces
-\end{itemize}
-
-\subsubsection{SPA pada DES}
-
-SPA dapat mengeksploitasi perbedaan daya antara operasi yang berbeda dalam DES.
-
-\begin{lstlisting}[style=cstyle, caption={DES Implementation Vulnerable to SPA}]
-void des_round_vulnerable(uint32_t *L, uint32_t *R, uint32_t *K) {
-    uint32_t expanded_R = expand_e(*R);
-    uint32_t substituted_R = substitution_s(expanded_R, *K);
-    uint32_t permuted_R = permutation_p(substituted_R);
-    
-    // SPA leak: conditional operation based on key bit
-    if (K[0] & 1) {  // Key-dependent branch
-        *L ^= permuted_R;
-    } else {
-        *L ^= permuted_R >> 1;  // Different operation
-    }
-}
-
-// Power trace measurement and analysis
-void spa_attack_des() {
-    PowerTrace traces[100];
-    
-    // Collect power traces during DES encryption
-    for (int i = 0; i < 100; i++) {
-        traces[i] = measure_power_trace(des_encrypt, plaintext[i], key);
-    }
-    
-    // Analyze traces to identify key-dependent operations
-    analyze_power_traces(traces, 100);
-}
-\end{lstlisting}
-
-\subsubsection{DPA Implementation}
-
-DPA menggunakan statistik untuk mengekstrak informasi kunci dari banyak power traces.
-
-\begin{lstlisting}[style=cstyle, caption={DPA Attack Framework}]
-typedef struct {
-    double samples[1000];  // Power trace samples
-    uint8_t plaintext[8];   // Corresponding plaintext
-} PowerTrace;
-
-// DPA attack on DES S-box
-void dpa_attack_des_sbox(PowerTrace *traces, int num_traces) {
-    int hypothesis_counts[256][2] = {0};  // [key_hypothesis][bit_value]
-    double hypothesis_sums[256][2] = {0};
-    
-    for (int trace_idx = 0; trace_idx < num_traces; trace_idx++) {
-        PowerTrace *trace = &traces[trace_idx];
-        
-        // Try all possible key values for S-box input
-        for (int key_hypothesis = 0; key_hypothesis < 256; key_hypothesis++) {
-            // Compute intermediate value
-            uint8_t intermediate = trace->plaintext[0] ^ key_hypothesis;
-            uint8_t sbox_output = sbox1[intermediate >> 4][intermediate & 0x0F];
-            int target_bit = (sbox_output >> 3) & 1;  // Target bit 3
-            
-            // Add power trace to appropriate hypothesis group
-            hypothesis_counts[key_hypothesis][target_bit]++;
-            hypothesis_sums[key_hypothesis][target_bit] += trace->samples[100];  // Sample at relevant time
-        }
-    }
-    
-    // Find key hypothesis with maximum correlation
-    double max_correlation = 0;
-    int best_key = 0;
-    
-    for (int key = 0; key < 256; key++) {
-        double mean0 = hypothesis_sums[key][0] / hypothesis_counts[key][0];
-        double mean1 = hypothesis_sums[key][1] / hypothesis_counts[key][1];
-        double correlation = fabs(mean1 - mean0);  // Simple correlation measure
-        
-        if (correlation > max_correlation) {
-            max_correlation = correlation;
-            best_key = key;
-        }
-    }
-    
-    printf("Best key hypothesis: 0x%02x (correlation: %.4f)\n", best_key, max_correlation);
-}
-\end{lstlisting}
-
-\subsection{Cache Attacks}
-
-Cache attacks mengeksploitasi perilaku cache CPU untuk mengekstrak informasi kriptografi \cite{osvik2006}.
-
-\subsubsection{Prime+Probe Attack}
-
-Prime+Probe attack mengisi cache dengan data target, kemudian mengukur waktu akses untuk menentukan mana yang diakses oleh victim.
-
-\begin{lstlisting}[style=cstyle, caption={Prime+Probe Attack Framework}]
-#include <time.h>
-
-#define CACHE_SIZE 64  // Simplified cache size
-#define CACHE_LINE_SIZE 64
-
-// Probe array for cache attack
-char probe_array[CACHE_SIZE * CACHE_LINE_SIZE];
-
-void prime_cache() {
-    // Fill entire cache with probe array
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        // Force cache line to be loaded
-        probe_array[i * CACHE_LINE_SIZE] = i;
-    }
-}
-
-void probe_cache(uint64_t *timings) {
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        clock_t start = clock();
-        volatile char dummy = probe_array[i * CACHE_LINE_SIZE];
-        clock_t end = clock();
-        
-        timings[i] = end - start;
-    }
-}
-
-// AES cache attack example
-void aes_cache_attack() {
-    uint64_t timings[CACHE_SIZE];
-    
-    // Prime cache
-    prime_cache();
-    
-    // Victim encrypts data (accesses S-box entries)
-    victim_aes_encrypt(plaintext, key);
-    
-    // Probe cache to find which entries were accessed
-    probe_cache(timings);
-    
-    // Analyze timings to identify accessed cache lines
-    for (int i = 0; i < CACHE_SIZE; i++) {
-        if (timings[i] < THRESHOLD) {
-            printf("Cache line %d was likely accessed\n", i);
-        }
-    }
-}
-\end{lstlisting}
-
-\subsubsection{Flush+Reload Attack}
-
-Flush+Reload attack menggunakan shared memory (shared libraries) untuk cache attacks.
-
-\begin{lstlisting}[style=cstyle, caption={Flush+Reload Attack}]
-#include <sys/mman.h>
-#include <fcntl.h>
-
-void flush_reload_attack() {
-    // Open shared library (e.g., OpenSSL crypto library)
-    int fd = open("/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1", O_RDONLY);
-    void *crypto_lib = mmap(NULL, 4096, PROT_READ, MAP_SHARED, fd, 0);
-    
-    // Find AES T-table address in shared library
-    uint8_t *aes_ttable = find_aes_ttable(crypto_lib);
-    
-    while (1) {
-        // Flush T-table from cache
-        for (int i = 0; i < 256; i++) {
-            _mm_clflush(&aes_ttable[i * 64]);  // CLFLUSH instruction
-        }
-        
-        // Wait for victim to perform AES operation
-        usleep(1000);
-        
-        // Reload and measure access times
-        for (int i = 0; i < 256; i++) {
-            clock_t start = clock();
-            volatile uint8_t dummy = aes_ttable[i * 64];
-            clock_t end = clock();
-            
-            if (end - start < CACHE_HIT_THRESHOLD) {
-                printf("T-table entry %d was accessed\n", i);
-            }
-        }
-    }
-}
-\end{lstlisting}
-
-\subsection{Countermeasures}
-
-\subsubsection{Hardware Countermeasures}
-
-\begin{itemize}
-  \item \textbf{Random Delays}: Menambahkan noise timing
-  \item \textbf{Power Filtering}: Menstabilkan suplai daya
-  \item \textbf{Shielding}: Mengurangi emisi elektromagnetik
-  \item \textbf{Secure Hardware}: TPM, HSM, secure enclaves
-\end{itemize}
-
-\subsubsection{Software Countermeasures}
-
-\begin{lstlisting}[style=cstyle, caption={Side-Channel Resistant Implementation}]
-// Blinding technique for RSA
-uint64_t rsa_blinded_decrypt(uint64_t ciphertext, uint64_t d, uint64_t n) {
-    // Generate random blinding factor
-    uint64_t r = random_uint64() % n;
-    uint64_t r_inv = mod_inverse(r, n);
-    
-    // Blind the ciphertext
-    uint64_t blinded_ct = (ciphertext * mod_pow(r, 65537, n)) % n;
-    
-    // Decrypt blinded ciphertext
-    uint64_t blinded_pt = mod_pow(blinded_ct, d, n);
-    
-    // Unblind the result
-    uint64_t plaintext = (blinded_pt * r_inv) % n;
-    
-    return plaintext;
-}
-
-// Randomized projective coordinates for ECC
-typedef struct {
-    uint32_t x, y, z;  // Projective coordinates (X:Y:Z)
-} ECPointProjective;
-
-ECPointProjective ecc_blinded_multiply(ECPointProjective P, uint32_t scalar) {
-    ECPointProjective result = {0, 1, 0};  // Point at infinity
-    
-    // Add random point R
-    ECPointProjective R = generate_random_point();
-    ECPointProjective PR = point_add(P, R);
-    
-    // Compute (scalar * P) + (scalar * R)
-    result = scalar_multiply(PR, scalar);
-    
-    // Subtract (scalar * R)
-    ECPointProjective sR = scalar_multiply(R, scalar);
-    result = point_subtract(result, sR);
-    
-    return result;
-}
-
-// Constant-time memory operations
-void constant_time_memcpy(void *dest, const void *src, size_t n) {
-    volatile uint8_t *d = (volatile uint8_t*)dest;
-    const volatile uint8_t *s = (const volatile uint8_t*)src;
-    
-    for (size_t i = 0; i < n; i++) {
-        d[i] = s[i];  // Prevent compiler optimization
-    }
-}
-
-// Constant-time comparison
-int constant_time_compare(const void *a, const void *b, size_t n) {
-    const volatile uint8_t *aa = (const volatile uint8_t*)a;
-    const volatile uint8_t *bb = (const volatile uint8_t*)b;
-    
-    uint8_t result = 0;
-    for (size_t i = 0; i < n; i++) {
-        result |= aa[i] ^ bb[i];
-    }
-    
-    return result;  // 0 if equal, non-zero if different
-}
-\end{lstlisting}
-
-\subsection{Praktikum: Side-Channel Analysis}
-
-\begin{lstlisting}[style=cstyle, caption={Simple Timing Analysis}]
-#include <time.h>
-#include <stdio.h>
-
-// Function with timing dependency
-int vulnerable_function(int secret, int input) {
-    int result = input;
-    
-    // Timing leak: loop iterations depend on secret
-    for (int i = 0; i < secret; i++) {
-        result = (result * 1103515245 + 12345) & 0x7fffffff;
-    }
-    
-    return result;
-}
-
-// Timing analysis
-void timing_analysis() {
-    int inputs[100];
-    clock_t timings[100];
-    
-    // Generate inputs
-    for (int i = 0; i < 100; i++) {
-        inputs[i] = i;
-    }
-    
-    // Measure timing for different secret values
-    for (int secret = 1; secret <= 10; secret++) {
-        clock_t total_time = 0;
-        
-        for (int i = 0; i < 100; i++) {
-            clock_t start = clock();
-            vulnerable_function(secret, inputs[i]);
-            clock_t end = clock();
-            
-            total_time += (end - start);
-        }
-        
-        printf("Secret %d: Average time = %ld ticks\n", secret, total_time / 100);
-    }
-}
-
-int main() {
-    timing_analysis();
-    return 0;
-}
-\end{lstlisting}
-
-\subsection{Evaluasi Keamanan Implementasi}
-
-\textbf{Checklist Keamanan Side-Channel}:
-\begin{itemize}
-  \item \textbf{Timing}: Apakah waktu eksekusi konstan terhadap data rahasia?
-  \item \textbf{Power}: Apakah konsumsi daya tidak tergantung pada operasi?
-  \item \textbf{Cache}: Apakah akses memori tidak membocorkan informasi kunci?
-  \item \textbf{Branching}: Apakah tidak ada conditional branches berdasarkan data rahasia?
-  \item \textbf{Memory}: Apakah tidak ada data rahasia yang tersimpan dalam memori yang tidak perlu?
-\end{itemize}
-
-\begin{catatan}
-Side-channel attacks menunjukkan bahwa keamanan kriptografi tidak hanya bergantung pada matematika, tetapi juga pada implementasi fisik. Countermeasures yang efektif memerlukan pendekatan holistik yang mencakup hardware, software, dan prosedur operasional.
-\end{catatan}
+\begin{latihan}
+  \item Jelaskan mengapa kriptografi hibrida jauh lebih efisien dibandingkan menggunakan RSA murni untuk mengenkripsi berkas berukuran 1 GB!
+  \item Apa yang terjadi jika Root CA dari sebuah sistem PKI mengalami kebocoran kunci privat? Jelaskan dampaknya terhadap seluruh sertifikat yang diterbitkan di bawahnya!
+  \item Bedakan antara peran RA (\textit{Registration Authority}) dan CA (\textit{Certificate Authority}) dalam proses penerbitan sertifikat digital!
+  \item Mengapa penggunaan OCSP dianggap lebih unggul dibandingkan CRL tradisional dalam hal pemutakhiran status pencabutan sertifikat?
+\end{latihan}

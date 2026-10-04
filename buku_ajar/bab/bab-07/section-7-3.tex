@@ -1,53 +1,75 @@
-\section{Tanda Tangan Digital}
+\section{Kriptanalisis dan Kelemahan Sistem Knapsack}
 
-\subsection{Konsep}
+\begin{subcpmk}
+  \item Mahasiswa mampu menganalisis kelemahan sistem Merkle-Hellman melalui serangan Adi Shamir, memahami peran algoritma LLL dalam analisis \textit{lattice}, serta menarik kesimpulan kritis mengenai hubungan antara kompleksitas NP-complete dan keamanan kriptografi praktis.
+\end{subcpmk}
 
-Tanda tangan digital memastikan keaslian dan integritas pesan \cite{stallings2017}. Alice menandatangani dengan kunci privat; Bob memverifikasi dengan kunci publik Alice. Non-repudiation: Alice tidak dapat menyangkal telah menandatangani.
+\noindent\textit{Rujukan:} Referensi Knapsack 2026; HAC Bab~8 \cite{hac_online}.
 
-\subsection{RSA-Based (RSASSA-PSS)}
+\subsection{Ilusi Keamanan NP-Complete}
 
-Alice: $h = H(m)$, $s = h^d \bmod n$ (kunci privat). Bob: $h' = s^e \bmod n$, bandingkan $h' = H(m)$. Skema "with appendix": tanda tangan hash, bukan pesan langsung \cite{rfc8017}. Gunakan RSASSA-PSS (padding acak), bukan PKCS\#1 v1.5.
+Sistem Merkle-Hellman dibangun di atas asumsi bahwa karena \textit{Subset Sum Problem} adalah NP-complete, maka sistem tersebut secara otomatis aman. Namun, sejarah kriptanalisis menunjukkan bahwa **kekerasan masalah secara umum tidak menjamin keamanan implementasi spesifik**.
 
-\subsection{DSA (Digital Signature Algorithm)}
+Masalah utama pada Merkle-Hellman adalah bahwa kunci publik $P$ bukan merupakan himpunan angka acak sejati, melainkan hasil transformasi linear dari barisan superincreasing $S$. Struktur tersembunyi ini menciptakan "celah" yang dapat dieksploitasi oleh kriptanalis.
 
-DSA berbasis logaritma diskrit (mirip ElGamal) \cite{stallings2017}. Parameter: prima $p$, $q \mid (p-1)$, generator $g$. Kunci privat $x$, kunci publik $y = g^x \bmod p$. Tanda tangan: $(r, s)$ dengan $r = (g^k \bmod p) \bmod q$, $s = k^{-1}(H(m) + xr) \bmod q$. Verifikasi menggunakan $r$, $s$, $y$, $H(m)$. Keamanan bergantung pada kesulitan logaritma diskrit \cite{menezes1996}. ECDSA adalah varian berbasis kurva eliptik.
+\subsection{Serangan Adi Shamir}
 
-\subsection{Struktur Sertifikat Digital (X.509)}
+Pada tahun 1982, Adi Shamir mematahkan klaim keamanan Merkle-Hellman. Ia menunjukkan bahwa meskipun $m$ dan $q$ tidak diketahui, penyerang dapat menemukan nilai-nilai yang "setara" dengan $m$ dan $q$ yang mampu mengubah kunci publik $P$ kembali menjadi barisan superincreasing.
 
-Sertifikat X.509 mengikat identitas dengan kunci publik \cite{stallings2017}. Bidang utama: version, serial number, algoritma tanda tangan, issuer (CA), validity (not before/after), subject (pemilik), public key, extension, tanda tangan CA. Chain of trust: sertifikat divalidasi melalui rantai sampai CA root tepercaya. Detail PKI dibahas di bab protokol.
+\subsubsection{Mekanisme Serangan}
+Shamir memanfaatkan fakta bahwa elemen-elemen dalam barisan superincreasing memiliki distribusi yang sangat spesifik. Dengan menggunakan teknik pemrograman linear (\textit{linear programming}), penyerang dapat mencari nilai $m'$ dan $q'$ yang memenuhi kendala:
+\begin{equation}
+  s'_i = (p_i \cdot (m')^{-1}) \pmod{q'}
+\end{equation}
+sedemikian sehingga $\{s'_1, s'_2, \dots, s'_n\}$ memenuhi syarat superincreasing. Begitu barisan superincreasing ditemukan, penyerang dapat mendekripsi semua pesan menggunakan algoritma \textit{greedy}, bahkan tanpa mengetahui kunci privat asli milik pemilik.
 
-\subsection{Implementasi dengan OpenSSL}
+\subsection{Analisis Lattice dan Algoritma LLL}
 
-Gunakan EVP API dengan PSS padding \cite{rfc8017}:
+Kematian akhir dari hampir semua varian kriptografi Knapsack terjadi dengan ditemukannya algoritma \textbf{LLL} (\textit{Lenstra-Lenstra-Lovász}) pada tahun 1982.
 
-\begin{lstlisting}[style=cstyle]
-// Contoh implementasi tanda tangan dengan OpenSSL
-EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
-EVP_PKEY_sign_init(ctx);
-EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PSS_PADDING);
-EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256());
-EVP_PKEY_sign(ctx, signature, &siglen, message, message_len);
-\end{lstlisting}
+\textbf{Lattice} (kisi) adalah kumpulan titik-titik di ruang $n$-dimensi yang dibentuk oleh kombinasi linear dari vektor-vektor basis. Persoalan \textit{Subset Sum} dapat direformulasi menjadi masalah pencarian vektor terpendek (\textit{Shortest Vector Problem} - SVP) di dalam sebuah kisi.
 
-\subsection{Keamanan Implementasi}
+Algoritma LLL memungkinkan penyerang untuk menemukan basis yang "hampir ortogonal" dari sebuah kisi dalam waktu polinomial. Dengan mengonstruksi kisi yang tepat dari kunci publik $P$ dan target $T$, algoritma LLL dapat menemukan solusi subset $\mathbf{x} = (x_1, \dots, x_n)$ dengan efisiensi yang mengejutkan, terlepas dari apakah barisannya superincreasing atau tidak.
 
-Implementasi yang aman harus memperhatikan \cite{ferguson2010}:
-\begin{itemize}
-  \item \textbf{Random Number Generation}: Gunakan CSRNG untuk kunci dan salt.
-  \item \textbf{Hash Function}: Gunakan hash yang kuat (SHA-256 atau lebih).
-  \item \textbf{Padding}: Selalu gunakan padding yang aman (OAEP, PSS).
-  \item \textbf{Side-Channel Protection}: Implementasi constant-time operations.
-  \item \textbf{Key Management}: Lindungi kunci privat dengan sangat hati-hati.
-\end{itemize}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{bab-07/lattice-lll-concept}
+  \caption{Konsep analisis lattice: transformasi Subset Sum Problem menjadi pencarian vektor terpendek dalam kisi $n$-dimensi.}
+  \label{fig:lattice-lll}
+\end{figure}
 
-\subsection{Aplikasi}
+\subsection{Kesimpulan: Pelajaran dari Knapsack}
 
-Tanda tangan digital digunakan untuk \cite{stallings2017}:
-\begin{itemize}
-  \item \textbf{Email Security}: S/MIME untuk email yang ditandatangani.
-  \item \textbf{Code Signing}: Menandatangani software dan driver untuk verifikasi integritas.
-  \item \textbf{Document Signing}: PDF dan dokumen digital yang ditandatangani.
-  \item \textbf{Financial Transactions}: Transaksi perbankan dan pembayaran online.
-  \item \textbf{Blockchain}: Transaksi cryptocurrency dan smart contracts.
-\end{itemize}
+Sistem Merkle-Hellman memberikan pelajaran fundamental bagi setiap perancang sistem kriptografi:
+\begin{enumerate}
+    \item \textbf{Hardness $\neq$ Security}: Menggunakan masalah yang terbukti sulit (seperti NP-complete) tidak menjamin keamanan jika struktur kunci yang dipilih memberikan pola yang dapat dieksploitasi.
+    \item \textbf{Bahaya Struktur Tersembunyi}: Upaya menyembunyikan struktur (superincreasing) dengan transformasi sederhana (perkalian modular) seringkali tidak cukup kuat untuk menghadapi analisis matematika tingkat lanjut.
+    \item \textbf{Pentingnya Peer-Review}: Keamanan sebuah cipher hanya dapat divalidasi setelah melalui serangan intensif dari komunitas kriptanalis dunia.
+\end{enumerate}
 
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Algoritma} & \textbf{Dasar Keamanan} & \textbf{Kecepatan} & \textbf{Status} & \textbf{Serangan Utama} \\
+    \midrule
+    RSA & Faktorisasi Prima & Sedang & Aman & GNFS \\
+    DH / ElGamal & Logaritma Diskret & Sedang & Aman & Index Calculus \\
+    ECC & ECDLP & Sangat Cepat & Sangat Aman & Pollard's Rho \\
+    Knapsack & Subset Sum & Cepat & \textbf{Tidak Aman} & LLL / Shamir \\
+    \bottomrule
+  \end{tabular}
+  \caption{Ringkasan perbandingan algoritma asimetris dan status keamanannya.}
+  \label{tab:perbandingan-asimetris-final}
+\end{table}
+
+\begin{aktivitas}
+  \item \textbf{Studi Literatur}: Cari dan baca makalah mengenai Algoritma LLL. Diskusikan bagaimana algoritma ini dapat digunakan untuk memecahkan sistem kriptografi selain Knapsack.
+\end{aktivitas}
+
+\begin{latihan}
+  \item Apa perbedaan mendasar antara serangan Adi Shamir dan serangan berbasis algoritma LLL terhadap sistem Knapsack?
+  \item Mengapa pemilihan parameter $m$ dan $q$ yang sangat besar tidak mampu menyelamatkan sistem Merkle-Hellman dari serangan LLL?
+  \item Berikan argumen mengapa RSA lebih tahan lama dibandingkan Merkle-Hellman, meskipun keduanya adalah sistem kunci publik awal!
+\end{latihan}
