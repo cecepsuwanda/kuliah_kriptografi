@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 42
+
+\begin{document}
+
+% === Halaman 42 (python/native) ===
+
+Algoritma Elliptic Curve Diffie-Hellman  (ECDH)
+
+• Alice dan Bob ingin berbagi sebuah kunci rahasia K yang sama.
+
+• Alice dan Bob menyepakati kurva eliptik y2 = x3 + ax + b  mod p dan titik B pada kurva
+
+• Alice dan Bob menghitung kunci publik dan kunci privat masing-masing. 
+
+• Alice
+
+• Kunci privat = a
+
+• Kunci publik = PA = a  B
+
+• Bob
+
+• Kunci privat = b
+
+• Kunci publik = PB = b  B
+
+• Alice dan Bob saling mengirim kunci publik masing-masing.
+
+• Keduanya melakukan perkalian kunci privatnya dengan kunci publik mitranya untuk 
+
+mendapatkan kunci rahasia yang mereka bagi
+
+• Alice → KAB = aPB = a(b  B)
+
+• Bob  → KAB = bPA = b(a  B)
+
+• Kunci rahasia = KAB = abB
+
+*) Sumber bahan: Debdeep Mukhopadhyay, Elliptic Curve Cryptography ,
+
+ Dept of Computer Sc and Engg IIT Madras
+
+42
+
+\end{document}

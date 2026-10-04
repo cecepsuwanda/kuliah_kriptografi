@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 31
+
+\begin{document}
+
+% === Halaman 31 (llm) ===
+
+\begin{itemize}
+  \item Karakteristik \textit{cipher}alir adalah melokalisir kesalahan enkripsi/dekripsi hanya pada bit yang eror saja.
+  \item Maksudnya, kesalahan 1-bit pada cipherteks hanya menghasilkan kesalahan 1-bit pada plainteks hasil dekripsi.
+  \item Misalkan cipherteks $1010\, \mathbf{0}010\, 1000\, 1000\, 1000\, 1111$ (Hex: A2888F) mengalami eror pada bit ke-5 dari semula 0 menjadi 1: $1010\, \mathbf{1}010\, 1000\, 1000\, 1000\, 1111$
+  \item Ketika didekripsi:
+\end{itemize}
+
+\vspace{5mm}
+
+\begin{align*}
+\text{C: } & 1010\mathbf{1}0101000100010001111... \\
+\text{K: } & 111101011001000111101011... \oplus \\
+\hline
+& 0101\mathbf{1}1110001100101100100... \quad (5\mathbf{F}1964\text{ dalam Hexa}) \\
+& \quad \quad \quad \quad \quad \quad \quad \quad \text{(Seharusnya: 571964 dalam Hexa)}
+\end{align*}
+
+\end{document}

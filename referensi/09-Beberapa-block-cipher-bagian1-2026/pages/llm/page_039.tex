@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 39
+
+\begin{document}
+
+% === Halaman 39 (llm) ===
+
+\begin{itemize}
+    \item Misalkan kita mengetahui pasangan potongan plaintext ($p$) dan cipherteks ($c$) yang berkoresponden.
+    \item Lakukan serangan \textit{brute force} (atau \textit{exhaustive key search attack}) dengan mencoba semua kemungkinan kunci ($k$):
+\end{itemize}
+
+\vspace{5mm}
+
+\begin{verbatim}
+for (k=0; k<2^{56}; k++) {
+    if (DES(k, p) == c) {
+        printf("Key is %x\n", k);
+        break;
+    }
+}
+\end{verbatim}
+
+\vspace{5mm}
+
+\begin{itemize}
+    \item Kunci diharapkan ditemukan sebelum $2^{55}$ iterasi.
+\end{itemize}
+
+\end{document}

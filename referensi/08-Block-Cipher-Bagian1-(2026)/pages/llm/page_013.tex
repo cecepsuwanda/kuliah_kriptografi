@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 13
+
+\begin{document}
+
+% === Halaman 13 (llm) ===
+
+\begin{itemize}
+  \item Contoh:
+  \begin{itemize}
+    \item Plainteks: \texttt{10100010001110101001}
+    \item Bagi plainteks menjadi blok-blok 4-bit:
+    \texttt{1010 0010 0011 1010 1001}
+    ( dalam notasi HEX :A23A9)
+  \end{itemize}
+  \item Kunci (juga 4-bit): \texttt{1011}
+  \item Misalkan fungsi enkripsi $E$ yang sederhana algoritmanya sbb:
+  \begin{enumerate}
+    \item XOR-kan blok plainteks $P_i$ dengan $K$
+    \item geser secara \textit{wrapping} bit-bit dari hasil langkah 1 satu posisi ke kiri
+  \end{enumerate}
+\end{itemize}
+
+\[ E_K(P) = (P \oplus K) \ll 1 \]
+
+\end{document}

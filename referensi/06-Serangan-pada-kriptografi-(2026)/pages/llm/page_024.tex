@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 24
+
+\begin{document}
+
+% === Halaman 24 (llm) ===
+
+\section*{2. Plaintext-Recovery Attack}
+
+\begin{itemize}
+    \item Tujuan: memperoleh plainteks, tetapi tidak harus memperoleh kunci.
+    \item Contoh: Misalkan sebuah cipherteks dikirimir:
+    \[ C = XQZ\dots \]
+    Penyerang menganalisis struktur cipherteks dan mengetahui bahwa pesan tersebut kemungkinan berbunyi:
+    \[ \text{MEET AT THE STATION} \]
+    tanpa mengetahui kunci sebenarnya.
+\end{itemize}
+
+Dalam beberapa situasi, mendapatkan plainteks tertentu sudah cukup bagi penyerang. Misalnya, jika pesan berisi informasi penting, penyerang mungkin tidak perlu mengetahui kunci untuk mencapai tujuannya.
+
+\end{document}

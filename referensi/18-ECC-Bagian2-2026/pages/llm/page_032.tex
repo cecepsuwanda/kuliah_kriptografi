@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 32
+
+\begin{document}
+
+% === Halaman 32 (llm) ===
+
+\section*{Penggandaan Titik di dalam EC pada GF(p)}
+
+Misalkan $P(x_p, y_p)$ yang dalam hal ini $y_p \neq 0$.
+Penggandaan titik: $2P = R$
+
+Koordinat Titik R:
+\begin{align*}
+x_r &\equiv m^2 - 2x_p \pmod{p} \\
+y_r &\equiv m(x_p - x_r) - y_p \pmod{p}
+\end{align*}
+
+Yang dalam hal ini,
+\[ m \equiv \frac{3x_p^2 + a}{2y_p} \pmod{p} \]
+
+Jika $y_p = 0$ maka $m$ tidak terdefinisi sehingga $2P = O$
+
+\end{document}

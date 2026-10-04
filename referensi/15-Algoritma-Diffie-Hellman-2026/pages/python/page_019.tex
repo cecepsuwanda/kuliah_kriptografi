@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 19
+
+\begin{document}
+
+% === Halaman 19 (python/native) ===
+
+Pertukaran kunci Diffie-Hellman untuk tiga 
+
+pihak (Alice, Bob, dan Carol)
+
+1. Alice, Bob, dan Carol menyepakati p dan g.
+
+2. Alice, Bob, dan Carol membangkitkan kunci privat masing-masing, a, b, dan c.
+
+3. Alice menghitung ga mod p dan mengirimkannya kepada Bob.
+
+4. Bob menghitung (ga)b mod p = gab mod p dan mengirimkannya kepada Carol.
+
+5. Carol menghitung  K = (gab)c mod p = gabc mod p.
+
+6. Bob menghitung gb mod p dan mengirimkannya kepada Carol.
+
+7. Carol menghitung (gb)c mod p = gbc mod p dan mengirimkannya kepada Alice.
+
+8. Alice menghitung K = (gbc)a mod p = gbca mod p = gabc mod p.
+
+9. Carol menghitung gc mod p dan mengirimkannta kepada Alice.
+
+10. Alice menghitung  (gc)a mod p = gca mod p dan mengirimkannya kepada Bob.
+
+11. Bob menghitung K = (gca)b mod p = gcab mod p = gabc mod p.
+
+12. Sekarang Alice, Bob, dan Carol sudah memiliki kunci rahasia yang sama, yaitu K
+
+Rinaldi M/II4020 Kriptografi
+
+19
+
+\end{document}

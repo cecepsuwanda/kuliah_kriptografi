@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 24
+
+\begin{document}
+
+% === Halaman 24 (python/native) ===
+
+Man-in-the-middle Attack
+
+• Karena pengirim dan penerima harus berbagi kunci publik, maka distribusi kunci publik 
+
+dapat mengalami serangan man-in-the-middle attack. 
+
+• Misalkan Alice dan Bob mengirim kunci publiknya masing-masing melalui saluran 
+
+komunikasi. Orang-di-tengah, misalkan Carol, mengintersepsi komunikasi antara Bob dan 
+
+Alice lalu ia berpura-pura sebagai salah satu pihak (Alice atau Bob). 
+
+• Carol (yang menyamar sebagai Alice) mengirim kunci publiknya kepada Bob (Bob percaya 
+
+itu adalah kunci publik Alice), dan Carol (yang menyamar sebagai Bob) mengirim kunci 
+
+publiknya kepada Alice (Alice percaya itu adalah kunci publik Bob). 
+
+• Selanjutnya, Carol mendekripsi pesan dari Bob dengan kunci privatnya, menyimpan 
+
+salinannya, lalu mengenkripsi pesan tersebut dengan kunci publik Alice, dan mengirim 
+
+cipherteks tersebut kepada Alice. Alice dan Bob tidak dapat mendeteksi keberadaan Carol.
+
+24
+
+\end{document}

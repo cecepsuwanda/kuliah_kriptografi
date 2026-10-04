@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 20
+
+\begin{document}
+
+% === Halaman 20 (llm) ===
+
+Selanjutnya untuk setiap putaran 1 sampai $r$ dilakukan operasi $XOR$, pergeseran ke kiri secara sirkuler, dan penjumlahan dalam modulo $2^{32}$ dengan kunci putaran sebagai berikut:
+
+\begin{align*}
+\text{for } i \leftarrow 1 \text{ to } r \text{ do}\
+\quad A \leftarrow ((A \oplus B) \lll B) + S[2i]\
+\quad B \leftarrow ((B \oplus A) \lll A) + S[2i+1]\
+\text{endfor}
+\end{align*}
+
+\end{document}

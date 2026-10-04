@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 20
+
+\begin{document}
+
+% === Halaman 20 (python/native) ===
+
+Contoh 5:  Kita akan mendekripsikan cipherteks dari Contoh 4 dengan 
+
+menggunakan kunci privat   \{2, 3, 6, 13, 27, 52\}. Di sini, n = 31 dan m = 105. 
+
+Nilai 31–1 (mod 105) diperoleh sbb:
+
+  n  n–1  1 (mod m) → 31  n–1  1 (mod 105) → n–1 = (1 + 105k)/31 
+
+    coba k = 0, 1, 2, …, diperoleh n–1 = 61
+
+Cipherteks dari Contoh 4 adalah 174, 280, 333. Hasil dekripsi:
+
+ 174  61 mod 105 = 9 = 02 + 13 + 16 + 013 + 027 + 052    → 011000
+
+ 280  61 mod 105 = 70 = 12 + 13 + 06 + 113 + 027 + 152 → 110101
+
+ 333  61 mod 105 = 48 = 12 + 03 + 16 + 113 + 127 + 052 → 101110
+
+Jadi, plainteks yang dihasilkan kembali adalah: 
+
+
+ 011000110101101110
+
+20
+
+\end{document}

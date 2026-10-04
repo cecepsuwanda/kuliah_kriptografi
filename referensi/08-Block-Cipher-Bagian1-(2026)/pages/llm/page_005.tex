@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 5
+
+\begin{document}
+
+% === Halaman 5 (llm) ===
+
+\textbf{Contoh:} Misalkan plainteks adalah \textcolor{red}{1101110100010001000101000101}, dibagi menjadi tiga buah blok masing-masing berukuran 8 bit:
+
+\begin{center}
+\textcolor{red}{11011101} \quad \textcolor{red}{00010001} \quad \textcolor{red}{01000101} \\
+P1 \qquad\qquad P2 \qquad\qquad P3
+\end{center}
+
+\vspace{5mm}
+
+Kunci yang digunakan adalah $\text{K} = \textcolor{blue}{01010110}$
+
+Enkripsi blok pertama, \textcolor{red}{11011101}, dengan fungsi $\text{E}$ sebagai berikut:
+\begin{enumerate}
+  \item $\text{P1} \oplus \text{K} = \textcolor{red}{11011101} \oplus \textcolor{blue}{01010110} = 10001011$
+  \item $10001011 \ll 1 = 00010111$
+\end{enumerate}
+
+Jadi, $\text{C1} = 00010111$. Cara yang sama dilakukan untuk $\text{P2}$ dan $\text{P3}$.
+
+Dekripsi blok cipherteks pertama, $00010111$, dengan fungsi $\text{D}$ sebagai berikut:
+\begin{enumerate}
+  \item $00010111 \gg 1 = 10001011$
+  \item $10001011 \oplus \text{K} = 10001011 \oplus \textcolor{blue}{01010110} = 11011101 = \text{P1}$
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 44
+
+\begin{document}
+
+% === Halaman 44 (llm) ===
+
+\section*{AES-256}
+
+\begin{itemize}
+    \item AES-256 dengan AES-128 hanya berbeda dalam hal:
+    \begin{enumerate}
+        \item Jumlah putaran 14 kali (AES-128 hanya 10 kali)
+        \item Panjang kunci 256 bit (AES-128 hanya 128 bit)
+        \item \textit{Expansion key} (untuk membangkitkan kunci putaran)
+    \end{enumerate}
+
+    \item \textit{Expansion key} pada AES-128 uritannya adalah sebagai berikut:
+    
+    RotWord $\rightarrow$ SubWord $\rightarrow$ XOR Rcon $\rightarrow$ XOR dengan word sebelumnya
+
+    \item \textit{Expansion key} pada AES-256:
+    
+    Operasi SubWord tambahan pada word tertentu:
+    
+    jika $i \pmod 8 = 0$, dilakukan RotWord $\rightarrow$ SubWord $\rightarrow$ XOR Rcon
+    
+    jika $i \pmod 8 = 4$, dilakukan SubWord saja
+\end{itemize}
+
+\end{document}

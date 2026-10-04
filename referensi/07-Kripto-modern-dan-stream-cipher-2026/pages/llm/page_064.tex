@@ -1,0 +1,31 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 64
+
+\begin{document}
+
+% === Halaman 64 (llm) ===
+
+\begin{itemize}
+    \item A5 terdiri dari 3 buah $LFSR$, masing-masing panjangnya 19, 22, dan 23 bit (total $= 19 + 22 + 23 = 64$).
+    \item Bit-bit di dalam register diindeks dimana bit paling tidak penting (LSB) diindeks dengan 0 (elemen paling kanan).
+    \item Luaran (output) dari A5 adalah hasil XOR dari ketiga buah $LFSR$ ini.
+    \item A5 menggunakan tiga buah kendali detak (clock) yang variabel:
+    \begin{itemize}
+        \item Bit ke-8 pada register 1. Bit-bit detak pada bit 13, 16, 17, dan 18
+        \item Bit ke-10 pada register 2. Bit-bit detaknya adalah pada bit 20 dan 21
+        \item Bit ke-10 pada register 3. Bit-bit detaknya adalah pada bit 7, 20, 21, dan 22
+    \end{itemize}
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 31
+
+\begin{document}
+
+% === Halaman 31 (llm) ===
+
+\begin{verbatim}
+# Bungkus kunci dalam format PKCS1_OAEP untuk padding
+public_key = PKCS1_OAEP.new(key.publickey())
+private_key = PKCS1_OAEP.new(key)
+
+# Tampilkan informasi kunci
+print("Modulus (n):", key.n)
+print("Kunci publik (e):", key.e)
+print("Kunci privat (d):", key.d)
+print("Bilangan prima p:", key.p)
+print("Bilangan prima q:", key.q)
+
+return public_key, private_key
+
+def encrypt_message(message, public_key):
+    #Enkripsi pesan dengan PKCS1_OAEP
+    return public_key.encrypt(message.encode())
+
+def decrypt_message(ciphertext, private_key):
+    #Dekripsi pesan dengan PKCS1_OAEP
+    return private_key.decrypt(ciphertext).decode()
+\end{verbatim}
+
+\end{document}

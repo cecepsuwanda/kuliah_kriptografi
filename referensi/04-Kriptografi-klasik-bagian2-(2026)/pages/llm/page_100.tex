@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 100
+
+\begin{document}
+
+% === Halaman 100 (llm) ===
+
+\begin{align*}
+K^{-1} &= \frac{1}{7} \begin{pmatrix} 3 & 10 \\ 15 & 9 \end{pmatrix} = 7^{-1} \begin{pmatrix} 9 & -10 \\ -15 & 3 \end{pmatrix} \\ &= 15 \begin{pmatrix} 9 & -10 \\ -15 & 3 \end{pmatrix} = 15 \begin{pmatrix} 9 & 16 \\ 11 & 3 \end{pmatrix} = \begin{pmatrix} 135 & 240 \\ 165 & 45 \end{pmatrix} \pmod{26} = \begin{pmatrix} 5 & 6 \\ 9 & 19 \end{pmatrix}
+\end{align*}
+
+\vspace{10mm}
+
+\textbf{Keterangan} (ingat kembali teori bilangan di dalam Matematika Diskrit):
+\begin{enumerate}[(i)]
+\item $7^{-1} \pmod{26} \equiv 15$, karena $(7)(15) = 105 \pmod{26} = 1$
+\item $-10 \equiv 16 \pmod{26}$
+\item $-15 \equiv 11 \pmod{26}$ 
+\end{enumerate}
+
+\end{document}

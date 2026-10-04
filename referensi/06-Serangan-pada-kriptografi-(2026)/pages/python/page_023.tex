@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 23
+
+\begin{document}
+
+% === Halaman 23 (python/native) ===
+
+1. Key-Recovery Attack
+
+• Tujuan: memperoleh kunci kriptografi yang digunakan untuk mengenkripsi/dekripsi.
+
+• Misalkan sebuah sistem menggunakan 
+
+             C = EK(P)  ,     P = plainteks,  K = kunci,  C = cipherteks 
+
+• Dalam key-recovery attack, penyerang berusaha menemukan K.
+
+• Contoh: Misalkan sebuah cipher menggunakan kunci 16 karakter. Penyerang 
+
+melakukan pencarian kunci secara brute force:
+
+            K₁ → dekripsi C → P₁
+
+            K₂ → dekripsi C → P₂
+
+            K₃ → dekripsi C → P₃
+
+               ⋮
+
+   sampai ditemukan kunci yang menghasilkan plainteks yang masuk akal.
+
+23
+
+\end{document}

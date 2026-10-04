@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 14
+
+\begin{document}
+
+% === Halaman 14 (python/native) ===
+
+14
+
+• OTP ini tidak dapat dipecahkan  karena:
+
+   1. Kunci OTP (acak) + plainteks (tidak  acak) = cipherteks (acak)
+
+
+2. Hanya terdapat satu kunci yang memetakan plainteks ke
+
+        cipherteks, begitu juga sebaliknya 
+
+       → fungsi C = (P + K) mod 26 adalah pemetaan satu-ke-satu (one-to-one).
+
+       → artinya, untuk sembarang plainteks dan cipherteks hanya ada satu 
+
+kunci yang memetakannya satu sama lain
+
+       → Akibatnya, jika kriptanalis mencoba mendekripsi cipherteks dengan 
+
+beberapa  kunci berbeda ada kemungkinan menghasilkan beberapa 
+
+plainteks yang bermakna, sehingga kriptanalis kesulitan menentukan 
+
+plainteks mana yang benar.
+
+Enkripsi: C = (P + K) mod 26
+
+Dekripsi: P = (C – K) mod 26
+
+\end{document}

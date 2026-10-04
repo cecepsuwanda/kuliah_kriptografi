@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 88
+
+\begin{document}
+
+% === Halaman 88 (llm) ===
+
+\begin{itemize}
+  \item Dekripsi:
+  \begin{itemize}
+    \item Mula-mula hitung $m^{-1}$ yaitu $7^{-1} \pmod{26}$ dengan memecahkan $7x \equiv 1 \pmod{26}$
+    
+    Solusinya: $x \equiv 15 \pmod{26}$ sebab $7 \cdot 15 = 105 \equiv 1 \pmod{26}$.
+    
+    \item Jadi, $P \equiv 15(C - 10) \pmod{26}$
+  \end{itemize}
+\end{itemize}
+
+\begin{align*}
+  c_1 = 2 \quad &\rightarrow p_1 \equiv 15 \cdot (2 - 10) = -120 \equiv 10 \pmod{26} \quad (\text{huruf 'k'})
+  c_2 = 25 \quad &\rightarrow p_2 \equiv 15 \cdot (25 - 10) = 225 \equiv 17 \pmod{26} \quad (\text{huruf 'r'})
+  c_3 = 14 \quad &\rightarrow p_3 \equiv 15 \cdot (14 - 10) = 60 \equiv 8 \pmod{26} \quad (\text{huruf 'i'})
+  c_4 = 11 \quad &\rightarrow p_4 \equiv 15 \cdot (11 - 10) = 15 \equiv 15 \pmod{26} \quad (\text{huruf 'p'})
+  c_5 = 13 \quad &\rightarrow p_5 \equiv 15 \cdot (13 - 10) = 45 \equiv 19 \pmod{26} \quad (\text{huruf 't'})
+  c_6 = 4 \quad &\rightarrow p_6 \equiv 15 \cdot (4 - 10) = -90 \equiv 14 \pmod{26} \quad (\text{huruf 'o'})
+\end{align*}
+
+Plainteks yang diungkap kembali: \texttt{kripto}
+
+\end{document}

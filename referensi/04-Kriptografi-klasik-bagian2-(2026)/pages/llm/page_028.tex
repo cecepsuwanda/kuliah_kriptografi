@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 28
+
+\begin{document}
+
+% === Halaman 28 (llm) ===
+
+\section*{Bentuk umum \textit{cipher} abjad-majemuk}
+
+\begin{itemize}
+    \item Kunci:
+    \[ K = k_1 k_2 \dots k_m \quad \text{(ket: } m = \text{ panjang kunci)} \]
+    Karena $m$ lebih pendek daripada panjang plainteks, maka kunci diulang secara periodik
+    
+    \item Plainteks:
+    \[ P = p_1 p_2 \dots p_m p_{m+1} \dots p_{2m} \dots \]
+    
+    \item Cipherteks:
+    \[ C = E_k(P) = f_{k_1}(p_1) f_{k_2}(p_2) \dots f_{k_m}(p_m) f_{k_1}(p_{m+1}) f_{k_2}(p_{m+2}) \dots f_{k_m}(p_{2m}) \dots \]
+    $f(.)$ adalah fungsi enkripsi pada \textit{cipher} abjad-tunggal
+
+    \item Untuk $m = 1$, \textit{cipher}-nya ekivalen dengan \textit{cipher} abjad-tunggal.
+\end{itemize}
+
+\end{document}

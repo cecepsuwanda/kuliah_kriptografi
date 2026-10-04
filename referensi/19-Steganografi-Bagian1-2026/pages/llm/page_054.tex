@@ -1,0 +1,27 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 54
+
+\begin{document}
+
+% === Halaman 54 (llm) ===
+
+\section*{Ekstraksi pesan dari Stego-image}
+
+\begin{itemize}
+    \item Pada proses ekstraksi pesan, \textit{pixel-pixel} dibaca secara sekuensial mulai dari \textit{pixel} pertama sampai \textit{pixel} yang menyimpan bit pesan terakhir
+    \item Ambil setiap \textit{byte} dari \textit{pixel}, ekstraksi bit LSB-nya.
+    \item Rangkailah bit-bit LSB menjadi bit-bit pesan semula.
+\end{itemize}
+
+\end{document}

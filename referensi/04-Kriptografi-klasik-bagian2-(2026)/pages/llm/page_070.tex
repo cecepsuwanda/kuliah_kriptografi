@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 70
+
+\begin{document}
+
+% === Halaman 70 (llm) ===
+
+\textbf{Alasan mengapa huruf J dibuang:}
+
+\begin{enumerate}
+    \item Matriks Playfair hanya $5\times 5$
+    Playfair cipher menggunakan tabel $5\times 5$, jadi hanya bisa memuat 25 huruf. Sementara alfabet latin ada 26 huruf (A--Z). Artinya satu huruf harus "dikorbankan".
+
+    \item I dan J dianggap mirip secara historis
+    Secara historis, dalam alfabet Latin lama, I dan J tidak dibedakan. J dianggap hanya variasi dari I. Karena itu, Playfair menggabungkan I dan J. Huruf J dihilangkan. Semua J dalam plaintext diganti menjadi I
+    Contoh: JALAN $\rightarrow$ IALAN
+
+    \item Dampaknya ke proses enkripsi/dekripsi
+    Saat enkripsi: setiap I diperlakukan sebagai I. Saat dekripsi: huruf I bisa berarti I atau J, tergantung konteks bahasa. Ini tidak mengurangi keamanan, karena Playfair sudah bersifat substitusi digraf
+    Ambiguitas kecil ini masih bisa diselesaikan lewat konteks
+
+    \item Apakah bisa buang huruf lain?
+    Bisa saja secara teori, tapi I/J paling masuk akal secara linguistik
+    Sudah jadi standar konvensi Playfair. Memudahkan implementasi dan pembacaan hasil
+\end{enumerate}
+
+\begin{flushright}
+Sumber: ChatGPT
+\end{flushright}
+
+\end{document}

@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 19
+
+\begin{document}
+
+% === Halaman 19 (python/native) ===
+
+(c) Dekripsi  (oleh Alice)
+
+Alice mendekripsi cipherteks dari Bob dengan kunci privatnya (x = 243, p = 2273):
+
+    (i) Dekripsi c1 = (1439, 74)
+
+(ax)– 1= ap – 1 – x mod p = 14392273 – 1 - 243 mod 2273 = 14392029 mod 2273 = 1791
+
+m1 = b/ax mod p = b(ax)–1mod p = 74 1791 mod 2273 = 700 = 0700
+
+    (ii) Dekripsi c2 = (1220, 1682)
+
+(ax)– 1= ap – 1 – x mod p = 12202029 mod 2273 = 1125
+
+m2 = b/ax mod p = 1682(ax)–1mod p = 1682 1125 mod 2273 = 1114
+
+Plainteks yang didekripsi adalah m1m2 = 07001114, yang kalau dikodekan menjadi teks 
+
+adalah empat digit adalah “HALO”, sama dengan plainteks yang dikirim oleh Bob. 
+
+19
+
+\end{document}

@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 12
+
+\begin{document}
+
+% === Halaman 12 (python/native) ===
+
+12
+
+• Selanjutnya Alice menghitung kunci privat d dengan kekongruenan:
+
+
+ed  1 (mod (n))   → d =
+
+1+𝑘 ∅(𝑛)
+
+𝑒
+
+
+ d adalah balikan e dalam modulus (n)
+
+    d dapat dihitung dengan dengan rumus:
+
+
+    Coba  berbagai nilai-nilai k = 1, 2, 3, …, sampai mendapatkan d bilangan bulat: 
+
+
+k = 1 → d = (1 + 3220  1)/79 = 3221/79 = 40,77    (bukan bilangan bulat)
+
+
+k = 2 → d = (1 + 3220  2)/79 = 6441/79 = 81,53    (bukan bilangan bulat)
+
+
+k = … dst
+
+
+k = 25 → d = (1 + 3220  25)/79 = 80501/79 = 1019    (bilangan bulat)
+
+   diperoleh nilai d yang bulat adalah 1019. Ini adalah kunci privat. 
+
+• Jadi, kunci privat Alice adalah (d, n) = (1019, 3337). Keep them secret!
+
+𝑑=
+
+1+𝑘(𝑛)
+
+𝑒
+
+ = 
+
+1+3220𝑘
+
+79
+
+\end{document}

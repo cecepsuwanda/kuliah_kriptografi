@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 87
+
+\begin{document}
+
+% === Halaman 87 (llm) ===
+
+\begin{itemize}
+  \item Contoh:
+  \end{itemize}
+
+Plainteks: \texttt{kripto} $(10 \ 17 \ 8 \ 15 \ 19 \ 14)$
+
+$n = 26$, ambil $m = 7$ (7 relatif prima dengan 26)
+
+\vspace{5mm}
+
+Enkripsi: $C \equiv 7P + 10 \pmod{26}$
+
+\begin{align*}
+ p_1 = 10 & \to c_1 \equiv 7 \cdot 10 + 10 \equiv 80 \equiv 2 \pmod{26} && (\text{huruf 'C'})
+ p_2 = 17 & \to c_2 \equiv 7 \cdot 17 + 10 \equiv 129 \equiv 25 \pmod{26} && (\text{huruf 'Z'})
+ p_3 = 8 & \to c_3 \equiv 7 \cdot 8 + 10 \equiv 66 \equiv 14 \pmod{26} && (\text{huruf 'O'})
+ p_4 = 15 & \to c_4 \equiv 7 \cdot 15 + 10 \equiv 115 \equiv 11 \pmod{26} && (\text{huruf 'L'})
+ p_5 = 19 & \to c_5 \equiv 7 \cdot 19 + 10 \equiv 143 \equiv 13 \pmod{26} && (\text{huruf 'N'})
+ p_6 = 14 & \to c_6 \equiv 7 \cdot 14 + 10 \equiv 108 \equiv 4 \pmod{26} && (\text{huruf 'E'})
+\end{align*}
+
+\vspace{5mm}
+
+Cipherteks: \texttt{CZOLNE}
+
+\end{document}

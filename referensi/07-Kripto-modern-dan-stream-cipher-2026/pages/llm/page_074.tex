@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 74
+
+\begin{document}
+
+% === Halaman 74 (llm) ===
+
+\section*{3. Trivium}
+
+\begin{itemize}
+    \item Trivium adalah \textit{cipher-alir} modern, merupakan salah satu \textit{cipher} alir yang di-submit pada kompetisi \textit{stream cipher} eSTREAM pada tahun 2004 -- 2008.
+    \item Dibuat oleh Christophe De Cannière dan Bart Preneel.
+    \item Menggunakan tiga buah \textit{nonlinear LFSRs} (NLFSR) dengan panjang masing-masing 93, 84, dan 111 bit.
+    \item Melakukan XOR terhadap tiga buah luaran NLFSR untuk membangkitkan bit kunci-alir.
+    \item Minimalis jika diimplementasikan pada \textit{hardware}:
+    \begin{itemize}
+        \item total sel register: 288
+        \item tiga buah gerbang AND
+        \item tujuh buah gerbang XOR
+    \end{itemize}
+\end{itemize}
+
+\end{document}

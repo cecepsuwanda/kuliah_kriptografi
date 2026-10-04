@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 39
+
+\begin{document}
+
+% === Halaman 39 (llm) ===
+
+\begin{itemize}
+    \item Dua pihak yang berkomunikasi menyepakati parameter data sebagai berikut:
+    \begin{enumerate}
+        \item Persamaan kurva eliptik \[ y^2 \equiv x^3 + ax + b \pmod{p} \]
+        \begin{itemize}
+            \item Nilai a dan b
+            \item Bilangan prima p
+        \end{itemize}
+        \item Grup eliptik yang dihitung dari persamaan kurva eliptik
+        \item Titik basis (\textit{base point}) B $(x_{\text{B}}, y_{\text{B}})$, dipilih dari grup eliptik untuk operasi kriptografi.
+    \end{enumerate}
+\end{itemize}
+
+\begin{itemize}
+    \item Setiap pengguna membangkitkan pasangan kunci publik dan kunci privat
+    \begin{itemize}
+        \item Kunci privat = integer x, dipilih dari selang $[1, p - 1]$
+        \item Kunci publik = titik Q, adalah hasil kali antara x dan titik basis B: $\text{Q} = \text{x} \cdot \text{B}$
+    \end{itemize}
+\end{itemize}
+
+\vfill
+\raggedleft
+\textcolor{red}{\small *) Sumber bahan: \textbf{Debdeep Mukhopadhyay}, \textit{Elliptic Curve Cryptography}, \\ Dept of Computer Sc and Engg IIT Madras}
+
+\end{document}

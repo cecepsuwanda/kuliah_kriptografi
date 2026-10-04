@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 58
+
+\begin{document}
+
+% === Halaman 58 (llm) ===
+
+(ii) \begin{align*}
+a \cdot b &= (x^6 + x^4 + x^2 + x + 1) \cdot (x^7 + x + 1) \\
+&= x^{13} + x^7 + x^6 + x^{11} + x^5 + x^4 + x^9 + x^3 + x^2 + x^8 + x^2 + x + x^7 + x + 1 \pmod{2} \\
+&= x^{13} + x^{11} + x^9 + x^8 + 2x^7 + x^6 + x^5 + x^4 + x^3 + 2x^2 + 2x + 1 \pmod{2} \\
+&= x^{13} + x^{11} + x^9 + x^8 + 0x^7 + x^6 + x^5 + x^4 + x^3 + 0x^2 + 0x + 1 \\
+&= x^{13} + x^{11} + x^9 + x^8 + x^6 + x^5 + x^4 + x^3 + 1
+\end{align*}
+
+Karena $m = 8$, maka hasil perkalian di atas direduksi menjadi derajat $< 8$ oleh \textit{irreducible polynomial}. Algoritma Rijndael menggunakan \textit{irreducible polynomial} $f(x) = x^8 + x^4 + x^3 + x + 1$
+
+\[ x^{13} + x^{11} + x^9 + x^8 + x^6 + x^5 + x^4 + x^3 + 1 \pmod{f(x)} = x^7 + x^6 + 1 = 11000001 \]
+
+$\dots a \cdot b = 11000001 = \text{'C1'}$
+
+\end{document}

@@ -1,0 +1,31 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 58
+
+\begin{document}
+
+% === Halaman 58 (llm) ===
+
+\section*{3. $m$-bit LSB}
+
+\begin{itemize}
+    \item Untuk meningkatkan ukuran pesan yang disembunyikan, maka digunakan lebih dari 1 bit LSB untuk setiap \textit{byte}.
+    \item Susunan bit pada setiap \textit{byte} adalah $b_7b_6b_5b_4b_3b_2b_1b_0$. Jika diambil 2-bit LSB, maka bit yang digunakan adalah bit $b_1$ dan bit $b_0$.
+    
+    Contoh: $110100\underline{10} \rightarrow 2$ bit LSB terakhir dipakai untuk menyembunyikan pesan.
+    
+    \item \textit{Trade-off}: Semakin banyak bit LSB yang digunakan, semakin besar ukuran pesan yang dapat disembunyikan, tetapi semakin turun kualitas \textit{stego-image}.
+    \item Pesan dapat disembunyikan secara sekuensial atau secara acak pada \textit{pixel-pixel} di dalam citra.
+\end{itemize}
+
+\end{document}

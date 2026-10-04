@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 4
+
+\begin{document}
+
+% === Halaman 4 (llm) ===
+
+\section*{One-Time Pad (OTP)}
+
+\begin{itemize}
+    \item Satu-satunya algoritma kriptografi sempurna aman (\textit{perfect secrecy}) sehingga tidak dapat dipecahkan adalah \textit{one-time pad (OTP)}.
+    \item OTP ditemukan oleh Gilbert Vernam pada tahun 1917 dan kemudian secara matematis dibuktikan memiliki \textit{perfect secrecy} oleh Claude Shannon tahun 1949.
+    \item OTP mengatasi kelemahan pada pada \textit{Vigenere Cipher}. \textit{Vigenere Cipher} mengulang penggunaan kunci secara periodik $\rightarrow$ mudah ditemukan dengan metode Kasiski.
+    \item Pada OTP, panjang kunci = panjang plainteks, seluruh karakternya acak sejati
+\end{itemize}
+
+\vspace{5mm}
+
+\begin{flushleft}
+\textcolor{red}{\textbf{Plainteks:}} \texttt{otpadalahcipheryangtidakbisadipecahkan} \\
+\textcolor{red}{\textbf{Kunci:}} \texttt{trjkdndkdwerylgrgdkopcegyhbdwjbtrfhgvk}
+\end{flushleft}
+
+\end{document}

@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 34
+
+\begin{document}
+
+% === Halaman 34 (llm) ===
+
+2. OAEP (\textit{Optimal Asymmetric Encryption Padding})
+\begin{itemize}
+    \item OAEP adalah metode \textit{padding} yang ditambahkan ke pesan sebelum dienkripsi dengan RSA.
+    \item \textit{Padding} diperlukan karena:
+    \begin{itemize}
+        \item RSA tidak boleh mengenkripsi pesan langsung
+        \item Tanpa \textit{padding}, RSA rentan terhadap berbagai serangan kriptografi
+    \end{itemize}
+    \item OAEP membuat pesan menjadi acak (\textit{randomized}) sebelum dienkripsi RSA, sehingga aman terhadap \textit{chosen-ciphertext attack}
+    \begin{itemize}
+        \item Skema ini diperkenalkan oleh Mihir Bellare dan Phillip Rogaway pada tahun 1994.
+    \end{itemize}
+    \item Pesan M sebelum dienkripsi RSA diproses sebagai berikut:
+    \[ M \rightarrow OAEP\ padding \rightarrow encoded\ message \rightarrow RSA\ encryption \]
+    \item Sehingga \textit{ciphertext} menjadi tidak deterministik (setiap enkripsi berbeda walaupun pesannya sama).
+\end{itemize}
+
+\end{document}

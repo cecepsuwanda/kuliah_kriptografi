@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 18
+
+\begin{document}
+
+% === Halaman 18 (llm) ===
+
+Contoh di dalam Vigenere Cipher:
+
+\begin{itemize}
+    \item Enkripsi setiap huruf plainteks:
+    \[ C = (P + K) \pmod{26} \]
+    \item Penyerang adaptif:
+    \begin{itemize}
+        \item Pertama masukkan plainteks = AAAA (=0000), maka ciphertext C = K.
+        \item Setelah tahu K, ia coba plainteks lain untuk memverifikasi, misalnya BBBB (=1111), hasilnya menegaskan hasil enkripsi dengan K yang sama.
+        \item Dengan informasi itu, cipherteks lain bisa langsung dipecahkan.
+    \end{itemize}
+\end{itemize}
+
+\end{document}

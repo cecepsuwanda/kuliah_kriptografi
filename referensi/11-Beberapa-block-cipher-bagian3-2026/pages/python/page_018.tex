@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 18
+
+\begin{document}
+
+% === Halaman 18 (python/native) ===
+
+18
+
+Akhirnya, campurkan L dan S sebagai berikut: 
+
+i  0 
+
+j  0 
+
+X  0 
+
+Y  0 
+
+n  3 * max(r, c) 
+
+for k  1 to n do 
+
+    S[i]  (S[i] + X + Y) <<< 3 
+
+    X  S[i] 
+
+    i  (1 + 1) mod (t) 
+
+    L[j]  (L[j] + X + Y) <<< ( X + Y) 
+
+    Y  L[j] 
+
+    j  (j + 1) mod (c) 
+
+endfor
+
+\end{document}

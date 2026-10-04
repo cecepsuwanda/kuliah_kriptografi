@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 67
+
+\begin{document}
+
+% === Halaman 67 (llm) ===
+
+Proses pembangkitan bit-bit acak di dalam A5/1 berdasarkan kunci sesi $K$ adalah sebagai berikut:
+
+\begin{enumerate}
+    \item Ketiga register pada awalnya diinisialisasi seluruh bitnya dengan 0. Selanjutnya dilakukan 64 putaran pertama, yaitu 64 bit kunci sesi $K$ dicampur dengan bit register berdasarkan skema berikut:
+    
+    Pada putaran $0 \le i < 64$,
+    \begin{itemize}
+        \item bit $K[i]$ ditambahkan ke bit $LSB$ dari setiap register $R$ dengan menggunakan operasi XOR:
+        \[ R[0] = R[0] \oplus K[i] \]
+        \item tiap register kemudian didetak
+    \end{itemize}
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 31
+
+\begin{document}
+
+% === Halaman 31 (python/native) ===
+
+S-box
+
+Elemen-elemen di dalam S-box terlihat seperti diisi secara acak, namun 
+
+sebenarnya ia dihasilkan dari proses perhitungan sebagai berikut:
+
+1. Inisialisasi S-box dengan nilai yang menaik dari baris ke baris. Baris 
+
+ke-0 diisi dengan nilai 00, 01, 02, …, 0F. Baris ke-1 diisi dengan nilai 
+
+10, 11, 12, …, 1F, dan seterusnya untuk baris-baris lain.
+
+2. Untuk setiap nilai pada baris y kolom x, tentukan balikannya dalam 
+
+GF(28). Nilai 00 dipetakan ke dirinya sendiri. Penjelasan tentang 
+
+GF(28) lihat pada lampiran.
+
+3. Hasil dari langkah 2 dikonversi ke vektor kolom bit (b0, b1, …, b8)T.
+
+\end{document}

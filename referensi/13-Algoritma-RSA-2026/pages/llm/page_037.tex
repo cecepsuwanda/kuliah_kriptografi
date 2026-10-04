@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 37
+
+\begin{document}
+
+% === Halaman 37 (llm) ===
+
+\vspace{201.96mm}
+
+\begin{verbatim}
+def encrypt_message(message, file_kunci):
+    #Enkripsi pesan
+    with open(file_kunci, "rb") as file:
+        kunci_publik = RSA.importKey(file.read())
+
+    RSA_cipher = PKCS1_OAEP.new(kunci_publik)
+    ciphertext = RSA_cipher.encrypt(message.encode())
+    return ciphertext
+
+def decrypt_message(ciphertext, file_kunci):
+    #Dekripsi pesan
+    with open(file_kunci, "rb") as file:
+        kunci_privat = RSA.importKey(file.read(), 'passwordku')
+
+    RSA_cipher = PKCS1_OAEP.new(kunci_privat)
+    plaintext = RSA_cipher.decrypt(ciphertext)
+    return plaintext
+\end{verbatim}
+
+% deskripsi: Screenshot potongan kode pemrograman Python untuk proses enkripsi dan dekripsi pesan menggunakan algoritma RSA.
+% bbox normalisasi: [0.0900, 0.1000, 0.6800, 0.7800]
+\begin{textblock*}{123.90mm}(18.90mm,29.70mm)
+\noindent\includegraphics[width=123.90mm,height=201.96mm]{../../images/llm/page_037_img_01.png}%
+\end{textblock*}
+
+\end{document}

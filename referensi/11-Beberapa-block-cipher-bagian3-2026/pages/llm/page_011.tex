@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 11
+
+\begin{document}
+
+% === Halaman 11 (llm) ===
+
+Perbedaan GOST dengan DES:
+
+\begin{enumerate}
+    \item Kunci $DES$ 56 bit, sedangkan kunci GOST lebih panjang yaitu 256 bit. Ini menyebabkan \textit{exhaustive key search} terhadap $GOST$ lebih sukar dibandingkan dengan $DES$.
+    \item Jumlah putaran DES 16 kali, sedangkan GOST lebih banyak yaitu 32 kali sehingga membuat kriptanalisis menjadi sangat sulit
+    \item Kotak S di dalam $DES$ menerima masukan 6 bit dan luaran 4 bit (berukuran $6 \times 4$), sedangkan kotak S di dalam GOST menerima masukan 4 bit dan luaran 4 bit (berukuran $4 \times 4$)
+    \item Pembangkitan kunci internal $DES$ rumit, sedangkan di dalam $GOST$ pembangkitan kunci internalnya sederhana
+    \item DES mempunyai permutasi yang tidak teratur, sedangkan GOST hanya menggunakan pergeseran 11-bit secara sirkuler
+\end{enumerate}
+
+\end{document}

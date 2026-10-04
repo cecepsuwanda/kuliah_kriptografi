@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 25
+
+\begin{document}
+
+% === Halaman 25 (llm) ===
+
+$s'(x) = a(x) \otimes s(x)$
+
+\begin{equation*}
+\begin{bmatrix}
+s'_{0,c} \\ s'_{1,c} \\ s'_{2,c} \\ s'_{3,c}
+\end{bmatrix} = \begin{bmatrix}
+02 & 03 & 01 & 01 \\ 01 & 02 & 03 & 01 \\ 01 & 01 & 02 & 03 \\ 03 & 01 & 01 & 02
+\end{bmatrix} \begin{bmatrix}
+s_{0,c} \\ s_{1,c} \\ s_{2,c} \\ s_{3,c}
+\end{bmatrix}
+\end{equation*}
+
+\begin{align*}
+ s'_{0,c} &= (\{02\} \bullet s_{0,c}) \oplus (\{03\} \bullet s_{1,c}) \oplus s_{2,c} \oplus s_{3,c} \\
+ s'_{1,c} &= s_{0,c} \oplus (\{02\} \bullet s_{1,c}) \oplus (\{03\} \bullet s_{2,c}) \oplus s_{3,c} \\
+ s'_{2,c} &= s_{0,c} \oplus s_{1,c} \oplus (\{02\} \bullet s_{1,c}) \oplus (\{03\} \bullet s_{3,c}) \\
+ s'_{3,c} &= (\{03\} \bullet s_{0,c}) \oplus s_{0,c} \oplus s_{1,c} \oplus (\{02\} \bullet s_{3,c}) 
+\end{align*}
+
+\end{document}

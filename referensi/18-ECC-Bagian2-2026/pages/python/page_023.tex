@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 23
+
+\begin{document}
+
+% === Halaman 23 (python/native) ===
+
+Elliptic Curve Discrete Logarithm Problem 
+
+(ECDLP)
+
+• Menghitung kP = Q mudah, tetapi menghitung k jika diketahaui P dan Q adalah 
+
+sulit. Inilah ECDLP yang menjadi dasar ECC.
+
+• ECDLP dirumuskan sebagai berikut:
+
+ Diberikan P dan Q adalah dua buah titik di kurva eliptik, carilah integer k 
+
+sedemikian sehingga Q = kP
+
+• Secara komputasi sulit menemukan k, jika k adalah bilangan yang besar.  Nilai k 
+
+adalah logaritma diskrit dari Q dengan basis P.     *)
+
+• Pada algoritma ECC, Q adalah kunci publik, k adalah kunci privat, dan P 
+
+sembarang titik pada kurva eliptik.
+
+23
+
+Catatan: ingatlah kP = Pk , sehingga Q = kP = Pk, k adalah logaritma diskrit dari Q
+
+\end{document}

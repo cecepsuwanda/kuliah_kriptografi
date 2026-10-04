@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 33
+
+\begin{document}
+
+% === Halaman 33 (llm) ===
+
+\begin{itemize}
+    \item \textbf{Contoh:} Misalkan $P(2, 4)$ dan $Q(5, 9)$ adalah dua buah titik pada kurva eliptik $y^2 \equiv x^3 + x + 6 \pmod{11}$. Tentukan $P + Q$ dan $2P$.
+\end{itemize}
+
+\textbf{Jawab:}\
+(a) $\color{red}{P + Q = R}$
+\[
+\begin{aligned}
+\text{m} & \equiv (9 - 4)/(5 - 2) \pmod{11} = 5/3 \pmod{11} = 5 \cdot 3^{-1} \pmod{11} \\
+& = 5 \cdot 4 \pmod{11} \equiv 9 \pmod{11}
+\end{aligned}
+\]
+$P + Q = R$, koordinat Titik R:
+\[
+\begin{aligned}
+x_r & \equiv \text{m}^2 - x_p - x_q \pmod{11} \equiv 81 - 2 - 5 \pmod{11} \equiv 8 \pmod{11} \\
+y_r & \equiv \text{m}(x_p - x_r) - y_p \pmod{11} \equiv 9(2 - 8) - 4 \pmod{11} \equiv -58 \pmod{11} \\
+& \equiv 8 \pmod{11}
+\end{aligned}
+\]
+
+Jadi, $R(8, 8)$
+
+\end{document}

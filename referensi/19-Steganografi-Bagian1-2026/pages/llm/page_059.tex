@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 59
+
+\begin{document}
+
+% === Halaman 59 (llm) ===
+
+\section*{4. Enkripsi}
+
+\begin{itemize}
+    \item Pesan dapat dienkripsi terlebih dahulu sebelum disembunyikan ke dalam citra.
+    \item Teknik enkripsi yang sederhana misalnya dengan meng-XOR-kan bit-bit pesan dengan bit-bit kunci. Jumlah bit-bit kunci sama dengan jumlah bit pesan.
+    \item Bit-bit kunci dibangkitkan secara acak.
+    \item Kunci untuk pembangkitan bit-bit kunci menjadi \textit{stego-key}.
+    \item Jika dipakai teknik acak dalam memilih \textit{pixel-pixel}, maka ada dua \textit{stego-key}: satu untuk pembangkitan bit-bit kunci, satu lagi untuk pembangkitan posisi \textit{pixel} yang dipilih untuk menyembunyikan pesan.
+\end{itemize}
+
+\end{document}

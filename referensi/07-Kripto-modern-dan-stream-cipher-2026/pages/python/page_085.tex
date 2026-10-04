@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 85
+
+\begin{document}
+
+% === Halaman 85 (python/native) ===
+
+Step 5: State hasil 10 putaran-ganda dijumlahkan dengan state awal yang disimpan 
+
+pada step 3: 
+
+              y = (x′ + x) mod 2³²
+
+Jika plainteks berukuran n x 512 bit, maka Salsa20 dieksekusi sebanyak n kali, 
+
+dengan counter bertambah 1, sedangkan nonce tetap.
+
+85
+
+Kode program C++:
+
+\#include <stdint.h>
+
+\#define ROTL(a,b) (((a) << (b)) | ((a) >> (32 - (b))))
+
+\#define QR(a, b, c, d)(  \textbackslash{}
+
+
+b \textasciicircum{}= ROTL(a + d, 7), \textbackslash{}
+
+
+c \textasciicircum{}= ROTL(b + a, 9), \textbackslash{}
+
+
+d \textasciicircum{}= ROTL(c + b,13), \textbackslash{}
+
+
+a \textasciicircum{}= ROTL(d + c,18))
+
+\#define ROUNDS 20
+
+\end{document}

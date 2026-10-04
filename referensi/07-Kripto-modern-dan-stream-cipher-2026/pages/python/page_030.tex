@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 30
+
+\begin{document}
+
+% === Halaman 30 (python/native) ===
+
+• Misalkan plainteks adalah:
+
+                  P: 0101 0111 0001 1001 0110 0100…   (571964 dalam Hexa)
+
+   Keystream yang dibangkitkan: 
+
+                  K: 111101011001000111101011…
+
+• Enkripsi: C= P  K
+
+                  010101110001100101100100…
+
+
+111101011001000111101011…    
+
+                  1010 0010 1000 1000 1000 1111…    (biner)
+
+                      A       2       8       8       8         F    …     (Hex)        
+
+• Dekripsi: P = C  K       
+
+                  101000101000100010001111…
+
+                  111101011001000111101011…    
+
+                  010101110001100101100100…          (571964 dalam Hexa)    
+
+30
+
+\end{document}

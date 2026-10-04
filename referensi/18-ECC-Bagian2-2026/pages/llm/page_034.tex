@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 34
+
+\begin{document}
+
+% === Halaman 34 (llm) ===
+
+(b) $2P = R$
+
+\[ m \equiv \frac{3x_p^2 + a}{2y_p} \pmod{p} \]
+
+\begin{align*}
+ m &= (3(2)^2 + 1)/8 \pmod{11} \equiv 13/8 \pmod{11} \\
+ &\equiv 13 \cdot 8^{-1} \pmod{11} \\
+ &\equiv 13 \cdot 7 \pmod{11} \\
+ &\equiv 78 \pmod{11} \equiv 3 \pmod{11} 
+\end{align*}
+
+Koordinat R:
+
+\begin{align*}
+ x_r &\equiv m^2 - 2x_p \pmod{p} \equiv 3^2 - 2 \cdot 2 \pmod{11} \equiv 5 \pmod{11} \\
+ y_r &\equiv m(x_p - x_r) - y_p \pmod{p} \equiv 3(2 - 5) - 4 \pmod{11} \\
+ &\equiv -13 \pmod{11} \equiv 9 \pmod{11} 
+\end{align*}
+
+Jadi, $R(5, 9)$
+
+\end{document}

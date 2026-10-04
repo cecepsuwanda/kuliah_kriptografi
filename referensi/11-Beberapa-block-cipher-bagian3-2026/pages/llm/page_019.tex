@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 19
+
+\begin{document}
+
+% === Halaman 19 (llm) ===
+
+\section*{Enkripsi}
+
+\begin{itemize}
+    \item Tinjau $RC5$ dengan ukuran blok 64 bit dan jumlah putaran $r$.
+    \item Enkripsi menggunakan kunci putaran $S_0, S_1, \dots, S_{2r+2}$ yang masing-masing panjangnya 32-bit.
+    \item Dua kunci putaran digunakan untuk setiap putaran $i = 1, 2, \dots, r$ dan dua buah kunci putaran tambahan sebelum putaran pertama jadi seluruhnya ada $2r + 2$ buah kunci internal.
+    \item Untuk melakukan enkripsi, mula-mula blok plainteks dibagi menjadi 2 bagian, $A$ dan $B$, yang masing-masing panjangnya 32 bit. Kemudian masing-masing bagian dijumlahkan (dalam modulo $2^{32}$) dengan $S_0$ dan $S_1$:
+    \[
+    \begin{aligned}
+    A \leftarrow A + S[0] \\
+    B \leftarrow B + S[1]
+    \end{aligned}
+    \]
+\end{itemize}
+
+\end{document}

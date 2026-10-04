@@ -1,0 +1,78 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 14
+
+\begin{document}
+
+% === Halaman 14 (python/native) ===
+
+\#define LENGTH 16            /* Jumlah byte di dalam blok atau kunci */ 
+
+\#define NROWS 4              /* Jumlah baris di dalam state */ 
+
+\#define NCOLS 4              /* Jumlah kolom di dalam state */ 
+
+\#define ROUNDS 10            /* Jumlah putaran */ 
+
+typedef unsigned char byte;  /* unsigned 8-bit integer */ 
+
+
+rijndael (byte plaintext[LENGTH], byte ciphertext[LENGTH],  
+
+          byte key[LENGTH]) 
+
+\{ 
+
+ int r;                     /* pencacah pengulangan */ 
+
+ byte state[NROWS][NCOLS];  /* state sekarang */ 
+
+ struct\{byte k[NROWS][NCOLS];\} rk[ROUNDS + 1];  /* kunci pada setiap putaran */ 
+
+
+ KeyExpansion(key, rk);       /* bangkitkan kunci setiap putaran */ 
+
+ CopyPlaintextToState(state, plaintext);  /* inisialisasi 
+
+                                             state sekarang */ 
+
+ AddRoundKey(state, rk[0]);  /* XOR key ke dalam state */ 
+
+
+ for (r = 1; r<= ROUNDS - 1; r++) 
+
+ \{ 
+
+  SubBytes(state);        /* substitusi setiap byte dengan S-box */  
+
+  ShiftRows(state);       /* rotasikan baris i sejauh i byte */   
+
+  MixColumns(state);      /* acak masing-masing kolom */ 
+
+  AddRoundKey(state, rk[r]);   /* XOR key ke dalam state */ 
+
+ \} 
+
+ SubBytes(state);        /* substitusi setiap byte dengan S-box */  
+
+ ShiftRows(state);       /* rotasikan baris i sejauh i byte */   
+
+ AddRoundKey(state, rk[ROUNDS]);   /* XOR key ke dalam state */ 
+
+
+ CopyStateToCiphertext(ciphertext, state);  /* blok cipherteks yang dihasilkan */  
+
+
+\}
+
+\end{document}

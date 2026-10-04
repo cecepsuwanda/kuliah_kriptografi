@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 76
+
+\begin{document}
+
+% === Halaman 76 (python/native) ===
+
+76
+
+def EkstraksiPesan(stego):    
+
+  \# Baca citra stego, ekstrak pixel-pixel sebagai larik (array)    
+
+  citra = Image.open(stego, 'r’) 
+
+  citra = citra.convert("RGB")
+
+  n = 3  
+
+  citra.show()   
+
+  larik\_pixel = np.array(list(citra.getdata()))   
+
+
+  total\_pixel = larik\_pixel.size//n     \#jumlah pixel di dalam citra    
+
+  \#Ekstraksi bit-bit pesan dari bit LSB setiap byte pixel   
+
+  bit\_pesan = ""   
+
+  for p in range(total\_pixel):       
+
+     for q in range(0, 3):
+
+        bit\_pesan = bit\_pesan + str(larik\_pixel[p][q] \& 1) \#ambil bit LSB        
+
+
+  \# Kelompokkan setiap 8-bit dari bit\_pesan, simpan sebagai list          
+
+  bit\_pesan = [bit\_pesan[i:i+8] for i in range(0, len(bit\_pesan), 8)]
+
+\end{document}

@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 28
+
+\begin{document}
+
+% === Halaman 28 (llm) ===
+
+\textcolor{red}{(02 \bullet 26) \oplus (03 \bullet 7B) \oplus (01 \bullet BD) \oplus (01 \bullet 43) = 3F}
+
+Selanjutnya, XOR-kan semua hasil antara tersebut:
+
+\begin{align*}
+(02 \bullet 26) &= 4C = 0100 \ 1100 \\
+(03 \bullet 7B) &= 8D = 1000 \ 1101 \\
+(01 \bullet BD) &= BD = 1011 \ 1101 \\
+(01 \bullet 43) &= 43 = \underline{0100 \ 0011} \oplus \\
+& \quad 0011 \ 1111 = 3F
+\end{align*}
+
+Jadi, $(02 \bullet 26) \oplus (03 \bullet 7B) \oplus (01 \bullet BD) \oplus (01 \bullet 43) = 3F$
+Persamaan lainnya diselesaikan dengan cara yang sama.
+
+\end{document}

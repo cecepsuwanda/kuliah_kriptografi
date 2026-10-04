@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 9
+
+\begin{document}
+
+% === Halaman 9 (llm) ===
+
+Plainteks: (P)
+\begin{center}
+\fbox{
+\begin{minipage}{0.6\textwidth}
+Dinas Pendidikan Kota Ternate meminta kepada pihak sekolah dan orang tua siswa untuk jenjang pendidikan SD dan SMP se-Kota Ternate untuk melarang para siswa membawa permainan lato-lato yang sedang tren itu ke sekolah, karena akan mengganggu kegiatan belajar mengajar yang dinilai berbahaya sehingga mengantisipasi kecelakaan bagi anak di daerah itu.
+\end{minipage}
+}
+\end{center}
+\vspace{5mm}
+$H(P)=3,8988$ bit/karakter
+\vspace{10mm}
+Cipherteks: (C)
+\begin{center}
+\fbox{
+\begin{minipage}{0.6\textwidth}
+HAWFHZDOHAHANGOMKLGFCVWFLBOCPRKFGHNOFNIN\\
+SPGNLHMPFVBEFWMVFWTBWRHSFZRWK FQMVHPAF WIK\\
+DOHAHANGPFEWNF PFNKLHMPFGLBAMGF C XK FQ MOCFV\\
+AVKANIAVHSFZR NCODG AF OHYUVG W G F O F G X E G F M L F W I T\\
+HEFWTBVCPAYQOBLHMPFVBPVADOVGNWFG NOV C A R K V A\\
+RQOBRGGF WH C V F G V Y Y U D O R V G V Y C F W A B A P V S V G C H G C I\\
+DRFIFH B A P V Q R V O C K A F W S G S H S N I H S O B D H F V N G F W D G R G R F\\
+W G N H A N F C V I D G S W Z
+\end{minipage}
+}
+\end{center}
+\vspace{5mm}
+$H(C)=4,3035$ bit/karakter
+
+\vspace{71.28mm}
+
+Entropi cipherteks meningkat
+
+Jadi cipherteks ini mencapai entropi sekitar:
+\[ \frac{4,3035}{4,7004} \times 100\% \approx 91,55\% \]
+dari entropi maksimum pesan 26 huruf alfabet
+
+% deskripsi: Tanda panah biru yang mengarah ke bawah, menghubungkan nilai H(P) dengan H(C).
+% bbox normalisasi: [0.8300, 0.2000, 0.8600, 0.4400]
+\begin{textblock*}{6.30mm}(174.30mm,59.40mm)
+\noindent\includegraphics[width=6.30mm,height=71.28mm]{../../images/llm/page_009_img_01.png}%
+\end{textblock*}
+
+\end{document}

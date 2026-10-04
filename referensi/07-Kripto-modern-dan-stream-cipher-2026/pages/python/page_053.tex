@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 53
+
+\begin{document}
+
+% === Halaman 53 (python/native) ===
+
+53
+
+j = 0;
+
+ for (i=0; i<256; i++) \{
+
+     j = (j + S[i] + K[i \% K.length()]) \% 256;
+
+     swap(S[i], S[j]); // Pertukarkan nilai S[i] dan S[j] 
+
+ \}
+
+ i = 0;   j = 0;
+
+while (!feof(Fin)) \{
+
+     c = fgetc(Fin); 
+
+     i = (i + 1) \% 256;
+
+     j = (j + S[i]) \% 256;
+
+     swap(S[i], S[j]);    // Pertukarkan nilai S[i] dan S[j] 
+
+     t = (S[i] + S[j]) \% 256;
+
+     u = S[t];   // keystream 
+
+     p = u \textasciicircum{} c;       
+
+     fputc(p, Fout);     
+
+ \}  
+
+ fclose(Fin);  fclose(Fout);
+
+\}
+
+\end{document}

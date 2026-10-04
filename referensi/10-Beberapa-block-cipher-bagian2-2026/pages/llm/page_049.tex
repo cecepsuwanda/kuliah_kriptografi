@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 49
+
+\begin{document}
+
+% === Halaman 49 (llm) ===
+
+\section*{Program enkripsi-dekripsi AES dengan Python}
+Input: File biner
+
+\vspace{10mm}
+
+\begin{verbatim}
+# Enkripsi file biner dengan AES-128
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad, unpad
+import base64
+
+BLOCK_SIZE = 16           # Panjang blok pesan yang dienkripsi = 16 byte = 128 bit
+
+def enkripsi_aes(plainteks, kunci):
+    kunci = kunci.encode()                # Kodekan kunci dari string menjadi byte
+    iv = get_random_bytes(BLOCK_SIZE)     # Bangkitkan IV
+    AEScipher = AES.new(kunci, AES.MODE_CBC, iv) # Definisikan AES mode CBC
+
+    plainteks = pad(plainteks, BLOCK_SIZE) # lakukan padding jika ukuran plainteks bukan kelipatan 16 byte
+
+    cipherteks = AEScipher.encrypt(plainteks) # Lakukan enkripsi plainteks
+    cipherteks = base64.b64encode(iv+cipherteks) # Kodekan iv+cipherteks dari kode byte ke base64
+    return cipherteks
+\end{verbatim}
+
+\end{document}

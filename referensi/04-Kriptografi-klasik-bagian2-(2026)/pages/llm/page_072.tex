@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 72
+
+\begin{document}
+
+% === Halaman 72 (llm) ===
+
+Pesan yang akan dienkripsi diatur terlebih dahulu sebagai berikut (langkah \textit{preprocessing}):
+
+\begin{enumerate}
+  \item Buang semua spasi di dalam pesan
+  \item Ganti huruf j (bila ada) dengan i. Contoh: jalan $\rightarrow$ ialan
+  \item Tulis pesan dalam pasangan huruf (\textit{bigram}).
+  \item Jangan sampai ada bigram dengan pasangan huruf yang sama. Jika ada, sisipkan x di tengahnya
+  \item Jika jumlah huruf di dalam pesan ganjil, tambahkan huruf x pada bigram terakhir
+\end{enumerate}
+
+\end{document}

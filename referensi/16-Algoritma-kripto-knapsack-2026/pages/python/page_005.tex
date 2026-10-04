@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 5
+
+\begin{document}
+
+% === Halaman 5 (python/native) ===
+
+Contoh 1:  Misalkan n = 6 dan w1 = 1, w2 = 5, w3 = 6,  w4 = 11, w5 = 14, dan w6 = 20.
+
+Plainteks:  111001010110000000011000
+
+Plainteks dibagi menjadi blok yang panjangnya 6, kemudian setiap bit di dalam blok dikalikan 
+
+dengan wi yang berkoresponden sesuai dengan persamaan (1):
+
+ Blok plainteks ke-1 
+
+: 111001 
+
+ Kriptogram 
+
+
+: (1  1) + (1  5) + (1  6) +  (0  11) + (0 x 14) + (1 x 20)   = 32
+
+ Blok plainteks ke-2 
+
+: 010110 
+
+ Kriptogram 
+
+
+: (1  5) + (1  11) + (1  14) = 30
+
+ Blok plainteks ke-3 
+
+: 000000 
+
+ Kriptogram 
+
+
+: 0
+
+ Blok plainteks ke-4 
+
+: 011000 
+
+ Kriptogram 
+
+
+: (1  5) + (1  6) = 11
+
+Jadi, cipherteks yang dihasilkan:  32  30  0  11
+
+5
+
+\end{document}

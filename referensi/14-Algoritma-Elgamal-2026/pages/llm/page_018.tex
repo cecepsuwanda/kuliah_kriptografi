@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 18
+
+\begin{document}
+
+% === Halaman 18 (llm) ===
+
+(i) Enkripsi $m_1 = 0700$
+
+Bob memilih bilangan acak $k = 1463$ (nilai $k$ masih berada di dalam selang $[0, 2273 - 1]$).
+
+Bob mengenkripsi pesan dengan menggunakan kunci publik Alice ($y = 461, g = 3, p = 2273$):
+
+\[ a = g^k \bmod p = 3^{1463} \bmod 2273 = 1439 \]
+\[ b = y^k m_1 \bmod p = 461^{1463} \cdot 700 \bmod 2273 = 74 \]
+
+Jadi, cipherteks yang dihasilkan untuk $m_1$ adalah $\mathbf{c_1 = (1439, 74)}$.
+
+\vspace{10mm}
+
+(ii) Enkripsi $m_2 = 1114$
+
+Bob memilih bilangan acak $k = 2001$ (nilai $k$ masih berada di dalam selang $[0, 2273 - 1]$).
+
+Bob mengenkripsi pesan dengan menggunakan kunci publik Alice ($y = 461, g = 3, p = 2273$):
+
+\[ a = g^k \bmod p = 3^{2001} \bmod 2273 = 1220 \]
+\[ b = y^k m_2 \bmod p = 461^{2001} \cdot 1114 \bmod 2273 = 1682 \]
+
+Jadi, cipherteks yang dihasilkan untuk $m_2$ adalah $\mathbf{c_2 = (1220, 1682)}$.
+
+Bob mengirim cipherteks $(1439, 74)$ dan $(1220, 1682)$ kepada Alice.
+
+\end{document}

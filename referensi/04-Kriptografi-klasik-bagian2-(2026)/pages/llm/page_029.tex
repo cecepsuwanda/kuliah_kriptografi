@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 29
+
+\begin{document}
+
+% === Halaman 29 (llm) ===
+
+\begin{itemize}
+    \item Misalkan panjang kunci $m = 10$, maka 10 huruf pertama plainteks dienkripsi dengan kunci $K$, setiap huruf ke-$i$ menggunakan kunci $k_i$.
+    \item Untuk 10 karakter berikutnya, kembali menggunakan pola enkripsi yang sama.
+\end{itemize}
+
+\noindent Contoh: kunci = \texttt{sony} \quad ($m = 4$)\
+Plainteks: \texttt{thisplaintexthissecret}\
+Kunci: \texttt{sonysonysonysonysonys}
+
+\vspace{5mm}
+
+Setiap huruf plainteks dienkripsi dengan huruf kunci di bawahnya dengan \textit{cipher} abjad tunggal (misalnya menggunakan \textit{Caesar Cipher}):
+
+\begin{align*}
+    (t+s) \pmod{26} \\
+    (h + o) \pmod{26} \\
+    (i + n) \pmod{26} \\
+    \text{dst...}
+\end{align*}
+
+\end{document}

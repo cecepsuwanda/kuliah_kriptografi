@@ -1,31 +1,43 @@
-\documentclass[12pt, a4paper]{book}
-\input{preamble}
+\documentclass[12pt, a4paper, oneside]{book}
+
+% Technical Configuration
+\input{config/preamble}
 
 \begin{document}
 
-\input{frontmatter}
+% Front Matter
+\frontmatter
+\include{frontmatter/titlepage}
+\include{frontmatter/preface}
+\include{frontmatter/syllabus_map}
 
+\tableofcontents
+\listoffigures
+\listoftables
+
+% Main Matter
 \mainmatter
+\subfile{chapters/ch01/chapter}
+\subfile{chapters/ch02/chapter}
+\subfile{chapters/ch03/chapter}
+\subfile{chapters/ch04/chapter}
+\subfile{chapters/ch05/chapter}
+\subfile{chapters/ch06/chapter}
+\subfile{chapters/ch07/chapter}
+\subfile{chapters/ch08/chapter}
+\subfile{chapters/ch09/chapter}
+\subfile{chapters/ch10/chapter}
+\subfile{chapters/ch11/chapter}
+\subfile{chapters/ch12/chapter}
+\subfile{chapters/ch13/chapter}
+\subfile{chapters/ch14/chapter}
+\subfile{chapters/ch15/chapter}
+\subfile{chapters/ch16/chapter}
 
-% Jalur utama sesuai silabus (CPMK-1, CPMK-2): Bab I--XI
-\input{bab/bab-01}
-\input{bab/bab-02}
-\input{bab/bab-03}
-\input{bab/bab-04}
-\input{bab/bab-05}
-\input{bab/bab-06}
-\input{bab/bab-07}
-\input{bab/bab-08}
-\input{bab/bab-09}
-\input{bab/bab-10}
-\input{bab/bab-11}
-
+% Back Matter
 \backmatter
-
-% Lampiran
-\input{lampiran}
-
-% Daftar Pustaka
-\input{backmatter}
+\include{appendices/glossary}
+\bibliography{references}
+\bibliographystyle{plain}
 
 \end{document}

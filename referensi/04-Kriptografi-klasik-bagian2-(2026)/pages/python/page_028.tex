@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 28
+
+\begin{document}
+
+% === Halaman 28 (python/native) ===
+
+28
+
+Bentuk umum cipher abjad-majemuk
+
+• Kunci:        
+
+              K = k1k2 … km                       (ket: m = panjang kunci)
+
+   Karena m lebih pendek daripada panjang plainteks, maka kunci diulang secara 
+
+periodik
+
+• Plainteks:  
+
+              P = p1p2 … pmpm+1 … p2m …                       
+
+• Cipherteks:
+
+          𝐶= 𝐸𝑘𝑃= 𝑓𝑘1(𝑝1) 𝑓𝑘2(𝑝2)… 𝑓𝑘𝑚(𝑝𝑚)𝑓𝑘1(𝑝𝑚+1)𝑓𝑘2(𝑝𝑚+2)… 𝑓𝑘𝑚(𝑝2𝑚)…
+
+
+f(.) adalah fungsi enkripsi pada cipher abjad-tunggal  
+
+
+• Untuk m = 1, cipher-nya ekivalen dengan cipher abjad-tunggal.
+
+\end{document}

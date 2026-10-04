@@ -1,0 +1,27 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 46
+
+\begin{document}
+
+% === Halaman 46 (llm) ===
+
+\section*{Counter Mode}
+
+\begin{itemize}
+    \item Mode \textit{counter} tidak melakukan perantaian (\textit{chaining}) seperti pada CBC.
+    \item \textit{Counter} adalah sebuah nilai berupa blok bit yang ukurannya sama dengan ukuran blok plainteks.
+    \item Nilai \textit{counter} harus berbeda dari setiap blok yang dienkripsi. Pada mulanya, untuk enkripsi blok pertama, \textit{counter} diinisialisasi dengan sebuah nilai.
+    \item Selanjutnya, untuk enkripsi blok-blok berikutnya \textit{counter} dinaikkan (\textit{increment}) nilainya satu \[ \text{counter} \leftarrow \text{counter} + 1 ). \]
+
+\end{document}

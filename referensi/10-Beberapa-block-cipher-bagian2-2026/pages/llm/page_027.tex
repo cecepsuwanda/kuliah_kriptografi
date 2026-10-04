@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 27
+
+\begin{document}
+
+% === Halaman 27 (llm) ===
+
+{\color{red} (02 \bullet 26) \oplus (03 \bullet 7B) \oplus (01 \bullet BD) \oplus (01 \bullet 43) = 3F}
+
+\begin{align*}
+(02 \bullet 26) &= (0000 \ 0010) \times (0010 \ 0110) \\
+&= x \times (x^5 + x^2 + x) \pmod{x^8 + x^4 + x^3 + x + 1} \\
+&= (x^6 + x^3 + x^2) \pmod{x^8 + x^4 + x^3 + x + 1} \\
+&= x^6 + x^3 + x^2 \\
+&= (01001100) \\
+&= 4C
+\end{align*}
+
+\begin{align*}
+(03 \bullet 7B) &= (0000 \ 0011) \times (0111 \ 1011) \\
+&= (x + 1) \times (x^6 + x^5 + x^4 + x^3 + x + 1) \pmod{x^8 + x^4 + x^3 + x + 1} \\
+&= ((x^7 + x^6 + x^5 + x^4 + x^2 + x) + (x^6 + x^5 + x^4 + x^3 + x + 1)) \pmod{x^8 + x^4 + x^3 + x + 1} \\
+&= (x^7 + (1 + 1)x^6 + (1 + 1)x^5 + (1 + 1)x^4 + x^3 + x^2 + (1 + 1)x + 1) \pmod{x^8 + x^4 + x^3 + x + 1} \\
+&= (x^7 + x^3 + x^2 + 1) \pmod{x^8 + x^4 + x^3 + x + 1} \\
+&= (x^7 + x^3 + x^2 + 1) \\
+&= (1000 \ 1101) = 8D
+\end{align*}
+
+\begin{align*}
+(01 \bullet BD) &= BD = 10111101 \\
+(01 \bullet 43) &= 43 = 01000011
+\end{align*}
+
+\end{document}

@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 66
+
+\begin{document}
+
+% === Halaman 66 (python/native) ===
+
+• Setiap register didetak dalam fase stop/go dengan menggunakan kaidah 
+
+mayoritas:  
+
+       “Pada setiap putaran (i=1..64), bit-bit tengah setiap register diperiksa dan bit 
+
+mayoritasnya (50\% + 1) ditentukan. Jika bit  tengah sebuah register sama 
+
+dengan bit mayoritas, maka register tersebut  didetak”
+
+. 
+
+• Biasanya pada setiap putaran dua atau tiga buah register didetak. Peluang sebuah 
+
+register didetak pada setiap putaran adalah ¾. 
+
+• Ketika sebuah register didetak, semua bit detaknya di-XOR-kan dan hasilnya 
+
+diletakkan pada posisi LSB (posisi ke-0) dengan mekanisme pergeseran bit-bit ke 
+
+kiri. 
+
+• Bit paling kiri (MSB) terlempar keluar. Bit yang terlempar dari setiap register di-
+
+XOR-kan bersama, bit inilah yang menjadi luaran dari ketiga buah register tadi. 
+
+66
+
+\end{document}

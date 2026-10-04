@@ -1,0 +1,94 @@
+{
+  "source": "02-Landasan-Matematika-Kriptografi-(2026).pdf",
+  "overlap_teks_rata": 0.7034,
+  "units": [
+    {
+      "index": 1,
+      "overlap_teks": 0.6060606060606061,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 2,
+      "overlap_teks": 0.75,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 3,
+      "overlap_teks": 0.6521739130434783,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 4,
+      "overlap_teks": 0.8444444444444444,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 5,
+      "overlap_teks": 0.7457627118644068,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [],
+      "hanya_python": [
+        "page_005_img_01.png"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 6,
+      "overlap_teks": 0.7272727272727273,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 7,
+      "overlap_teks": 0.7454545454545455,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [],
+      "hanya_python": [
+        "page_007_img_01.png",
+        "page_007_img_02.png"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 8,
+      "overlap_teks": 0.7368421052631579,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 9,
+      "overlap_teks": 0.5227272727272727,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_009_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    }
+  ]
+}

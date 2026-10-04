@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 67
+
+\begin{document}
+
+% === Halaman 67 (python/native) ===
+
+67
+
+\% Baca pesan
+
+pesan = input('Ketikkan pesan: ', 's');
+
+
+\% Hitung panjang pesan
+
+L = length(pesan);
+
+
+\%Konversi panjang pesan ke dalam biner
+
+nL = dec2bin(L, 30);
+
+\%Konversi pesan ke dalam vektor biner
+
+for i = 1 : L
+
+    biner((i-1)*8 + 1 : i*8) = dec2bin(pesan(i), 8);
+
+end
+
+
+\% Gabungkan bit-bit panjang pesan dengan bit-bit pesan
+
+biner = [nL, biner];
+
+m = length(biner);       \% Ubah vektor biner ke numerik
+
+
+if m > total\_bit\_embed 
+
+    disp('Ukuran citra tidak mencukup untuk penyembunyian pesan');
+
+\end{document}

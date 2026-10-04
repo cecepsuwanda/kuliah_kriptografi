@@ -1,0 +1,61 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 27
+
+\begin{document}
+
+% === Halaman 27 (python/native) ===
+
+(02 • 26) = (0000 0010)  (0010 0110) 
+
+                = x  (x5 + x2 + x)  mod (x8 + x4 + x3 + x + 1)
+
+
+   = (x6 + x3 + x2) mod (x8 + x4 + x3 + x + 1)
+
+
+   = x6 + x3 + x2
+
+
+   = (01001100)
+
+
+   = 4C
+
+(03 • 7B) = (0000 0011)  (0111 1011) 
+
+                 = (x + 1)  (x6 + x5 + x4 + x3 + x + 1) mod (x8 + x4  +  x3 + x + 1)
+
+
+
+    = ((x7 + x6 + x5 + x4 + x2 + x) + (x6 + x5 + x4 + x3 + x  +1)) mod (x8 + x4 +  x3 + x + 1)
+
+                = (x7 + (1 + 1)x6 + (1 + 1)x5 + (1 + 1)x4 + x3 + x2 + (1 +1)x + 1) mod (x8 + x4 + x3 + 
+
+                    x + 1)
+
+                = (x7 + x3 + x2 + 1) mod (x8 + x4 + x3 + x + 1)
+
+
+   = (x7 + x3 + x2 + 1)
+
+
+   = (1000 1101)  = 8D    
+
+(01 • BD) = BD = 10111101
+
+(01 • 43) = 43 = 01000011
+
+(02 • 26)  (03 • 7B)  (01 • BD)  (01 • 43) = 3F
+
+\end{document}

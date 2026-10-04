@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 49
+
+\begin{document}
+
+% === Halaman 49 (python/native) ===
+
+Contoh: Misalkan y2  x3 – x  + 188  (mod 751) . Kurva eliptik ini memiliki N = 727 
+
+buah titik. 
+
+• Misalkan karakter yang akan dikodekan adalah huruf ‘B’, yang dikodekan menjadi 
+
+nilai 11. 
+
+• Pilih k = 20, maka x = mk + 1 = (11)(20) + 1 = 221. Sulihkan x = 221 ke dalam kurva 
+
+eliptik y2  x3 – x  + 188  (mod 751)  456 (mod 751). Tidak ada nilai y yang 
+
+memenuhi. 
+
+• Coba untuk x = mk + 2 = (11)(20) + 2 = 222. Sulihkan x = 222 ke dalam kurva eliptik 
+
+y2  x3 – x  + 188  (mod 751) . Juga tidak ada nilai y yang memenuhi. 
+
+• Coba untuk untuk x = mk + 3 = (11)(20) + 3 = 223. Sulihkan x = 223 ke dalam kurva 
+
+eliptik y2  x3 – x  + 188  (mod 751) . Juga tidak ada nilai y yang memenuhi. 
+
+• Coba untuk untuk x = mk + 4 = (11)(20) + 4 = 224. Sulihkan x = 224 ke dalam kurva 
+
+eliptik y2  x3 – x  + 188  (mod 751). Diperoleh y =  248. Jadi, karakter ‘B’ dikodekan 
+
+menjadi titik (224, 248) pada kurva eliptik. 
+
+• Pada proses decoding, hitung m = (x – 1)/k = (224 – 1)/20 = 11.15 = 11. Jadi 
+
+pesan semula adalah huruf ‘B’.
+
+49
+
+\end{document}

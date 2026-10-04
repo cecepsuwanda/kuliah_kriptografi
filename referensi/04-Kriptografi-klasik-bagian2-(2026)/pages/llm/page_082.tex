@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 82
+
+\begin{document}
+
+% === Halaman 82 (llm) ===
+
+\section*{Kriptanalisis Playfair Cipher}
+
+\begin{itemize}
+    \item Karena ada 26 huruf abjad, maka terdapat $26 \times 26 = 677$ bigram, sehingga identifikasi bigram individual lebih sukar.
+    \item Sayangnya ukuran poligram di dalam \textit{Playfair cipher} tidak cukup besar, hanya dua huruf sehingga \textit{Playfair cipher} tetap tidak aman.
+    \item Meskipun \textit{Playfair cipher} sulit dipecahkan dengan analisis frekuensi relatif huruf-huruf, namun ia dapat dipecahkan dengan analisis frekuensi pasangan huruf.
+    \item Dalam Bahasa Inggris kita bisa mempunyai frekuensi kemunculan pasangan huruf, misalnya pasangan huruf TH dan HE paling sering muncul.
+\end{itemize}
+
+\end{document}

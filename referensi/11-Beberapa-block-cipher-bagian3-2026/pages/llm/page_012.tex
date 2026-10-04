@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 12
+
+\begin{document}
+
+% === Halaman 12 (llm) ===
+
+\section*{Cryptanalysis of GOST}
+
+The latest cryptanalysis of GOST shows that it is secure in a theoretical sense. In practice, the data and memory complexity of the best published attacks has reached the level of practical, while the time complexity of even the best attack is still $2^{192}$ when $2^{64}$ data is available.
+
+Since 2007, several attacks have been developed against reduced-round GOST implementations and/or weak keys.$^{[6][7]}$
+
+In 2011 several authors discovered more significant flaws in GOST, being able to attack the full 32-round GOST with arbitrary keys for the first time. It has even been called ``a deeply flawed cipher'' by Nicolas Courtois.$^{[8]}$ Initial attacks were able to reduce time complexity from $2^{256}$ to $2^{228}$ at the cost of huge memory requirements,$^{[9]}$ and soon they were improved up to $2^{178}$ time complexity (at the cost of $2^{70}$ memory and $2^{64}$ data).$^{[10][11]}$
+
+In December 2012, Courtois, Gawinecki, and Song improved attacks on GOST by computing only $2^{101}$ GOST rounds.$^{[12]}$ Isobe had already published a single key attack on the full GOST cipher,$^{[13]}$ which Dinur, Dunkelman, and Shamir improved upon, reaching $2^{224}$ time complexity for $2^{32}$ data and $2^{36}$ memory, and $2^{192}$ time complexity for $2^{64}$ data.$^{[14]}$
+
+Since the attacks reduce the expected strength from $2^{256}$ (key length) to around $2^{178}$, the cipher can be considered broken. However, for any block cipher with block size of n bits, the maximum amount of plaintext that can be encrypted before rekeying must take place is $2^{n/2}$ blocks, due to the birthday paradox,$^{[15]}$ and none of the aforementioned attacks require less than $2^{32}$ data.
+
+\begin{flushright}
+Sumber: Wikipedia
+\end{flushright}
+
+\end{document}

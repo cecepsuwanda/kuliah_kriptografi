@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 9
+
+\begin{document}
+
+% === Halaman 9 (python/native) ===
+
+Contoh 2: Misalkan bobot-bobot yang membentuk barisan superincreasing 
+
+adalah \{2, 3, 6, 13, 27, 52\}, dan diketahui bobot knapsack (M) = 70. Kita akan 
+
+mencari b1, b2, …, b6 sedemikian sehingga
+
+
+70= 2b1 + 3b2 + 6b3 + 13b4 + 27b5 + 52b6
+
+ Caranya sebagai berikut:
+
+1) Bandingkan 70 dengan bobot terbesar, yaitu 52. Karena 52  70, 
+
+maka 52 dimasukkan ke dalam knapsack.  → b6 = 1
+
+2) Bobot total sekarang menjadi 70 – 52 = 18. Bandingkan 18 dengan 
+
+bobot terbesar kedua, yaitu 27. Karena 27 > 18, maka 27 tidak 
+
+dimasukkan ke dalam knapsack. → b5 = 0
+
+3) Bandingkan 18 dengan bobot terbesar berikutnya, yaitu 13. Karena 
+
+13  18, maka 13 dimasukkan ke dalam knapsack. → b4 = 1
+
+9
+
+\end{document}

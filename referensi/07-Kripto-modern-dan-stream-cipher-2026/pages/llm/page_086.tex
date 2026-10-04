@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 86
+
+\begin{document}
+
+% === Halaman 86 (llm) ===
+
+\begin{verbatim}
+void salsa20_block(uint32_t out[16], uint32_t const in[16])
+{
+    int i;
+    uint32_t x[16];
+
+    for (i = 0; i < 16; ++i)
+        x[i] = in[i];
+    // 10 loops x 2 rounds/loop = 20 rounds
+    for (i = 0; i < ROUNDS; i += 2) {
+        // Column round
+        QR(x[0], x[4], x[8], x[12]); // column 1
+        QR(x[5], x[9], x[13], x[1]); // column 2
+        QR(x[10], x[14], x[2], x[6]); // column 3
+        QR(x[15], x[3], x[7], x[11]); // column 4
+        // Row round
+        QR(x[0], x[1], x[2], x[3]); // row 1
+        QR(x[5], x[6], x[7], x[4]); // row 2
+        QR(x[10], x[11], x[8], x[9]); // row 3
+        QR(x[15], x[12], x[13], x[14]); // row 4
+    }
+    for (i = 0; i < 16; ++i)
+        out[i] = x[i] + in[i];
+}
+\end{verbatim}
+
+\begin{flushright}
+Sumber: Wikipedia
+\end{flushright}
+
+\end{document}

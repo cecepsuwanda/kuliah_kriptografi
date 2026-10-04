@@ -1,0 +1,121 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 4
+
+\begin{document}
+
+% === Halaman 4 (python/native) ===
+
+• Ukuran blok pesan = 64 bit
+
+• Panjang kunci = 256 bit
+
+• Jumlah putaran = 32 putaran
+
+• Setiap putaran menggunakan kunci putaran. 
+
+• Kunci putaran sebenarnya hanya ada 8 buah, K1 sampai K8,  namun  karena ada 
+
+32 putaran, maka 8 buah kunci putaran ini dijadwalkan penggunaannya. 
+
+• Standard GOST yang baru menspesifikasikan cipher blok 128-bit yang diberi 
+
+nama Kuznyechik. 
+
+4
+
+Tabel 6.2  Penjadwalan kunci internal GOST 
+
+
+Putaran 
+
+1 
+
+2 
+
+3 
+
+4 
+
+5 
+
+6 
+
+7 
+
+8 
+
+9 
+
+10 
+
+11 
+
+12 
+
+13 
+
+14 
+
+15 
+
+16 
+
+Kunci internal 
+
+K1 
+
+K2 K3 K4 K5 K6 K7 K8 K1 K2 K3 K4 K5 K6 K7 K8 
+
+
+Putaran 
+
+17 
+
+18 
+
+19 
+
+20 
+
+21 
+
+22 
+
+23 
+
+24 
+
+25 
+
+26 
+
+27 
+
+28 
+
+29 
+
+30 
+
+31 
+
+32 
+
+Kunci internal 
+
+K1 
+
+K2 K3 K4 K5 K6 K7 K8 K8 K7 K6 K5 K4 K3 K2 K1
+
+\end{document}

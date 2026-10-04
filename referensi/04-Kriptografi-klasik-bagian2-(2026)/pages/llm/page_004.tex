@@ -1,0 +1,31 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 4
+
+\begin{document}
+
+% === Halaman 4 (llm) ===
+
+\section*{Kriptanalisis Cipher Abjad-Tunggal}
+
+\begin{itemize}
+    \item Kelemahan \textit{cipher} abjad-tunggal: tidak dapat menyembunyikan hubungan statistik antara plainteks dengan cipherteks.
+    \begin{itemize}
+        \item Huruf yang sama dienkripsi menjadi huruf cipherteks yang sama
+        \item Huruf yang sering muncul di dalam plainteks, juga sering muncul di dalam huruf cipherteksnya yang berkoresponden.
+        \item artinya struktur statistik bahasa masih muncul di dalam cipherteks
+    \end{itemize}
+    \item Oleh karena itu, cipherteks dapat didekripsi tanpa mengetahui kuncinya sekalipun dengan menggunakan \textbf{teknik analisis frekuensi}.
+\end{itemize}
+
+\end{document}

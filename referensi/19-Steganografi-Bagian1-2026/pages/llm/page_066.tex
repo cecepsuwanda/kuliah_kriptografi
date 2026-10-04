@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 66
+
+\begin{document}
+
+% === Halaman 66 (llm) ===
+
+\section*{A. Program penyisipan pesan}
+
+\begin{verbatim}
+% Nama file: LSB_sisip.m
+% Penyisipan pesan di dalam citra dengan metode modifikasi LSB. Panjang
+% pesan (L) disimpan di dalam citra stegano.
+% Asumsi: jumlah bit untuk merepresentasikan panjang pesan maksimal 30 bit.
+% Input: 1. Citra berwarna (RGB)
+%        2. Teks dari keyboard
+% Output: citra stego (harus disimpan dalam format BMP)
+% Diprogram oleh Rinaldi Munir, @Informatika STEI-ITB
+
+clear all;
+% Baca citra cover dan tampilkan
+namaFile = input('Ketikkan nama file citra cover: ', 's');
+coverImage = imread(namaFile);
+imshow(namaFile); title ('Citra cover ');
+
+tinggi = size(coverImage, 1);
+lebar = size(coverImage, 2);
+total_byte = tinggi * lebar * 3;
+total_bit_embed = total_byte;
+
+% Baca pesan
+pesan = input('Ketikkan pesan: ', 's');
+\end{verbatim}
+
+\end{document}

@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 56
+
+\begin{document}
+
+% === Halaman 56 (python/native) ===
+
+2. Diffusion
+
+• Prinsip ini menyebarkan pengaruh satu bit plainteks atau kunci ke sebanyak mungkin bit-
+
+bit cipherteks. 
+
+    Contoh: satu huruf plainteks mempengaruhi nilai banyak huruf cipherteks
+
+
+• Sebagai efek difusi, maka pengubahan kecil pada plainteks sebanyak satu atau dua bit 
+
+menghasilkan perubahan pada bit-bit cipherteks yang tidak dapat diprediksi. 
+
+• Contoh: mengenkripsi plainteks 1111111111111111 
+
+    menghasilkan cipherteks 0110110000101001. 
+
+    Misalkan 1 bit pertama plainteks diubah menjadi 0111111111111111. Jika difusi bekerja, 
+
+maka cipherteksnya berubah signifikan menjadi  1011001011101111
+
+• Diffusion did alam block cipher dapat direalisasikan dengan menggunakan teknik 
+
+permutasi atau transposisi secara berulang-ulang. Permutasi adalah mengacak susunan 
+
+bit atau byte di dalam plainteks.
+
+56
+
+\end{document}

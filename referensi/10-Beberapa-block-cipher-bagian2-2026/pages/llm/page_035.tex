@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 35
+
+\begin{document}
+
+% === Halaman 35 (llm) ===
+
+\section*{ExpansionKey()}
+
+Algoritma:
+
+\begin{enumerate}
+    \item Salin elemen-elemen $key$ ke dalam larik $w[0], w[1], w[2], w[3]$. Larik $w[0]$ berisi empat elemen pertama $key$, $w[1]$ berisi empat elemen berikutnya, dan seterusnya.
+    \item Mulai dari $i = 4$ sampai $43$, lakukan:
+    \begin{enumerate}
+        \item Simpan $w[i-1]$ ke dalam peubah $temp$
+        \item Jika $i$ kelipatan 4, lakukan fungsi $g$ berikut:
+        \begin{itemize}
+            \item \textbf{RotWord}: Geser $w[i-1]$ satu $byte$ ke kiri secara sirkuler
+            \item \textbf{SubWord}: Lakukan substitusi dengan $S\text{-box}$ terhadap hasil pergeseran tersebut
+        \end{itemize}
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}

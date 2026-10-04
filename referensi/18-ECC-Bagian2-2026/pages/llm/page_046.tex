@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 46
+
+\begin{document}
+
+% === Halaman 46 (llm) ===
+
+\section*{Perbandingan Elgamal dengan Elliptic Curve Elgamal}
+
+\begin{itemize}
+    \item Cipherteks pada EC-Elgamal adalah pasangan titik
+    \begin{itemize}
+        \item $P_C = ( (kB), (P_M + kP_B) )$ \quad (ket: $P_b = \text{kunci publik Bob}$)
+    \end{itemize}
+    
+    \item $\color{red}{\text{Cipherteks pada Elgamal juga pasangan nilai:}}$
+    \begin{itemize}
+        \item $\color{red}{C = (a, b) = (g^k \pmod p, my_B^k \pmod p)$ \quad (ket: $y_b = \text{kunci publik Bob}$)}
+    \end{itemize}
+\end{itemize}
+
+\hrulefill
+
+\begin{itemize}
+    \item Pada EC\_Elgamal, Bob mengurangkan titik kedua dari $P_C$ dengan hasil kali $b \cdot (kB)$
+    \begin{itemize}
+        \item $(P_M + kP_B) - [b(kB)] = P_M + k(bB) - b(kB) = P_M$
+    \end{itemize}
+    
+    \item $\color{red}{\text{Pada El Gamal, Bob membagi nilai kedua dengan nilai pertama yang dipangkatkan}}$
+    \color{red}{\text{dengan kunci privat Bob}}
+    \begin{itemize}
+        \item $\color{red}{my_B^k / (g^k)^b = mg^{k*b} / g^{k*b} = m}$
+    \end{itemize}
+\end{itemize}
+
+\vspace{10mm}
+
+\begin{flushright}
+\small $\text{*)} \text{Sumber bahan: } \text{\color{blue}{Debdeep Mukhopadhyay, Elliptic Curve Cryptography,}}$ \\
+\small $\text{\color{blue}{Dept of Computer Sc and Engg IIT Madras}}$
+\end{flushright}
+
+\end{document}

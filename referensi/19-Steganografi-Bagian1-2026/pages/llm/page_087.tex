@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 87
+
+\begin{document}
+
+% === Halaman 87 (llm) ===
+
+\section*{3 data Chunk}
+
+Inilah bagian terpenting --- berisi sampel audio mentah.
+
+Struktur:
+
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Field} & \textbf{Ukuran} & \textbf{Keterangan} \\ \hline
+"data" & 4 byte & ID chunk \\ \hline
+Subchunk2Size & 4 byte & Ukuran data audio \\ \hline
+Data & n byte & Sampel audio \\ \hline
+\end{tabular}
+
+\vspace{10mm}
+
+\subsection*{Representasi Data Audio}
+
+Misalnya:
+\begin{itemize}
+    \item 16-bit
+    \item Stereo
+    \item 44100 Hz
+\end{itemize}
+
+Maka struktur sampel:
+
+\begin{center}
+\texttt{[L1][R1][L2][R2][L3][R3]...}
+\end{center}
+
+Setiap sampel:
+\begin{itemize}
+    \item 16-bit = 2 byte
+    \item Stereo = 4 byte per frame
+\end{itemize}
+
+\end{document}

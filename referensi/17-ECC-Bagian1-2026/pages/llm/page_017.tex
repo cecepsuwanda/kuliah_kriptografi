@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 17
+
+\begin{document}
+
+% === Halaman 17 (llm) ===
+
+\section*{Galois Field GF($2^m$)}
+
+\begin{itemize}
+    \item Dari GF($p^m$), jika $p = 2$, maka GF($2^m$) disebut juga medan berhingga biner.
+    \item GF($2^m$) atau $\text{F}_2^m$ adalah ruang vektor berdimensi $m$ pada GF(2). Setiap elemen di dalam GF($2^m$) adalah integer dalam representasi biner sepanjang maksimal $m$ bit.
+    Contoh: GF($2^4$), GF($2^8$), dst
+    \item String biner $b_{m-1}b_{m-2} \dots b_1b_0$, $b_i \in \{0,1\}$, dapat dinyatakan sebagai polinom
+    \[ b_{m-1}x^{m-1} + b_{m-2}x^{m-2} + \dots + b_1x + b_0 \]
+    \item Jadi, setiap $a \in \text{GF}(2^m)$ dapat dinyatakan sebagai
+    \[ b_{m-1}x^{m-1} + b_{m-2}x^{m-2} + \dots + b_1x + b_0 \]
+    \item Contoh: 1101 di dalam GF($2^4$) dapat dinyatakan sebagai polinom $x^3 + x^2 + 1$
+    
+    0101010111 di dalam GF($2^8$) dapat dinyatakan sebagai polinom $x^6 + x^4 + x^2 + x + 1$
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,31 @@
+\documentclass[../main.tex]{subfiles}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[indonesian]{babel}
+
+\begin{document}
+
+\chapter*{Glosarium}
+\addcontentsline{toc}{chapter}{Glosarium}
+
+\begin{description}
+    \item[Akar Primitif] Bilangan $g$ sedemikian sehingga perpangkatan $g^1, g^2, \dots, g^{p-1} \pmod{p}$ menghasilkan semua nilai dari $1$ hingga $p-1$.
+    \item[Avalanche Effect] Properti di mana perubahan satu bit pada plainteks atau kunci menyebabkan perubahan signifikan pada banyak bit cipherteks.
+    \item[Block Cipher] Algoritma enkripsi yang memproses data dalam blok-blok dengan ukuran tetap.
+    \item[Confusion] Teknik untuk membuat hubungan antara kunci dan cipherteks serumit mungkin, biasanya menggunakan S-Box.
+    \item[Diffusion] Teknik untuk menyebarkan pengaruh satu bit plainteks ke banyak bit cipherteks, biasanya menggunakan permutasi.
+    \item[Discrete Logarithm Problem] Persoalan mencari $x$ dalam $g^x \equiv y \pmod{p}$ yang secara komputasi sangat sulit untuk $p$ yang besar.
+    \item[ECC (Elliptic Curve Cryptography)] Sistem kriptografi kunci-publik yang menggunakan struktur grup dari titik-titik pada kurva eliptik.
+    \item[Fungsi Hash] Fungsi satu arah yang memetakan input ukuran variabel menjadi output ukuran tetap.
+    \item[Galois Field] Medan berhingga yang memiliki jumlah elemen $p^m$.
+    \item[Hybrid Cryptography] Kombinasi kriptografi kunci-simetri (untuk efisiensi) dan asimetris (untuk distribusi kunci).
+    \item[Invers Modulo] Bilangan $d$ sedemikian sehingga $e \cdot d \equiv 1 \pmod{n}$.
+    \item[MAC (Message Authentication Code)] Kode yang digunakan untuk menjamin integritas dan otentikasi pesan menggunakan kunci rahasia bersama.
+    \item[Non-Repudiation] Jaminan bahwa pengirim pesan tidak dapat menyangkal telah mengirimkan pesan tersebut.
+    \item[PKI (Public Key Infrastructure)] Kerangka kerja yang mengelola pembuatan, distribusi, dan pencabutan sertifikat kunci publik.
+    \item[S-Box (Substitution Box)] Komponen non-linear dalam block cipher yang digunakan untuk mencapai \textit{confusion}.
+    \item[Stream Cipher] Algoritma enkripsi yang memproses data bit-per-bit menggunakan keystream.
+    \item[Tanda Tangan Digital] Mekanisme kriptografis untuk membuktikan otentikasi dan integritas pesan menggunakan kunci privat pengirim.
+\end{description}
+
+\end{document}

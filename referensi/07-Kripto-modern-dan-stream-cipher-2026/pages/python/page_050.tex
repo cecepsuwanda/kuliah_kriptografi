@@ -1,0 +1,76 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 50
+
+\begin{document}
+
+% === Halaman 50 (python/native) ===
+
+Kode Program RC4 (dalam Bahasa C++)
+
+• Enkripsi
+
+50
+
+// Enkripsi sembarang berkas dengan algoritma RC4.
+
+\#include <iostream>
+
+\#include <string.h>
+
+\#include <stdio.h>
+
+\#include <stdlib.h>
+
+using namespace std;
+
+main(int argc, char *argv[])
+
+\{
+
+ FILE *Fin, *Fout;
+
+ char p, c, u;
+
+ string K;
+
+ int S[256];
+
+ int i, j, t; 
+
+
+Fin = fopen(argv[1], "rb");
+
+ if (Fin == NULL) \{
+
+   cout << "Berkas " << argv[1] <<" tidak ada" << endl;
+
+   exit(0);
+
+ \}
+
+
+ Fout = fopen(argv[2], "wb");
+
+ cout << "Kata kunci : "; cin >> K; 
+
+ cout <<"Enkripsi " << argv[1] << " menjadi " << argv[2] << "..."; 
+
+
+ for (i = 0; i<256; i++) \{
+
+  S[i] = i;
+
+ \}
+
+\end{document}

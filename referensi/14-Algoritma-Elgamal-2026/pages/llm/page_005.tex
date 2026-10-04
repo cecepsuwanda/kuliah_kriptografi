@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 5
+
+\begin{document}
+
+% === Halaman 5 (llm) ===
+
+\section*{Akar Primitif dan Logaritma Diskrit}
+
+\begin{itemize}
+    \item Jika $n$ adalah bilangan bulat, maka $a$ disebut \textbf{akar primitif} dari $n$ jika perpangkatan
+    \[ a, a^2, ..., a^{\phi(n)} \quad (\text{dalam sebuah modulus } n) \]
+    menghasilkan nilai yang berbeda dan semuanya relatif prima dengan $n$.
+    
+    \item Secara khusus, jika $p$ adalah bilangan prima, maka $a$ disebut akar primitif dari $p$ jika perpangkatan
+    \[ a, a^2, ..., a^{p-1} \quad (\text{dalam modulus } p) \]
+    menghasilkan nilai-nilai yang berbeda \\
+    (ingatlah dari fungsi \textit{toitient} Euler, bahwa jika $p$ prima maka $\phi(p) = p - 1$)
+\end{itemize}
+
+\end{document}

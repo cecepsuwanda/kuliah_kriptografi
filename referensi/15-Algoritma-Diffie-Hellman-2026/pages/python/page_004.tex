@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 4
+
+\begin{document}
+
+% === Halaman 4 (python/native) ===
+
+3) Alice membangkitkan kunci rahasia (K) untuk enkripsi pesan dengan AES
+
+   4) Alice mengenkripsi K dengan RSA menggunakan kunci publik Bob (PKBob). 
+
+
+
+E\_RSAPKbob(K) = CK
+
+    5) Alice mengenkripsi pesan M dengan AES menggunakan K, 
+
+
+
+E\_AESK(M) = CM
+
+        lalu mengirim CK dan CM kepada Bob. 
+
+    6) Bob mendekripsi CK dengan RSA menggunakan kunci privatnya (SKBob)
+
+
+             D\_RSASKbob(CK) = K
+
+    7)  Selanjutnya Bob mendekripsi pesan CM dengan AES menggunakan K
+
+
+
+D\_AESK(CM) = M
+
+Rinaldi M/II4020 Kriptografi
+
+4
+
+\end{document}

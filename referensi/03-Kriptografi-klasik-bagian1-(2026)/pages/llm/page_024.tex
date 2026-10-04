@@ -1,0 +1,27 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 24
+
+\begin{document}
+
+% === Halaman 24 (llm) ===
+
+\section*{Kriptanalisis Caesar Cipher}
+
+\begin{itemize}
+    \item \textit{Caesar cipher} mudah dipecahkan dengan \textit{exhaustive key search} (\textit{brute force}) karena jumlah kuncinya sangat sedikit (hanya ada 26 kunci).
+    \item Coba lakukan dekripsi dengan berbagai nilai $k$ dari 0 sampai 25, lalu periksa apakah hasil dekripsi merupakan kata atau kalimat yang bermakna. Jika ya, maka diduga $k$ adalah kuncinya.
+    \item Untuk memastikan $k$ adalah kunci yang benar, maka cobakan $k$ untuk potongan kriptogram lainnya.
+\end{itemize}
+
+\end{document}

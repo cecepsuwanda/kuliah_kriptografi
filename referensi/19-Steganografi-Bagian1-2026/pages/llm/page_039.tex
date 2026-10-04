@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 39
+
+\begin{document}
+
+% === Halaman 39 (llm) ===
+
+\section*{Ranah Steganografi}
+
+Berdasarkan ranah operasinya, metode-metode steganografi dapat dibagi menjadi dua kelompok
+
+\begin{itemize}
+    \item \textbf{\textcolor{red}{Spatial (time) domain methods}}
+    Memodifikasi langsung nilai $byte$ dari $cover-object$ (nilai $byte$ merepresentasikan intensitas/warna $pixel$ atau amplitudo)
+    \par Contoh: Metode $LSB$
+    
+    \item \textbf{\textcolor{red}{Tranform domain methods}}
+    Memodifikasi hasil transformasi sinyal dalam ranah transform (hasil transformasi dari ranah spasial ke ranah lain (misalnya ranah frekuensi).
+    \par Contoh: Metode $Spread$ $Spectrum$
+\end{itemize}
+
+\end{document}

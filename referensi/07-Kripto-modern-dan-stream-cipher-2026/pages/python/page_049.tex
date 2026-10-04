@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 49
+
+\begin{document}
+
+% === Halaman 49 (python/native) ===
+
+Keamanan RC4
+
+• RC4 memiliki kelemahan, yaitu byte-byte pada keystream awal pembangkitan memiliki 
+
+korelasi yang tinggi dengan beberapa byte awal kunci
+
+• Oleh karena itu direkomendasikan membuang 256 sampai 512 byte keystream awal
+
+
+• RC4 adalah cipher alir, maka ia tidak kuat terhadap serangan seperti flip-bit attack maupun 
+
+serangan-serangan stream attack lainnya. 
+
+• Saat ini keamanan RC4 sudah berhasil dipecahkan dalam hitungan jam atau hari. 
+
+• Pada bulan Februari 2015, RC4 dilarang penggunaannya di dalam Transport Layer Security 
+
+(TLS) seperti disebutkan di dalam RFC 7465 (https://tools.ietf.org/html/rfc7465).
+
+• Beberapa varian RC4 telah dibuat untuk mengatasi kelemahannya, yaitu Spritz, RC4A, 
+
+VMPC, dan RC4+. 
+
+49
+
+\end{document}

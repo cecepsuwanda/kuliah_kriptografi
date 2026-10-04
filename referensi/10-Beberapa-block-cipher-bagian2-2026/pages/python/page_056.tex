@@ -1,0 +1,63 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 56
+
+\begin{document}
+
+% === Halaman 56 (python/native) ===
+
+Contoh 1:  Misalkan a = 00001101 = x3 + x2 + 1 dan b = 00000110 = x2 + x 
+
+
+       a dan b  GF(28)      (dalam notasi Hex, a = ’0D’ dan b = ’06’)
+
+(i)
+
+a + b = ‘0D’ + ‘06’ =  (x3 + x2 + 1) +  (x2 + x ) = x3 + 2x2 + x + 1 (mod 2)
+
+
+
+
+
+
+
+   = x3 + 0x2 + x + 1 
+
+
+
+
+
+
+
+   = x3 + x + 1  = 00001011 = ‘0B’
+
+
+Dalam representasi biner:
+
+
+00001101
+
+
+00000110 +
+
+
+00001011  → sama dengan hasil operasi XOR
+
+
+ a + b = 00001011 = a XOR b 
+
+Bagi  tiap koefisien dengan 2,
+
+lalu ambil sisanya
+
+\end{document}

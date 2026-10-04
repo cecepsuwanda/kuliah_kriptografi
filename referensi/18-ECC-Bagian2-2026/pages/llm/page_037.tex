@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 37
+
+\begin{document}
+
+% === Halaman 37 (llm) ===
+
+\section*{Elliptic Curve Cryptography (ECC) $\ast$)}
+
+\begin{itemize}
+    \item ECC adalah sistem kriptografi kunci-publik, sejenis dengan RSA, Rabin, ElGamal, D-H, dll.
+    \item Setiap pengguna memiliki \textbf{kunci publik dan kunci privat}
+    \begin{itemize}
+        \item Kunci publik untuk enkripsi atau untuk verifikasi tanda tangan digital
+        \item Kunci privat untuk dekripsi atau untuk menghasilkan tanda tangan digital
+    \end{itemize}
+    \item Kurva eliptik digunakan sebagai perluasan sistem kriptografi kunci-publik yang lain:
+    \begin{enumerate}
+        \item Elliptic Curve Elgamal (ECEG)
+        \item Elliptic Curve Digital Signature (ECDSA)
+        \item Elliptic Curve Diffie-Hellman (ECDH)
+    \end{enumerate}
+\end{itemize}
+
+\vspace{10mm}
+
+\textcolor{red}{\ast}) Sumber bahan: \textcolor{red}{Debdeep Mukhopadhyay, \textit{Elliptic Curve Cryptography}, Dept of Computer Sc and Engg IIT Madras}
+
+\end{document}

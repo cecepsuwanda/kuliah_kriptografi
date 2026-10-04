@@ -1,0 +1,30 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 49
+
+\begin{document}
+
+% === Halaman 49 (llm) ===
+
+\section*{Keamanan RC4}
+
+\begin{itemize}
+    \item RC4 memiliki kelemahan, yaitu \textit{byte-byte} pada \textit{keystream} awal pembangkitan memiliki korelasi yang tinggi dengan beberapa \textit{byte} awal kunci
+    \item Oleh karena itu direkomendasikan membuang 256 sampai 512 \textit{byte keystream} awal
+    \item RC4 adalah \textit{cipher} alir, maka ia tidak kuat terhadap serangan seperti \textit{flip-bit attack} maupun serangan-serangan \textit{stream attack} lainnya.
+    \item Saat ini keamanan RC4 sudah berhasil dipecahkan dalam hitungan jam atau hari.
+    \item Pada bulan Februari 2015, RC4 dilarang penggunaannya di dalam \textit{Transport Layer Security} (TLS) seperti disebutkan di dalam RFC 7465 (\url{https://tools.ietf.org/html/rfc7465}).
+    \item Beberapa varian RC4 telah dibuat untuk mengatasi kelemahannya, yaitu Spritz, RC4A, VMPC, dan RC4+.
+\end{itemize}
+
+\end{document}

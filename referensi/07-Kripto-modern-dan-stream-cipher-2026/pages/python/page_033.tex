@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 33
+
+\begin{document}
+
+% === Halaman 33 (python/native) ===
+
+33
+
+• Contoh FSR adalah LFSR (Linear Feedback Shift Register) 
+
+• Bit-bit di dalam register digeser satu bit ke kanan setiap kali pembangkitan bit 
+
+luaran (= bit kunci alir atau keystream)
+
+• Bit bn digeser ke tempat bn – 1, bn – 1 digeser ke bn – 2, dst, b2 digeser ke b1, b1 
+
+terlempar ke luar
+
+• Bit yang terlempar keluar (b1) menjadi bit luaran LFSR
+
+• Selanjutnya dihitung bn yang baru, yaitu  bn  = bn  bn – 1  …  b2  b1
+
+bn
+
+bn - 1
+
+...
+
+b 4
+
+b 3
+
+b 2
+
+b 1
+
+Register Geser
+
+Bit Keluaran
+
+...
+
+bn  = bn  bn – 1  …  b2  b1
+
+b1
+
+\end{document}

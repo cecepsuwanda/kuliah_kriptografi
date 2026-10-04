@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 20
+
+\begin{document}
+
+% === Halaman 20 (llm) ===
+
+header for SPIE use
+
+\begin{center}
+\textbf{BPCS-Steganography Experimental Program site:}\
+\url{http://www.datahide.org/BPCS e:QPtechHV-program-e.html}
+
+\Large \textbf{Principle and applications of BPCS-Steganography}
+
+\large Eiji Kawaguchi$^*$ and Richard O. Eason$^{**}$
+
+\small $^*$ Kyushu Institute of Technology, Kitakyushu, Japan\
+$^{**}$ University of Maine, Orono, Maine 04469-5708
+\end{center}
+
+\begin{center}
+\textbf{ABSTRACT}
+\end{center}
+
+Steganography is a technique to hide secret information in some other data (we call it a \textit{vessel}) without leaving any apparent evidence of data alteration. All of the traditional steganographic techniques have limited information-hiding capacity. They can hide only $10\%$ (or less) of the data amounts of the vessel. This is because the principle of those techniques was either to replace a special part of the frequency components of the vessel image, or to replace all the least significant bits of a multi-valued image with the secret information.
+
+Our new steganography uses an image as the vessel data, and we embed secret information in the bit-planes of the vessel. This technique makes use of the characteristics of the human vision system where by herself a human cannot perceive any shape information in a very complicated binary pattern. We can replace all of the ``noise-like'' regions in the bit-planes of the vessel image with secret data without deteriorating the image quality. We termed our steganography ``BPCS-Steganography,'' which stands for Bit-Plane Complexity Segmentation-steganography.
+
+We made an experimental system to investigate this technique in depth. The merits of BPCS-Steganography found by the experiments are as follows.
+
+\begin{enumerate}
+    \item The information hiding capacity of a true color image is around $50\%$.
+    \item A sharpening operation on the dummy image increases the embedding capacity quite a bit.
+    \item Canonical Gray coded bit planes are more suitable for BPCS-Steganography than the standard binary bit planes.
+\end{enumerate}
+
+\end{document}

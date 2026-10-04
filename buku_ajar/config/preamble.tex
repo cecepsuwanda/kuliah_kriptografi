@@ -1,0 +1,85 @@
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[indonesian]{babel}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage{subfiles}
+
+% --- Page Layout ---
+\geometry{
+    a4paper,
+    left=3cm,
+    right=2.5cm,
+    top=3cm,
+    bottom=3cm
+}
+
+% --- Listing Styles ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+% --- Custom Commands for OBE ---
+\newtcolorbox{learningoutcome}{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    title=Tujuan Pembelajaran (Learning Outcomes),
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{obeactivity}{
+    colback=green!5!white,
+    colframe=green!75!black,
+    title=Aktivitas Rekomendasi,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{obereflection}{
+    colback=yellow!5!white,
+    colframe=yellow!75!black,
+    title=Latihan dan Refleksi,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{obeassessment}{
+    colback=red!5!white,
+    colframe=red!75!black,
+    title=Asesmen Kompetensi,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{competencychecklist}{
+    colback=gray!5!white,
+    colframe=gray!75!black,
+    title=Checklist Kompetensi,
+    fonttitle=\bfseries
+}

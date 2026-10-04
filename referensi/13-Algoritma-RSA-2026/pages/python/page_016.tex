@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 16
+
+\begin{document}
+
+% === Halaman 16 (python/native) ===
+
+• Alice mendekripsi cipherteks C = 0328, 0301, 2653, 2986, 1164 dengan 
+
+menggunakan kunci privatnya, yaitu  d = 1019, n = 3337:
+
+
+c1 = 0328 →m1 = 3281019 mod 3337 = 704 = 0704 
+
+c2 = 0301 →m2 = 3011019 mod 3337 = 1111 
+
+c3 = 2653 →m3 = 26531019 mod 3337 = 1400
+
+c4 = 2986 →m4 = 29861019 mod 3337 = 1108
+
+c5 = 1164 →m5 = 11641019 mod 3337 = 204
+
+• Alice memperoleh kembali plainteks dari Bob 
+
+m = 07041111140011080204 
+
+   yang dikodekan kembali (A = 00, B = 01, C = 02, …, Z = 25) menjadi 
+
+
+M = HELLO ALICE 
+
+Dekripsi: m = cd mod n
+
+16
+
+\end{document}

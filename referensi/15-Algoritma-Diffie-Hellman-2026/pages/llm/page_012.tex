@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 12
+
+\begin{document}
+
+% === Halaman 12 (llm) ===
+
+\section*{Algoritma Pertukaran Kunci Diffie-Hellman}
+
+\begin{enumerate}
+  \item Alice membangkitkan bilangan bulat acak $a$ dan mengirim hasil perhitungan berikut kepada Bob:
+  \[ A = g^a \bmod p \quad (a = \text{kunci privat Alice, } A = \text{kunci publik Alice}) \]
+  \item Bob membangkitkan bilangan bulat acak $b$ dan mengirim hasil perhitungan berikut kepada Alice:
+  \[ B = g^b \bmod p \quad (b = \text{kunci privat Bob, } B = \text{kunci publik Bob}) \]
+  \item Alice menghitung
+  \[ K = B^a \bmod p \quad (K = g^{ab} \bmod p) \]
+  \item Bob menghitung
+  \[ K = A^b \bmod p \quad (K = g^{ab} \bmod p) \]
+\end{enumerate}
+
+\begin{itemize}
+  \item Jika perhitungan dilakukan dengan benar, maka $K = g^{ab} \bmod p$. Alice dan Bob sekarang memiliki kunci rahasia yang sama, yaitu $K$.
+\end{itemize}
+
+\end{document}

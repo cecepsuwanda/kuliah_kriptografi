@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 12
+
+\begin{document}
+
+% === Halaman 12 (python/native) ===
+
+12
+
+Algoritma Pertukaran Kunci Diffie-Hellman
+
+1.
+
+Alice membangkitan bilangan bulat acak a  dan mengirim hasil perhitungan 
+
+berikut kepada Bob:
+
+
+
+A = ga mod p
+
+2.
+
+Bob membangkitkan bilangan bulat acak b dan mengirim hasil perhitungan 
+
+berikut kepada Alice:
+
+
+
+B = gb mod p
+
+3.
+
+Alice menghitung
+
+
+
+K = Ba mod p  
+
+
+(K  = gab mod p)
+
+4.
+
+Bob menghitung
+
+
+
+K = Ab mod p  
+
+
+(K  = gab mod p)
+
+• Jika perhitungan dilakukan dengan benar, maka  K = gab mod p. Alice dan Bob 
+
+sekarang memiliki kunci rahasia yang sama, yaitu K.
+
+(a = kunci privat Alice, A = kunci publik Alice) 
+
+(b = kunci privat Bob, B = kunci publik Bob) 
+
+Rinaldi M/II4020 Kriptografi
+
+\end{document}

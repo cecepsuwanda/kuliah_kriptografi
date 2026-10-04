@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 5
+
+\begin{document}
+
+% === Halaman 5 (llm) ===
+
+\textbf{Contoh 1:} Misalkan $n = 6$ dan $w_1 = 1$, $w_2 = 5$, $w_3 = 6$, $w_4 = 11$, $w_5 = 14$, dan $w_6 = 20$.
+
+\textbf{Plainteks:} $\color{red}{1110010101100000000011000}$
+
+Plainteks dibagi menjadi blok yang panjangnya 6, kemudian setiap bit di dalam blok dikalikan dengan $w_i$ yang berkoresponden sesuai dengan persamaan (1):
+
+\begin{align*}$
+\text{Blok plainteks ke-1} & : 111001 \\ 
+\text{Kriptogram} & : (1 \times 1) + (1 \times 5) + (1 \times 6) + (0 \times 11) + (0 \times 14) + (1 \times 20) = 32 \\
+\\
+\text{Blok plainteks ke-2} & : 010110 \\ 
+\text{Kriptogram} & : (1 \times 5) + (1 \times 11) + (1 \times 14) = 30 \\
+\\
+\text{Blok plainteks ke-3} & : 000000 \\ 
+\text{Kriptogram} & : 0 \\
+\\
+\text{Blok plainteks ke-4} & : 011000 \\ 
+\text{Kriptogram} & : (1 \times 5) + (1 \times 6) = 11
+\end{align*}
+
+Jadi, cipherteks yang dihasilkan: $\color{red}{32 \ 30 \ 0 \ 11}$
+
+\end{document}

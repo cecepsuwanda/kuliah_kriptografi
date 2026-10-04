@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 44
+
+\begin{document}
+
+% === Halaman 44 (python/native) ===
+
+44
+
+\# Program utama
+
+\#Alice membangkitkan kunci publik dan kunci privatnya
+
+print("\textbackslash{}nKUNCI PUBLIK DAN KUNCI PRIVAT ALICE:")
+
+PembangkitanKunciRSA('kunci\_publik\_Alice.pem', 'kunci\_privat\_Alice.pem')
+
+\#Bob membangkitkan kunci publik dan kunci privatnya
+
+print("\textbackslash{}nKUNCI PUBLIK DAN KUNCI PRIVAT BOB:")
+
+PembangkitanKunciRSA("kunci\_publik\_Bob.pem", "kunci\_privat\_Bob.pem")
+
+\#Bob mengirim pesan kepada Alice
+
+pesan = input("\textbackslash{}nBob, ketikkan pesan teks buat Alice: ")
+
+\#Bob mengenkripsi pesan dengan menggunakan kunci publik Alice
+
+ciphertext = encrypt\_message(pesan, 'kunci\_publik\_Alice.pem')
+
+print("\textbackslash{}nCiphertext (dari Bob):", ciphertext.hex())
+
+\#Alice mendekripsi ciphertext dari Bob menggunakab kunci privatnya sendiri 
+
+(kunci privat Alice)
+
+decrypted\_message = decrypt\_message(ciphertext, 'kunci\_privat\_Alice.pem')
+
+print("\textbackslash{}nPesan setelah dekripsi oleh Alice:", decrypted\_message)
+
+\end{document}

@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 43
+
+\begin{document}
+
+% === Halaman 43 (llm) ===
+
+\textbf{Contoh *):} Misalkan kurva eliptik yang dipilih adalah $y^2 = x^3 + 2x + 1 \pmod 5$. Himpunan titik-titik pada kurva eliptik adalah $\{\{(0, 1), (1, 3), (3, 3), (3, 2), (1, 2), (0, 4)\}$. Alice dan Bob menyepakati titik $B(0, 1)$ sebagai basis.
+
+\begin{enumerate}
+    \item Alice memilih $a = 2$, lalu menghitung kunci publiknya:
+    \[ P_A = a \cdot B = 2B = B + B = (1, 3) \quad \rightarrow \text{ misalkan titik Q} \]
+    \item Bob memilih $b = 3$, lalu menghitung kunci publiknya:
+    \[ P_B = b \cdot B = 3B = B + B + B = 2B + B = (3, 3) \quad \rightarrow \text{ misalkan titik R} \]
+    \item Alice mengirimkan $P_A$ kepada Bob, Bob mengirimkan $P_B$ kepada Alice.
+    \item Alice menghitung kunci rahasia sbb:
+    \[ K_A = a \cdot P_B = 2R = R + R = (0, 4) \]
+    \item Bob menghitung kunci rahasia sbb:
+    \[ K_B = b \cdot P_A = 3Q = Q + Q + Q = (0, 4) \]
+\end{enumerate}
+
+Jadi, sekarang Alice dan Bob sudah berbagi kunci rahasia yang sama, yaitu $(0, 4)$
+
+\vspace{10mm}
+\textcolor{red}{* Sumber bahan: Nana Juhana, Implementasi Elliptic Curve Cryptography (ECC) pada proses Pertukaran Kunci Diffie-Hellman dan Skema Enkripsi El Gamal}
+
+\end{document}

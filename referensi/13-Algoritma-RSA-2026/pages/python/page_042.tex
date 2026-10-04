@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 42
+
+\begin{document}
+
+% === Halaman 42 (python/native) ===
+
+42
+
+3. Kode Program RSA Python (3)
+
+from Crypto.PublicKey import RSA
+
+from Crypto.Cipher import PKCS1\_OAEP
+
+def PembangkitanKunciRSA(filekuncipublik, filekunciprivat):
+
+    \# Buat kunci RSA
+
+    key = RSA.generate(1024)
+
+    kunci\_publik = key.publickey()
+
+
+    \# Tampilkan informasi kunci
+
+    print("Modulus (n):", key.n)
+
+    print("Kunci publik (e):", key.e)
+
+    print("Kunci privat (d):", key.d)
+
+    print("Bilangan prima p:", key.p)
+
+    print("Bilangan prima q:", key.q)
+
+    \#Simpan kunci publik dan kunci privat ke dalam dua file kunci berbeda, format PEM
+
+    with open(filekuncipublik, "wb") as file:
+
+         file.write(kunci\_publik.exportKey('PEM'))
+
+         file.close()
+
+    with open(filekunciprivat, "wb") as file:
+
+         file.write(key.exportKey('PEM','passwordku'))  \# Password bisa diubah
+
+         file.close()
+
+\end{document}

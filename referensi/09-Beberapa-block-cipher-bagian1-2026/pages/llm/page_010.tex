@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 10
+
+\begin{document}
+
+% === Halaman 10 (llm) ===
+
+\section*{Pembangkitan Kunci Internal (\textit{key expansion})}
+
+\begin{itemize}
+    \item Kunci internal = kunci setiap putaran = \textit{subkey (round key)}
+    \item Ada 16 putaran, jadi ada 16 kunci internal: $K_1, K_2, \dots, K_{16}$
+    \item Kunci internal dibangkitkan dari kunci eksternal (64 bit) yang diberikan oleh pengguna. Di dalam dokumen resmi DES pembangkitan kunci internal disebut \textit{key schedule}.
+    \item Panjang kunci internal adalah 48 bit
+    \item Gambar 3 memperlihatkan proses pembangkitan kunci internal.
+\end{itemize}
+
+\end{document}

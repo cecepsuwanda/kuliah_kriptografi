@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 17
+
+\begin{document}
+
+% === Halaman 17 (llm) ===
+
+\begin{itemize}
+  \item Pembuktian
+  
+  \"kunci OTP (acak) + plainteks (tidak acak) = cipherteks (acak)\" \\
+  sebagai berikut:\
+  Misalkan:\n  \[ C = (P + K) \pmod{26} \]
+  dengan $K$ dipilih secara uniform:\n  \[ P(K = k) = \frac{1}{26}, \quad k = 0, 1, \dots, 25. \]
+  Untuk setiap nilai plainteks tertentu $P = p$, pemetaan
+  \[ C = (P + K) \pmod{26} \]
+  merupakan pemetaan satu-ke-satu dari semua kemungkinan $K$ ke semua kemungkinan $C$.\
+  Akibatnya:\n  \[ P(C = c \mid P = p) = \frac{1}{26} \]
+  untuk setiap $c$ (yaitu: $P(C = \text{'a'}) = P(C = \text{'b'}) = \dots = P(C = \text{'z'}) = \frac{1}{26}$)
+\end{itemize}
+
+\end{document}

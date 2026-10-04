@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 14
+
+\begin{document}
+
+% === Halaman 14 (llm) ===
+
+\section*{RC5}
+
+\begin{itemize}
+    \item $RC5$ dibuat oleh Ronald Rivest dari Laboratorium $RSA$ pada tahun 1994.
+    \item Salah satu finalis AES, yaitu RC6, dikembangkan dari RC5
+\end{itemize}
+
+\begin{itemize}
+    \item Tidak seperti algoritma \textit{cipher} blok lainnya, $RC5$ mempunyai:
+    \begin{itemize}
+        \item ukuran blok yang variabel (16, 32, 64)
+        \item panjang kunci yang variabel (0 sampai 2040 bit)
+        \item dan jumlah putaran yang variabel (0 sampai 255).
+    \end{itemize}
+\end{itemize}
+
+\vspace{5mm}
+
+\begin{tabular}{|l|c|l|}
+\hline
+\textbf{Parameter} & \textbf{Simbol} & \textbf{Nilai yang dibolehkan} \\ \hline
+Ukuran blok (dalam bit) & $w$ & 16, 32, 64 \\ \hline
+Jumlah putaran & $r$ & 0, 1, ..., 255 \\ \hline
+Panjang kunci eksternal $K$ (dalam $byte$, 1 $byte = 8$ bit) & $b$ & 0, 1, ..., 255 \\ \hline
+\end{tabular}
+
+\end{document}

@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 63
+
+\begin{document}
+
+% === Halaman 63 (python/native) ===
+
+• Biasanya, plainteks dimanipulasi dulu dengan kunci (umumnya di-XOR-kan 
+
+dengan kunci eksternal, atau dengan kunci putaran pertama), lalu hasilnya 
+
+ditransformasikan dengan fungsi f berulang kali.
+
+
+
+
+          𝐶0 = P   K0 
+
+                       𝐶𝑖 = 𝑓(𝐶𝑖−1, 𝐾𝑖) 
+
+, 𝑖= 1, 2, … , 𝑟−1
+
+
+
+𝐶= 𝐶𝑟 = 𝐶𝑟−1  𝐾𝑟
+
+• Semakin banyak jumlah putaran, efek diffusi semakin bertambah, namun jumlah 
+
+putaran yang besar dapat mempuat komputasi menjadi tidak sangkil (efisien).
+
+• Jumlah putaran harus dipertimbangkan untuk mempertemukan kriteria 
+
+keamanan dan efisiensi. 
+
+
+63
+
+\end{document}

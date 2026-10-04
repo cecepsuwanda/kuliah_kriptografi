@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 52
+
+\begin{document}
+
+% === Halaman 52 (python/native) ===
+
+52
+
+• Ukuran pesan yang akan disembunyikan bergantung pada ukuran cover-object.
+
+• Misalkan pada citra grayscale (1 byte/pixel) 256 x 256 pixel :
+
+ - jumlah pixel = jumlah byte = 256 x 256 = 65536
+
+ - setiap byte dapat menyembunyikan 1 bit pesan di LSB-nya
+
+ - jadi ukuran maksimal pesan = 65536 bit = 8192 byte = 8 KB
+
+• Pada citra berwarna 24-bit berukuran 256  256 pixel:
+
+ - jumlah pixel 256 x 256 = 65536
+
+ - setiap pixel = 3 byte, berarti ada 65536  3 = 196608 byte. 
+
+ - setiap byte dapat menyembunyikan 1 bit pesan
+
+ - jadi ukuran maksimal pesan = 196608 bit = 24576 byte = 24KB
+
+Menghitung Ukuran Pesan yang dapat Disembunyikan
+
+\end{document}

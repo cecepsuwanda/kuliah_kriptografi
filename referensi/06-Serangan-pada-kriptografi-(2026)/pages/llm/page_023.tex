@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 23
+
+\begin{document}
+
+% === Halaman 23 (llm) ===
+
+\section*{1. Key-Recovery Attack}
+
+\begin{itemize}
+    \item Tujuan: memperoleh kunci kriptografi yang digunakan untuk mengenkripsi/dekripsi.
+    \item Misalkan sebuah sistem menggunakan
+    \[ C = E_K(P) \quad , \quad P = \text{plainteks}, \ K = \text{kunci}, \ C = \text{cipherteks} \]
+    \item Dalam \textit{key-recovery attack}, penyerang berusaha menemukan K.
+    \item Contoh: Misalkan sebuah cipher menggunakan kunci 16 karakter. Penyerang melakukan pencarian kunci secara \textit{brute force}:
+    
+    \begin{align*}
+    K_1 & \to \text{dekripsi } C \to P_1 \\
+    K_2 & \to \text{dekripsi } C \to P_2 \\
+    K_3 & \to \text{dekripsi } C \to P_3 \\
+    & \vdots
+    \end{align*}
+    sampai ditemukan kunci yang menghasilkan plainteks yang masuk akal.
+\end{itemize}
+
+\end{document}

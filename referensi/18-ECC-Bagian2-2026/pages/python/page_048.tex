@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 48
+
+\begin{document}
+
+% === Halaman 48 (python/native) ===
+
+• Metode kedua adalah dengan metode Kolbitz. Langkah-langkahnya adalah 
+
+sebagai berikut:
+
+   1.  Pilih sebuah kurva eliptik y2  x3 + ax + b  (mod p) yang mengandung N buah 
+
+titik.
+
+   2.  Misalkan karakter-karakter penyusun pesan adalah angka 0, 1, 2, …, 9 dan 
+
+huruf A, B, C, … Z yang dikodekan menjadi 10, 11, …, 35.
+
+   3.  Kodekan setiap karakater di dalam pesan menjadi nilai m di antara 0 dan 35.
+
+   4.  Pilih sebuah bilangan bulat k sebagai parameter basis (disepakati kedua pihak). 
+
+   5.  Untuk setiap nilai mk, nyatakan x = mk + 1, sulihkan x ke dalam y2  x3 + ax + b  
+
+(mod p) lalu tentukan nilai y yang memenuhi.
+
+   6.  Jika tidak ada nilai y yang memenuhi, coba untuk x = mk + 2, x = mk + 3, dst, 
+
+sampai y2  x3 + ax + b  (mod p) dapat dipecahkan.
+
+   7 . Pada proses decoding, untuk titik (x, y), tentukan nilai m terbesar tetapi lebih 
+
+kecil dari (x – 1)/k. Kodekan titik (x, y) menjadi symbol m.  
+
+48
+
+\end{document}

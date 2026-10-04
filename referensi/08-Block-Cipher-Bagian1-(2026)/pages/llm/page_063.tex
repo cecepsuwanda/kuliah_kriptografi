@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 63
+
+\begin{document}
+
+% === Halaman 63 (llm) ===
+
+\begin{itemize}
+  \item Biasanya, plainteks dimanipulasi dulu dengan kunci (umumnya di-XOR-kan dengan kunci eksternal, atau dengan kunci putaran pertama), lalu hasilnya ditransformasikan dengan fungsi $f$ berulang kali.
+\end{itemize}
+
+\vspace{10mm}
+
+\begin{align*}
+C_0 &= P \oplus K_0 \\
+C_i &= f(C_{i-1}, K_i) \quad , i = 1, 2, ..., r-1 \\
+C &= C_r = C_{r-1} \oplus K_r
+\end{align*}
+
+\vspace{10mm}
+
+\begin{itemize}
+  \item Semakin banyak jumlah putaran, efek diffusi semakin bertambah, namun jumlah putaran yang besar dapat memuat komputasi menjadi tidak sangkil (efisien).
+  \item Jumlah putaran harus dipertimbangkan untuk mempertemukan kriteria keamanan dan efisiensi.
+\end{itemize}
+
+\end{document}

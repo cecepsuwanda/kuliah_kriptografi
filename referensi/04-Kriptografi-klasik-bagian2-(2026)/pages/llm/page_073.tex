@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 73
+
+\begin{document}
+
+% === Halaman 73 (llm) ===
+
+Contoh plainteks: \texttt{temui ibu nanti malam}
+
+$\rightarrow$ Tidak ada huruf j, maka langsung tulis pesan dalam pasangan huruf (setelah semua spasi dibuang):
+
+\texttt{te mu ii bu na nt im al am}
+
+$\rightarrow$ Ada bigram dengan huruf yang berulang (\texttt{ii}), sisipkan huruf x di tengahnya:
+
+\texttt{te mu ix ib un an ti ma la m}
+
+$\rightarrow$ Tambahkan huruf x jika bigram terakhir hanya satu huruf:
+
+\texttt{te mu ix ib un an ti ma la mx}
+
+\end{document}

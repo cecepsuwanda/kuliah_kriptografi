@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 30
+
+\begin{document}
+
+% === Halaman 30 (llm) ===
+
+\section*{Dekripsi}
+
+\begin{itemize}
+    \item Dekripsi terhadap cipherteks merupakan kebalikan dari proses enkripsi.
+    \item DES menggunakan algoritma yang sama untuk proses enkripsi dan dekripsi.
+    \item Pada proses dekripsi urutan kunci yang digunakan adalah $K_{16}, K_{15}, \dots, K_1$.
+    \item Untuk tiap putaran $16, 15, \dots, 1$, luaran pada setiap putaran \textit{deciphering} adalah
+    \[
+    \begin{aligned}
+    R_{i-1} &= L_i \\
+    L_{i-1} &= R_i \oplus f(R_{i-1}, K_i) = R_i \oplus f(L_i, K_i)
+    \end{aligned}
+    \]
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 92
+
+\begin{document}
+
+% === Halaman 92 (llm) ===
+
+\section*{Catatan:}
+
+\begin{itemize}
+    \item Untuk memutar file audio, jika belum terpasang, install terlebih dahulu
+    \vspace{5mm}
+    \begin{verbatim}
+pip install simpleaudio
+    \end{verbatim}
+    \item Fungsi untuk memutar file audio:
+    \vspace{5mm}
+    \begin{verbatim}
+import simpleaudio as sa
+
+def play_audio(file_path):
+    print(f"Memutar audio: {file_path}")
+    wave_obj = sa.WaveObject.from_wave_file(file_path)
+    play_obj = wave_obj.play()
+    play_obj.wait_done() # Tunggu sampai selesai diputar
+    \end{verbatim}
+\end{itemize}
+
+\end{document}

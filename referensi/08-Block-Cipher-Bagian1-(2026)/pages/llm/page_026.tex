@@ -1,0 +1,30 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 26
+
+\begin{document}
+
+% === Halaman 26 (llm) ===
+
+\section*{Cipher Block Chaining(CBC)}
+
+\begin{itemize}
+    \item Tujuan: membuat ketergantungan antar blok (mengatasi kelemahan mode ECB).
+    \item Setiap blok cipherteks bergantung tidak hanya pada blok plainteksnya tetapi juga pada seluruh blok plainteks sebelumnya.
+    \item Hasil enkripsi blok sebelumnya di-umpan-balikkan ke dalam enkripsi blok yang current.
+    \item Enkripsi blok pertama memerlukan blok semu ($C_0$) yang disebut IV (initialization vector).
+    \item IV dapat diberikan oleh pengguna atau dibangkitkan secara acak oleh program.
+    \item Pada dekripsi, blok plainteks diperoleh dengan cara meng-XOR-kan IV dengan hasil dekripsi terhadap blok cipherteks pertama.
+\end{itemize}
+
+\end{document}

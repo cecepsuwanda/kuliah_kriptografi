@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 17
+
+\begin{document}
+
+% === Halaman 17 (llm) ===
+
+\section*{Serangan pada Diffie-Hellman}
+
+\begin{itemize}
+    \item Pertukaran kunci Diffie-Hellman hanya aman terhadap serangan pasif, misalnya penyadapan (\textit{eavesdropping}).
+    \item Eva yang menyadap komunikasi antara Alice dan Bob hanya mengetahui nilai $g, p, A$ dan $B$ (semuanya publik). Dia tidak dapat mendeduksi $a$ dan $b$ (kunci privat Alice dan Bob) dari nilai-nilai publik tersebut. Untuk mendeduksi $a$ dan $b$, Eva harus dapat menghitung logaritma diskrit dari persamaan
+    \[ A = g^a \pmod{p} \text{ atau } B = g^b \pmod{p} \]
+    \item Namun, Diffie-Hellman tidak tahan terhadap serangan aktif seperti \textit{man-in-the-middle attack}.
+    \item Misalkan Mallory mengintervensi komunikasi antara Alice dan Bob. Kepada Alice Malllory menyamar (\textit{impersonation}) sebagai Bob, dan kepada Bob Mallory menyamar sebagai Alice.
+\end{itemize}
+
+\vfill
+\begin{center}
+    Rinaldi M/II4020 Kriptografi
+\end{center}
+
+\end{document}

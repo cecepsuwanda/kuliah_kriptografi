@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 59
+
+\begin{document}
+
+% === Halaman 59 (llm) ===
+
+\section*{Library Crypto.Cipher}
+
+\begin{itemize}
+    \item Pustaka \texttt{Crypto.Cipher} adalah \textbf{package cipher} di dalam Python.
+    \url{https://www.pycrypto.org/api/2.6/Crypto.Cipher-module.html}
+    \item Di dalamnya terdapat beberapa modul beberapa cipher, salah satunya RC4 dengan nama modul \texttt{Crypto.Cipher.ARC4}
+    \item Cara memanggil Pustaka \texttt{Crypto.Cipher}
+    \begin{center}
+        \texttt{>> from Crypto.Cipher import ARC4}
+    \end{center}
+    dengan asumsi sudah meng-install \textit{pycryptodome} dengan menggunakan perintah \texttt{pip}:
+    \begin{center}
+        \texttt{>> pip install pycryptodome}
+    \end{center}
+    \item Contoh program Python untuk enkripsi pesan teks dengan RC4 pada slide berikut
+\end{itemize}
+
+\end{document}

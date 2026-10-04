@@ -1,0 +1,30 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 17
+
+\begin{document}
+
+% === Halaman 17 (llm) ===
+
+\textbf{(b) Enkripsi (oleh Bob)}\newline
+Misalkan Bob ingin mengirim plainteks 'HALO' kepada Alice.
+
+Misalkan A = 00, B = 01, ..., Z = 25, maka pesan $m$ dikodekan ke dalam \textit{integer} adalah
+\[ m = 07001114 \]
+
+Bob memecah $m$ menjadi blok yang lebih kecil, misalkan $m$ dipecah menjadi blok-blok sepanjang 4 angka:
+\[ m_1 = 0700 \quad \text{dan} \quad m_2 = 1114 \]
+
+Nilai-nilai $m_i$ ini masih terletak di dalam selang $[0, 2273 - 1]$ agar transformasi menjadi satu-ke-satu.
+
+\end{document}

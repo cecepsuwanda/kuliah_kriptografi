@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 46
+
+\begin{document}
+
+% === Halaman 46 (python/native) ===
+
+Program enkripsi-dekripsi AES dengan Python
+
+Input: Teks dari keyboard
+
+46
+
+from Crypto.Cipher import AES
+
+from Crypto.Random import get\_random\_bytes
+
+from Crypto.Util.Padding import pad, unpad
+
+import base64
+
+\# Panjang blok AES
+
+BLOCK\_SIZE = 16
+
+def enkripsi\_aes(plainteks, kunci):                     
+
+    kunci = kunci.encode()                              \# Kodekan kunci dari string menjadi byte
+
+    iv = get\_random\_bytes(BLOCK\_SIZE)                   \# Bangkitkan IV
+
+    AEScipher = AES.new(kunci, AES.MODE\_CBC, iv)        \# Defenisikan AES mode CBC
+
+
+    plainteks = pad(plainteks.encode(),BLOCK\_SIZE)      \# Lakukan padding pada plainteks      
+
+
+    cipherteks = AEScipher.encrypt(plainteks)           \# Lakukan enkripsi plainteks 
+
+    cipherteks = base64.b64encode(iv+cipherteks)        \# Kodekan iv+cipherteks dari byte ke kode base64
+
+    return cipherteks
+
+\end{document}

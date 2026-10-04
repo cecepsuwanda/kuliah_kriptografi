@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 4
+
+\begin{document}
+
+% === Halaman 4 (llm) ===
+
+\begin{itemize}
+    \item $E$ dan $D$ adalah fungsi enkripsi dan dekripsi dari suatu \textit{cipher} blok dengan parameter kunci $K$:
+    \[ C = E_K(P) \quad \text{dan} \quad P = D_K(C) \]
+    \item Dimisalkan contoh sebuah fungsi $E$ yang sederhana, tapi tidak cukup aman, sbb:
+    \begin{enumerate}
+        \item XOR-kan blok plainteks $P$ dengan $K$
+        \item lalu geser secara \textit{wrapping} bit-bit dari hasil langkah 1 satu posisi ke kiri
+    \end{enumerate}
+    \[ C = E_K(P) = (P \oplus K) \ll 1 \]
+    \item $D$ adalah kebalikan (\textit{invers}) dari $E$. Contoh fungsi $D$ yang sederhana adalah sbb:
+    \begin{enumerate}
+        \item Geser secara \textit{wrapping} bit-bit ciphertes $C$ satu posisi ke kanan
+        \item Lalu XOR-kan blok hasil Langkah 1 dengan $K$
+    \end{enumerate}
+    \[ P = D_K(C) = (C \gg 1) \oplus K \]
+\end{itemize}
+
+\end{document}

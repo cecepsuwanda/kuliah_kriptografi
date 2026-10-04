@@ -1,0 +1,30 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 14
+
+\begin{document}
+
+% === Halaman 14 (llm) ===
+
+\begin{itemize}
+  \item Eve (seorang kriptanalis) yang menyadap pembicaraan Alice dan Bob tidak dapat menghitung $K$.
+  \item Sebab Eve hanya memiliki informasi $p, g, A$ dan $B$ yang semuanya tidak rahasia, tetapi ia tidak mengetahui nilai $a$ atau $b$.
+  \item Untuk mengetahui $a$, Eve perlu melakukan perhitungan untuk menemukan $a$ dari persamaan $A = g^a \pmod{p}$. ($a$ adalah logaritma diskrit dari $A$ dalam modulus $p$)
+  \item Sekali $a$ diketahui, maka selanjutnya Eve menggunakannya untuk menghitung kunci rahasia $K = B^a \pmod{p}$.
+  \item Kabar baiknya, logaritma diskrit bilangan bulat yang besar sangat sulit dihitung. Jadi, Eve tidak dapat menemukan kunci $K$.
+\end{itemize}
+
+\vfill
+\centering Rinaldi M/II4020 Kriptografi
+
+\end{document}

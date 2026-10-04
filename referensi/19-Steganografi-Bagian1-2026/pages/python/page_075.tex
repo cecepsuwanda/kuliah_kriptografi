@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 75
+
+\begin{document}
+
+% === Halaman 75 (python/native) ===
+
+75
+
+\# Sisipkan bit-bit pesan pada LSB setiap byte      
+
+index = 0       
+
+for p in range(total\_pixel):         
+
+   for q in range(3):                
+
+      if index < panjang\_bit\_pesan:      
+
+         larik\_pixel[p][q] = (larik\_pixel[p][q] \& 254) | int(pesan\_biner[index])   
+
+             \# 254 = 11111110 dalam biner 
+
+         index = index +  1        
+
+
+larik\_pixel = larik\_pixel.reshape(tinggi, lebar, n)        
+
+stego\_image = Image.fromarray(larik\_pixel.astype('uint8'), citra.mode)        
+
+stego\_image.save(stego)       
+
+print("Penyisipan pesan ke dalam citra berhasil")
+
+\end{document}

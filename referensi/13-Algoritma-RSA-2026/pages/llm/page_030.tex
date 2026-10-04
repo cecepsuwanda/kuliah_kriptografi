@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 30
+
+\begin{document}
+
+% === Halaman 30 (llm) ===
+
+\section*{1. Kode Program RSA (1)}
+
+\begin{verbatim}
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Util.number import getPrime, inverse
+
+def PembangkitanKunciRSA():
+    key_size = 1024    # Gunakan 1024-bit untuk menghindari error
+    p = getPrime(key_size // 2)
+    q = getPrime(key_size // 2)
+    n = p * q
+    phi_n = (p - 1) * (q - 1)
+
+    e = 65537    # Kunci publik, default, bisa diganti
+    d = inverse(e, phi_n)    # Kunci privat
+
+    # Buat kunci RSA
+    key = RSA.construct((n, e, d, p, q))
+\end{verbatim}
+
+\end{document}

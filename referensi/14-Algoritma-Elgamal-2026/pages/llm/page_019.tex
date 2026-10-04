@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 19
+
+\begin{document}
+
+% === Halaman 19 (llm) ===
+
+\textbf{(c) Dekripsi (oleh Alice)}
+
+Alice mendekripsi cipherteks dari Bob dengan kunci privatnya ($x = 243$, $p = 2273$):
+
+\begin{enumerate}
+  \item[(i)] Dekripsi $c_1 = (1439, 74)$
+  \[ (a^x)^{-1} = a^{p-1-x} \pmod p = 1439^{2273-1-243} \pmod{2273} = 1439^{2029} \pmod{2273} = 1791 \]
+  \[ m_1 = b/a^x \pmod p = b(a^x)^{-1} \pmod p = 74 \cdot 1791 \pmod{2273} = 700 = \text{\color{red}0700} \]
+  \item[(ii)] Dekripsi $c_2 = (1220, 1682)$
+  \[ (a^x)^{-1} = a^{p-1-x} \pmod p = 1220^{2029} \pmod{2273} = 1125 \]
+  \[ m_2 = b/a^x \pmod p = 1682(a^x)^{-1} \pmod p = 1682 \cdot 1125 \pmod{2273} = \text{\color{red}1114} \]
+\end{enumerate}
+
+Plainteks yang didekripsi adalah $m_1 m_2 = 07001114$, yang kalau dikodekan menjadi teks adalah empat digit adalah "HALO", sama dengan plainteks yang dikirim oleh Bob.
+
+\end{document}

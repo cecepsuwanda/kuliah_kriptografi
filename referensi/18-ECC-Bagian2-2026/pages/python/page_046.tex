@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 46
+
+\begin{document}
+
+% === Halaman 46 (python/native) ===
+
+Perbandingan Elgamal dengan Elliptic Curve Elgamal
+
+• Cipherteks pada EC-Elgamal adalah pasangan  titik 
+
+• PC = ( (kB), (PM
+
+ + kPB) )            (ket: Pb = kunci publik Bob)
+
+• Cipherteks pada Elgamal juga pasangan nilai:
+
+• C = (a, b) = (gk mod p, myB
+
+k mod p)    (ket: yb = kunci publik Bob)
+
+-----------------------------------------------------------------------------------------------------------
+
+• Pada EC\_Elgamal, Bob mengurangkan titik kedua  dari PC dengan hasil kali b  (kB)
+
+• (PM + kPB) – [b(kB)] = PM + k(bB) – b(kB) = PM
+
+• Pada El Gamal, Bob membagi nilai kedua dengan nilai pertama yang dipangkatkan 
+
+dengan kunci privat Bob
+
+• myB
+
+k / (gk)b = mgk*b / gk*b = m
+
+*) Sumber bahan: Debdeep Mukhopadhyay, Elliptic Curve Cryptography ,
+
+ Dept of Computer Sc and Engg IIT Madras
+
+46
+
+\end{document}

@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 4
+
+\begin{document}
+
+% === Halaman 4 (llm) ===
+
+\begin{enumerate}
+  \item[3)] Alice membangkitkan kunci rahasia (K) untuk enkripsi pesan dengan AES
+  \item[4)] Alice mengenkripsi K dengan RSA menggunakan kunci publik Bob (PK$_{Bob}$).
+  \[ E\_RSA_{PKbob}(K) = CK \]
+  \item[5)] Alice mengenkripsi pesan M dengan AES menggunakan K,
+  \[ E\_AES_{K}(M) = CM \]
+  lalu mengirim CK dan CM kepada Bob.
+  \item[6)] Bob mendekripsi CK dengan RSA menggunakan kunci privatnya (SK$_{Bob}$)
+  \[ D\_RSA_{SKbob}(CK) = K \]
+  \item[7)] Selanjutnya Bob mendekripsi pesan CM dengan AES menggunakan K
+  \[ D\_AES_{K}(CM) = M \]
+\end{enumerate}
+
+\vspace{10mm}
+\centering{Rinaldi M/II4020 Kriptografi}
+
+\end{document}

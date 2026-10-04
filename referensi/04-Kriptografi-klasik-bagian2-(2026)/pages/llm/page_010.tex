@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 10
+
+\begin{document}
+
+% === Halaman 10 (llm) ===
+
+Langkah-langkah kriptanalisis dengan teknik analisis frekuensi adalah sbb:
+
+\begin{enumerate}
+  \item Hitung frekuensi kemunculan relatif huruf-huruf di dalam cipherteks.
+  \item Bandingkan hasil langkah 1 dengan tabel frekuensi kemunculan huruf. Mengingat huruf yang paling sering muncul dalam teks Bahasa Inggris adalah huruf E, maka huruf yang paling sering muncul di dalam cipherteks kemungkinan besar berpadanan dengan huruf E di dalam plainteksnya.
+  \item Langkah 2 diulangi untuk huruf dengan frekuensi terbanyak berikutnya. (biasanya hanya terpakai untuk 2 sampai 3 huruf pertama di dalam tabel frekuensi).
+  \item Ulangi langah 1 dan 2 dengan menggunakan bigram, trigram, dst, yang sering muncul di dalam cipherteks.
+\end{enumerate}
+
+\end{document}

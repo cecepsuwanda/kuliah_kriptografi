@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 24
+
+\begin{document}
+
+% === Halaman 24 (llm) ===
+
+\begin{center}
+\textbf{A POLYNOMIAL TIME ALGORITHM FOR BREAKING\\
+THE BASIC MERKLE-HELLMAN CRYPTOSYSTEM}
+
+by Adi Shamir
+
+Applied Mathematics\
+The Weizmann Institute\
+Rehovot, Israel
+\end{center}
+
+\subsection*{Abstract}
+
+The cryptographic security of the Merkle-Hellman cryptosystem has been a major open problem since 1976. In this paper we show that the basic variant of this cryptosystem, in which the elements of the public key are modular multiples of a superincreasing sequence, is breakable in polynomial time.
+
+\subsection*{I. Introduction}
+
+In 1976, Whitfield Diffie and Martin Hellman published their pioneering paper on public-key cryptography (Diffie and Hellman [1976]). The paper speculated that such cryptosystems exist and surveyed their potential applications, but did not describe actual implementations. In late 1976 and early 1977, the first public-key cryptosystems were discovered (see Merkle and Hellman [1978] and Rivest, Shamir and Adleman [1978]). Since then, many variants and a few new public-key cryptosystems have been proposed, but for a variety of reasons not claiming to give any ultimate answers in this sense.
+
+An overview of the Merkle-Hellman cryptosystem can be found in Section II. In Section III we describe the cryptanalytic attack in an informal way, and in Section IV we analyze its performance. A discussion of the results appears in Section V.
+
+\subsection*{II. The Basic Merkle-Hellman Cryptosystem}
+
+The public encryption key in any Merkle-Hellman cryptosystem is a sequence of $n$ natural numbers $a_1, \dots, a_n$ (a typical value of $n$ is 100 and a typical size of each $a_i$ is 200 bits). To encrypt an $m$-bit cleartext $X = x_1 \dots x_m$ ($x_i \in \{0,1\}$), the sender computes a message-dependent partial sum of the $a_i$ elements:
+
+\[ b = \sum_{i=1}^{n} x_i a_i \]
+
+\end{document}

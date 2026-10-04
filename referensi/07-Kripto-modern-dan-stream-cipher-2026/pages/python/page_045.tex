@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 45
+
+\begin{document}
+
+% === Halaman 45 (python/native) ===
+
+45
+
+3.
+
+Lakukan pengacakan (permutasi) nilai-nilai di dalam larik S  
+
+berdasarkan kunci rahasia K (kunci eksternal dari pengguna):
+
+
+j  0
+
+
+for i  0 to 255 do
+
+       j  (j + S[i] + K[i  mod Length(K)]) mod 256
+
+       swap(S[i], S[j]) \{* Pertukarkan S[i] \& S[j] *\}
+
+     end
+
+• Permutasi ini menyebabkan elemen-elemen di dalam larik S teracak. 
+
+• K[i mod Length(K)] menyatakan karakter-karakter kunci diulang 
+
+secara periodik jika panjangnya kurang dari 256
+
+\end{document}

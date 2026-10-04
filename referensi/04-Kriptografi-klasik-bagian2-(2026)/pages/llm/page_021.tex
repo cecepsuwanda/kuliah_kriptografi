@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 21
+
+\begin{document}
+
+% === Halaman 21 (llm) ===
+
+\begin{itemize}
+  \item Hasil perhitungan frekuensi kemunculan huruf, bigram, dan trigram:
+  \begin{itemize}
+    \item huruf I paling sering muncul,
+    \item XL adalah bigram yang paling sering muncul,
+    \item XLI adalah trigram yang paling sering muncul.
+  \end{itemize}
+\end{itemize}
+
+Ketiga data terbanyak ini menghasilkan dugaan bahwa
+
+\begin{align*}
+  \text{I} & \text{ berkoresponden dengan huruf plainteks e,}\
+  \text{XLI} & \text{ berkoresponden dengan the,}\
+  \text{XL} & \text{ berkoresponden dengan th}
+\end{align*}
+
+Pemetaan:
+
+\begin{align*}
+  \text{I} & \rightarrow \text{e}\
+  \text{X} & \rightarrow \text{t}\
+  \text{L} & \rightarrow \text{h}
+\end{align*}
+
+\end{document}

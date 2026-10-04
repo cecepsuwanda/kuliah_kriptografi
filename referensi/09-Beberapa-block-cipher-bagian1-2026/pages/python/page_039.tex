@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 39
+
+\begin{document}
+
+% === Halaman 39 (python/native) ===
+
+• Misalkan kita mengetahui pasangan potongan plaintext (p) dan cipherteks (c) 
+
+yang berkoresponden. 
+
+• Lakukan serangan brute force (atau exhaustive key search attack) dengan 
+
+mencoba semua kemungkinan kunci (k):
+
+for(k=0;k<256;k++) \{
+
+ if(DES(k,p)==c) \{
+
+
+printf(“Key is \%x\textbackslash{}n”, k);
+
+
+break;
+
+ \}
+
+\}
+
+• Kunci diharapkan ditemukan sebelum 255 iterasi.
+
+39
+
+\end{document}

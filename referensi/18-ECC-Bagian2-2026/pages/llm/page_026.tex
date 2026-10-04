@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 26
+
+\begin{document}
+
+% === Halaman 26 (llm) ===
+
+\begin{itemize}
+    \item \textbf{Contoh:} Tentukan semua titik $\text{P}(\text{x},\text{y})$ pada kurva eliptik
+    \[ y^2 \equiv x^3 + x + 6 \pmod{11} \]
+    dengan $\text{x}$ dan $\text{y}$ didefinisikan di dalam $\text{GF}(11)$
+\end{itemize}
+
+\textbf{Jawab:}
+
+\begin{align*}
+    \text{x} = 0 & \rightarrow y^2 \equiv 6 \pmod{11} \rightarrow \text{tidak ada nilai y yang memenuhi} \\
+    \text{x} = 1 & \rightarrow y^2 \equiv 8 \pmod{11} \rightarrow \text{tidak ada nilai y yang memenuhi} \\
+    \text{x} = 2 & \rightarrow y^2 \equiv 16 \pmod{11} \equiv 5 \pmod{11} \rightarrow y_1 = 4 \text{ dan } y_2 = 7 \\
+    & \rightarrow \text{titik } \text{P}(2,4) \text{ dan } \text{P}'(2,7) \\
+    \text{x} = 3 & \rightarrow y^2 \equiv 36 \pmod{11} \equiv 3 \pmod{11} \rightarrow y_1 = 5 \text{ dan } y_2 = 6 \\
+    & \rightarrow \text{titik } \text{P}(3,5) \text{ dan } \text{P}'(3,6)
+\end{align*}
+
+\end{document}

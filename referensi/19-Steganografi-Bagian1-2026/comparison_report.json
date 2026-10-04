@@ -1,0 +1,1067 @@
+{
+  "source": "19-Steganografi-Bagian1-2026.pdf",
+  "overlap_teks_rata": 0.6074,
+  "units": [
+    {
+      "index": 1,
+      "overlap_teks": 0.5806451612903226,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [],
+      "hanya_python": [
+        "page_001_img_01.png"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 2,
+      "overlap_teks": 0.6756756756756757,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_002_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 3,
+      "overlap_teks": 0.6774193548387096,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 4,
+      "overlap_teks": 0.7619047619047619,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 5,
+      "overlap_teks": 0.6071428571428571,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 6,
+      "overlap_teks": 0.7428571428571429,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 7,
+      "overlap_teks": 0.5416666666666666,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_007_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 8,
+      "overlap_teks": 0.3,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_008_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 9,
+      "overlap_teks": 0.6,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_009_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 10,
+      "overlap_teks": 0.5294117647058824,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_010_img_01.png"
+      ],
+      "hanya_python": [
+        "page_010_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 11,
+      "overlap_teks": 0.6470588235294118,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 12,
+      "overlap_teks": 0.8208955223880597,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 3,
+      "hanya_llm": [
+        "page_012_img_01.png",
+        "page_012_img_02.png"
+      ],
+      "hanya_python": [
+        "page_012_img_01.jpeg",
+        "page_012_img_02.jpeg",
+        "page_012_img_03.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 13,
+      "overlap_teks": 0.7906976744186046,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_013_img_01.png"
+      ],
+      "hanya_python": [
+        "page_013_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 14,
+      "overlap_teks": 0.7906976744186046,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_014_img_01.png"
+      ],
+      "hanya_python": [
+        "page_014_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 15,
+      "overlap_teks": 0.8095238095238095,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 16,
+      "overlap_teks": 0.8333333333333334,
+      "jumlah_gambar_llm": 3,
+      "jumlah_gambar_python": 3,
+      "hanya_llm": [
+        "page_016_img_01.png",
+        "page_016_img_02.png"
+      ],
+      "hanya_python": [
+        "page_016_img_01.jpeg",
+        "page_016_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 17,
+      "overlap_teks": 0.864406779661017,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_017_img_01.png"
+      ],
+      "hanya_python": [
+        "page_017_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 18,
+      "overlap_teks": 0.8421052631578947,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_018_img_01.png"
+      ],
+      "hanya_python": [
+        "page_018_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 19,
+      "overlap_teks": 0.29473684210526313,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 20,
+      "overlap_teks": 0.15384615384615385,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 21,
+      "overlap_teks": 0.7272727272727273,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 22,
+      "overlap_teks": 0.5294117647058824,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_022_img_01.png",
+        "page_022_img_02.png"
+      ],
+      "hanya_python": [
+        "page_022_img_01.jpeg",
+        "page_022_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 23,
+      "overlap_teks": 0.8,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_023_img_01.png",
+        "page_023_img_02.png"
+      ],
+      "hanya_python": [
+        "page_023_img_01.jpeg",
+        "page_023_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 24,
+      "overlap_teks": 0.8048780487804879,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_024_img_01.png",
+        "page_024_img_02.png"
+      ],
+      "hanya_python": [
+        "page_024_img_01.jpeg",
+        "page_024_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 25,
+      "overlap_teks": 0.6792452830188679,
+      "jumlah_gambar_llm": 3,
+      "jumlah_gambar_python": 3,
+      "hanya_llm": [
+        "page_025_img_02.png",
+        "page_025_img_03.png"
+      ],
+      "hanya_python": [
+        "page_025_img_02.jpeg",
+        "page_025_img_03.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 26,
+      "overlap_teks": 0.625,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 3,
+      "hanya_llm": [],
+      "hanya_python": [
+        "page_026_img_02.png",
+        "page_026_img_03.png"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 27,
+      "overlap_teks": 0.7674418604651163,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 28,
+      "overlap_teks": 0.15789473684210525,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_028_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 29,
+      "overlap_teks": 0.0,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 30,
+      "overlap_teks": 0.8372093023255814,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_030_img_01.png",
+        "page_030_img_02.png"
+      ],
+      "hanya_python": [
+        "page_030_img_01.jpeg",
+        "page_030_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 31,
+      "overlap_teks": 0.42857142857142855,
+      "jumlah_gambar_llm": 3,
+      "jumlah_gambar_python": 3,
+      "hanya_llm": [
+        "page_031_img_01.png",
+        "page_031_img_02.png"
+      ],
+      "hanya_python": [
+        "page_031_img_01.jpeg",
+        "page_031_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 32,
+      "overlap_teks": 0.5,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_032_img_01.png",
+        "page_032_img_02.png"
+      ],
+      "hanya_python": [
+        "page_032_img_01.jpeg",
+        "page_032_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 33,
+      "overlap_teks": 0.0,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_033_img_01.png"
+      ],
+      "hanya_python": [
+        "page_033_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 34,
+      "overlap_teks": 0.5,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_034_img_01.png",
+        "page_034_img_02.png"
+      ],
+      "hanya_python": [
+        "page_034_img_01.jpeg",
+        "page_034_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 35,
+      "overlap_teks": 0.5,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_035_img_01.png",
+        "page_035_img_02.png"
+      ],
+      "hanya_python": [
+        "page_035_img_01.jpeg",
+        "page_035_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 36,
+      "overlap_teks": 0.7407407407407407,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 37,
+      "overlap_teks": 0.8421052631578947,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 38,
+      "overlap_teks": 0.9591836734693877,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_038_img_01.png"
+      ],
+      "hanya_python": [
+        "page_038_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 39,
+      "overlap_teks": 0.8076923076923077,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 40,
+      "overlap_teks": 0.2857142857142857,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 41,
+      "overlap_teks": 0.6388888888888888,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_041_img_01.png",
+        "page_041_img_02.png"
+      ],
+      "hanya_python": [
+        "page_041_img_01.jpeg",
+        "page_041_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 42,
+      "overlap_teks": 0.55,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 3,
+      "hanya_llm": [],
+      "hanya_python": [
+        "page_042_img_02.jpeg",
+        "page_042_img_03.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 43,
+      "overlap_teks": 0.7142857142857143,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_043_img_01.png"
+      ],
+      "hanya_python": [
+        "page_043_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 44,
+      "overlap_teks": 0.4714285714285714,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_044_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 45,
+      "overlap_teks": 0.7169811320754716,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 46,
+      "overlap_teks": 0.5666666666666667,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_046_img_01.png"
+      ],
+      "hanya_python": [
+        "page_046_img_01.jpeg",
+        "page_046_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 47,
+      "overlap_teks": 0.6,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_047_img_01.png"
+      ],
+      "hanya_python": [
+        "page_047_img_01.jpeg",
+        "page_047_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 48,
+      "overlap_teks": 0.6615384615384615,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_048_img_01.png"
+      ],
+      "hanya_python": [
+        "page_048_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 49,
+      "overlap_teks": 0.4358974358974359,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_049_img_01.png"
+      ],
+      "hanya_python": [
+        "page_049_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 50,
+      "overlap_teks": 0.8095238095238095,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 51,
+      "overlap_teks": 0.6274509803921569,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_051_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 52,
+      "overlap_teks": 0.8163265306122449,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 53,
+      "overlap_teks": 0.5106382978723404,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_053_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 54,
+      "overlap_teks": 0.7878787878787878,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 55,
+      "overlap_teks": 0.8333333333333334,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 56,
+      "overlap_teks": 0.4878048780487805,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_056_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 57,
+      "overlap_teks": 0.8292682926829268,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 58,
+      "overlap_teks": 0.6388888888888888,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 59,
+      "overlap_teks": 0.8627450980392157,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 60,
+      "overlap_teks": 0.78125,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 61,
+      "overlap_teks": 0.12121212121212122,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 62,
+      "overlap_teks": 0.02857142857142857,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 63,
+      "overlap_teks": 0.2631578947368421,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 64,
+      "overlap_teks": 0.16842105263157894,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_064_img_01.png",
+        "page_064_img_02.png"
+      ],
+      "hanya_python": [
+        "page_064_img_01.jpeg",
+        "page_064_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 65,
+      "overlap_teks": 0.7222222222222222,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 66,
+      "overlap_teks": 0.9295774647887324,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 67,
+      "overlap_teks": 0.926829268292683,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_067_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 68,
+      "overlap_teks": 0.9433962264150944,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_068_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 69,
+      "overlap_teks": 0.7096774193548387,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_069_img_01.png",
+        "page_069_img_02.png"
+      ],
+      "hanya_python": [
+        "page_069_img_01.jpeg",
+        "page_069_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 70,
+      "overlap_teks": 0.918918918918919,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_070_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 71,
+      "overlap_teks": 0.9285714285714286,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_071_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 72,
+      "overlap_teks": 0.8888888888888888,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_072_img_01.png"
+      ],
+      "hanya_python": [
+        "page_072_img_01.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 73,
+      "overlap_teks": 0.775,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 74,
+      "overlap_teks": 0.9428571428571428,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_074_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 75,
+      "overlap_teks": 0.9130434782608695,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_075_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 76,
+      "overlap_teks": 0.0,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_076_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 77,
+      "overlap_teks": 0.8823529411764706,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_077_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 78,
+      "overlap_teks": 0.9,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_078_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 79,
+      "overlap_teks": 0.9327731092436975,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 80,
+      "overlap_teks": 0.5714285714285714,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [
+        "page_080_img_01.png",
+        "page_080_img_02.png"
+      ],
+      "hanya_python": [
+        "page_080_img_01.jpeg",
+        "page_080_img_02.jpeg"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 81,
+      "overlap_teks": 0.7391304347826086,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 82,
+      "overlap_teks": 0.775,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 83,
+      "overlap_teks": 0.5,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 84,
+      "overlap_teks": 0.16666666666666666,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 85,
+      "overlap_teks": 0.06666666666666667,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 86,
+      "overlap_teks": 0.21052631578947367,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [],
+      "hanya_python": [
+        "page_086_img_01.png"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 87,
+      "overlap_teks": 0.0,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 2,
+      "hanya_llm": [],
+      "hanya_python": [
+        "page_087_img_01.png",
+        "page_087_img_02.png"
+      ],
+      "status": "ok"
+    },
+    {
+      "index": 88,
+      "overlap_teks": 0.0,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_088_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 89,
+      "overlap_teks": 0.0,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_089_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 90,
+      "overlap_teks": 0.9512195121951219,
+      "jumlah_gambar_llm": 1,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [
+        "page_090_img_01.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 91,
+      "overlap_teks": 0.0,
+      "jumlah_gambar_llm": 2,
+      "jumlah_gambar_python": 1,
+      "hanya_llm": [
+        "page_091_img_02.png"
+      ],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 92,
+      "overlap_teks": 0.7804878048780488,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 93,
+      "overlap_teks": 0.75,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 94,
+      "overlap_teks": 0.78125,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 0,
+      "hanya_llm": [],
+      "hanya_python": [],
+      "status": "ok"
+    },
+    {
+      "index": 95,
+      "overlap_teks": 0.8205128205128205,
+      "jumlah_gambar_llm": 0,
+      "jumlah_gambar_python": 3,
+      "hanya_llm": [],
+      "hanya_python": [
+        "page_095_img_01.png",
+        "page_095_img_02.png",
+        "page_095_img_03.png"
+      ],
+      "status": "ok"
+    }
+  ]
+}

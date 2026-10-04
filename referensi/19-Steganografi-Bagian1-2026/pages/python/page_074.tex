@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 74
+
+\begin{document}
+
+% === Halaman 74 (python/native) ===
+
+74
+
+import numpy as np
+
+from PIL import Image
+
+def EmbeddingPesan(cover, pesan, stego):       
+
+ \# Baca citra cover, ekstrak pixel-pixel sebagai sebuah  larik (array)  
+
+ citra = Image.open(cover, 'r’) 
+
+ citra = citra.convert("RGB")
+
+ n = 3    
+
+ citra.show()   
+
+ lebar, tinggi = citra.size   
+
+ larik\_pixel = np.array(list(citra.getdata()))   
+
+ total\_pixel = larik\_pixel.size//n     \#jumlah pixel di dalam citra     
+
+ pesan = pesan + “\#\#\#\#\#"   \#tambahkan delimiter ‘\#\#\#\#\#’ untuk menandai akhir pesan
+
+ \#ubah pesan menjadi string biner  
+
+ pesan\_biner = ''.join([format(ord(i), "08b") for i in pesan])
+
+ panjang\_bit\_pesan = len(pesan\_biner) 
+
+ \# periksa apakah jumlah pixel di dalam citra mencukupi untuk menyisipkan pesan   
+
+ if panjang\_bit\_pesan > total\_pixel:     
+
+    print("ERROR: Ukuran citra tidak mencukupi untuk penyembunyian pesan")    
+
+ else:
+
+\end{document}

@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 14
+
+\begin{document}
+
+% === Halaman 14 (llm) ===
+
+\textbf{Contoh 1:} Bob membangkitkan kunci publik dan kunci privatnya. Alice akan mengenkripsi pesan dengan menggunakan kunci publik Bob.
+
+\textbf{(a) Pembangkitan kunci} (Oleh Bob)
+
+\textcolor{red}{syarat $g < p, g$ akar primitif dari 2357 dan $1 \le x \le p - 2$}
+
+Misal $p = 2357, g = 2,$ dan $x = 1751$.
+
+Hitung: $y = g^x \pmod p = 2^{1751} \pmod{2353} = 1185$
+
+Hasil: Kunci publik: $(y = 1185, g = 2, p = 2357)$
+
+Kunci privat: $(x = 1751, p = 2357)$.
+
+Bob memberitahu kunci publik ini kepada Alice
+
+\vspace{10mm}
+
+\textbf{(b) Enkripsi} (Oleh Alice)
+
+Misalkan pesan $m = 2035$ (nilai $m$ masih berada di dalam selang $[0, 2357 - 1])$.
+
+Alice memilih bilangan acak $k = 1520$ (nilai $k$ berada di dalam selang $[0, 2357 - 1])$.
+
+\end{document}

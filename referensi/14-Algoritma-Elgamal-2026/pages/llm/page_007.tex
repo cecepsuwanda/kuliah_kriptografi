@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 7
+
+\begin{document}
+
+% === Halaman 7 (llm) ===
+
+\begin{itemize}
+    \item Perhatikan bahwa $a = 2$ bukan akar primitif dari 7 karena
+    
+    \[
+    \begin{aligned}
+    2^1 \pmod{7} &= 2; & 2^2 \pmod{7} &= 4; & 2^3 \pmod{7} &= 1 \\
+    2^4 \pmod{7} &= 2; & 2^5 \pmod{7} &= 4; & 2^6 \pmod{7} &= 1
+    \end{aligned}
+    \]
+    
+    \item Nilai-nilai yang dihasilkan dari $2^1, 2^2, \dots, 2^6$ tidak semuanya berbeda dan tidak mencakup semua nilai di dalam modulus 7.
+    
+    \item Untuk menemukan semua akar primitif dari $p$, kita harus mencoba semua bilangan bulat dari $2, 3, \dots$
+\end{itemize}
+
+\end{document}

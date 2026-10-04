@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 42
+
+\begin{document}
+
+% === Halaman 42 (llm) ===
+
+\section*{Algoritma Elliptic Curve Diffie-Hellman (ECDH)}
+
+\begin{itemize}
+    \item Alice dan Bob ingin berbagi sebuah kunci rahasia $K$ yang sama.
+    \begin{itemize}
+        \item Alice dan Bob menyepakati kurva eliptik $y^2 = x^3 + ax + b \pmod{p}$ dan titik $B$ pada kurva $B$
+        \item Alice dan Bob menghitung kunci publik dan kunci privat masing-masing.
+        \begin{itemize}
+            \item Alice
+            \begin{itemize}
+                \item Kunci privat $= a$
+                \item Kunci publik $= P_A = a \cdot B$
+            \end{itemize}
+            \item Bob
+            \begin{itemize}
+                \item Kunci privat $= b$
+                \item Kunci publik $= P_B = b \cdot B$
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+    \item Alice dan Bob saling mengirim kunci publik masing-masing.
+    \item Keduanya melakukan perkalian kunci privatnya dengan kunci publik mitranya untuk mendapatkan kunci rahasia yang mereka bagi
+    \begin{itemize}
+        \item Alice $\rightarrow K_{AB} = a \cdot P_B = a \cdot (b \cdot B)$
+        \item Bob $\rightarrow K_{AB} = b \cdot P_A = b \cdot (a \cdot B)$
+        \item Kunci rahasia $= K_{AB} = abB$
+    \end{itemize}
+\end{itemize}
+
+\vfill
+\raggedleft
+\small *) Sumber bahan: \textbf{Debdeep Mukhopadhyay}, \textit{Elliptic Curve Cryptography}, \\ Dept of Computer Sc and Engg IIT Madras
+
+\end{document}

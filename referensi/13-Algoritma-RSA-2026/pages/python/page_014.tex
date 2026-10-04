@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 14
+
+\begin{document}
+
+% === Halaman 14 (python/native) ===
+
+14
+
+Contoh pengiriman pesan 2:
+
+• Misalkan Bob akan mengirim plainteks  M = ‘HELLO ALICE’ kepada Alice
+
+• Dengan memisalkan A = 00, B = 01, …, Z = 25, maka plainteks dikodekan ke dalam 
+
+integer  (spasi diabaikan) menjadi 
+
+m = 07041111140011080204
+
+ Nilai m ini sangat besar untuk dipangkatkan dan tidak berada di dalam selang         
+
+[0, 3337-1], oleh karena itu pecah m menjadi blok-blok pesan yang lebih kecil, 
+
+misalnya blok 4 digit:
+
+
+m1 = 0704
+
+m4 = 1108
+
+m2 = 1111
+
+m5 = 0204
+
+m3 = 1400
+
+   (Perhatikan, mi masih valid karena terletak di dalam selang [0, 3337 – 1] )
+
+\end{document}

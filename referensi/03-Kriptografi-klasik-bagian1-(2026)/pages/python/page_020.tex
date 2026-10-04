@@ -1,0 +1,74 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 20
+
+\begin{document}
+
+% === Halaman 20 (python/native) ===
+
+/ Program enkripsi dan dekripsi pesan dengan Caesar Cipher dalam Bahasa C++ 
+
+\#include <iostream>
+
+\#include <string.h>
+
+using namespace std;
+
+void enkripsi()
+
+\{
+
+  string plainteks, cipherteks;
+
+  int i, k;
+
+  char c;
+
+  cout << "Ketikkan pesan:";
+
+  cin.ignore(); getline (cin, plainteks);
+
+  cout << "Masukkan jumlah pergesaran (0-25): "; cin >> k;
+
+  cipherteks = "";  // inisialisasi cipherteks dengan null string
+
+
+  for (i=0; i < plainteks.length(); i++) \{
+
+      c = plainteks[i];
+
+      if (isalpha(c)) \{    //hanya memproses huruf alfabet saja
+
+         c = toupper(c);   // ubah menjadi huruf kapital 
+
+         c = c - 65;       // kodekan huruf ke angka 0 s/d 25    
+
+         c = (c + k) \% 26; // enkripsi, geser sejauh k ke kanan
+
+         c = c + 65;       // kodekan kembali ke huruf semula          
+
+      \}      
+
+      cipherteks = cipherteks + c;  // sambungkan ke cipherteks
+
+  \}
+
+  cout << "Cipherteks: "<<cipherteks<< endl;  // cetak cipherteks
+
+\}
+
+20
+
+Program Caesar Cipher dalam Bahasa C++
+
+\end{document}

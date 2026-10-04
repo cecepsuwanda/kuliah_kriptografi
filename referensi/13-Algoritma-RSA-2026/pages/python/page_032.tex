@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 32
+
+\begin{document}
+
+% === Halaman 32 (python/native) ===
+
+32
+
+\# Program utama
+
+public\_key, private\_key = PembangkitanKunciRSA()
+
+pesan = input("Ketikkan pesan teks: ")
+
+ciphertext = encrypt\_message(pesan, public\_key)
+
+print("\textbackslash{}nCiphertext:", ciphertext.hex())
+
+decrypted\_message = decrypt\_message(ciphertext, private\_key)
+
+print("\textbackslash{}nPesan setelah dekripsi:", decrypted\_message)
+
+\end{document}

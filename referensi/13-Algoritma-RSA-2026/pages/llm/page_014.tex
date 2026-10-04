@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 14
+
+\begin{document}
+
+% === Halaman 14 (llm) ===
+
+\section*{Contoh pengiriman pesan 2:}
+\begin{itemize}
+    \item Misalkan Bob akan mengirim plainteks $M = \text{'HELLO ALICE'}$ kepada Alice
+    \item Dengan memisalkan $\text{A} = 00, \text{B} = 01, \dots, \text{Z} = 25$, maka plainteks dikodekan ke dalam \textit{integer} (spasi diabaikan) menjadi
+    \[ m = 070411111140011080204 \]
+\end{itemize}
+
+Nilai $m$ ini sangat besar untuk dipangkatkan dan tidak berada di dalam selang $[0, 3337-1]$, oleh karena itu pecah $m$ menjadi blok-blok pesan yang lebih kecil, misalnya blok 4 digit:
+
+\begin{align*}
+    m_1 &= 0704 & m_4 &= 1108 \\
+    m_2 &= 1111 & m_5 &= 0204 \\
+    m_3 &= 1400 & \\
+\end{align*}
+
+(Perhatikan, $m_i$ masih valid karena terletak di dalam selang $[0, 3337 - 1])$
+
+\end{document}

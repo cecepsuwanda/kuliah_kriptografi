@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 45
+
+\begin{document}
+
+% === Halaman 45 (llm) ===
+
+\begin{itemize}
+    \item Alice memilih bilangan acak $k$ yang harus terletak di dalam selang $[1, p-1]$
+    \item Cipherteks dari $P_M$ adalah pasangan titik
+    \begin{itemize}
+        \item $P_C = [ ( kB), (P_M + kP_B) ]$
+    \end{itemize}
+    \item Untuk mendekripsi, Bob mula-mula menghitung hasil kali titik pertama dari $P_C$ (yaitu $kB$) dengan kunci privatnya, $b$
+    \begin{itemize}
+        \item $b \cdot (kB)$
+    \end{itemize}
+    \item Bob kemudian mengurangkan titik kedua dari $P_C$ dengan hasil kali di atas
+    \begin{itemize}
+        \item $(P_M + kP_B) - [b \cdot (kB)] = P_M + k \cdot (bB) - b \cdot (kB) = P_M$
+    \end{itemize}
+    \item Bob kemudian men-decode $P_M$ untuk memperoleh pesan M
+\end{itemize}
+
+\vspace{10mm}
+
+\textcolor{red}{*) Sumber bahan: Debdeep Mukhopadhyay, Elliptic Curve Cryptography , Dept of Computer Sc and Engg IIT Madras}
+
+\end{document}

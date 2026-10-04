@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 15
+
+\begin{document}
+
+% === Halaman 15 (llm) ===
+
+\begin{flushright}
+\fbox{Enkripsi: $c = m^e \pmod{n}$}
+\end{flushright}
+
+\begin{itemize}
+    \item Bob mengenkripsi setiap blok plainteks dengan menggunakan kunci publik Alice ($e = 79$, $n = 3337$):
+    \begin{align*}
+        m_1 = 0704 & \to c_1 = 704^{79} \pmod{3337} = 328; \\
+        m_2 = 1111 & \to c_2 = 1111^{79} \pmod{3337} = 301; \\
+        m_3 = 1400 & \to c_3 = 1400^{79} \pmod{3337} = 2653; \\
+        m_4 = 1108 & \to c_4 = 1108^{79} \pmod{3337} = 2986; \\
+        m_1 = 204 & \to c_5 = 204^{79} \pmod{3337} = 1164;
+    \end{align*}
+
+    Cipherteks: $C = 0328, 0301, 2653, 2986, 1164$
+
+    \item Bob mengirim cipherteks $C$ kepada Alice
+\end{itemize}
+
+\end{document}

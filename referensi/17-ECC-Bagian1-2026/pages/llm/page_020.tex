@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 20
+
+\begin{document}
+
+% === Halaman 20 (llm) ===
+
+\textbf{Contoh 2:} Misalkan $a = 01010111 = x^6 + x^4 + x^2 + x + 1$ dan $b = 10000011 = x^7 + x + 1$\
+$a$ dan $b \in \text{GF}(2^8)$ (dalam notasi Hex, $a = \text{'57'}$ dan $b = \text{'83'}$)\
+(i) $a + b = \text{'57'} + \text{'83'} = (x^6 + x^4 + x^2 + x + 1) + (x^7 + x + 1)$\
+\begin{align*}$\\ = x^7 + x^6 + x^4 + x^2 + x + 2 \pmod{2} \quad \text{\color{red}Bagi tiap koefisien dengan 2,}\\ &\text{\color{red}lalu ambil sisanya}\\ = x^7 + x^6 + x^4 + x^2 + x + 0$\\ $= x^7 + x^6 + x^4 + x^2 + x = 11010100 = \text{'D4'}$\end{align*}\
+Dalam representasi biner:
+\begin{center}
+\begin{tabular}{rl}
+01010111 \\ $\underline{10000011} +$ \\ 11010100 $\rightarrow$ sama dengan hasil operasi XOR
+\end{tabular}
+\end{center}
+$\therefore a + b = 11010100 = a \text{ XOR } b$
+
+\vspace{10mm}
+\begin{center}
+\small Rinaldi Munir/II4021 Kriptografi
+\end{center}
+
+\end{document}

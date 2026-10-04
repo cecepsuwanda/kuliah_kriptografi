@@ -1,0 +1,58 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 23
+
+\begin{document}
+
+% === Halaman 23 (llm) ===
+
+\vspace{238.79mm}
+
+\section*{Transformasi $MixColumns()$}
+
+\begin{itemize}
+    \item Transformasi $MixColumns()$ mengalikan matriks $state$ dengan sebuah matriks tertentu sbb:
+\end{itemize}
+
+\vspace{5mm}
+
+\[
+\begin{bmatrix}
+02 & 03 & 01 & 01 \\
+01 & 02 & 03 & 01 \\
+01 & 01 & 02 & 03 \\
+03 & 01 & 01 & 02
+\end{bmatrix} 
+\begin{bmatrix}
+s_{0,0} & s_{0,1} & s_{0,2} & s_{0,3} \\
+s_{1,0} & s_{1,1} & s_{1,2} & s_{1,3} \\
+s_{2,0} & s_{2,1} & s_{2,2} & s_{2,3} \\
+s_{3,0} & s_{3,1} & s_{3,2} & s_{3,3}
+\end{bmatrix} = 
+\begin{bmatrix}
+s'_{0,0} & s'_{0,1} & s'_{0,2} & s'_{0,3} \\
+s'_{1,0} & s'_{1,1} & s'_{1,2} & s'_{1,3} \\
+s'_{2,0} & s'_{2,1} & s'_{2,2} & s'_{2,3} \\
+s'_{3,0} & s'_{3,1} & s'_{3,2} & s'_{3,3}
+\end{bmatrix}
+\]
+
+% deskripsi: Persamaan perkalian matriks untuk transformasi MixColumns pada algoritma AES
+% bbox normalisasi: [0.0600, 0.1080, 0.9400, 0.9120]
+\begin{textblock*}{184.80mm}(12.60mm,32.08mm)
+\noindent\includegraphics[width=184.80mm,height=238.79mm]{../../images/llm/page_023_img_01.png}%
+\end{textblock*}
+
+% bbox perkiraan otomatis: Persamaan perkalian matriks untuk transformasi MixColumns pada algoritma AES
+
+\end{document}

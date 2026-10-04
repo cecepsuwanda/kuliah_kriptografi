@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 19
+
+\begin{document}
+
+% === Halaman 19 (llm) ===
+
+\textbf{Contoh 1:} Misalkan $a = 00001101 = x^3 + x^2 + 1$ dan $b = 00000110 = x^2 + x$\
+$a$ dan $b \in GF(2^8)$ \quad (dalam notasi Hex, $a = \text{'0D'}$ dan $b = \text{'06'}$)\
+
+(i) $a + b = \text{'0D'} + \text{'06'} = (x^3 + x^2 + 1) + (x^2 + x) = x^3 + 2x^2 + x + 1 \pmod{2}$
+
+\begin{align*}
+\text{\color{red}Bagi tiap koefisien dengan 2, lalu ambil sisanya} \\
+&= x^3 + 0x^2 + x + 1 \\
+&= x^3 + x + 1 = 00001011 = \text{'0B'}
+\end{align*}
+
+Dalam representasi biner:
+
+\begin{align*}
+&00001101 \\
+&00000110 + \\
+&00001011 \rightarrow \text{sama dengan hasil operasi XOR}
+\end{align*}
+
+$\therefore a + b = 00001011 = a \text{ XOR } b$
+
+\vspace{10mm}
+
+\centering Rinaldi Munir/II4021 Kriptografi
+
+\end{document}

@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 19
+
+\begin{document}
+
+% === Halaman 19 (python/native) ===
+
+19
+
+Kelebihan Mode ECB
+
+1.
+
+Karena tiap blok plainteks dienkripsi secara independen, maka kita 
+
+tidak perlu mengenkripsi pesan secara sekuensial/linier. 
+
+• Kita dapat mengenkripsi 5 blok pertama, kemudian blok-blok di akhir, dan  
+
+kembali ke blok-blok di tengah dan seterusnya.
+
+• Mode ECB cocok untuk mengenkripsi isi arsip (file) yang diakses secara acak, 
+
+misalnya arsip-arsip basisdata. 
+
+• Jika basisdata dienkripsi dengan mode ECB, maka sembarang record dapat 
+
+dienkripsi secara independen dari record lainnya (dengan asumsi setiap 
+
+record terdiri dari sejumlah blok diskrit yang sama banyaknya).
+
+\end{document}

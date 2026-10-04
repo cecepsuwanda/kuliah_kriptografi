@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\usepackage[indonesian]{babel}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{2em}
+% unit: Halaman 15
+
+\begin{document}
+
+% === Halaman 15 (python/native) ===
+
+15
+
+Alice melakukan enkripsi dengan kunci public Bob (y = 1185, g = 2, p = 2357):
+
+
+a = gk mod p = 21520 mod 2357 = 1430
+
+
+b = ykm mod p = 11851520  2035 mod 2357 = 697
+
+ Jadi, cipherteks yang dihasilkan adalah (1430, 697). 
+
+ Alice mengirim cipherteks ini kepada Bob.
+
+(c) Dekripsi (Oleh Bob)
+
+  Bob melakukan dekripsi dengan kunci privatnya (x = 1751, p = 2357):
+
+
+(ax)–1 = ap – 1 – x mod p  = 14302357 – 1 – 1751 mod 2357 = 1430605 mod 2357 = 872
+
+
+m = b/ax mod p  = b  (ax)–1 mod p = 697  872 mod 2357 = 2035
+
+     Bob mendapatkan kembali plainteks m = 2035 yang dikirim oleh Alice.
+
+\end{document}
