@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 \documentclass[12pt, a4paper, oneside]{book}
 
 % Technical Configuration
@@ -10,6 +11,14 @@
 \include{frontmatter/titlepage}
 \include{frontmatter/preface}
 \include{frontmatter/syllabus_map}
+=======
+\documentclass[12pt, a4paper, draft]{book}
+\input{preamble}
+
+\begin{document}
+
+\subfile{frontmatter}
+>>>>>>> worktree-fix-subfiles-v2
 
 \tableofcontents
 \listoffigures
@@ -34,10 +43,33 @@
 \subfile{chapters/ch15/chapter}
 \subfile{chapters/ch16/chapter}
 
+<<<<<<< HEAD
 % Back Matter
 \backmatter
 \include{appendices/glossary}
 \bibliography{references}
 \bibliographystyle{plain}
+=======
+% Jalur utama sesuai silabus (CPMK-1, CPMK-2): Bab I--XI
+\subfile{bab/bab-01}
+\subfile{bab/bab-02}
+\subfile{bab/bab-03}
+\subfile{bab/bab-04}
+\subfile{bab/bab-05}
+\subfile{bab/bab-06}
+\subfile{bab/bab-07}
+\subfile{bab/bab-08}
+\subfile{bab/bab-09}
+\subfile{bab/bab-10}
+\subfile{bab/bab-11}
+
+\backmatter
+
+% Lampiran
+\subfile{lampiran}
+
+% Daftar Pustaka
+\subfile{backmatter}
+>>>>>>> worktree-fix-subfiles-v2
 
 \end{document}

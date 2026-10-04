@@ -1,0 +1,108 @@
+\section{Pertukaran Kunci Diffie-Hellman dan ElGamal}
+
+\begin{subcpmk}
+  \item Mahasiswa mampu menganalisis protokol pertukaran kunci Diffie-Hellman, menguraikan landasan matematis \textit{Discrete Logarithm Problem} (DLP), mengevaluasi kerentanan terhadap serangan \textit{Man-in-the-Middle}, serta mengimplementasikan algoritma enkripsi ElGamal.
+\end{subcpmk}
+
+\noindent\textit{Rujukan:} Munir \cite{munir2019,munir_slides_itb}; HAC Bab~8 \cite{hac_online}; Katz \& Lindell \cite{katz2020}; Boneh \cite{boneh_cs255}.
+
+\subsection{Masalah Logaritma Diskret (\textit{Discrete Logarithm Problem} - DLP)}
+
+Keamanan sebagian besar sistem kunci publik, termasuk Diffie-Hellman dan ElGamal, tidak didasarkan pada faktorisasi (seperti RSA), melainkan pada kesulitan menghitung logaritma diskret.
+
+\textbf{Definisi DLP}: Misalkan $p$ adalah bilangan prima besar dan $g$ adalah generator dari grup multiplikatif $\mathbb{Z}_p^*$. Jika diberikan nilai $y = g^x \pmod{p}$, maka mencari nilai $x$ sedemikian sehingga persamaan tersebut terpenuhi adalah masalah yang sangat sulit secara komputasi apabila $p$ cukup besar.
+
+Operasi $g^x \pmod{p}$ (eksponensiasi modular) adalah \textit{one-way function}: sangat mudah dihitung menggunakan algoritma \textit{square-and-multiply}, namun sangat sulit untuk dibalikkan (mencari $x$ dari $y$) jika $p$ dipilih dengan benar (misal: $p$ adalah \textit{safe prime}).
+
+\subsection{Protokol Pertukaran Kunci Diffie-Hellman (DH)}
+
+\crypt{Diffie-Hellman Key Exchange} (DH) bukanlah algoritma enkripsi, melainkan protokol yang memungkinkan dua pihak yang tidak saling mengenal untuk menyepakati sebuah \crypt{Shared Secret} (kunci rahasia bersama) melalui saluran komunikasi publik yang tidak aman.
+
+\subsubsection{Parameter Publik}
+Sebelum memulai, kedua pihak menyepakati dua parameter publik:
+\begin{itemize}
+    \item $p$: Bilangan prima besar (modulus).
+    \item $g$: Generator atau akar primitif dari $p$ (berarti $g^1, g^2, \dots, g^{p-1} \pmod{p}$ menghasilkan seluruh elemen dari $1$ sampai $p-1$).
+\end{itemize}
+
+\subsubsection{Langkah-Langkah Protokol}
+\begin{enumerate}
+    \item \textbf{Sisi Alice}:
+    \begin{itemize}
+        \item Membangkitkan kunci privat $a$ secara acak ($1 < a < p-1$).
+        \item Menghitung kunci publik $A = g^a \pmod{p}$.
+        \item Mengirimkan $A$ kepada Bob.
+    \end{itemize}
+    \item \textbf{Sisi Bob}:
+    \begin{itemize}
+        \item Membangkitkan kunci privat $b$ secara acak ($1 < b < p-1$).
+        \item Menghitung kunci publik $B = g^b \pmod{p}$.
+        \item Mengirimkan $B$ kepada Alice.
+    \end{itemize}
+    \item \textbf{Penghitungan Kunci Bersama (\textit{Shared Secret})}:
+    \begin{itemize}
+        \item Alice menghitung $S = B^a \pmod{p}$.
+        \item Bob menghitung $S = A^b \pmod{p}$.
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Pembuktian Kesamaan Kunci}:
+Sesuai dengan hukum eksponen, kedua pihak akan mendapatkan nilai $S$ yang sama karena:
+\[ S = (g^b)^a \equiv g^{ba} \equiv g^{ab} \equiv (g^a)^b \pmod{p} \]
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{example-image-c}
+  \caption{Alur pertukaran kunci Diffie-Hellman: dari pemilihan parameter publik hingga tercapainya \textit{shared secret} $g^{ab} \pmod{p}$.}
+  \label{fig:dh-diagram}
+\end{figure}
+
+\subsection{Kriptografi Hibrida (\textit{Hybrid Cryptography})}
+
+Karena komputasi eksponensiasi modular jauh lebih lambat dibandingkan operasi XOR atau substitusi pada cipher simetris, DH tidak digunakan untuk mengenkripsi pesan besar. Sebagai gantinya, digunakan pendekatan \textbf{Hibrida}:
+\begin{enumerate}
+    \item \textbf{Fase Kunci}: Menggunakan Diffie-Hellman (atau RSA) untuk menyepakati satu kunci simetris pendek (misal: 256-bit untuk AES).
+    \item \textbf{Fase Data}: Menggunakan kunci simetris tersebut untuk mengenkripsi data massal menggunakan AES.
+\end{enumerate}
+Alur ini menggabungkan \textit{keamanan distribusi kunci} dari kriptografi asimetris dengan \textit{efisiensi performa} dari kriptografi simetris.
+
+\subsection{Serangan Man-in-the-Middle (MitM)}
+
+Kelemahan fundamental DH standar adalah \textbf{ketiadaan autentikasi}. Protokol ini tidak menjamin bahwa pihak yang berkomunikasi adalah benar-benar orang yang dimaksud. Penyerang (Mallory) dapat melakukan serangan MitM:
+\begin{enumerate}
+    \item Mallory mencegat $A$ dari Alice, lalu mengirimkan $A' = g^{m_1} \pmod{p}$ miliknya sendiri kepada Bob.
+    \item Mallory mencegat $B$ dari Bob, lalu mengirimkan $B' = g^{m_2} \pmod{p}$ miliknya sendiri kepada Alice.
+\end{enumerate}
+Hasilnya, Alice menyepakati kunci $S_1 = g^{m_2 a}$ dengan Mallory, dan Bob menyepakati kunci $S_2 = g^{m_1 b}$ dengan Mallory. Mallory kini dapat mendekripsi semua pesan dari Alice, membacanya, mengubahnya, lalu mengenkripsi ulang dengan $S_2$ sebelum dikirim ke Bob.
+
+\subsection{Algoritma Enkripsi ElGamal}
+
+ElGamal adalah pengembangan dari protokol Diffie-Hellman menjadi sistem enkripsi kunci publik yang lengkap.
+
+\subsubsection{Pembangkitan Kunci}
+1. Pilih bilangan prima besar $p$ dan generator $g$.
+2. Pilih kunci privat $x$ secara acak ($1 < x < p-1$).
+3. Hitung kunci publik $y = g^x \pmod{p}$.
+\textbf{Kunci Publik}: $(p, g, y)$, \textbf{Kunci Privat}: $x$.
+
+\subsubsection{Enkripsi}
+Untuk mengirim pesan $M$ kepada pemilik kunci:
+1. Pilih bilangan acak efemer $k$ sedemikian sehingga $\gcd(k, p-1) = 1$.
+2. Hitung pasangan cipherteks $(c_1, c_2)$:
+   \[ c_1 = g^k \pmod{p}, \quad c_2 = M \cdot y^k \pmod{p} \]
+
+\subsubsection{Dekripsi}
+Penerima memulihkan pesan $M$ dengan menghitung:
+\[ M = c_2 \cdot (c_1^x)^{-1} \pmod{p} \]
+Karena $c_1^x = (g^k)^x = (g^x)^k = y^k$, maka $c_2 \cdot (y^k)^{-1} = (M \cdot y^k) \cdot (y^k)^{-1} = M \pmod{p}$.
+
+\begin{aktivitas}
+  \item \textbf{Simulasi DH}: Lakukan pertukaran kunci Diffie-Hellman dengan parameter $p=23$ dan $g=5$. Alice memilih $a=6$ dan Bob memilih $b=15$. Hitung kunci publik masing-masing dan tentukan nilai \textit{shared secret} $S$ yang dihasilkan.
+\end{aktivitas}
+
+\begin{latihan}
+  \item Jelaskan mengapa pemilihan generator $g$ yang salah dapat melemahkan keamanan protokol Diffie-Hellman!
+  \item Buktikan secara matematis bahwa enkripsi ElGamal memberikan kerahasiaan pesan berdasarkan kesulitan DLP!
+  \item Dalam serangan MitM pada DH, bagaimana penggunaan sertifikat digital yang ditandatangani oleh \textit{Certificate Authority} (CA) dapat mencegah Mallory menyamar sebagai Bob?
+  \item Hitunglah enkripsi pesan $M=10$ menggunakan algoritma ElGamal dengan parameter $p=23, g=5, x=6, k=3$!
+\end{latihan}

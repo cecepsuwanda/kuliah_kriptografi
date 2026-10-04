@@ -1,0 +1,93 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+\chapter*{Lampiran}
+\addcontentsline{toc}{chapter}{Lampiran}
+
+% ============================================================
+% Lampiran A: Rubrik Penilaian
+% ============================================================
+\section*{Lampiran A: Rubrik Penilaian Tugas Praktik Kriptografi}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{3.5cm}|}
+\hline
+\textbf{Kriteria} & \textbf{Sangat Baik} & \textbf{Baik} & \textbf{Perlu Perbaikan} \\
+\hline
+Kebenaran Algoritma & Kode benar, output sesuai teori & Kode benar, minor bug & Kode sebagian benar \\
+\hline
+Implementasi C & Struktur kode rapi, modular & Struktur cukup baik & Struktur berantakan \\
+\hline
+Dokumentasi & Lengkap, jelas, komentar bermakna & Cukup lengkap & Kurang lengkap \\
+\hline
+Pengujian & Test cases lengkap & Beberapa test cases & Minimal testing \\
+\hline
+Analisis & Analisis mendalam terhadap kelemahan & Analisis memadai & Analisis sederhana \\
+\hline
+\end{tabular}
+\caption{Rubrik Penilaian Tugas Praktik Kriptografi}
+\end{table}
+
+% ============================================================
+% Lampiran B: Contoh Template Laporan
+% ============================================================
+\section*{Lampiran B: Contoh Template Laporan Tugas}
+\begin{enumerate}
+  \item Judul dan Identitas Mahasiswa
+  \item Deskripsi Algoritma yang Diimplementasikan
+  \item Alur Enkripsi/Dekripsi (diagram atau pseudocode)
+  \item Implementasi (cuplikan kode C penting)
+  \item Hasil Pengujian dengan Berbagai Input
+  \item Analisis Kelemahan dan Keamanan
+  \item Refleksi dan Kesimpulan
+\end{enumerate}
+
+% ============================================================
+% Lampiran C: Glosarium
+% ============================================================
+\section*{Lampiran C: Glosarium Istilah Kriptografi}
+\begin{itemize}
+  \item \textbf{Plaintext}: Pesan asli sebelum enkripsi
+  \item \textbf{Ciphertext}: Pesan terenkripsi
+  \item \textbf{Cipher}: Algoritma untuk enkripsi/dekripsi
+  \item \textbf{Key}: Kunci rahasia untuk enkripsi/dekripsi
+  \item \textbf{Enkripsi}: Proses mengubah plaintext menjadi ciphertext
+  \item \textbf{Dekripsi}: Proses mengubah ciphertext kembali ke plaintext
+  \item \textbf{Kriptografi simetris}: Menggunakan kunci yang sama untuk enkripsi dan dekripsi
+  \item \textbf{Kriptografi asimetris}: Menggunakan pasangan kunci publik dan privat
+  \item \textbf{Fungsi hash}: Fungsi satu arah yang memetakan input ke output dengan panjang tetap
+  \item \textbf{Kriptanalisis}: Studi untuk memecahkan cipher tanpa mengetahui kunci
+  \item \textbf{Confidentiality}: Kerahasiaan informasi
+  \item \textbf{Integrity}: Keutuhan data
+  \item \textbf{Authenticity}: Keaslian sumber
+\end{itemize}
+
+% ============================================================
+% Lampiran D: Referensi Tambahan
+% ============================================================
+\section*{Lampiran D: Referensi Tamban}
+\begin{itemize}
+  \item Munir, Rinaldi. Slide IF4020 Kriptografi (ITB): \url{https://informatika.stei.itb.ac.id/~rinaldi.munir/Kriptografi/2023-2024/}
+  \item Handbook of Applied Cryptography (bab PDF): \url{http://cacr.uwaterloo.ca/hac/}
+  \item NIST Cryptographic Standards: \url{https://csrc.nist.gov/}
+  \item Boneh, Dan. Crypto I (CS255 Stanford): \url{https://crypto.stanford.edu/~dabo/courses/cs255/}
+  \item OpenSSL Documentation: \url{https://www.openssl.org/docs/}
+  \item Cryptography Stack Exchange: \url{https://crypto.stackexchange.com/}
+\end{itemize}
+
+% ============================================================
+% Lampiran E: Materi Opsional (di luar CPMK wajib silabus)
+% ============================================================
+\section*{Lampiran E: Materi Opsional --- RNG dan Steganografi}
+
+\noindent\textit{Catatan:} Topik ini \textbf{tidak} termasuk CPMK-1/CPMK-2 pada silabus. Disediakan sebagai pengayaan.
+
+\subsection*{E.1 Ringkasan RNG}
+TRNG memakai sumber fisik; PRNG deterministik dari seed dan untuk kripto harus CSPRNG. LCG tidak aman untuk kunci. Uji keacakan (mis. NIST SP 800-22) membantu deteksi kelemahan statistik, tetapi lulus uji tidak menjamin keamanan kriptografis \cite{stallings2017,menezes1996}.
+
+\subsection*{E.2 Ringkasan Steganografi LSB}
+Steganografi menyembunyikan keberadaan pesan dalam media cover (berbeda dari enkripsi). Metode LSB mengganti bit paling tidak signifikan sampel citra; kapasitas besar tetapi rentan steganalis statistik. Watermarking lebih menekankan ketahanan terhadap modifikasi \cite{stallings2017}.
+
+\noindent Untuk uraian lebih lengkap, lihat berkas sumber \texttt{bab/bab-09/} (tidak diikutkan dalam kompilasi utama).
+\end{document}

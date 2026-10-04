@@ -1,0 +1,279 @@
+% ============================================================
+% Preamble untuk Buku Ajar OBE - Kriptografi
+% ============================================================
+
+% --- Encoding dan Bahasa ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[indonesian]{babel}
+\usepackage{lmodern}
+
+% --- Layout Halaman ---
+\usepackage{geometry}
+\usepackage{amsthm} % Added for proof environment
+\geometry{a4paper, margin=2.5cm, headheight=16pt}
+
+% --- Grafik dan Tabel ---
+\usepackage{graphicx}
+\graphicspath{{gambar/}{../gambar/}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% --- TikZ untuk Diagram ---
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,calc}
+\tikzset{
+  arrow/.style={
+    thick,
+    ->,
+    >=stealth
+  }
+}
+
+% --- List dan Enumerasi ---
+\usepackage{enumitem}
+
+% --- Hyperlinks ---
+\usepackage{xurl}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue,
+  bookmarksnumbered=true,
+  pdfstartview=FitH
+}
+
+% --- Subfiles untuk Modular Structure ---
+\usepackage{subfiles}
+
+% --- Header dan Footer ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\raggedbottom
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\leftmark}
+\fancyhead[LO]{\rightmark}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Code Listings untuk C ---
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Definisi warna untuk syntax highlighting
+\definecolor{cred}{rgb}{0.6,0,0}
+\definecolor{cgreen}{rgb}{0.25,0.5,0.35}
+\definecolor{cpurple}{rgb}{0.5,0,0.35}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+
+% Style untuk C code
+\lstdefinestyle{cstyle}{
+  language=C,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{cpurple}\bfseries,
+  stringstyle=\color{cred},
+  commentstyle=\color{cgreen},
+  numbers=left,
+  numberstyle=\tiny\color{codegray},
+  stepnumber=1,
+  numbersep=10pt,
+  backgroundcolor=\color{codebg},
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  frame=single,
+  tabsize=2,
+  captionpos=b,
+  breaklines=true,
+  breakatwhitespace=false,
+  xleftmargin=15pt,
+  xrightmargin=5pt,
+  morekeywords={int,char,void,return,for,while,if,else,unsigned,long,size_t}
+}
+
+\renewcommand{\lstlistlistingname}{Daftar Kode Program}
+\renewcommand{\lstlistingname}{Kode Program}
+\lstset{style=cstyle}
+
+% Environment untuk C code dengan caption
+\lstnewenvironment{ccode}[1][]{
+  \lstset{style=cstyle, #1}
+}{}
+
+% Style untuk Python code
+\lstdefinestyle{pystyle}{
+  style=cstyle,
+  language=Python,
+  morekeywords={True,False,None,def,return,in,not,and,or,import,from,as},
+  deletekeywords={int,char,void,unsigned,long,size_t}
+}
+
+\lstnewenvironment{pycode}[1][]{
+  \lstset{style=pystyle, #1}
+}{}
+
+% Alias javacode untuk kompatibilitas (redirect ke ccode)
+\lstnewenvironment{javacode}[1][]{
+  \lstset{style=cstyle, #1}
+}{}
+
+% --- Boxes untuk Highlight ---
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% Box untuk konsep penting
+\newtcolorbox{konsep}{
+  colback=blue!5!white,
+  colframe=blue!75!black,
+  fonttitle=\bfseries,
+  title=Konsep Penting,
+  breakable
+}
+
+% Box untuk catatan
+\newtcolorbox{catatan}{
+  colback=yellow!5!white,
+  colframe=yellow!75!black,
+  fonttitle=\bfseries,
+  title=Catatan,
+  breakable
+}
+
+% Box untuk contoh
+\newtcolorbox{contoh}{
+  colback=green!5!white,
+  colframe=green!75!black,
+  fonttitle=\bfseries,
+  title=Contoh,
+  breakable
+}
+
+% ============================================================
+% Custom Environments untuk OBE
+% ============================================================
+
+% --- Environment untuk Sub-CPMK ---
+\newenvironment{subcpmk}{
+  \vspace{0.5cm}
+  \noindent\colorbox{blue!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{
+    \textbf{\large Sub-CPMK yang Dicakup dalam Bab Ini:}
+  }}
+  \vspace{0.3cm}
+  \begin{itemize}[leftmargin=*, itemsep=5pt]
+}{
+  \end{itemize}
+  \vspace{0.5cm}
+}
+
+% --- Environment untuk Aktivitas Pembelajaran ---
+\newenvironment{aktivitas}{
+  \vspace{0.5cm}
+  \noindent\colorbox{green!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{
+    \textbf{\large Aktivitas Pembelajaran}
+  }}
+  \vspace{0.3cm}
+  \begin{enumerate}[leftmargin=*, itemsep=8pt]
+}{
+  \end{enumerate}
+  \vspace{0.5cm}
+}
+
+% --- Environment untuk Latihan ---
+\newenvironment{latihan}{
+  \vspace{0.5cm}
+  \noindent\colorbox{orange!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{
+    \textbf{\large Latihan dan Refleksi}
+  }}
+  \vspace{0.3cm}
+  \begin{enumerate}[leftmargin=*, itemsep=8pt]
+}{
+  \end{enumerate}
+  \vspace{0.5cm}
+}
+
+% --- Environment untuk Asesmen ---
+\newenvironment{asesmen}{
+  \vspace{0.5cm}
+  \noindent\colorbox{red!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{
+    \textbf{\large Asesmen (Evaluasi Kinerja)}
+  }}
+  \vspace{0.3cm}
+}{
+  \vspace{0.5cm}
+}
+
+% --- Environment untuk Checklist Kompetensi ---
+\newenvironment{checklist}{
+  \vspace{0.5cm}
+  \noindent\colorbox{purple!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{
+    \textbf{\large Checklist Pencapaian Kompetensi}
+  }}
+  \vspace{0.3cm}
+  \noindent\textit{Centang item berikut setelah Anda yakin telah menguasainya:}
+  \vspace{0.2cm}
+  \begin{itemize}[leftmargin=*, itemsep=5pt, label=$\square$]
+}{
+  \end{itemize}
+  \vspace{0.5cm}
+}
+
+% --- Environment untuk Rangkuman ---
+\newenvironment{rangkuman}{
+  \vspace{0.5cm}
+  \noindent\colorbox{gray!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{
+    \textbf{\large Rangkuman}
+  }}
+  \vspace{0.3cm}
+}{
+  \vspace{0.5cm}
+}
+
+% --- Environment untuk Transisi ke Bab Berikutnya ---
+\newenvironment{transition}{
+  \vspace{0.5cm}
+  \noindent\colorbox{cyan!10}{\parbox{\dimexpr\textwidth-2\fboxsep}{
+    \textbf{\large Persiapan untuk Bab Berikutnya}
+  }}
+  \vspace{0.3cm}
+}{
+  \vspace{0.5cm}
+}
+
+% ============================================================
+% Custom Commands
+% ============================================================
+
+% Command untuk highlight istilah kriptografi
+\newcommand{\crypt}[1]{\textbf{\textit{#1}}}
+
+% Command untuk code inline
+\newcommand{\code}[1]{\texttt{#1}}
+
+% Command untuk keyword C (untuk kompatibilitas)
+\newcommand{\keyword}[1]{\textcolor{cpurple}{\texttt{\textbf{#1}}}}
+
+% Alias untuk kompatibilitas dengan kode lama
+\newcommand{\oop}[1]{\crypt{#1}}
+\newcommand{\class}[1]{\texttt{\textbf{#1}}}
+\newcommand{\method}[1]{\texttt{#1()}}
+
+% ============================================================
+% Pengaturan Tambahan
+% ============================================================
+
+% Spacing untuk paragraf
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+
+% Depth untuk table of contents
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}

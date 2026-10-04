@@ -1,0 +1,4 @@
+Jalankan perintah di bawah ini :
+1. baca dan pahami buku di C:\Matakuliah\kuliah_kriptografi\buku_ajar
+2. baca dan pahami file C:\Matakuliah\kuliah_kriptografi\compile_main.bat
+3. terjadi perubahan di C:\Matakuliah\kuliah_kriptografi\buku_ajar sesuaikan C:\Matakuliah\kuliah_kriptografi\compile_main.bat

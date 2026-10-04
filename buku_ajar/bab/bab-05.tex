@@ -1,0 +1,205 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\chapter{Block Cipher dan Kriptografi Simetris Modern}
+
+\begin{subcpmk}
+  \item Sub-CPMK 1.2: Mengenal dan menguasai prinsip kriptografi modern simetris, mencakup cipher alir (stream cipher: LFSR, RC4, A5/1, Salsa20, ChaCha20), prinsip perancangan Shannon (confusion dan diffusion), arsitektur Feistel dan SPN, algoritma DES, Double DES, Triple DES, AES (Rijndael), mode operasi cipher blok (ECB, CBC, CFB, OFB, CTR, GCM), serta ragam cipher blok modern lainnya (GOST, RC5, RC6, Blowfish, Twofish, Serpent) dan penerapannya di dunia nyata.
+\end{subcpmk}
+
+\noindent\textit{Rujukan:} Munir slide 07--11 (Kripto Modern \& Stream Cipher, Block Cipher Bagian 1, Beberapa Block Cipher Bagian 1--3) \cite{munir_slides_itb}; Stallings \cite{stallings2017}; FIPS PUB 46-3 (DES) \cite{fips46_3}; FIPS PUB 197 (AES) \cite{fips197}; NIST SP 800-38A/38D \cite{nist800_38a, nist800_38d}; Schneier \cite{schneier1996}; Menezes dkk. (HAC Bab~6--7) \cite{menezes1996, hac_online}.
+
+Bab ini menyajikan telaah mendalam mengenai era kriptografi simetris modern. Pembahasan diawali dengan pemrosesan tingkat bit biner, operasi logika XOR, dan arsitektur cipher alir (stream cipher) beserta algoritma legendarisnya (LFSR, RC4, A5/1) hingga cipher modern berkecepatan tinggi (Trivium, Salsa20, ChaCha20). Selanjutnya, bab ini membedah prinsip perancangan cipher blok dari Claude Shannon, struktur jaringan Feistel, dan standardisasi pertama dunia melalui Data Encryption Standard (DES), mitigasi Double DES (serangan Meet-in-the-Middle), serta Triple DES (3DES). Pembahasan kemudian berlanjut ke algoritma standar global Advanced Encryption Standard (AES / Rijndael), landasan aljabar medan hingga $\mathrm{GF}(2^8)$, seluruh mode operasi blok (ECB, CBC, CFB, OFB, CTR, AEAD GCM), trace matematis langkah demi langkah, dan implementasi kode dalam bahasa C. Bab ini dipungkasi dengan kajian terhadap cipher blok terkemuka lainnya (GOST, RC5, RC6, Blowfish, Twofish, Serpent, MARS) serta implementasi kriptografi simetris dalam transaksi mesin ATM dan komunikasi bergerak seluler.
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab/bab-05/section-5-0}
+\input{bab/bab-05/section-5-1}
+\input{bab/bab-05/section-5-2}
+\input{bab/bab-05/section-5-3}
+\input{bab/bab-05/section-5-4}
+\input{bab/bab-05/section-5-5-cipher-blok-lainnya}
+
+% ============================================================
+% AKTIVITAS PEMBELAJARAN
+% ============================================================
+
+\begin{aktivitas}
+  \item \textbf{Eksperimen Stream Cipher (RC4 \& ChaCha20)}: Implementasikan algoritma KSA dan PRGA RC4 serta fungsi quarter-round ChaCha20 dalam bahasa pemrograman pilihan (Python/C). Amati fenomena bias statistik pada byte-byte awal keluaran RC4 dan diskusikan mengapa ChaCha20 jauh lebih tahan terhadap serangan waktu saluran samping (\textit{cache timing attacks}).
+  \item \textbf{Eksplorasi Efek Longsoran (Avalanche Effect)}: Buat program uji untuk mengukur efek longsoran pada DES dan AES. Ubah satu bit plainteks dan hitung persentase bit cipherteks yang berubah pada setiap putaran (round 1 hingga round akhir). Visualisasikan perkembangannya dalam bentuk grafik kurva difusi.
+  \item \textbf{Simulasi Serangan Meet-in-the-Middle}: Dalam kelompok, buat simulasi serangan Meet-in-the-Middle terhadap algoritma cipher mainan (\textit{toy cipher}) dengan panjang kunci 16-bit dalam mode Double Encryption. Buktikan secara empiris bahwa ruang pencarian kunci tereduksi dari $2^{32}$ menjadi $2 \times 2^{16}$.
+  \item \textbf{Analisis Visual Mode Operasi Blok}: Ambil berkas gambar format BMP tanpa kompresi (misalnya logo kampus atau foto Tux). Enkripsi berkas tersebut menggunakan kakas OpenSSL dengan mode ECB, CBC, dan CTR. Buka citra terenkripsi dan bandingkan apakah pola visual citra masih terbaca pada mode ECB dibandingkan mode CBC dan CTR.
+  \item \textbf{Studi Kasus Keamanan Mesin ATM dan Jaringan Seluler}: Analisis arsitektur pertukaran data antara terminal ATM, modul HSM, dan server otorisasi perbankan. Identifikasi peran format PIN Block ISO 9564, algoritma 3DES/AES, dan MAC ANSI X9.9 dalam mencegah penyadapan saldo atau manipulasi rekening nasabah.
+\end{aktivitas}
+
+% ============================================================
+% LATIHAN DAN REFLEKSI
+% ============================================================
+
+\begin{latihan}
+  \item Jelaskan perbedaan mendasar antara cipher alir (stream cipher) dan cipher blok (block cipher) dari segi: unit pemrosesan data, kebutuhan memori, penanganan padding, dan perambatan galat (\textit{error propagation})!
+
+  \item Diberikan sebuah LFSR 4-tingkat dengan polinomial karakteristik primitif $C(x) = x^4 + x + 1$ atas medan $\mathrm{GF}(2)$ dan status awal (seed) $(s_3, s_2, s_1, s_0) = (1, 0, 0, 1)$. Hitunglah 15 bit pertama keluaran keystream dan buktikan bahwa periodenya adalah $2^4 - 1 = 15$! Mengapa LFSR murni tidak aman untuk kriptografi?
+
+  \item Pada algoritma RC4, jelaskan tahapan algoritma KSA (Key-Scheduling Algorithm) dan PRGA (Pseudo-Random Generation Algorithm). Mengapa protokol WEP pada Wi-Fi berhasil dipecahkan dengan serangan FMS?
+
+  \item Jelaskan prinsip perancangan \textbf{Confusion} dan \textbf{Diffusion} menurut Claude Shannon! Sebutkan komponen spesifik pada DES dan AES yang mengimplementasikan masing-masing prinsip tersebut!
+
+  \item Buktikan secara aljabar bahwa proses dekripsi pada Jaringan Feistel selalu berhasil memulihkan plainteks awal tanpa mensyaratkan fungsi putaran $F$ memiliki fungsi invers! Mengapa putaran ke-16 pada DES tidak melakukan pertukaran (\textit{swap}) paruh kiri dan kanan?
+
+  \item Jelaskan mengapa Double DES memiliki ruang kunci $2^{112}$ namun tingkat keamanannya hanya setara dengan $2^{57}$ operasi! Jelaskan algoritma serangan Meet-in-the-Middle yang membuktikannya!
+
+  \item Mengapa Triple DES menggunakan skema \textit{Encrypt-Decrypt-Encrypt} (EDE) dan bukan \textit{Encrypt-Encrypt-Encrypt} (EEE)? Berapa tingkat keamanan efektif 3DES EDE2 dan EDE3?
+
+  \item Pada algoritma AES:
+  \begin{enumerate}
+    \item Sebutkan dan jelaskan empat transformasi yang menyusun satu putaran standar AES!
+    \item Mengapa transformasi \texttt{MixColumns} ditiadakan pada putaran terakhir?
+    \item Hitunglah perkalian polinomial $\{02\} \cdot \{\text{D}4\}$ di dalam medan Galois $\mathrm{GF}(2^8)$ dengan modulus irreducible $m(x) = x^8 + x^4 + x^3 + x + 1$ menggunakan fungsi $\mathrm{xtime}()$!
+  \end{enumerate}
+
+  \item Diberikan sebuah plainteks sepanjang 42 byte yang akan dienkripsi dengan AES (ukuran blok 16 byte) menggunakan standar padding PKCS\#7. Berapa total panjang byte setelah padding, dan apa nilai heksadesimal dari byte-byte padding tersebut? Bagaimana jika panjang plainteks tepat 48 byte?
+
+  \item Jelaskan perbedaan sifat perambatan galat (\textit{error propagation}) antara mode CBC, OFB, dan CTR jika terjadi 1 bit galat transmisi pada blok cipherteks ke-2!
+
+  \item Jelaskan keunikan perancangan algoritma cipher blok berikut:
+  \begin{enumerate}
+    \item GOST 28147-89: Mengapa kotak-S tidak didefinisikan secara kaku dalam spesifikasi?
+    \item RC5 dan RC6: Apa peran operasi rotasi bergantung-data (\textit{data-dependent rotation}) dan fungsi $x(2x+1) \bmod 2^w$?
+    \item Blowfish: Bagaimana 4 kotak-S dinamisnya dibangkitkan dari bilangan $\pi$?
+    \item Serpent: Apa yang dimaksud dengan implementasi \textit{bitslicing}?
+  \end{enumerate}
+  \item \textbf{Refleksi}: Mengapa industri perbankan dunia membutuhkan waktu bertahun-tahun untuk bermigrasi dari 3DES ke AES pada jaringan mesin ATM, meskipun AES telah dinyatakan sebagai standar global sejak 2001? Identifikasi faktor teknis, sertifikasi perangkat keras (HSM), dan risiko operasional yang memengaruhinya!
+\end{latihan}
+
+% ============================================================
+% ASESMEN
+% ============================================================
+
+\begin{asesmen}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 1.2}
+
+\textbf{A. Pilihan Ganda}
+
+\begin{enumerate}
+  \item Operasi logika yang paling dominan digunakan dalam kriptografi modern karena memiliki sifat involusi $A \oplus B \oplus B = A$ adalah:
+  \begin{enumerate}
+    \item AND
+    \item OR
+    \item XOR
+    \item NAND
+  \end{enumerate}
+
+  \item Panjang kunci efektif pada algoritma Data Encryption Standard (DES) murni adalah:
+  \begin{enumerate}
+    \item 48 bit
+    \item 56 bit
+    \item 64 bit
+    \item 128 bit
+  \end{enumerate}
+
+  \item Serangan yang meruntuhkan keamanan Double DES dari $2^{112}$ menjadi $2^{57}$ operasi komputasi adalah:
+  \begin{enumerate}
+    \item Linear Cryptanalysis
+    \item Differential Cryptanalysis
+    \item Meet-in-the-Middle Attack
+    \item Birthday Attack
+  \end{enumerate}
+
+  \item Keunggulan arsitektural utama cipher Salsa20 dan ChaCha20 dibandingkan AES dalam implementasi perangkat lunak murni tanpa instruksi akselerasi CPU adalah:
+  \begin{enumerate}
+    \item Menggunakan ruang kunci yang lebih kecil
+    \item Tidak menggunakan tabel S-box di memori sehingga kebal terhadap serangan waktu cache (\textit{cache-timing attacks})
+    \item Memerlukan ukuran blok yang lebih fleksibel
+    \item Tidak memerlukan vektor inisialisasi (nonce)
+  \end{enumerate}
+
+  \item Mode operasi block cipher yang mengubah cipher blok menjadi stream cipher yang sepenuhnya dapat dieksekusi secara paralel pada proses enkripsi maupun dekripsi adalah:
+  \begin{enumerate}
+    \item Electronic Codebook (ECB)
+    \item Cipher Block Chaining (CBC)
+    \item Cipher Feedback (CFB)
+    \item Counter Mode (CTR)
+  \end{enumerate}
+
+  \item Transformasi pada putaran AES yang bertanggung jawab memberikan sifat non-linear (confusion) adalah:
+  \begin{enumerate}
+    \item SubBytes
+    \item ShiftRows
+    \item MixColumns
+    \item AddRoundKey
+  \end{enumerate}
+
+  \item Algoritma cipher blok finalis AES yang mengimplementasikan 32 putaran SPN dengan teknik \textit{bitslicing} dan diakui memiliki margin keamanan paling tinggi adalah:
+  \begin{enumerate}
+    \item Twofish
+    \item RC6
+    \item Serpent
+    \item MARS
+  \end{enumerate}
+  \item Komponen keamanan pada mesin ATM yang bertugas mengenkripsi kode PIN nasabah di dalam papan tombol fisik anti-sadap adalah:
+  \begin{enumerate}
+    \item Magnetic Stripe Reader
+    \item Encrypting PIN Pad (EPP)
+    \item Cash Dispenser Controller
+    \item Network Router Switch
+  \end{enumerate}
+\end{enumerate}
+
+\textbf{B. Soal Pemecahan Masalah (Studi Kasus)}
+
+Sebuah aplikasi perpesanan instan IoT mengirimkan data telemetri sensor suhu dalam bentuk paket data 30 byte secara berkala. Arsitek sistem mengusulkan penggunaan AES-128 dengan mode ECB tanpa IV agar hemat daya dan hemat bandwidth.
+\begin{enumerate}
+  \item Berikan evaluasi kritis terhadap usulan arsitek tersebut dari perspektif keamanan informasi! Ancaman spesifik apa yang akan terjadi jika nilai suhu stabil pada angka yang sama selama berjam-jam?
+  \item Usulkan alternatif mode operasi simetris modern yang paling hemat sumber daya, tidak memerlukan penambahan byte padding, kebal terhadap serangan manipulasi teks sandi, dan mendukung efisiensi komputasi! Jelaskan alasannya!
+\end{enumerate}
+\end{asesmen}
+
+% ============================================================
+% CHECKLIST KOMPETENSI
+% ============================================================
+
+\begin{checklist}
+  \item Saya memahami karakteristik kriptografi modern tingkat bit dan sifat aljabar operasi XOR
+  \item Saya menguasai konsep stream cipher (synchronous vs self-synchronizing, LFSR, RC4, A5/1, Trivium, Salsa20, ChaCha20)
+  \item Saya memahami prinsip perancangan Shannon (confusion dan diffusion) serta struktur Jaringan Feistel dan SPN
+  \item Saya memahami struktur algoritma DES, fungsi putaran $f$, penjadwalan kunci, kelemahan brute force, dan mitigasi 3DES
+  \item Saya memahami serangan Meet-in-the-Middle pada Double DES dan kompleksitas komputasinya
+  \item Saya menguasai arsitektur AES (Rijndael), matriks State, empat transformasi putaran, medan $\mathrm{GF}(2^8)$, dan proses dekripsinya
+  \item Saya memahami karakteristik seluruh mode operasi block cipher (ECB, CBC, CFB, OFB, CTR, AEAD GCM) beserta aturan IV dan padding
+  \item Saya mengenal ragam cipher blok modern lainnya (GOST, RC5, RC6, Blowfish, Twofish, Serpent, MARS) dan aplikasinya dalam ATM serta jaringan seluler
+\end{checklist}
+
+% ============================================================
+% RANGKUMAN
+% ============================================================
+
+\begin{rangkuman}
+Bab ini membahas secara komprehensif pilar-pilar kriptografi simetris modern:
+\begin{itemize}
+  \item \textbf{Kriptografi Modern vs Klasik}: Beralih dari ranah karakter ke mode pemrosesan biner (bit, byte, word) dengan mengandalkan operasi XOR aljabar involutif yang sangat efisien.
+  \item \textbf{Stream Cipher}: Memproses data bit per bit atau byte per byte dengan meng-XOR plainteks bersama keystream pseudo-acak. Meliputi LFSR (polinomial primitif, periode $2^n-1$), RC4 (KSA dan PRGA dengan vektor status 256 byte, kini dihentikan karena bias byte awal), A5/1 (tiga LFSR dengan aturan clocking mayoritas untuk GSM), Trivium (eSTREAM Profile 2 berbasis 3 shift register non-linear), serta Salsa20 dan ChaCha20 (arsitektur ARX 512-bit tanpa tabel pencarian memori untuk mencegah \textit{cache-timing attack}, diadopsi pada TLS 1.3 dan WireGuard).
+  \item \textbf{Prinsip Perancangan Shannon}: Confusion mengaburkan ketergantungan statistik kunci-cipherteks via substitusi non-linear (S-box); Diffusion menyebarkan pengaruh tiap bit masukan ke seluruh blok (avalanche effect) via permutasi linear.
+  \item \textbf{Jaringan Feistel}: Memproses paruh blok secara bolak-balik ($L_i = R_{i-1}$, $R_i = L_{i-1} \oplus F(R_{i-1}, K_i)$), menjamin sifat reversibilitas tanpa mensyaratkan fungsi putaran $F$ memiliki fungsi invers. Digunakan pada DES, 3DES, GOST, Blowfish, Twofish.
+  \item \textbf{DES dan Varian}: Blok 64 bit, kunci 56 bit efektif, 16 putaran Feistel, fungsi $f$ (Ekspansi $E$, XOR subkey, 8 S-box non-linear, Permutasi $P$). Rentan brute-force 56-bit (EFF Deep Crack 56 jam). Double DES rentan serangan Meet-in-the-Middle ($2^{57}$ operasi). Triple DES (3DES) mengadopsi struktur Encrypt-Decrypt-Encrypt (EDE2 keamanan 112 bit, EDE3 keamanan 168 bit) dengan kompatibilitas mundur.
+  \item \textbf{Advanced Encryption Standard (AES)}: Pemenang sayembara NIST karya Daemen dan Rijmen (Rijndael). Berbasis SPN pada matriks State $4 \times 4$ byte di medan hingga $\mathrm{GF}(2^8)$ dengan blok 128 bit. Terdiri dari SubBytes (S-box non-linear), ShiftRows (difusi antar-kolom), MixColumns (difusi intra-kolom di $\mathrm{GF}(2^8)$), dan AddRoundKey. Varian mencakup AES-128 (10 putaran), AES-192 (12 putaran), dan AES-256 (14 putaran).
+  \item \textbf{Mode Operasi}: ECB (rentan pola data berulang, dilarang untuk multi-blok), CBC (chaining dengan IV acak tak terprediksi, perambatan galat 2 blok, rentan padding oracle tanpa otentikasi), CFB (self-synchronizing stream), OFB (synchronous stream, tanpa perambatan galat), CTR (keystream dari enkripsi counter/nonce, paralelisasi komputasi penuh, random access), dan GCM (standar modern AEAD memadukan CTR dan GHASH $\mathrm{GF}(2^{128})$ untuk integritas dan kerahasiaan sekaligus).
+  \item \textbf{Ragam Cipher Blok dan Aplikasi}: GOST 28147-89 (standar Soviet 32 putaran, kunci 256 bit), RC5 dan RC6 (rotasi bergantung data dan perkalian kuadratik modular), Blowfish (Feistel 16 putaran dengan S-box berbasis digit $\pi$), Twofish (Feistel 16 putaran dengan matriks MDS dan S-box dinamis), Serpent (SPN 32 putaran dengan bitslicing paralel, margin keamanan tertinggi), dan MARS (arsitektur heterogen IBM). Di dunia nyata, kriptografi simetris mengamankan transaksi ATM (PIN block ISO 9564, HSM, 3DES/AES, MAC) dan komunikasi nirkabel telepon seluler (A5/1 pada GSM, Kasumi pada 3G, SNOW 3G/ZUC/AES pada 4G, dan AES-256 pada 5G).
+\end{itemize}
+\end{rangkuman}
+
+% ============================================================
+% Persiapan untuk Bab Berikutnya
+% ============================================================
+\begin{transition}
+Setelah menguasai prinsip kriptografi modern simetris, kita akan beralih ke mekanisme yang memungkinkan pertukaran kunci secara aman melalui saluran publik dalam \textbf{Bab VI: Kriptografi Asimetris (Kunci Publik)}.
+\end{transition}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+
+\end{document}

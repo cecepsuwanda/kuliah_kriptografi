@@ -1,0 +1,108 @@
+\section{Kriptografi Kurva Eliptik (\textit{Elliptic Curve Cryptography} - ECC)}
+
+\begin{subcpmk}
+  \item Mahasiswa mampu menganalisis landasan matematis kurva eliptik atas medan hingga, memahami operasi penjumlahan titik (\textit{point addition}) dan perkalian skalar, serta membandingkan efisiensi keamanan ECC terhadap RSA dan ElGamal.
+\end{subcpmk}
+
+\noindent\textit{Rujukan:} Munir \cite{munir2019,munir_slides_itb}; HAC Bab~8 \cite{hac_online}; Katz \& Lindell \cite{katz2020}; Boneh \cite{boneh_cs255}.
+
+\subsection{Konsep Dasar Kurva Eliptik}
+
+\crypt{Elliptic Curve Cryptography} (ECC) adalah pendekatan kriptografi asimetris yang didasarkan pada struktur aljabar dari kurva eliptik atas medan hingga (\textit{finite fields}). Berbeda dengan RSA dan ElGamal yang menggunakan operasi eksponensiasi modular, ECC menggunakan operasi geometri titik-titik pada kurva.
+
+Persamaan umum kurva eliptik yang digunakan dalam kriptografi (dalam bentuk Weierstraß) adalah:
+\begin{equation}
+  y^2 = x^3 + ax + b
+\end{equation}
+dengan syarat $4a^3 + 27b^2 \neq 0$ untuk memastikan kurva tidak memiliki titik singular (titik tajam atau titik potong diri).
+
+Dalam implementasi kriptografi, kurva ini didefinisikan atas medan hingga $\mathrm{GF}(p)$ (di mana $p$ adalah bilangan prima besar), sehingga persamaannya menjadi:
+\begin{equation}
+  y^2 \equiv x^3 + ax + b \pmod{p}
+\end{equation}
+Himpunan semua titik $(x, y)$ yang memenuhi persamaan tersebut, ditambah dengan satu titik spesial yang disebut \textbf{Titik Tak Hingga} (\textit{Point at Infinity}, dilambangkan dengan $\mathcal{O}$), membentuk sebuah Grup Abelian.
+
+\subsection{Operasi Grup pada Kurva Eliptik}
+
+Operasi utama dalam ECC bukanlah perkalian bilangan, melainkan \textbf{Penjumlahan Titik} (\textit{Point Addition}).
+
+\subsubsection{Penjumlahan Titik (\textit{Point Addition})}
+Jika dua titik $P$ dan $Q$ berada pada kurva, maka jumlah mereka $P + Q = R$ didefinisikan secara geometris sebagai berikut:
+\begin{enumerate}
+    \item Tarik garis lurus yang menghubungkan titik $P$ dan $Q$.
+    \item Garis tersebut akan memotong kurva di satu titik ketiga, sebut saja $-R$.
+    \item Refleksikan titik $-R$ terhadap sumbu $x$ untuk mendapatkan titik $R$.
+\end{enumerate}
+
+\subsubsection{Penggandaan Titik (\textit{Point Doubling})}
+Jika $P = Q$, maka garis yang digunakan adalah garis \textbf{tangen} kurva di titik $P$. Hasil refleksi dari titik potong garis tangen tersebut dengan kurva adalah $2P$.
+
+\subsubsection{Perkalian Skalar (\textit{Scalar Multiplication})}
+Operasi yang paling krusial bagi keamanan ECC adalah perkalian skalar:
+\[ Q = kP = \underbrace{P + P + \dots + P}_{k \text{ kali}} \]
+Di mana $k$ adalah bilangan bulat (skalar) dan $P$ adalah titik pada kurva.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{example-image-a}
+  \caption{Ilustrasi geometris penjumlahan titik ($P+Q$) dan penggandaan titik ($2P$) pada kurva eliptik.}
+  \label{fig:ecc-geometry}
+\end{figure}
+
+\subsection{Masalah Logaritma Diskret Kurva Eliptik (ECDLP)}
+
+Keamanan ECC bersandar pada \textbf{Elliptic Curve Discrete Logarithm Problem} (ECDLP):
+\begin{quote}
+Diberikan dua titik $P$ dan $Q$ pada kurva eliptik, sangat sulit untuk menemukan bilangan bulat $k$ sedemikian sehingga $Q = kP$, meskipun $P$ dan $Q$ diketahui.
+\end{quote}
+
+ECDLP jauh lebih sulit dipecahkan dibandingkan DLP standar (pada ElGamal) atau faktorisasi prima (pada RSA). Akibatnya, ECC dapat memberikan tingkat keamanan yang sama dengan kunci yang jauh lebih pendek.
+
+\subsection{Implementasi Kunci Publik ECC}
+
+\begin{enumerate}
+    \item \textbf{Parameter Global}: Pilih kurva (nilai $a, b$ dan prima $p$) serta sebuah titik dasar $G$ (\textit{Base Point}) yang memiliki orde besar $n$.
+    \item \textbf{Pembangkitan Kunci}:
+    \begin{itemize}
+        \item Pilih kunci privat $d$ secara acak ($1 < d < n$).
+        \item Hitung kunci publik $Q = dG$ (menggunakan perkalian skalar).
+    \end{itemize}
+    \item \textbf{Kunci Publik}: $Q$ (sepasang koordinat $x, y$).
+    \item \textbf{Kunci Privat}: $d$ (bilangan bulat).
+\end{enumerate}
+
+\subsection{Perbandingan Efisiensi Keamanan: RSA vs ECC}
+
+Keunggulan utama ECC adalah efisiensi ukuran kunci. Tabel berikut menunjukkan perbandingan panjang kunci untuk mencapai tingkat keamanan yang setara (berdasarkan standar NIST):
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Tingkat Keamanan (bit)} & \textbf{Panjang Kunci RSA (bit)} & \textbf{Panjang Kunci ECC (bit)} \\
+    \midrule
+    80 & 1024 & 160 \\
+    112 & 2048 & 224 \\
+    128 & 3072 & 256 \\
+    192 & 7680 & 384 \\
+    256 & 15360 & 512 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Perbandingan panjang kunci RSA dan ECC untuk tingkat keamanan yang setara.}
+  \label{tab:rsa-vs-ecc}
+\end{table}
+
+\begin{catatan}
+Karena kunci yang lebih pendek, ECC membutuhkan memori lebih sedikit, bandwidth lebih rendah, dan daya komputasi yang lebih ringan, sehingga menjadi standar utama untuk keamanan pada perangkat mobile, IoT, dan sertifikat SSL/TLS modern (melalui ECDSA dan ECDH).
+\end{catatan}
+
+\begin{aktivitas}
+  \item \textbf{Eksplorasi Kurva}: Gunakan kalkulator kurva eliptik daring untuk mencoba operasi penjumlahan titik pada kurva $y^2 = x^3 + 2x + 2$ atas $\mathrm{GF}(17)$. Hitunglah $2P$ jika $P = (5, 1)$.
+\end{aktivitas}
+
+\begin{latihan}
+  \item Jelaskan mengapa operasi $Q = kP$ disebut sebagai \textit{one-way function} dalam konteks ECC!
+  \item Berikan analisis mengapa ECC lebih disarankan daripada RSA untuk pengamanan perangkat IoT yang memiliki keterbatasan daya dan memori!
+  \item Jika sebuah sistem menggunakan kurva eliptik dengan titik dasar $G$ yang memiliki orde sangat kecil, apa risiko keamanan yang mungkin terjadi?
+\end{latihan}

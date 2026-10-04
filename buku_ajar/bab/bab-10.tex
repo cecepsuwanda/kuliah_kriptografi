@@ -1,0 +1,146 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\chapter{Pembangkit Bilangan Acak dan Steganografi}
+
+\begin{subcpmk}
+  \item Sub-CPMK 6.1: Membedakan PRNG dan TRNG serta menguji keacakan deret bit
+  \item Sub-CPMK 7.1: Mengimplementasikan metode LSB untuk steganografi pada citra digital
+\end{subcpmk}
+
+% ============================================================
+% MATERI POKOK
+% ============================================================
+\input{bab/bab-10/section-10-1}
+\input{bab/bab-10/section-10-2}
+\input{bab/bab-10/section-10-3}
+
+% ============================================================
+% AKTIVITAS PEMBELAJARAN
+% ============================================================
+
+\begin{aktivitas}
+  \item \textbf{RNG}: Bandingkan output \texttt{rand()} dengan CSPRNG (\texttt{/dev/urandom} atau OpenSSL). Amati pola dengan visualisasi sederhana.
+
+  \item \textbf{Praktikum C}: Implementasikan LCG dan uji periode untuk parameter berbeda.
+
+  \item \textbf{Steganografi}: Implementasikan LSB embedding pada citra BMP/PNG. Sembunyikan pesan pendek, ekstrak, dan verifikasi.
+
+  \item \textbf{Steganalis}: Diberikan citra asli dan citra dengan LSB stego, bandingkan histogram atau statistik LSB.
+\end{aktivitas}
+
+% ============================================================
+% LATIHAN DAN REFLEKSI
+% ============================================================
+
+\begin{latihan}
+  \item Bedakan PRNG dan TRNG. Kapan masing-masing digunakan?
+
+  \item Mengapa LCG tidak aman untuk kriptografi? Apa prinsip Blum Blum Shub?
+
+  \item Jelaskan uji keacakan NIST. Apakah lolos uji menjamin keamanan kriptografis?
+
+  \item Jelaskan metode LSB untuk steganografi. Berapa kapasitas maksimum untuk citra 800$\times$600 RGB?
+
+  \item Bedakan steganografi dan watermarking.
+
+  \item Implementasikan dalam C/Python: LSB embedding pada file citra.
+\end{latihan}
+
+% ============================================================
+% ASESMEN
+% ============================================================
+
+\begin{asesmen}
+\textbf{Instrumen Penilaian untuk Sub-CPMK 6.1, 7.1}
+
+\textbf{A. Essay}
+
+\begin{enumerate}
+  \item Bedakan PRNG dan TRNG. Mengapa \texttt{rand()} tidak boleh dipakai untuk kunci?
+  \item Jelaskan prinsip LSB steganografi. Apa kelemahannya terhadap steganalis?
+\end{enumerate}
+
+\textbf{B. Implementasi}
+
+Implementasikan dalam C/Python: program yang menyembunyikan pesan teks dalam citra BMP/PNG dengan metode LSB, lalu mengekstrak kembali. Uji dengan citra dan pesan contoh.
+\end{asesmen}
+
+% ============================================================
+% CHECKLIST KOMPETENSI
+% ============================================================
+
+\begin{checklist}
+  \item Saya dapat membedakan PRNG dan TRNG
+  \item Saya memahami LCG dan Blum Blum Shub
+  \item Saya memahami pentingnya uji keacakan dan CSPRNG untuk kriptografi
+  \item Saya dapat mengimplementasikan metode LSB untuk steganografi pada citra
+  \item Saya memahami perbedaan steganografi dan watermarking
+\end{checklist}
+
+% ============================================================
+% RANGKUMAN
+% ============================================================
+
+\begin{rangkuman}
+Bab ini membahas pembangkit bilangan acak (TRNG vs PRNG, uji keacakan, Blum Blum Shub) dan steganografi (LSB, kapasitas, deteksi). RNG krusial untuk keamanan kriptografi; steganografi menyembunyikan informasi dalam media lain.
+
+\textbf{Poin Kunci:}
+\begin{itemize}
+  \item TRNG: sumber fisik, tidak dapat diprediksi; PRNG: algoritma deterministik
+  \item Uji keacakan: NIST SP 800-22, statistical tests
+  \item Blum Blum Shub: CSPRNG yang dapat dibuktikan keamanannya
+  \item LSB steganografi: embedding dalam bit tidak signifikan
+\end{itemize}
+
+\textbf{Kata Kunci}: \crypt{TRNG}, \crypt{PRNG}, \crypt{Blum Blum Shub}, \crypt{Steganografi}, \crypt{LSB}, \crypt{Keacakan}
+\end{rangkuman}
+
+% ============================================================
+% Persiapan untuk Bab Berikutnya
+% ============================================================
+
+\begin{transition}
+Setelah mempelajari kriptanalisis dan topik lanjutan, kita siap untuk memasuki \textbf{Bab X: Evaluasi dan Integrasi Kompetensi}.
+
+Dalam Bab X, kita akan mengintegrasikan semua pengetahuan yang telah dipelajari:
+\begin{itemize}
+  \item \textbf{Integrasi Konsep}: Menghubungkan semua bab dalam sistem lengkap
+  \item \textbf{Studi Kasus}: Menganalisis sistem keamanan nyata
+  \item \textbf{Evaluasi Kompetensi}: Validasi pencapaian semua Sub-CPMK
+  \item \textbf{Refleksi Pembelajaran}: Persiapan untuk aplikasi lanjutan
+\end{itemize}
+
+\textbf{Integrasi Semua Bab (II-IX)}:
+\begin{itemize}
+  \item \textbf{Bab II}: Layanan keamanan $\text{--}$ fondasi kebutuhan keamanan
+  \item \textbf{Bab III}: Matematika $\text{--}$ alat untuk implementasi
+  \item \textbf{Bab IV-V}: Cipher $\text{--}$ teknik enkripsi klasik dan modern
+  \item \textbf{Bab VI}: Kunci publik $\text{--}$ solusi distribusi kunci
+  \item \textbf{Bab VII}: Hash dan MAC $\text{--}$ integrity dan authenticity
+  \item \textbf{Bab VIII}: Protokol $\text{--}$ implementasi praktis
+  \item \textbf{Bab IX}: Kriptanalisis $\text{--}$ perspektif keamanan
+\end{itemize}
+
+\textbf{Sistem Keamanan Lengkap}:
+\begin{enumerate}
+  \item \textbf{Identifikasi}: Sertifikat digital dan PKI
+  \item \textbf{Enkripsi}: AES untuk data, RSA untuk kunci
+  \item \textbf{Integrity}: SHA-256 dan HMAC
+  \item \textbf{Authenticity}: Tanda tangan digital
+  \item \textbf{Protokol}: TLS untuk komunikasi
+  \item \textbf{Manajemen}: Siklus hidup kunci
+\end{enumerate}
+
+\textbf{Preview}: Di Bab X, kita akan melihat bagaimana semua komponen kriptografi bekerja sama dalam sistem keamanan nyata. Kita akan menganalisis studi kasus seperti HTTPS, email aman, dan sistem pembayaran. Kita akan juga mengevaluasi pemahaman kita tentang semua konsep dan mempersiapkan diri untuk aplikasi kriptografi dalam dunia nyata atau penelitian lebih lanjut.
+
+Setelah Bab X, Anda akan memiliki pemahaman komprehensif tentang kriptografi $\text{--}$ dari matematika dasar hingga implementasi praktis, dari desain cipher hingga analisis keamanan. Ini adalah fondasi yang kuat untuk karim di keamanan siber atau penelitian lanjutan dalam bidang kriptografi.
+\end{transition}
+
+\ifSubfilesClassLoaded{
+  \renewcommand{\bibname}{Daftar Pustaka}
+  \bibliographystyle{plain}
+  \bibliography{../references}
+}{}
+
+\end{document}
