@@ -13,3 +13,11 @@ RC5 menggunakan operasi XOR, penjumlahan modulo $2^w$, dan rotasi bit sirkuler.
 \subsection{RC6}
 RC6 adalah pengembangan dari RC5 yang dirancang untuk kompetisi AES. RC6 beroperasi pada blok 128-bit dengan kunci variabel (128, 192, hingga 2040 bit). Perbedaan utama dengan RC5 adalah penggunaan operasi \textbf{perkalian modulo $2^w$} untuk meningkatkan difusi.
 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth, height=0.8\textheight, keepaspectratio]{figures/putaran-rc5.png}
+    \caption{Satu putaran algoritma RC5: operasi XOR, rotasi bit ke kiri, dan penjumlahan dengan konstanta, diikuti pertukaran posisi kedua kata}
+    \label{fig:putaran-rc5}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

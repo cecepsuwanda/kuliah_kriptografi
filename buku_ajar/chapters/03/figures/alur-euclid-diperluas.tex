@@ -1,0 +1,39 @@
+% Alur Algoritma Euclidean dan pemakaiannya untuk mencari invers modulo.
+% Dirujuk dari section-01.tex dengan \input{figures/alur-euclid-diperluas}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center, font=\small,
+                      inner sep=5pt, minimum width=7.2cm},
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+    ]
+        \node[kotak, fill=gray!10] (masuk) at (0,0)
+            {Masukan $a$ dan $n$ dengan $0 < a < n$};
+        \node[kotak, fill=orange!12] (bagi) at (0,-1.5)
+            {$r \leftarrow a \bmod n$; \quad $a \leftarrow n$; \quad $n \leftarrow r$};
+        \node[kotak, fill=orange!12] (cek) at (0,-3.0)
+            {Apakah $r = 0$?};
+        \node[kotak, fill=green!10] (pbb) at (0,-4.5)
+            {$\text{PBB}(a_0, n_0) = a$};
+        \node[kotak, fill=blue!6] (invers) at (0,-6.0)
+            {Substitusi balik: peroleh $x$ dengan $a_0 x \equiv 1 \pmod{n_0}$};
+
+        \draw[panah] (masuk) -- (bagi);
+        \draw[panah] (bagi) -- (cek);
+        \draw[panah] (cek) -- node[right, font=\scriptsize, fill=white, inner sep=1pt]
+            {ya} (pbb);
+        \draw[panah] (pbb) -- node[right, font=\scriptsize, fill=white, inner sep=1pt]
+            {PBB $= 1$} (invers);
+
+        % Simpai ulang selama sisa bagi belum nol
+        \draw[panah] (cek.east) -- (4.4,-3.0) -- (4.4,-1.5) -- (bagi.east)
+            node[midway, above, font=\scriptsize, fill=white, inner sep=1pt] {belum};
+
+        % Cabang kegagalan: PBB bukan 1
+        \node[kotak, fill=red!6] (gagal) at (0,-7.5)
+            {Jika $\text{PBB}(a_0, n_0) \neq 1$: invers modulo tidak ada};
+        \draw[panah] (invers) -- (gagal);
+    \end{tikzpicture}
+    \caption{Alur pencarian invers modulo: Algoritma Euclidean mengulang pembagian sampai sisa bagi nol untuk memperoleh PBB, lalu substitusi balik menghasilkan $x$ sedemikian sehingga $a x \equiv 1 \pmod{n}$}
+    \label{fig:alur-euclid-diperluas}
+\end{figure}

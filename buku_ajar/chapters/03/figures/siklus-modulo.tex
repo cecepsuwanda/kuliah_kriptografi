@@ -1,0 +1,24 @@
+% Ilustrasi siklus aritmetika modulo: menghitung 23 mod 7.
+% Dirujuk dari section-01.tex dengan \input{figures/siklus-modulo}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        titik/.style={circle, draw, fill=blue!8, font=\scriptsize,
+                      inner sep=1.2pt, minimum size=5.5mm},
+    ]
+        \def\radius{1.9}
+        % Lingkaran acuan (jam modulo 7)
+        \draw[gray!40, thin] (0,0) circle (\radius);
+        % Titik-titik sisa bagi 0 sampai 6
+        \foreach \i/\sudut in {0/90, 1/38.571, 2/-12.857, 3/-64.286,
+                               4/-115.714, 5/-167.143, 6/141.429} {
+            \node[titik] (p\i) at (\sudut:\radius) {\i};
+        }
+        % Arah pencacahan: berputar dari 0 melewati 1 lalu berhenti di 2
+        \draw[very thick, red!70, -{Latex[length=2.4mm]}]
+            (104:\radius+0.42) arc (104:-6:\radius+0.42);
+        \node[font=\small, align=center] at (0,0) {$23 \bmod 7$\\$= 2$};
+    \end{tikzpicture}
+    \caption{Siklus aritmetika modulo 7: sisa bagi diperoleh dengan \textit{berputar} mengelilingi siklus, sehingga $23 \bmod 7$ berhenti pada titik 2}
+    \label{fig:siklus-modulo}
+\end{figure}

@@ -24,3 +24,19 @@ Kunci eksternal 56-bit diolah untuk menghasilkan 16 buah kunci putaran (\textit{
     \item \textbf{PC-2 (Permuted Choice 2)}: Memilih 48 bit dari hasil pergeseran untuk menjadi kunci putaran $K_i$.
 \end{itemize}
 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\linewidth, height=0.82\textheight, keepaspectratio]{figures/skema-enkripsi-des.png}
+    \caption{Skema menyeluruh enkripsi DES: permutasi awal, 16 putaran dengan subkunci hasil pembangkitan kunci, dan permutasi awal terbalik}
+    \label{fig:skema-enkripsi-des}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth, height=0.82\textheight, keepaspectratio]{figures/pembangkitan-kunci-des.png}
+    \caption{Pembangkitan kunci internal DES: permutasi PC-1 membagi kunci 64 bit menjadi dua register 28 bit, lalu pergeseran dan permutasi PC-2 menghasilkan subkunci $K_1$ sampai $K_{16}$}
+    \label{fig:pembangkitan-kunci-des}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

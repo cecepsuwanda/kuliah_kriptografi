@@ -13,7 +13,7 @@ Contoh: Pada Caesar Cipher, jika penyerang hanya memiliki cipherteks \texttt{KHO
 Penyerang memiliki sejumlah pasangan plainteks dan cipherteks yang berkoresponden ($P_i$ dan $C_i = E_k(P_i)$). Serangan ini sering terjadi jika sebagian isi pesan dapat ditebak, seperti \textit{header} file, protokol standar, atau salam pembuka email (misalnya "Dengan hormat").
 
 \subsection{Chosen-Plaintext Attack}
-Penyerang dapat memilih plainteks tertentu untuk dienkripsi oleh sistem dan mendapatkan cipherteksnya. Dengan memilih plainteks yang strategis (misalnya rangkaian huruf 'AAAAA'), penyerang dapat lebih mudah mendeduksi kunci.
+Penyerang dapat memilih plainteks tertentu untuk dienkripsi oleh sistem dan mendapatkan cipherteksnya. Dengan memilih plainteks yang strategis (misalnya rangkaian huruf 'AAAAA'), penyerang dapat lebih mudah mendeduksi kunci. Kasus nyatanya adalah penyerang yang memiliki akses ke mesin ATM: ia memasukkan PIN pilihannya sendiri berkali-kali, lalu mempelajari cipherteks yang dikirim mesin itu ke bank (lihat Gambar~\ref{fig:serangan-chosen-plaintext}).
 
 \subsection{Adaptive Chosen-Plaintext Attack}
 Variasi dari chosen-plaintext attack di mana penyerang dapat menyesuaikan plainteks berikutnya berdasarkan hasil cipherteks dari query sebelumnya. Penyerang belajar secara bertahap untuk menggali informasi kunci.
@@ -21,3 +21,19 @@ Variasi dari chosen-plaintext attack di mana penyerang dapat menyesuaikan plaint
 \subsection{Chosen-Ciphertext Attack}
 Penyerang dapat memilih cipherteks tertentu dan mendapatkan hasil dekripsinya melalui sebuah \textit{oracle} (sistem yang bisa mendekripsi). Informasi ini kemudian digunakan untuk memecahkan cipher atau menemukan kunci.
 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.78\linewidth, height=0.7\textheight, keepaspectratio]{figures/serangan-ciphertext-only.png}
+    \caption{Serangan \textit{ciphertext-only}: penyerang hanya berbekal cipherteks dan berupaya menurunkan plainteks aslinya}
+    \label{fig:serangan-ciphertext-only}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth, height=0.5\textheight, keepaspectratio]{figures/serangan-chosen-plaintext.png}
+    \caption{Serangan \textit{chosen-plaintext} pada mesin ATM: kriptanalis pertama mengubah PIN yang dimasukkan agar memperoleh pasangan plainteks--cipherteks, sementara kriptanalis kedua menyadap cipherteks itu untuk mendeduksi kunci $k$}
+    \label{fig:serangan-chosen-plaintext}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

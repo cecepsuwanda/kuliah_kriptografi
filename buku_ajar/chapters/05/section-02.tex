@@ -16,3 +16,11 @@ Karena tidak mungkin mengirimkan kunci sepanjang pesan, \textit{keystream} diban
     \item \textbf{Block Cipher}: Memproses data dalam blok berukuran tetap (misal: 128 bit). Lebih kompleks dan umumnya digunakan untuk enkripsi file atau database.
 \end{itemize}
 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth, height=0.7\textheight, keepaspectratio]{figures/diagram-blok-stream-cipher.png}
+    \caption{Diagram blok cipher alir: pengirim dan penerima membangkitkan keystream yang sama, lalu keystream di-XOR dengan plainteks saat enkripsi dan dengan cipherteks saat dekripsi}
+    \label{fig:diagram-blok-stream-cipher}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

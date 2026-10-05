@@ -10,3 +10,11 @@ DES memiliki efek longsoran yang kuat: perubahan satu bit pada plainteks atau ku
 \subsection{Kunci Lemah DES}
 Terdapat beberapa kunci yang disebut \textit{weak keys} di mana enkripsi dan dekripsi menjadi operasi yang sama ($E_K(E_K(x)) = x$). Penggunaan kunci ini harus dihindari karena menurunkan tingkat keamanan.
 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth, height=0.82\textheight, keepaspectratio]{figures/fungsi-f-des.png}
+    \caption{Komputasi fungsi $f$ pada DES: ekspansi blok kanan 32 bit menjadi 48 bit, XOR dengan subkunci, substitusi melalui delapan S-box, dan permutasi $P$}
+    \label{fig:fungsi-f-des}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

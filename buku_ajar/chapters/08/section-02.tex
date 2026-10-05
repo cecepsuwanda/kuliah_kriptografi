@@ -33,3 +33,27 @@ Setiap putaran utama terdiri dari empat transformasi:
 Putaran terakhir hampir sama dengan putaran utama, namun \textbf{tanpa tahap MixColumns}:
 \[ \text{SubBytes} \rightarrow \text{ShiftRows} \rightarrow \text{AddRoundKey} \]
 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\linewidth, height=0.82\textheight, keepaspectratio]{figures/alur-enkripsi-aes.png}
+    \caption{Alur enkripsi AES-128: kunci diekspansi menjadi \textit{round key}, dan \textit{state} diproses melalui SubBytes, ShiftRows, serta MixColumns selama 10 putaran}
+    \label{fig:alur-enkripsi-aes}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.72\linewidth, height=0.82\textheight, keepaspectratio]{figures/subbytes-aes.png}
+    \caption{Transformasi SubBytes pada AES: setiap byte matriks \textit{state} disubstitusi melalui tabel S-box menjadi byte baru}
+    \label{fig:subbytes-aes}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\linewidth, height=0.82\textheight, keepaspectratio]{figures/shiftrows-aes.png}
+    \caption{Transformasi ShiftRows pada AES: baris ke-$r$ matriks \textit{state} digeser secara siklik ke kiri sejauh $r$ byte}
+    \label{fig:shiftrows-aes}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
