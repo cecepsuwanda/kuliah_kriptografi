@@ -1,0 +1,11 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item Cipher klasik dibedakan atas substitusi (Caesar, monoalphabetic, Vigen\`ere, Affine) dan transposisi (kolom); keduanya bekerja pada huruf, bukan pada blok bit.
+    \item Cipher abjad-tunggal mudah dipecahkan karena distribusi frekuensi huruf plainteks tetap tampak pada cipherteks (analisis frekuensi, bigram, dan trigram).
+    \item Vigen\`ere dan cipher abjad-majemuk meratakan frekuensi, tetapi dapat dipecahkan dengan metode Kasiski bila pesan cukup panjang dan kunci diulang periodik.
+    \item Playfair dan Hill adalah polygram cipher; Hill berbasis aljabar linier $\mathbf{C}=\mathbf{KP}\bmod 26$ dan hanya dapat didekripsi jika $\det(\mathbf{K})$ relatif prima dengan 26.
+    \item Affine Cipher memakai fungsi linier $C\equiv mP+b\pmod n$ dan mensyaratkan $\gcd(m,n)=1$ agar invers modulo ada.
+    \item Enigma adalah mesin elektromekanik abjad-majemuk berperiode sangat panjang; kelemahannya dimanfaatkan kriptanalisis Polandia--Inggris (mesin \textit{Bombe} Turing).
+    \item One-Time Pad (Vernam 1917; dibuktikan Shannon 1949) adalah satu-satunya cipher berkerahasiaan sempurna, dengan syarat kunci acak sejati, panjang kunci sama dengan panjang pesan, dan kunci hanya dipakai sekali.
+    \item Kelemahan praktis OTP: pembangkitan dan distribusi kunci sepanjang pesan sulit, serta pemakaian ulang kunci (\textit{two-time pad}) langsung membocorkan XOR dua plainteks.
+\end{itemize}

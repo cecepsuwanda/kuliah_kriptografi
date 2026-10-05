@@ -1,0 +1,40 @@
+% Ilustrasi SubBytes: satu byte matriks state dipetakan melalui S-box menjadi
+% byte baru. Digambar ulang sebagai diagram vektor; penggambaran aslinya dari
+% slide Munir ditangkap pada bingkai animasi yang sorotannya meleset sehingga
+% kotak sorot menutupi sel tetangga dan panahnya menunjuk baris yang salah.
+% Dirujuk dari section-02.tex dengan \input{figures/subbytes-aes}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        sel/.style={draw, minimum size=1.15cm, inner sep=0pt, font=\small},
+        sorot/.style={sel, fill=blue!55, text=white},
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+    ]
+        % Grid state (kiri) dan state' (kanan). Indeks mengikuti penamaan slide:
+        % baris pertama a_00..a_03, dan seterusnya.
+        \foreach \i in {0,1,2,3} {
+            \foreach \j in {0,1,2,3} {
+                \node[sel] (a\i\j) at ({\j*1.15}, {-\i*1.15}) {$a_{\i\j}$};
+                \node[sel] (b\i\j) at ({\j*1.15+8.05}, {-\i*1.15}) {$b_{\i\j}$};
+            }
+        }
+        % Byte yang sedang disubstitusi ditandai. Dipilih byte pada baris
+        % terakhir agar panahnya dapat keluar tepat di tepi bawah grid tanpa
+        % melintasi sel atau label lain.
+        \node[sorot] at (a31) {$a_{31}$};
+        \node[sorot] at (b31) {$b_{31}$};
+
+        \node[font=\small] at (1.725, 1.15) {state};
+        \node[font=\small] at (9.775, 1.15) {state$'$};
+
+        \node[draw, thick, fill=white, minimum width=1.9cm, minimum height=1.1cm,
+              font=\small] (sbox) at (5.75,-5.3) {S-box};
+
+        % Byte tersorot masuk ke S-box, lalu keluar sebagai byte hasil substitusi.
+        \draw[panah] (a31.south) to[out=-90, in=175] (sbox.west);
+        \draw[panah] (sbox.east) to[out=5, in=-90] (b31.south);
+    \end{tikzpicture}
+    \caption{Transformasi SubBytes pada AES: setiap byte matriks \textit{state} disubstitusi melalui tabel S-box menjadi byte baru}
+    \label{fig:subbytes-aes}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

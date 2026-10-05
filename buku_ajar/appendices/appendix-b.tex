@@ -1,0 +1,71 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Contoh Tugas, Portofolio, dan Rubrik Refleksi}
+
+Lampiran ini memberi contoh instrumen yang dapat dipakai dosen pengampu
+sekaligus contoh format bagi mahasiswa.
+
+\section{Contoh Tugas}
+
+\begin{enumerate}[label=\textbf{Tugas \arabic*.}, leftmargin=*]
+    \item \textbf{Kriptografi klasik (Sub-CPMK 1.1).} Enkripsikan plainteks
+          \code{SERANGPAGI} dengan cipher Vigen\`ere berkunci \code{KUNCI},
+          kemudian dekripsikan kembali. Tunjukkan tabel konversi huruf--angka
+          dan setiap langkah substitusi. Jelaskan mengapa cipher ini lebih kuat
+          daripada Caesar.
+    \item \textbf{Kriptografi asimetris (Sub-CPMK 1.3).} Dengan $p = 11$ dan
+          $q = 13$, bangkitkan sepasang kunci RSA. Enkripsikan pesan
+          $m = 7$, lalu dekripsikan cipherteksnya. Tunjukkan perhitungan
+          modulus, fungsi Euler, dan invers modulo beserta pemeriksaannya.
+    \item \textbf{Integritas dan otentikasi (Sub-CPMK 1.4).} Jelaskan mengapa
+          fungsi hash saja tidak cukup menjamin otentikasi pesan, sehingga
+          diperlukan MAC atau tanda tangan digital. Berikan satu contoh
+          serangan bila hash dipakai tanpa kunci.
+\end{enumerate}
+
+\section{Panduan Portofolio}
+
+Portofolio adalah kumpulan bukti belajar satu semester. Susunannya sebagai
+berikut.
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Halaman sampul}---identitas dan judul portofolio.
+    \item \textbf{Daftar isi}---peta bukti yang dikumpulkan.
+    \item \textbf{Jawaban latihan}---pengerjaan \textit{Latihan dan Refleksi}
+          pada setiap bab, disusun menurut nomor bab.
+    \item \textbf{Laporan praktikum}---hasil \textit{Aktivitas Rekomendasi}
+          beserta hasil verifikasi.
+    \item \textbf{Laporan proyek}---studi kasus penerapan kriptografi.
+    \item \textbf{Lembar refleksi}---refleksi ketercapaian kompetensi tiap bab
+          (lihat rubrik di bawah).
+\end{enumerate}
+
+\section{Rubrik Refleksi}
+
+\begin{table}[H]
+\centering
+\caption{Rubrik penilaian lembar refleksi}
+\label{tab:rubrik-refleksi}
+\footnotesize
+\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{1.6cm}|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Kriteria} & \textbf{Bobot} & \textbf{Indikator} \\
+\hline
+Kedalaman refleksi & 30\% & Menyebut apa yang sudah dan belum dipahami secara spesifik. \\
+\hline
+Keterkaitan dengan Sub-CPMK & 25\% & Menghubungkan refleksi dengan Sub-CPMK bab terkait. \\
+\hline
+Rencana perbaikan & 25\% & Menyusun langkah lanjutan yang konkret dan dapat diukur. \\
+\hline
+Kesadaran diri & 20\% & Menilai capaian sendiri secara jujur dan beralasan. \\
+\hline
+\end{tabularx}
+\end{table}
+
+Lembar refleksi yang lengkap memuat tiga bagian: apa yang dipelajari, bagian
+yang masih sulit, dan rencana tindak lanjut. Ketiganya dinilai terhadap rubrik
+di atas.
+
+\end{document}

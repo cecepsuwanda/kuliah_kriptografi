@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item DES adalah \textit{block cipher} blok 64 bit dengan kunci eksternal 64 bit yang hanya 56 bit dipakai untuk enkripsi (8 bit sisanya paritas), memakai jaringan Feistel 16 putaran.
+    \item Alur enkripsi: permutasi awal (IP), 16 putaran \textit{enciphering}, lalu invers permutasi awal ($\text{IP}^{-1}$).
+    \item Fungsi putaran $f$ memperluas blok kanan 32 bit menjadi 48 bit, di-XOR dengan subkunci, disubstitusi melalui delapan S-box (6 bit $\to$ 4 bit), lalu dipermutasi oleh $P$.
+    \item Pembangkitan kunci: PC-1 membuang bit paritas dan membagi kunci menjadi $C_0,D_0$ (28 bit), pergeseran siklik per putaran, dan PC-2 memilih 48 bit menjadi $K_i$.
+    \item Sifat Feistel yang reversibel membuat dekripsi memakai algoritma yang sama dengan urutan kunci terbalik $K_{16},\dots,K_1$, tanpa fungsi dekripsi terpisah.
+    \item Keamanan DES terbatas pada ruang kunci $2^{56}$ yang kini terlalu kecil untuk pencarian menyeluruh dan adanya \textit{weak keys}; efek longsorannya kuat sehingga perubahan satu bit plainteks atau kunci menyebar ke sekitar setengah bit cipherteks.
+    \item Double DES ($2^{112}$) tumbang oleh \textit{meet-in-the-middle} sekitar $2^{57}$; Triple DES EDE (2 kunci 112 bit, 3 kunci 168 bit) memperpanjang umur DES.
+\end{itemize}

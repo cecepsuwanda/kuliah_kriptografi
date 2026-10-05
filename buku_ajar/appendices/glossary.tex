@@ -4,6 +4,9 @@
 
 \chapter*{Glosarium}
 \addcontentsline{toc}{chapter}{Glosarium}
+% \chapter* tidak menyetel tanda halaman; tanpa baris ini kepala halaman
+% masih memperlihatkan judul dari bagian sebelumnya.
+\markboth{\MakeUppercase{Glosarium}}{\MakeUppercase{Glosarium}}
 
 \begin{description}
     \item[Akar Primitif] Bilangan $g$ sedemikian sehingga perpangkatan $g^1, g^2, \dots, g^{p-1} \pmod{p}$ menghasilkan semua nilai dari $1$ hingga $p-1$.

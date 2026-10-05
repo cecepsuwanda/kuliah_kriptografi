@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item Kurva eliptik $y^2 = x^3 + ax + b$ dengan $4a^3 + 27b^2 \neq 0$; himpunan titiknya bersama titik tak hingga $\mathcal{O}$ membentuk grup abelian $\langle G, + \rangle$.
+    \item Penjumlahan titik $P + Q = R$ memakai gradien $m = (y_q - y_p)/(x_q - x_p)$, sedangkan penggandaan $2P$ memakai gradien garis singgung $m = (3x_p^2 + a)/(2y_p)$, dengan $x_r = m^2 - x_p - x_q$ dan $y_r = m(x_p - x_r) - y_p$.
+    \item Pada medan berhingga $\text{GF}(p)$ semua operasi dilakukan modulo prima $p$, dan pembagian diganti perkalian dengan invers modulo, misalnya $m \equiv (3x_p^2 + a)(2y_p)^{-1} \bmod p$.
+    \item Keamanan ECC bersandar pada \textbf{ECDLP}: diberikan $P$ dan $Q = kP$, sangat sukar menemukan skalar $k$ jika $k$ sangat besar.
+    \item Kunci privat berupa integer $k \in [1, p-1]$ dan kunci publik berupa titik $Q = kP$; ECDH menghasilkan kunci bersama $K = abB$, sedangkan ECEG mengenkripsi pesan sebagai pasangan titik $[(kB), (P_M + kP_B)]$.
+    \item ECC jauh lebih efisien daripada RSA: kunci 256 bit memberi keamanan setara RSA 3072 bit, sehingga cocok untuk \textit{smart card} dan perangkat IoT.
+    \item Pesan teks harus dikodekan lebih dulu menjadi titik kurva, misalnya dengan metode Koblitz $x = mk + \text{offset}$ sampai diperoleh $y$ yang valid.
+\end{itemize}

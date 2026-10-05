@@ -11,6 +11,21 @@ HMAC adalah konstruksi MAC yang menggunakan fungsi hash kriptografis (seperti SH
 
 \input{figures/skema-hmac}
 
+\subsection{Rumus Lengkap HMAC}
+HMAC didefinisikan secara eksplisit sebagai
+\[ \mathrm{HMAC}(K,m) = H\big((K^{+}\oplus \mathrm{opad}) \,\|\, H((K^{+}\oplus \mathrm{ipad}) \,\|\, m)\big), \]
+dengan $K^{+}$ adalah kunci $K$ yang dipad nol hingga sepanjang satu blok hash ($B$ byte: 64 untuk SHA-256, 128 untuk SHA-512), atau di-hash lebih dulu bila $|K| > B$. Konstanta $\mathrm{ipad} = \code{0x36}$ dan $\mathrm{opad} = \code{0x5C}$ diulang $B$ kali, sehingga $H$ dipanggil dua kali melalui dua jalur kunci efektif yang berbeda \citep{stallings2017,menezes1996}.
+
+\subsection{Mengapa Bukan \texorpdfstring{$H(K\|m)$}{H(K||m)}?}
+Menempelkan kunci di depan pesan, $H(K\|m)$, rentan \textbf{length extension}: karena sifat Merkle--Damgård, penyerang yang mengetahui $H(K\|m)$ dan panjang $K$ dapat menghitung $H(K\|m\|\mathit{pad}\|m')$ tanpa mengetahui $K$. HMAC menutup celah ini sebab $h_1 = H((K\oplus\mathrm{ipad})\|m)$ belum menjadi tag; tag baru terbentuk setelah hash lapis kedua dengan opad. HMAC tetap aman selama fungsi kompresi dianggap tahan \textit{pseudorandom} \citep{katz2020}.
+
+\subsection{MAC vs Tanda Tangan Digital vs Checksum}
+\begin{itemize}
+    \item \textbf{Checksum/CRC}: mendeteksi galat acak, tanpa kunci. Penyerang bebas menghitung ulang nilainya, jadi integritas terhadap manipulasi tidak terjamin.
+    \item \textbf{MAC/HMAC}: memakai kunci simetris bersama. Menjamin integritas dan otentikasi pesan, tetapi \emph{tidak} menjamin \textit{non-repudiation} karena kedua pihak memegang kunci yang sama.
+    \item \textbf{Tanda tangan digital}: memakai kunci privat/publik. Menjamin integritas, otentikasi, dan \textit{non-repudiation}, tetapi biaya komputasinya jauh lebih tinggi daripada MAC.
+\end{itemize}
+
 
 
 

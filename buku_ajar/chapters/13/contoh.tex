@@ -1,0 +1,37 @@
+\section{Contoh Terhitung}
+Setiap langkah berikut diverifikasi secara numerik dengan Python.
+
+\subsection{Enkripsi dan Dekripsi Merkle--Hellman}
+Kunci privat adalah barisan \textit{superincreasing}
+\[ W_{priv} = \{1, 2, 4, 9, 18, 36, 72, 144\}, \qquad \sum_{i=1}^{8} w_i = 286 . \]
+Pilih modulus $m = 293$ (lebih besar daripada $286$) dan pengali $n = 37$ dengan $\text{PBB}(37, 293) = 1$.
+Kunci publik dihitung dengan rumus $w'_i = (w_i \cdot n) \bmod m$:
+\[
+\begin{aligned}
+w'_1 &= (1 \cdot 37) \bmod 293 = 37,   & w'_2 &= (2 \cdot 37) \bmod 293 = 74, \\
+w'_3 &= (4 \cdot 37) \bmod 293 = 148,  & w'_4 &= (9 \cdot 37) \bmod 293 = 40, \\
+w'_5 &= (18 \cdot 37) \bmod 293 = 80,  & w'_6 &= (36 \cdot 37) \bmod 293 = 160, \\
+w'_7 &= (72 \cdot 37) \bmod 293 = 27,  & w'_8 &= (144 \cdot 37) \bmod 293 = 54 .
+\end{aligned}
+\]
+Jadi $W_{pub} = \{37, 74, 148, 40, 80, 160, 27, 54\}$.
+
+\textbf{Enkripsi.} Untuk blok plainteks $B = \code{10110010}$ (yaitu $b_1=1, b_2=0, \dots$),
+\[ C = \sum_{i=1}^{8} b_i w'_i = 1(37) + 0(74) + 1(148) + 1(40) + 0(80) + 0(160) + 1(27) + 0(54) = 252 . \]
+Blok kedua $B_2 = \code{01101001}$ menghasilkan $C_2 = 74 + 148 + 80 + 54 = 356$.
+
+\textbf{Dekripsi.} Hitung invers $n^{-1} \bmod m$: dari $37 \cdot 198 = 7326 = 25 \cdot 293 + 1$ diperoleh $n^{-1} = 198$. Kemudian
+\[ C' = (C \cdot n^{-1}) \bmod m, \qquad
+252 \cdot 198 \bmod 293 = 86, \qquad 356 \cdot 198 \bmod 293 = 168 . \]
+Pecahkan $86$ dengan algoritma \textit{greedy} pada $W_{priv}$ (dari elemen terbesar):
+\[
+\begin{aligned}
+144 > 86 &\Rightarrow b_8 = 0, && 72 \le 86 \Rightarrow b_7 = 1 \ (\text{sisa } 14), \\
+36 > 14 &\Rightarrow b_6 = 0, && 18 > 14 \Rightarrow b_5 = 0, \\
+9 \le 14 &\Rightarrow b_4 = 1 \ (\text{sisa } 5), && 4 \le 5 \Rightarrow b_3 = 1 \ (\text{sisa } 1), \\
+2 > 1 &\Rightarrow b_2 = 0, && 1 \le 1 \Rightarrow b_1 = 1 \ (\text{sisa } 0).
+\end{aligned}
+\]
+Diperoleh $B = \code{10110010}$, sama seperti plainteks semula; dengan cara yang sama $168$ mengembalikan $B_2 = \code{01101001}$.
+
+Penerima memulihkan plainteks \emph{tanpa} memecahkan \textit{knapsack} publik, karena transformasi $(C \cdot n^{-1}) \bmod m$ mengubahnya kembali menjadi \textit{superincreasing knapsack} yang mudah dipecahkan.

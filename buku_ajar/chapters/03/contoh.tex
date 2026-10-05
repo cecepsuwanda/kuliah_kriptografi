@@ -1,0 +1,41 @@
+\section{Contoh Terhitung}
+
+\begin{example}[Algoritma Euclidean dan invers modulo]
+\begin{enumerate}
+    \item \textbf{PBB dan koefisien B\'ezout dari pasangan $(1970,1066)$.} Terapkan algoritma pembagian berulang berikut untuk memperoleh sisa terakhirnya:
+    \[
+    \begin{aligned}
+    1970 &= 1 \cdot 1066 + 904\\
+    1066 &= 1 \cdot 904 + 162\\
+    904  &= 5 \cdot 162 + 94\\
+    162  &= 1 \cdot 94 + 68\\
+    94   &= 1 \cdot 68 + 26\\
+    68   &= 2 \cdot 26 + 16\\
+    26   &= 1 \cdot 16 + 10\\
+    16   &= 1 \cdot 10 + 6\\
+    10   &= 1 \cdot 6 + 4\\
+    6    &= 1 \cdot 4 + 2\\
+    4    &= 2 \cdot 2 + 0
+    \end{aligned}
+    \]
+    Sisa bukan nol terakhir adalah $2$, jadi $\text{PBB}(1970,1066) = 2$. Substitusi balik memberi koefisien B\'ezout
+    \[ 1970 \cdot (-204) + 1066 \cdot 377 = 2. \]
+    \item \textbf{Invers modulo $550 \bmod 1769$.} Karena $\text{PBB}(550,1769) = 1$, inversnya ada. Uji nilai $x = 550$:
+    \[ 550 \cdot 550 = 302\,500 = 171 \cdot 1769 + 1, \]
+    sehingga $550 \cdot 550 \equiv 1 \pmod{1769}$, yaitu $550^{-1} \equiv 550 \pmod{1769}$.
+\end{enumerate}
+\end{example}
+
+\begin{example}[Entropi Shannon sebuah distribusi]
+Pesan $X = \code{AABBCBDB}$ terdiri atas 8 simbol dengan peluang $p(A)=2/8$, $p(B)=4/8$, $p(C)=1/8$, dan $p(D)=1/8$. Substitusikan ke rumus entropi:
+\[
+\begin{aligned}
+H(X) &= -\sum_{i} p(x_i) \log_2 p(x_i)\\
+     &= -\left(\tfrac14 \log_2 \tfrac14 + \tfrac12 \log_2 \tfrac12
+        + \tfrac18 \log_2 \tfrac18 + \tfrac18 \log_2 \tfrac18\right)\\
+     &= -\left(\tfrac14(-2) + \tfrac12(-1) + \tfrac18(-3) + \tfrac18(-3)\right)\\
+     &= 1{,}75\ \text{bit/simbol}.
+\end{aligned}
+\]
+Karena entropi maksimum untuk 4 simbol adalah $\log_2 4 = 2$ bit/simbol, distribusi yang tidak seragam ini menghasilkan entropi yang lebih rendah dan karena itu lebih mudah dianalisis secara statistik.
+\end{example}

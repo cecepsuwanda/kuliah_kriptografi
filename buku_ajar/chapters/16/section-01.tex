@@ -12,3 +12,8 @@ Otentikasi adalah proses pembuktian identitas seorang pengguna atau sistem. Terd
 \subsection{Non-Repudiation (Nir-Sangkalan)}
 \textit{Non-repudiation} adalah jaminan bahwa pengirim pesan tidak dapat menyangkal telah mengirimkan pesan tersebut, dan penerima tidak dapat menyangkal telah menerima pesan tersebut. Hal ini dicapai melalui penggunaan tanda tangan digital.
 
+\subsection{Otentikasi Entitas vs Otentikasi Pesan}
+\textbf{Otentikasi entitas} membuktikan identitas pihak yang berkomunikasi pada saat sesi dibangun (misalnya \textit{login}), umumnya dengan tantangan \textit{nonce} agar tahan \textit{replay}. \textbf{Otentikasi pesan} membuktikan bahwa tiap pesan yang diterima benar-benar berasal dari entitas tersebut dan belum diubah; ini tugas MAC atau tanda tangan digital \citep{menezes1996}. Keduanya perlu: sesi yang sudah terotentikasi tetap dapat menerima pesan palsu bila tidak ada otentikasi per pesan.
+
+\textit{Non-repudiation} menuntut bukti yang dapat diverifikasi pihak ketiga, sehingga hanya dapat dicapai dengan tanda tangan digital (dan infrastruktur kunci publik), bukan dengan MAC yang kuncinya simetris \citep{stallings2017}.
+

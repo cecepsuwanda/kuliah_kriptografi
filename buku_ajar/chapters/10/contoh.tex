@@ -1,0 +1,29 @@
+\section{Contoh Terhitung}
+
+\begin{example}[Pembangkitan kunci RSA]
+Alice memilih dua bilangan prima kecil $p = 47$ dan $q = 71$.
+\begin{enumerate}
+    \item Hitung modulus:
+    \[ n = p \cdot q = 47 \times 71 = 3337. \]
+    \item Hitung fungsi Totient Euler:
+    \[ \phi(n) = (p-1)(q-1) = 46 \times 70 = 3220. \]
+    \item Pilih kunci publik $e = 79$; syaratnya terpenuhi karena $1 < 79 < 3220$ dan $\text{PBB}(79, 3220) = 1$.
+    \item Hitung kunci privat $d$ sebagai invers $e$ modulo $\phi(n)$:
+    \[ e \cdot d \equiv 1 \pmod{3220} \;\Longrightarrow\; d = \frac{1 + k\,\phi(n)}{e} = \frac{1 + 3220k}{79}. \]
+    Nilai $k = 1, 2, 3, \dots$ dicoba hingga pembilang habis dibagi 79; untuk $k = 25$,
+    \[ d = \frac{1 + 3220 \times 25}{79} = \frac{80501}{79} = 1019. \]
+    Pemeriksaan: $79 \times 1019 = 80501 = 1 + 25 \times 3220$.
+\end{enumerate}
+Kunci publik Alice adalah $(e, n) = (79, 3337)$ dan kunci privatnya $(d, n) = (1019, 3337)$; hanya $n$ dan $e$ yang boleh disebarkan.
+\end{example}
+
+\begin{example}[Enkripsi dan dekripsi RSA]
+Bob mengirim pesan $m = 16$ kepada Alice menggunakan kunci publik $(e, n) = (79, 3337)$.
+\begin{enumerate}
+    \item Enkripsi oleh Bob:
+    \[ c = m^e \bmod n = 16^{79} \bmod 3337 = 1493. \]
+    \item Dekripsi oleh Alice dengan kunci privat $(d, n) = (1019, 3337)$:
+    \[ m = c^d \bmod n = 1493^{1019} \bmod 3337 = 16. \]
+\end{enumerate}
+Plainteks $m = 16$ pulih dengan tepat. Untuk pesan yang lebih panjang, pesan dikodekan menjadi barisan digit lalu dipecah menjadi blok $m_i < n$ (misalnya $m_1 = 0704$) dan setiap blok dienkripsi secara terpisah.
+\end{example}

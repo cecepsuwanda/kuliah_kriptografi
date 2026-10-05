@@ -1,0 +1,46 @@
+\section{Contoh Terhitung}
+
+\begin{example}
+\textbf{Vigen\`ere Cipher.} Enkripsi plainteks \code{SERANGPAGI} dengan kunci \code{KUNCI}. Kunci diulang periodik sepanjang pesan sehingga menjadi \code{KUNCIKUNCI} ($|P|=|K|=10$). Konversi huruf ke angka ($A=0,\dots,Z=25$):
+\[
+\begin{array}{c|cccccccccc}
+P & 18 & 4 & 17 & 0 & 13 & 6 & 15 & 0 & 6 & 8\\
+K & 10 & 20 & 13 & 2 & 8 & 10 & 20 & 13 & 2 & 8
+\end{array}
+\]
+Hitung $C_i=(P_i+K_i)\bmod 26$ tiap posisi:
+\[
+\begin{aligned}
+(18+10)_{26}&=2=\text{C}, & (13+8)_{26}&=21=\text{V},\\
+(4+20)_{26}&=24=\text{Y}, & (6+10)_{26}&=16=\text{Q},\\
+(17+13)_{26}&=4=\text{E}, & (15+20)_{26}&=9=\text{J},\\
+(0+2)_{26}&=2=\text{C}, & (0+13)_{26}&=13=\text{N},\\
+(6+2)_{26}&=8=\text{I}, & (8+8)_{26}&=16=\text{Q}.
+\end{aligned}
+\]
+Jadi cipherteks adalah \code{CYECVQJNIQ}. Dekripsi mengembalikannya melalui $P_i=(C_i-K_i)\bmod 26$.
+\end{example}
+
+\begin{example}
+\textbf{Hill Cipher $2\times2$.} Matriks kunci $\mathbf{K}=\begin{pmatrix}3&3\\2&5\end{pmatrix}$ dengan $\det(\mathbf{K})=(3\cdot5)-(3\cdot2)=9$, dan $\gcd(9,26)=1$ sehingga $\mathbf{K}$ invertibel modulo 26. Enkripsi plainteks \code{HILL} sebagai dua vektor kolom: $\text{HI}=(7,8)$ dan $\text{LL}=(11,11)$.
+\[
+\mathbf{C}=\mathbf{KP}\pmod{26}
+\]
+\[
+\begin{pmatrix}3&3\\2&5\end{pmatrix}\begin{pmatrix}7\\8\end{pmatrix}=
+\begin{pmatrix}21+24\\14+40\end{pmatrix}=\begin{pmatrix}45\\54\end{pmatrix}\bmod 26=\begin{pmatrix}19\\2\end{pmatrix}=\text{TC}
+\]
+\[
+\begin{pmatrix}3&3\\2&5\end{pmatrix}\begin{pmatrix}11\\11\end{pmatrix}=
+\begin{pmatrix}33+33\\22+55\end{pmatrix}=\begin{pmatrix}66\\77\end{pmatrix}\bmod 26=\begin{pmatrix}14\\25\end{pmatrix}=\text{OZ}
+\]
+Cipherteks \code{TCOZ}. Dekripsi memakai $\mathbf{K}^{-1}=\det(\mathbf{K})^{-1}\begin{pmatrix}5&-3\\-2&3\end{pmatrix}$ dengan $9^{-1}\equiv3 \pmod{26}$, yaitu $\mathbf{K}^{-1}=\begin{pmatrix}15&17\\20&9\end{pmatrix}$. Uji balik untuk \code{TC}: $\mathbf{K}^{-1}\binom{19}{2}=\binom{15\cdot19+17\cdot2}{20\cdot19+9\cdot2}=\binom{319}{398}\bmod26=\binom{7}{8}=\text{HI}$.
+\end{example}
+
+\begin{example}
+\textbf{One-Time Pad (XOR biner).} Plainteks $P=10110011$ dienkripsi dengan kunci acak $K=01101101$; panjang kunci sama dengan panjang pesan ($|K|=|P|=8$ bit). Enkripsi dan dekripsi identik, yaitu XOR bit-per-bit:
+\[
+C=P\oplus K=10110011\oplus01101101=11011110.
+\]
+Dekripsi: $C\oplus K=11011110\oplus01101101=10110011=P$. Jika kunci yang sama dipakai lagi untuk $P_2=11001010$, diperoleh $C_2=10100111$; maka $C\oplus C_2=01111001=P\oplus P_2$, sehingga XOR dua plainteks terbuka tanpa mengetahui kuncinya.
+\end{example}

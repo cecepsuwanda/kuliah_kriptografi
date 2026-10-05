@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item Fungsi hash memetakan pesan berukuran variabel menjadi \textit{digest} berukuran tetap dan bersifat satu arah; ia menjamin integritas, bukan kerahasiaan.
+    \item Properti kriptografisnya: tahan \textit{pre-image}, tahan \textit{second pre-image}, dan tahan kolisi; ketahanan kolisi hanya sebesar $2^{n/2}$ karena \textit{birthday paradox}.
+    \item Parameter konkret: MD5 128 bit/512 bit (rusak), SHA-1 160 bit/512 bit (kolisi praktis 2017), SHA-256 256 bit/512 bit/64 putaran, SHA-512 512 bit/1024 bit/80 putaran, SHA-3 berbasis sponge Keccak.
+    \item MD5, SHA-1, dan SHA-2 memakai konstruksi Merkle--Damgård yang rawan \textit{length extension}; SHA-3 memakai konstruksi sponge.
+    \item MAC menambahkan kunci simetris pada fungsi hash sehingga menjamin integritas sekaligus otentikasi pesan; HMAC memakai dua lapis hash dengan $\mathrm{ipad} = \code{0x36}$ dan $\mathrm{opad} = \code{0x5C}$.
+    \item HMAC lebih kuat daripada $H(K\|m)$ karena menutup serangan \textit{length extension}, namun keduanya tidak memberikan \textit{non-repudiation}.
+    \item Checksum hanya mendeteksi galat acak, MAC menjamin otentikasi dengan kunci bersama, dan tanda tangan digital menjamin integritas, otentikasi, serta \textit{non-repudiation}.
+\end{itemize}

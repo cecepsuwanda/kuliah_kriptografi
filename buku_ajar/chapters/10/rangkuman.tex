@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item Kriptografi kunci-publik memakai sepasang kunci: kunci publik untuk enkripsi dan kunci privat untuk dekripsi; untuk $n$ pengguna cukup $2n$ kunci, jauh lebih sedikit daripada sekitar $n(n-1)/2$ kunci pada sistem simetris.
+    \item Keamanan RSA bersandar pada sulitnya memfaktorkan modulus $n = p \cdot q$ menjadi dua bilangan prima pembentuknya.
+    \item Fungsi Totient Euler untuk $n = p \cdot q$ adalah $\phi(n) = (p-1)(q-1)$, dan Teorema Euler ($a^{\phi(n)} \equiv 1 \pmod n$ bila $\text{PBB}(a,n)=1$) menjamin kebenaran dekripsi RSA.
+    \item Pembangkitan kunci: pilih $p, q$ prima, hitung $n = pq$ dan $\phi(n)$, pilih $e$ dengan $\text{PBB}(e,\phi(n))=1$, lalu hitung $d \equiv e^{-1} \pmod{\phi(n)}$.
+    \item Enkripsi $c = m^e \bmod n$ dan dekripsi $m = c^d \bmod n$ saling membalik karena $e \cdot d \equiv 1 \pmod{\phi(n)}$.
+    \item Contoh: $p=47$, $q=71$ memberi $n=3337$, $\phi(n)=3220$, $e=79$, dan $d=1019$; pesan $m=16$ terenkripsi menjadi $c=1493$ lalu kembali menjadi $m=16$.
+    \item RSA jarang dipakai langsung untuk data besar; praktiknya memakai kriptografi hibrida (RSA mengenkripsi kunci sesi, AES/DES mengenkripsi data), dan distribusi kunci publik tetap rentan serangan \textit{Man-in-the-Middle}.
+\end{itemize}

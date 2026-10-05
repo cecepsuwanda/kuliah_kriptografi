@@ -17,9 +17,14 @@
 
     \vfill
 
+    % Logo institusi bersifat opsional. Bila assets/logos/logo_itb.png tersedia,
+    % logo dicetak; bila belum, dipakai garis pemisah tipis agar halaman judul
+    % tidak menyisakan ruang kosong tanpa keterangan.
     \IfFileExists{assets/logos/logo_itb.png}{%
-        \includegraphics[width=0.4\textwidth]{assets/logos/logo_itb.png}\\[2cm]%
-    }{\vspace{2cm}}%
+        \includegraphics[width=0.4\textwidth]{assets/logos/logo_itb.png}\\[1.5cm]%
+    }{%
+        \rule{0.45\textwidth}{0.4pt}\\[1.5cm]%
+    }%
 
     {\large \textbf{Oleh:}}\\
     {\Large \textbf{\BookAuthor}}\\[1cm]

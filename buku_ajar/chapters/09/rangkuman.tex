@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item GOST (Magma) adalah \textit{block cipher} standar Rusia dengan blok 64 bit, kunci 256 bit, jaringan Feistel 32 putaran, dan 8 kunci internal $K_1,\dots,K_8$ yang dijadwalkan berulang.
+    \item Fungsi $f$ GOST adalah penjumlahan modulo $2^{32}$ dengan kunci putaran, substitusi 8 kotak-S ($4 \times 4$ bit), lalu pergeseran sirkuler kiri 11 bit.
+    \item Dibanding DES, GOST unggul pada panjang kunci (256 vs 56 bit), jumlah putaran (32 vs 16), dan kotak-S yang lebih sederhana ($4 \times 4$ vs $6 \times 4$).
+    \item RC5 (Rivest, 1994) memiliki parameter fleksibel: ukuran kata $w \in \{16,32,64\}$, jumlah putaran $r \in \{0,\dots,255\}$, dan panjang kunci $b \in \{0,\dots,255\}$ byte.
+    \item Satu putaran RC5 adalah $A \leftarrow \mathrm{ROTL}(A \oplus B, B) + S_{2i}$ dan $B \leftarrow \mathrm{ROTL}(B \oplus A, A) + S_{2i+1}$, memakai $2r+2$ kunci putaran dengan operasi XOR, penjumlahan modulo $2^w$, dan rotasi.
+    \item RC6 memperluas RC5 ke blok 128 bit dengan kunci hingga 2040 bit dan menambahkan perkalian modulo $2^w$ untuk mempercepat difusi.
+    \item Blowfish dan Twofish (Feistel, kunci variabel), Serpent (32 putaran berbasis substitusi--permutasi), serta MARS adalah varian penting; Blowfish, Serpent, dan Twofish termasuk finalis kompetisi AES.
+\end{itemize}

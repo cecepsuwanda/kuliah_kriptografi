@@ -1,0 +1,35 @@
+\section{Contoh Terhitung}
+
+\begin{example}[Serangan \textit{ciphertext-only} pada Caesar cipher]
+Diketahui cipherteks $C = \code{KHOORZRUOG}$ tanpa diketahui kunci. Karena ruang kunci hanya 26 pergeseran, penyerang mencoba tiap kunci $k$ dengan aturan dekripsi
+\[ P_i = (C_i - k) \bmod 26, \]
+lalu memeriksa mana hasil yang bermakna. Hasil uji lengkapnya:
+\begin{itemize}
+    \item $k=0$: \code{KHOORZRUOG}; \quad $k=1$: \code{JGNNQYQTNF}
+    \item $k=2$: \code{IFMMPXPSME}; \quad $k=3$: \code{HELLOWORLD}
+    \item $k=4$: \code{GDKKNVNQKC}; \quad $k=5$: \code{FCJJMUMPJB}
+    \item $k=6$: \code{EBIILTLOIA}; \quad $k=7$: \code{DAHHKSKNHZ}
+    \item $k=8$: \code{CZGGJRJMGY}; \quad $k=9$: \code{BYFFIQILFX}
+    \item $k=10$: \code{AXEEHPHKEW}; \quad $k=11$: \code{ZWDDGOGJDV}
+    \item $k=12$: \code{YVCCFNFICU}; \quad $k=13$: \code{XUBBEMEHBT}
+    \item $k=14$: \code{WTAADLDGAS}; \quad $k=15$: \code{VSZZCKCFZR}
+    \item $k=16$: \code{URYYBJBEYQ}; \quad $k=17$: \code{TQXXAIADXP}
+    \item $k=18$: \code{SPWWZHZCWO}; \quad $k=19$: \code{ROVVYGYBVN}
+    \item $k=20$: \code{QNUUXFXAUM}; \quad $k=21$: \code{PMTTWEWZTL}
+    \item $k=22$: \code{OLSSVDVYSK}; \quad $k=23$: \code{NKRRUCUXRJ}
+    \item $k=24$: \code{MJQQTBTWQI}; \quad $k=25$: \code{LIPPSASVPH}
+\end{itemize}
+Hanya $k=3$ yang menghasilkan teks bermakna, yaitu \code{HELLOWORLD}. Seluruh proses selesai dalam
+\[ t = \frac{26}{10^9} \approx 2{,}6 \times 10^{-8}\ \text{detik}, \]
+jadi ciphertext-only berhasil karena ruang kuncinya terlalu kecil: penyerang memperoleh kunci sekaligus plainteks.
+\end{example}
+
+\begin{example}[Kapan \textit{brute-force} menjadi tidak praktis]
+Sebagai pembanding, cipher dengan kunci 56 bit memiliki $|\mathcal{K}| = 2^{56} \approx 7{,}21 \times 10^{16}$ kunci. Dengan kecepatan $10^9$ kunci/detik,
+\[ t = \frac{2^{56}}{10^9} \approx 2{,}28\ \text{tahun}. \]
+\begin{itemize}
+    \item Bila kecepatan dinaikkan menjadi $10^{12}$ kunci/detik, waktu turun ke
+    \[ t = \frac{2^{56}}{10^{12}} \approx 7{,}21 \times 10^{4}\ \text{detik} \approx 20\ \text{jam}, \]
+    sehingga ruang kunci 56 bit tidak lagi memadai; inilah dasar konsep \textit{computationally secure}.
+\end{itemize}
+\end{example}

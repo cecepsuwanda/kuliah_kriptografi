@@ -1,0 +1,131 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter*{Evaluasi, Refleksi, dan Integrasi Kompetensi}
+\addcontentsline{toc}{chapter}{Evaluasi, Refleksi, dan Integrasi Kompetensi}
+% \chapter* tidak menyetel tanda halaman, sehingga tanpa baris ini kepala
+% halaman masih memperlihatkan judul bab terakhir ("BAB 16. ...").
+\markboth{\MakeUppercase{Evaluasi, Refleksi, dan Integrasi Kompetensi}}%
+         {\MakeUppercase{Evaluasi, Refleksi, dan Integrasi Kompetensi}}
+
+Bab penutup ini menyatukan seluruh asesmen yang dipakai sepanjang semester,
+menyediakan rubrik penilaian komprehensif, meninjau ketercapaian kompetensi,
+dan merumuskan rekomendasi tindak lanjut.
+
+\section*{1. Kumpulan Asesmen Akhir}
+
+Asesmen pada mata kuliah ini tersebar pada enam instrumen dengan bobot sesuai
+RPS. Setiap instrumen diukur terhadap Sub-CPMK yang relevan.
+
+\begin{table}[H]
+\centering
+\caption{Bobot dan cakupan asesmen mata kuliah}
+\label{tab:asesmen-akhir}
+\footnotesize
+\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}p{2.5cm}|X|>{\centering\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{3.2cm}|}
+\hline
+\textbf{Instrumen} & \textbf{Bentuk} & \textbf{Bobot} & \textbf{Sub-CPMK} \\
+\hline
+Tugas & Soal terapan dan contoh terhitung pada \textit{Latihan dan Refleksi} tiap bab & 15\% & 1.1--1.4 \\
+\hline
+Kuis & Kuis singkat di kelas pada \textit{Asesmen Kompetensi} tiap bab & 10\% & 2.1--2.3, 1.1--1.4 \\
+\hline
+Praktikum & Pengerjaan \textit{Aktivitas Rekomendasi} di laboratorium & 20\% & 1.1--1.4 \\
+\hline
+Proyek & Studi kasus penerapan kriptografi secara berkelompok & 15\% & 1.1--1.4, 2.2 \\
+\hline
+UTS & Ujian tengah semester (materi Bab 1--7) & 20\% & 2.1--2.3, 1.1--1.2 \\
+\hline
+UAS & Ujian akhir semester (materi Bab 8--16) & 20\% & 1.2--1.4 \\
+\hline
+\end{tabularx}
+\end{table}
+
+Butir UTS mencakup materi hingga block cipher dan DES; butir UAS mencakup AES
+sampai SSL/TLS. Nilai akhir dihitung sebagai jumlah berbobot keenam instrumen
+tersebut. Ambang kelulusan mengikuti ketentuan program studi.
+
+\section*{2. Rubrik Penilaian Komprehensif OBE}
+
+Rubrik berikut dipakai untuk menilai kinerja pada tugas, praktikum, proyek,
+dan jawaban uraian, dengan empat tingkat capaian.
+
+\begin{table}[H]
+\centering
+\caption{Rubrik penilaian komprehensif berbasis OBE}
+\label{tab:rubrik-komprehensif}
+\footnotesize
+\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Kriteria} & \textbf{4 -- Sangat Baik} & \textbf{3 -- Baik} & \textbf{2 -- Cukup} & \textbf{1 -- Kurang} \\
+\hline
+Pemahaman konsep & Menjelaskan konsep dengan tepat, lengkap, dan disertai alasan & Menjelaskan konsep dengan tepat & Penjelasan sebagian benar & Penjelasan keliru atau tidak ada \\
+\hline
+Penerapan algoritma & Prosedur benar dan hasil akhir benar & Prosedur benar, ada galat hitung kecil & Prosedur sebagian benar & Prosedur tidak tepat \\
+\hline
+Analisis matematis & Langkah lengkap dan terverifikasi & Langkah lengkap & Langkah tidak lengkap & Tidak ada analisis \\
+\hline
+Integritas \& otentikasi & Menghubungkan mekanisme dengan skenario nyata secara tepat & Menjelaskan mekanisme dengan tepat & Menjelaskan sebagian & Tidak menjelaskan \\
+\hline
+Komunikasi ilmiah & Sistematis, istilah tepat, rujukan lengkap & Sistematis dan istilah tepat & Cukup jelas & Tidak sistematis \\
+\hline
+\end{tabularx}
+\end{table}
+
+Skor akhir rubrik = rata-rata skor kriteria; konversi ke nilai huruf mengikuti
+ketentuan program studi.
+
+\section*{3. Tinjauan Pencapaian Kompetensi}
+
+Tabel berikut memetakan setiap Sub-CPMK ke rumusannya dan perangkat asesmen
+utama. Dosen pengampu dan mahasiswa dapat memakainya untuk menelusuri bukti
+ketercapaian.
+
+\begin{table}[H]
+\centering
+\caption{Peta Sub-CPMK, bab pendukung, dan asesmen utama}
+\label{tab:peta-subcpmk}
+\footnotesize
+\begin{tabularx}{\linewidth}{|>{\centering\arraybackslash}p{1.3cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{2.6cm}|}
+\hline
+\textbf{Sub-CPMK} & \textbf{Rumusan} & \textbf{Bab pendukung} & \textbf{Asesmen utama} \\
+\hline
+2.1 & Definisi, terminologi, sejarah, dan layanan keamanan & Bab~\ref{chap:pengantar}, \ref{chap:layanan-keamanan} & Kuis, UTS \\
+\hline
+2.2 & Urgensi kriptografi di bidang TI & Bab~\ref{chap:pengantar}, \ref{chap:tanda-tangan-pki} & Tugas, Proyek \\
+\hline
+2.3 & Landasan matematika: modulo, prima, invers & Bab~\ref{chap:landasan-matematika} & Kuis, UTS \\
+\hline
+1.1 & Cipher klasik dan kriptanalisisnya & Bab~\ref{chap:kriptografi-klasik} & Tugas, UTS \\
+\hline
+1.2 & Kriptografi simetris modern & Bab~\ref{chap:stream-cipher}--\ref{chap:block-cipher-lainnya} & Praktikum, UTS, UAS \\
+\hline
+1.3 & Kriptografi asimetris modern & Bab~\ref{chap:rsa}--\ref{chap:ecc} & Praktikum, UAS \\
+\hline
+1.4 & Hash, MAC, tanda tangan digital, PKI & Bab~\ref{chap:hash-mac}--\ref{chap:tanda-tangan-pki} & Tugas, Proyek, UAS \\
+\hline
+\end{tabularx}
+\end{table}
+
+Sertakan pada portofolio Anda: jawaban \textit{Latihan dan Refleksi} tiap bab,
+laporan praktikum, dan laporan proyek. Uraian bukti tersebutlah yang dinilai
+terhadap rubrik pada Subbab 2.
+
+\section*{4. Rekomendasi Tindak Lanjut}
+
+\begin{itemize}
+    \item \textbf{Skor rata-rata rubrik $\geq 3$ pada semua kriteria.} Mahasiswa
+          dapat melanjutkan ke mata kuliah lanjutan bertema keamanan informasi
+          dan kriptografi terapan.
+    \item \textbf{Skor 2 pada kriteria penerapan atau analisis matematis.}
+          Disarankan mengulang contoh terhitung pada bab terkait dan
+          mengerjakan kembali latihan sebelum asesmen berikutnya.
+    \item \textbf{Skor 1 pada kriteria pemahaman konsep.} Disarankan sesi
+          konsultasi tambahan dan menelaah kembali Bab 1--3 sebagai landasan.
+    \item \textbf{Minat pendalaman.} Mahasiswa yang berminat riset disarankan
+          menempuh topik lanjutan: kriptografi pasca-kuantum, protokol
+          \textit{zero-knowledge}, atau analisis keamanan protokol modern.
+\end{itemize}
+
+\end{document}

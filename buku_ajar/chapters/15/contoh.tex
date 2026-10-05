@@ -1,0 +1,38 @@
+\section{Contoh Terhitung}
+Setiap angka pada contoh berikut diverifikasi secara numerik dengan Python.
+
+\subsection{Biaya Serangan Birthday pada MD5 dan SHA-256}
+Untuk peluang kolisi sekitar $50\%$, jumlah pesan acak yang harus dicoba adalah $k \approx 1{,}177 \cdot 2^{n/2}$.
+
+\textbf{(a) MD5}, $n = 128$:
+\[ k \approx 1{,}177 \cdot 2^{64} = 1{,}177 \cdot 18.446.744.073.709.551.616 \approx 2{,}17\times10^{19}. \]
+
+\textbf{(b) SHA-256}, $n = 256$:
+\[ k \approx 1{,}177 \cdot 2^{128} = 1{,}177 \cdot (3{,}402823669\times10^{38}) \approx 4{,}01\times10^{38}. \]
+
+Rasio keduanya adalah $2^{128}/2^{64} = 2^{64} = 18.446.744.073.709.551.616$. Jadi SHA-256 membutuhkan sekitar $1{,}8\times10^{19}$ kali lebih banyak usaha daripada MD5.
+
+\subsection{Padding Merkle--Damgård}
+Aturan padding Merkle--Damgård untuk blok 512 bit: tambahkan $1$ bit ``1'', lalu $k$ bit ``0'', lalu panjang pesan $L$ dalam 64 bit, dengan syarat
+\[ L + 1 + k + 64 \equiv 0 \pmod{512}, \qquad 0 \le k < 512 . \]
+
+\textbf{Contoh: pesan \code{"abc"}.} Panjang $L = 3 \text{ byte} = 24$ bit.
+\[ 24 + 1 + k + 64 \equiv 0 \pmod{512} \;\Rightarrow\; k = 423 . \]
+Total $= 24 + 1 + 423 + 64 = 512$ bit, sehingga terbentuk \textbf{1 blok}.
+
+\textbf{Contoh: pesan $L = 1000$ bit.}
+\[ 1000 + 1 + k + 64 \equiv 0 \pmod{512} \;\Rightarrow\; k = 471, \]
+total $= 1000 + 1 + 471 + 64 = 1536$ bit, yaitu \textbf{3 blok}.
+
+\subsection{HMAC dengan Fungsi Hash Mainan}
+Agar struktur ipad/opad terlihat, pakai fungsi hash mainan $H(b_1,\dots,b_t) = \left(\sum_i b_i\right) \bmod 256$ dan kunci 1 byte $K = \code{0x3A}$, pesan $m = \code{0x41}$, serta $\mathrm{ipad} = \code{0x36}$, $\mathrm{opad} = \code{0x5C}$.
+
+\begin{itemize}
+    \item Kunci efektif dalam: $K \oplus \mathrm{ipad} = \code{0x3A} \oplus \code{0x36} = \code{0x0C} = 12$.
+    \item Kunci efektif luar: $K \oplus \mathrm{opad} = \code{0x3A} \oplus \code{0x5C} = \code{0x66} = 102$.
+    \item Lapis dalam: $h_1 = H(\code{0x0C}, \code{0x41}) = (12 + 65) \bmod 256 = 77$.
+    \item Lapis luar: $\mathrm{Tag} = H(\code{0x66}, 77) = (102 + 77) \bmod 256 = 179$.
+\end{itemize}
+Hasilnya $\mathrm{HMAC}(K,m) = 179$.
+
+\textbf{Perbandingan dengan $H(K\|m)$.} Untuk skema naif $H(K\|m) = (58 + 65) \bmod 256 = 123 = \code{0x7B}$. Penyerang yang tahu tag ini dan panjang $K$ dapat menghitung $H(K\|m\|\code{0x42})$ tanpa $K$, yaitu $123 + 66 = 189 \pmod{256}$; penambahan byte \code{0x42} mengubah tag secara terprediksi. Serangan \textit{length extension} inilah yang tidak mungkin dilakukan terhadap HMAC dua lapis.

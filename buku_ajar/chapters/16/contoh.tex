@@ -1,0 +1,31 @@
+\section{Contoh Terhitung}
+Setiap langkah berikut diverifikasi secara numerik dengan Python.
+
+\subsection{Tanda Tangan RSA dengan Bilangan Kecil}
+Pilih $p = 61$, $q = 53$, sehingga
+\[ n = p\,q = 3233, \qquad \varphi(n) = (p-1)(q-1) = 60 \cdot 52 = 3120 . \]
+Ambil $e = 17$ (relatif prima terhadap $3120$), maka $d = e^{-1} \bmod \varphi(n) = 2753$ karena $17 \cdot 2753 = 46801 = 15 \cdot 3120 + 1$. Pasangan kunci: privat $d = 2753$, publik $(e,n) = (17, 3233)$.
+
+Misalkan fungsi hash mainan untuk pesan 1 karakter \code{'A'} memberi $h = H(m) = 65$ (kode ASCII-nya, dan $h < n$). Penandatanganan:
+\[ s = h^{d} \bmod n = 65^{2753} \bmod 3233 = 588 . \]
+Verifikasi oleh penerima:
+\[ s^{e} \bmod n = 588^{17} \bmod 3233 = 65 = h \;\checkmark \]
+Tanda tangan valid. Sekarang uji pemalsuan: bila penyerang mengubah pesan sehingga hash mainannya menjadi $h' = 66$, penerima menghitung $h' = 66$ sedangkan dari tanda tangan lama diperoleh $s^{e} \bmod n = 65 \neq 66$, sehingga tanda tangan ditolak.
+
+\subsection{Tanda Tangan DSA dengan Parameter Kecil}
+Ambil prima $p = 23$ dan $q = 11$ (karena $11 \mid 22 = p-1$), generator $g = 2$; cek ordonya: $2^{11} \bmod 23 = 2048 \bmod 23 = 1$, jadi $g$ berorde $q$. Kunci privat $x = 5$ memberi kunci publik
+\[ y = g^{x} \bmod p = 2^{5} \bmod 23 = 32 \bmod 23 = 9 . \]
+Untuk hash mainan $h = 10$ dan bilangan acak sesi $k = 3$ (dengan $k^{-1} \bmod 11 = 4$):
+\[ r = (g^{k} \bmod p) \bmod q = (2^{3} \bmod 23) \bmod 11 = 8 \bmod 11 = 8, \]
+\[ s = k^{-1}(h + x\,r) \bmod q = 4\,(10 + 5 \cdot 8) \bmod 11 = 4 \cdot 50 \bmod 11 = 200 \bmod 11 = 2 . \]
+Pasangan tanda tangan $(r, s) = (8, 2)$.
+
+Verifikasi: $w = s^{-1} \bmod 11 = 2^{-1} \bmod 11 = 6$,
+\[ u_1 = h\,w \bmod 11 = 10 \cdot 6 \bmod 11 = 5, \qquad u_2 = r\,w \bmod 11 = 8 \cdot 6 \bmod 11 = 4, \]
+\[ v = \bigl(g^{u_1} y^{u_2} \bmod p\bigr) \bmod q = \bigl(2^{5} \cdot 9^{4} \bmod 23\bigr) \bmod 11 = (9 \cdot 6 \bmod 23) \bmod 11 = 8 . \]
+Karena $v = 8 = r$, tanda tangan \textbf{valid}.
+
+\subsection{Dampak Pemakaian Ulang \texorpdfstring{$k$}{k}}
+Jika dua pesan dengan hash berbeda $h_1, h_2$ ditandatangani memakai $k$ yang sama, maka $r$ keduanya sama dan penyerang dapat menyelesaikan
+\[ x = \frac{s_1 - s_2}{r} \cdot \frac{1}{h_1 - h_2} \pmod q, \]
+sehingga seluruh kunci privat bocor. Inilah sebabnya ECDSA/DSA menuntut $k$ acak yang unik per tanda tangan \citep{stallings2017}.

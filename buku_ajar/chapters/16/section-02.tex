@@ -27,3 +27,20 @@ Berbeda dengan enkripsi pesan (di mana pesan dienkripsi dengan kunci publik pene
 \subsection{Digital Signature Standard (DSS)}
 DSS adalah standar pemerintah AS yang menggunakan algoritma DSA (Digital Signature Algorithm). Berbeda dengan RSA, DSA hanya digunakan untuk tanda tangan digital dan tidak bisa digunakan untuk enkripsi data. DSS menawarkan efisiensi lebih tinggi dalam proses pembuatan tanda tangan.
 
+\subsection{Tanda Tangan RSA}
+Dengan modulus $n = p\cdot q$ dan pasangan kunci $(d,e)$ hasil algoritma RSA, penandatanganan dan verifikasi dirumuskan
+\[ \text{Tanda tangan: } s = H(m)^d \bmod n, \qquad \text{Verifikasi: } H(m) \stackrel{?}{=} s^e \bmod n . \]
+Kunci privat $d$ hanya dimiliki penanda tangan, sedangkan verifikasi cukup memakai $e$ yang publik \citep{rsa1978,stallings2017}. Verifikasi yang berhasil menyiratkan integritas pesan sekaligus identitas penanda tangan.
+
+\subsection{Tanda Tangan DSA/ECDSA dan Parameter DSS}
+DSA bekerja pada sebuah subgrup prima. Parameter publiknya adalah $p$ (prima besar), $q$ (prima yang membagi $p-1$), dan generator $g$ berorde $q$; kunci privat $x$ menghasilkan kunci publik $y = g^x \bmod p$ \citep{menezes1996}. Untuk pesan ber-hash $h$ (dipangkas sehingga $0 < h < q$) dan bilangan acak rahasia $k$ per pesan:
+\[ r = (g^k \bmod p) \bmod q, \qquad s = k^{-1}(h + x\,r) \bmod q . \]
+Verifikasi: hitung $w = s^{-1} \bmod q$, $u_1 = h\,w \bmod q$, $u_2 = r\,w \bmod q$, lalu uji
+\[ (g^{u_1} y^{u_2} \bmod p) \bmod q \stackrel{?}{=} r . \]
+\important{Nilai $k$ wajib unik per tanda tangan.} Pemakaian ulang $k$ membuat dua persamaan linear dengan $x$ yang sama, sehingga kunci privat dapat dihitung; karena itu ECDSA membutuhkan pembangkit acak yang baik \citep{stallings2017}.
+
+ECDSA adalah DSA di atas grup titik kurva eliptik, sehingga kunci jauh lebih pendek: P-256 (kunci 256 bit) kira-kira setara keamanan RSA-3072. Standar DSS (FIPS 186) menetapkan tiga konfigurasi: $p$/$q$ sebesar 1024/160 bit, 2048/224 bit, dan 3072/256 bit \citep{stallings2017}.
+
+\subsection{Mengapa Pesan Di-hash Lebih Dulu}
+Fungsi hash memampatkan pesan berukuran berapa pun menjadi nilai ringkas berukuran tetap lebih kecil dari modulus. Tanpa hashing, tanda tangan pada pesan panjang menjadi mahal (RSA hanya bekerja pada satu elemen modulo $n$), dan skema seperti DSA/ECDSA tidak dapat menandatangani pesan mentah. Hashing juga mengikat tanda tangan pada pesan: penggantian pesan oleh penyerang menuntut ditemukannya kolisi, yang praktis mustahil untuk SHA-256 \citep{katz2020}.
+

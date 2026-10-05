@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item Kriptografi modern beroperasi pada bit/byte, bukan karakter; XOR menjadi operasi dasar karena $a\oplus a=0$ membuat enkripsi dan dekripsi memakai fungsi yang sama.
+    \item \textit{Stream cipher} mengenkripsi satu bit/byte sekaligus dengan $c_i=p_i\oplus k_i$, sehingga cepat dan cocok untuk data \textit{real-time}.
+    \item Keamanannya bergantung pada \textit{keystream generator} (PRNG) yang membangkitkan keystream sepanjang pesan dari kunci dan IV sebagai \textit{seed}; penerima harus dapat membangkitkan keystream yang identik.
+    \item Keystream tidak boleh dipakai ulang: dua cipherteks berkeystream sama dapat di-XOR sehingga XOR kedua plainteksnya terbuka tanpa mengetahui kunci.
+    \item Galat 1 bit pada cipherteks hanya merusak 1 bit plainteks (tidak menyebar), berbeda dengan \textit{block cipher} yang menyebarkan galat antar blok.
+    \item RC4 (KSA dan PRGA) tidak lagi aman karena byte awal keystream berkorelasi dengan kunci; A5/1 memakai tiga LFSR dengan kaidah mayoritas, sedangkan Trivium memakai NLFSR.
+    \item LFSR $n$-bit berperiode maksimum $2^n-1$ bila polinomial umpan baliknya primitif; Salsa20/ChaCha20 memakai operasi ARX pada matriks $4\times4$ dan ChaCha20 dipakai pada TLS 1.3.
+\end{itemize}

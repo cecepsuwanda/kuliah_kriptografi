@@ -1,0 +1,26 @@
+\section{Contoh Terhitung}
+
+\begin{example}[Pembangkitan kunci ElGamal]
+Alice memilih bilangan prima $p = 2273$ dan akar primitif $g = 3$ (lihat Gambar~\ref{fig:simulasi-enkripsi-elgamal}). Ia menetapkan kunci privat $x = 243$ dengan $2 \le x \le p-2$, lalu menghitung kunci publiknya:
+\[ y = g^x \bmod p = 3^{243} \bmod 2273 = 461. \]
+Kunci publik Alice adalah $(y, g, p) = (461, 3, 2273)$, sedangkan kunci privatnya $(x, p) = (243, 2273)$.
+\end{example}
+
+\begin{example}[Enkripsi dan dekripsi ElGamal]
+Bob mengirim pesan $m = 700$ (berada dalam selang $[0, 2272]$) kepada Alice dengan memilih kunci efemeral $k = 1463$.
+\begin{enumerate}
+    \item Enkripsi oleh Bob:
+    \[ a = g^k \bmod p = 3^{1463} \bmod 2273 = 1439, \]
+    \[ b = y^k \cdot m \bmod p = 461^{1463} \times 700 \bmod 2273 = 74. \]
+    Jadi cipherteks yang dikirim adalah $(a, b) = (1439, 74)$.
+    \item Dekripsi oleh Alice dengan kunci privat $x = 243$:
+    \[
+    \begin{aligned}
+    (a^x)^{-1} &\equiv a^{\,p-1-x} \pmod p\\
+               &= 1439^{\,2273-1-243} \bmod 2273 = 1439^{\,2029} \bmod 2273 = 1791,
+    \end{aligned}
+    \]
+    \[ m = b \cdot (a^x)^{-1} \bmod p = 74 \times 1791 \bmod 2273 = 700. \]
+\end{enumerate}
+Plainteks $m = 700$ berhasil dipulihkan. Karena $k$ dipilih acak, enkripsi ulang pesan $m$ yang sama dengan $k$ berbeda akan menghasilkan pasangan $(a, b)$ yang berbeda.
+\end{example}

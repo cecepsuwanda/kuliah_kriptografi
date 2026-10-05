@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item \textit{Block cipher} membagi plainteks menjadi blok tetap $n$ bit ($C=E_K(P)$, $P=D_K(C)$); panjang cipherteks sama dengan panjang plainteks.
+    \item Confusion menyembunyikan hubungan kunci--cipherteks melalui substitusi non-linear (S-box), sedangkan diffusion menyebarkan pengaruh satu bit plainteks ke banyak bit cipherteks melalui permutasi.
+    \item Mode ECB ($C_i=E_K(P_i)$) sederhana dan mendukung akses acak, tetapi blok plainteks yang sama selalu menghasilkan cipherteks yang sama sehingga pola data bocor.
+    \item Mode CBC ($C_i=E_K(P_i\oplus C_{i-1})$, $C_0=IV$) menghapus pola berulang, namun galat satu bit menjalar ke seluruh blok cipherteks berikutnya.
+    \item CFB dan OFB mengubah \textit{block cipher} menjadi serupa \textit{stream cipher} untuk data yang belum genap satu blok; OFB tidak menjalarkan galat.
+    \item Mode CTR ($C_i=P_i\oplus E_K(\text{counter}_i)$) mendukung pemrosesan paralel dan akses acak karena tiap blok tidak bergantung pada blok lain.
+    \item Jaringan Feistel ($L_i=R_{i-1}$, $R_i=L_{i-1}\oplus f(R_{i-1},K_i)$) bersifat reversibel sehingga dekripsi memakai urutan kunci terbalik tanpa fungsi $f^{-1}$ terpisah.
+\end{itemize}

@@ -1,0 +1,105 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter*{Landasan Teori dan Peta Konsep}
+\addcontentsline{toc}{chapter}{Landasan Teori dan Peta Konsep}
+
+Materi buku ini bertumpu pada tiga hal: konsep dan definisi kunci, teori utama
+kriptografi, serta peta keterkaitan antar-bab. Bab 1 sampai Bab 3 berperan
+sebagai landasan teori dan konsep dasar; bab-bab berikutnya adalah unit materi
+inti yang menerapkan landasan itu.
+
+\section*{Konsep dan Definisi Kunci}
+
+Definisi istilah berikut dipakai berulang di seluruh buku (definisi formalnya
+diberikan pada bab yang ditunjuk).
+
+\begin{description}
+    \item[Kriptografi] Ilmu dan seni menjaga keamanan pesan, mencakup
+          enkripsi, dekripsi, serta layanan keamanan lain (Bab 1).
+    \item[Plainteks dan cipherteks] Pesan asli dan pesan hasil penyandian
+          (Bab 1).
+    \item[Kunci] Informasi rahasia yang mengendalikan proses enkripsi dan
+          dekripsi; keamanan sistem bergantung pada kerahasiaan kunci, bukan
+          pada kerahasiaan algoritma (Bab 1 dan Bab 2).
+    \item[Layanan keamanan] Kerahasiaan, integritas, ketersediaan,
+          otentikasi, dan nirsangkal (Bab 2).
+    \item[Aritmetika modulo dan invers modulo] Operasi sisa pembagian beserta
+          balikannya, landasan matematis hampir semua algoritma pada buku ini
+          (Bab 3).
+    \item[Kriptanalisis] Upaya memperoleh plainteks atau kunci tanpa hak
+          (Bab 2).
+\end{description}
+
+\section*{Teori Utama}
+
+\begin{itemize}
+    \item \textbf{Keamanan melalui kerahasiaan kunci.} Sesuai prinsip Kerckhoffs,
+          algoritma boleh diketahui umum; yang harus dirahasiakan hanya kuncinya.
+    \item \textbf{Kerahasiaan sempurna.} \textit{One-time pad} mencapai keamanan
+          teoretis bila kunci acak, sepanjang pesan, dan tidak pernah dipakai
+          ulang (Bab 4).
+    \item \textbf{Konfusi dan difusi.} Shannon merumuskan dua sifat yang harus
+          dimiliki block cipher yang kuat (Bab 6).
+    \item \textbf{Jaringan Feistel.} Kerangka yang memungkinkan dekripsi memakai
+          mesin yang sama dengan enkripsi, dan mendasari DES (Bab 6 dan Bab 7).
+    \item \textbf{Kesulitan komputasi.} Keamanan kriptografi kunci-publik
+          bersandar pada persoalan yang sulit dipecahkan---faktorisasi bilangan
+          besar (RSA), logaritma diskret (Diffie--Hellman, ElGamal), dan
+          logaritma diskret pada kurva eliptik (ECC) (Bab 10--14).
+    \item \textbf{Fungsi satu arah dan tanda tangan digital.} Integritas dan
+          nirsangkal dibangun dari fungsi hash dan kunci privat penandatangan
+          (Bab 15 dan Bab 16).
+\end{itemize}
+
+\section*{Peta Konsep dan Struktur Materi}
+
+Bagan berikut merangkum alur materi buku: dari landasan, melalui kriptografi
+klasik dan modern, hingga mekanisme integritas dan otentikasi.
+
+\begin{center}
+\begin{tikzpicture}[
+    font=\scriptsize,
+    kotak/.style={draw, rounded corners=2pt, align=center, inner sep=4pt,
+                  text width=2.35cm, minimum height=1.15cm, fill=blue!5},
+    akar/.style={draw, rounded corners=3pt, align=center, inner sep=5pt,
+                  font=\small\bfseries, fill=blue!20},
+    panah/.style={-{Stealth[length=2mm]}, thick, blue!55!black}
+]
+\node[akar] (akar) {Kriptografi};
+\node[kotak, below=0.9cm of akar, xshift=-6.0cm] (b1)
+    {\textbf{Fondasi}\\{\tiny Bab 1--3}};
+\node[kotak, below=0.9cm of akar, xshift=-3.0cm] (b2)
+    {\textbf{Klasik}\\{\tiny Bab 4}};
+\node[kotak, below=0.9cm of akar] (b3)
+    {\textbf{Simetris Modern}\\{\tiny Bab 5--9}};
+\node[kotak, below=0.9cm of akar, xshift=3.0cm] (b4)
+    {\textbf{Asimetris}\\{\tiny Bab 10--14}};
+\node[kotak, below=0.9cm of akar, xshift=6.0cm] (b5)
+    {\textbf{Integritas \& Otentikasi}\\{\tiny Bab 15--16}};
+\foreach \b in {b1,b2,b3,b4,b5} \draw[panah] (akar) -- (\b);
+\end{tikzpicture}
+\end{center}
+
+Kelima cabang pada bagan di atas adalah lima bagian materi buku.
+
+\begin{enumerate}[label=\textbf{Bagian \arabic*.}, leftmargin=*]
+    \item \textbf{Fondasi (Bab 1--3).} Pengantar dan urgensi kriptografi,
+          layanan keamanan dan serangan, serta landasan matematika. Menopang
+          Sub-CPMK 2.1--2.3.
+    \item \textbf{Kriptografi klasik (Bab 4).} Cipher substitusi dan
+          transposisi, abjad-majemuk (Vigen\`ere), polygram (Playfair, Hill),
+          Enigma, Affine, dan \textit{one-time pad}. Menopang Sub-CPMK 1.1.
+    \item \textbf{Kriptografi simetris modern (Bab 5--9).} Stream cipher, block
+          cipher dan mode operasinya, DES, AES, serta block cipher lain (GOST,
+          RC5/RC6, Blowfish, Twofish). Menopang Sub-CPMK 1.2.
+    \item \textbf{Kriptografi asimetris (Bab 10--14).} RSA, pertukaran kunci
+          Diffie--Hellman, ElGamal, kripto knapsack, dan kurva eliptik (ECC).
+          Menopang Sub-CPMK 1.3.
+    \item \textbf{Integritas dan otentikasi (Bab 15--16).} Fungsi hash dan MAC,
+          tanda tangan digital, PKI, serta protokol SSL/TLS. Menopang
+          Sub-CPMK 1.4.
+\end{enumerate}
+
+\end{document}

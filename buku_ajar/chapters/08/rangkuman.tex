@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item AES adalah algoritma Rijndael (Rijmen dan Daemen) yang dipilih NIST pada 2001: blok tetap 128 bit dengan kunci 128, 192, atau 256 bit untuk 10, 12, atau 14 putaran.
+    \item Berbeda dari DES yang memakai jaringan Feistel, AES memakai struktur substitusi--permutasi (SPN) yang beroperasi pada \textit{state} matriks $4\times4$ byte.
+    \item Setiap putaran utama menjalankan SubBytes, ShiftRows, MixColumns, dan AddRoundKey; putaran terakhir sama tetapi tanpa MixColumns.
+    \item SubBytes memberikan \textit{confusion} melalui S-box non-linear yang dibangun dari invers di $\text{GF}(2^8)$ dan transformasi affine; ShiftRows memberikan difusi antar kolom dengan pergeseran siklik baris.
+    \item MixColumns memperkuat difusi dengan mengalikan state memakai matriks tetap $\{02,03,01,01\}$ di $\text{GF}(2^8)$, sedangkan AddRoundKey hanya men-XOR state dengan kunci putaran.
+    \item KeyExpansion membangkitkan kunci putaran dari kunci eksternal melalui RotWord, SubWord, dan konstanta putaran Rcon.
+    \item Aritmetika AES berada di $\text{GF}(2^8)$: byte direpresentasikan sebagai polinomial derajat 7, penjumlahan adalah XOR, dan perkalian direduksi oleh polinomial $x^8+x^4+x^3+x+1$.
+\end{itemize}

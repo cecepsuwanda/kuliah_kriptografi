@@ -26,8 +26,9 @@
             {PBB $= 1$} (invers);
 
         % Simpai ulang selama sisa bagi belum nol
-        \draw[panah] (cek.east) -- (4.4,-3.0) -- (4.4,-1.5) -- (bagi.east)
-            node[midway, above, font=\scriptsize, fill=white, inner sep=1pt] {belum};
+        % Label diletakkan pada ruas tegak agar tidak menabrak sudut kotak "bagi".
+        \draw[panah] (cek.east) -- (4.4,-3.0) -- node[right, font=\scriptsize,
+            fill=white, inner sep=1pt] {belum} (4.4,-1.5) -- (bagi.east);
 
         % Cabang kegagalan: PBB bukan 1
         \node[kotak, fill=red!6] (gagal) at (0,-7.5)

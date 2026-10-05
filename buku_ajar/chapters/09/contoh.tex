@@ -1,0 +1,45 @@
+\section{Contoh Terhitung}
+
+\begin{example}[Satu putaran RC5 dengan $w = 16$]
+Tinjau RC5 berukuran kata $w = 16$ bit (blok 32 bit) dengan $r = 2$ putaran. Blok plainteks dipecah menjadi $A_0 = \code{0x1234}$ dan $B_0 = \code{0x2345}$, dengan kunci putaran
+\[
+\begin{aligned}
+S_0 &= \code{0x1A2B}, & S_1 &= \code{0x0C0D}, & S_2 &= \code{0x3344},\\
+S_3 &= \code{0x5566}, & S_4 &= \code{0x7788}, & S_5 &= \code{0x1122}.
+\end{aligned}
+\]
+Seluruh penjumlahan dilakukan modulo $2^{16}$, dan $\mathrm{ROTL}_{16}(x,r)$ menyatakan rotasi sirkuler kiri sejauh $r \bmod 16$ bit.
+
+\textbf{Langkah 1: penyaringan awal.}
+\[ A = A_0 + S_0 = \code{0x1234} + \code{0x1A2B} = \code{0x2C5F} = 11359, \]
+\[ B = B_0 + S_1 = \code{0x2345} + \code{0x0C0D} = \code{0x2F52} = 12114. \]
+
+\textbf{Langkah 2: putaran $i = 1$.}
+\[ A \leftarrow \mathrm{ROTL}_{16}(A \oplus B,\; B) + S_2. \]
+\[ A \oplus B = \code{0x2C5F} \oplus \code{0x2F52} = \code{0x030D} = 781,\qquad B \bmod 16 = 2, \]
+\[ \mathrm{ROTL}_{16}(\code{0x030D}, 2) = \code{0x0C34} = 3124,\qquad A = 3124 + 13124 = \code{0x3F78} = 16248. \]
+\[ B \leftarrow \mathrm{ROTL}_{16}(B \oplus A,\; A) + S_3. \]
+\[ B \oplus A = \code{0x2F52} \oplus \code{0x3F78} = \code{0x102A} = 4138,\qquad A \bmod 16 = 8, \]
+\[ \mathrm{ROTL}_{16}(\code{0x102A}, 8) = \code{0x2A10} = 10768,\qquad B = 10768 + 21862 = \code{0x7F76} = 32630. \]
+
+\textbf{Langkah 3: putaran $i = 2$.}
+\[ A \leftarrow \mathrm{ROTL}_{16}(\code{0x3F78} \oplus \code{0x7F76},\; \code{0x7F76}) + S_4, \]
+\[ \code{0x3F78} \oplus \code{0x7F76} = \code{0x400E} = 16398,\qquad \mathrm{ROTL}_{16}(\code{0x400E}, 6) = \code{0x0390} = 912, \]
+\[ A = 912 + 30600 = \code{0x7B18} = 31512. \]
+\[ B \leftarrow \mathrm{ROTL}_{16}(\code{0x7F76} \oplus \code{0x7B18},\; \code{0x7B18}) + S_5, \]
+\[ \code{0x7F76} \oplus \code{0x7B18} = \code{0x046E} = 1134,\qquad \mathrm{ROTL}_{16}(\code{0x046E}, 8) = \code{0x6E04} = 28164, \]
+\[ B = 28164 + 4386 = \code{0x7F26} = 32550. \]
+
+Cipherteks keluarannya adalah $(A,B) = (\code{0x7B18},\code{0x7F26}) = (31512, 32550)$. Kombinasi XOR, rotasi bergantung-data, dan penjumlahan dengan konstanta membuat satu bit plainteks menyebar ke banyak posisi bit cipherteks---inilah sumber difusi RC5.
+\end{example}
+
+\begin{example}[Operasi aritmetika pada fungsi $f$ GOST]
+Fungsi $f$ GOST menerapkan penjumlahan modulo $2^{32}$ dengan kunci putaran, substitusi delapan kotak-S ($4 \times 4$ bit), lalu pergeseran sirkuler kiri 11 bit.
+\begin{enumerate}
+    \item \textbf{Penjumlahan modulo $2^{32}$.} Untuk $R_{i-1} = \code{0x0A0B0C0D}$ dan $K_i = \code{0x01020304}$,
+    \[ (R_{i-1} + K_i) \bmod 2^{32} = \code{0x0A0B0C0D} + \code{0x01020304} = \code{0x0B0D0F11} = 185405201. \]
+    \item \textbf{Pergeseran sirkuler kiri 11 bit.} Misalkan luaran substitusi kedelapan kotak-S adalah $\code{0x80000001}$ (bit ke-31 dan bit ke-0 bernilai 1). Bit ke-31 bergeser ke posisi $(31 + 11) \bmod 32 = 10$, sedangkan bit ke-0 bergeser ke posisi 11, sehingga
+    \[ \mathrm{ROTL}_{32}(\code{0x80000001}, 11) = \code{0x00000C00} = 3072. \]
+\end{enumerate}
+Hasil ini menjelaskan mengapa GOST lebih tahan \textit{brute-force} daripada DES: kunci GOST 256 bit ($2^{256} \approx 1{,}16 \times 10^{77}$) versus DES 56 bit ($2^{56} \approx 7{,}21 \times 10^{16}$), yaitu sekitar $2^{200} \approx 1{,}61 \times 10^{60}$ kali lebih banyak; ditambah 32 putaran (DES 16) dan kotak-S $4\times4$ (DES $6\times4$), kriptanalisis GOST jauh lebih berat.
+\end{example}

@@ -10,3 +10,19 @@ SHA dikembangkan oleh NSA dan diterbitkan oleh NIST \citep{stallings2017}.
     \item \textbf{SHA-3}: Standar terbaru yang menggunakan struktur berbeda (\textit{Sponge Construction}), memberikan alternatif jika SHA-2 ditemukan memiliki kelemahan.
 \end{itemize}
 
+\subsection{Parameter Konkret Algoritma Hash}
+\begin{itemize}
+    \item \textbf{MD5}: digest 128 bit, blok 512 bit, 64 langkah (4 putaran $\times$ 16 operasi). Kolisi praktis ditemukan Wang dkk.\ (2004); MD5 kini dianggap benar-benar rusak \citep{menezes1996}.
+    \item \textbf{SHA-1}: digest 160 bit, blok 512 bit, 80 putaran. Kolisi praktis ``SHAttered'' (2017) hanya dengan usaha $\approx 2^{63{,}1} \approx 9{,}9\times10^{18}$ operasi \citep{stallings2017}.
+    \item \textbf{SHA-256}: digest 256 bit, blok 512 bit, 64 putaran, beroperasi pada kata 32 bit.
+    \item \textbf{SHA-512}: digest 512 bit, blok 1024 bit, 80 putaran, beroperasi pada kata 64 bit. SHA-384 adalah varian SHA-512 yang dipotong ke 384 bit.
+    \item \textbf{SHA-3}: keluarga Keccak, digest 224/256/384/512 bit, dengan kapasitas \textit{state} dua kali ukuran digest.
+\end{itemize}
+
+\subsection{Merkle--Damgård vs Sponge}
+MD5, SHA-1, dan SHA-2 memakai konstruksi \textbf{Merkle--Damgård}: pesan di-\textit{padding}, dipecah menjadi blok berukuran tetap, lalu fungsi kompresi $f$ diiterasi
+\[ h_i = f(h_{i-1}, M_i), \qquad h_0 = IV . \]
+Skema ini rawan \textit{length extension}, dan kolisi pada fungsi kompresi langsung merambat menjadi kolisi pada hash \citep{stallings2017}.
+
+SHA-3 tidak memakai iterasi kompresi, melainkan \textbf{konstruksi sponge} di atas permutasi Keccak-f[1600] dengan 24 putaran. Pesan diserap (\textit{absorbing}) ke dalam \textit{state}, kemudian hasilnya diperas (\textit{squeezing}). Keunggulannya: tahan \textit{length extension} dan keamanannya tidak bergantung pada ketahanan kolisi sebuah fungsi kompresi \citep{menezes1996}.
+

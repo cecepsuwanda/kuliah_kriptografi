@@ -10,6 +10,8 @@
 \frontmatter
 \subfile{frontmatter/titlepage}
 \subfile{frontmatter/preface}
+\subfile{frontmatter/pendahuluan}
+\subfile{frontmatter/peta-konsep}
 \subfile{frontmatter/syllabus_map}
 
 \tableofcontents
@@ -34,6 +36,17 @@
 \subfile{chapters/14/chapter}
 \subfile{chapters/15/chapter}
 \subfile{chapters/16/chapter}
+
+% Bab Akhir: Evaluasi, Refleksi, dan Integrasi Kompetensi
+% Pakai \chapter* agar penomoran 16 bab inti tidak bergeser.
+\subfile{backmatter/evaluasi-integrasi}
+
+% Lampiran
+% \appendix membuat \chapter menghasilkan "Lampiran A", "Lampiran B", dst.
+\appendix
+\subfile{appendices/appendix-a}
+\subfile{appendices/appendix-b}
+\subfile{appendices/appendix-c}
 
 % Back Matter
 \backmatter

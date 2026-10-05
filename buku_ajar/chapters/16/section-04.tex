@@ -11,6 +11,17 @@ Secure Sockets Layer (SSL) dan penerusnya, Transport Layer Security (TLS), adala
 
 \input{figures/alur-tls}
 
+\subsection{Jaminan pada Tiap Langkah Jabat Tangan}
+\begin{enumerate}
+    \item \textbf{ClientHello}: klien mengirim versi protokol, daftar \textit{cipher suite}, dan \textit{nonce} klien. Pada tahap ini belum ada jaminan keamanan.
+    \item \textbf{ServerHello} + sertifikat: server memilih suite dan mengirim sertifikat X.509 beserta rantainya. Sertifikat memberi otentikasi entitas dan kunci publik server.
+    \item \textbf{Verifikasi dan pertukaran kunci}: klien memverifikasi tanda tangan CA dan nama domain, lalu menyepakati kunci sesi (lewat \textit{key transport} RSA atau \textit{(EC)DHE}). Verifikasi inilah yang mencegah serangan \textit{Man-in-the-Middle}.
+    \item \textbf{Finished}: kedua pihak saling mengirim MAC atas seluruh transkrip jabat tangan, sehingga parameter yang dinegosiasikan tidak dapat diubah diam-diam (\textit{downgrade attack}). Setelah itu seluruh data dienkripsi simetris, misalnya AES-GCM atau ChaCha20-Poly1305 \citep{stallings2017}.
+\end{enumerate}
+Kunci asimetris hanya dipakai untuk otentikasi dan menyepakati kunci; beban transfer data diserahkan ke enkripsi simetris yang jauh lebih cepat.
+
+\textbf{TLS 1.3} memangkas jabat tangan menjadi satu putaran (1-RTT, bahkan 0-RTT dengan \textit{session resumption}), mewajibkan \textit{forward secrecy} melalui (EC)DHE, menghapus cipher lemah (key transport RSA, CBC, RC4), dan mengenkripsi sebagian besar pesan jabat tangan \citep{stallings2017}.
+
 
 
 

@@ -1,0 +1,35 @@
+\section{Contoh Terhitung}
+Setiap langkah berikut diverifikasi secara numerik dengan Python.
+
+\subsection{Penjumlahan dan Penggandaan Titik pada Kurva Real}
+Gunakan kurva $y^2 = x^3 - 3x + 3$ (jadi $a = -3$, $b = 3$; cek $4a^3 + 27b^2 = -108 + 243 = 135 \neq 0$).
+Titik $P(1,1)$ memenuhi kurva karena $1^2 = 1^3 - 3(1) + 3 = 1$; titik $Q(-2,1)$ juga karena $1^2 = -8 + 6 + 3 = 1$.
+
+\textbf{(a) Penjumlahan $P + Q$} (dengan $P \neq Q$, rumus $m = (y_q - y_p)/(x_q - x_p)$):
+\[ m = \frac{1 - 1}{-2 - 1} = \frac{0}{-3} = 0, \]
+\[ x_r = m^2 - x_p - x_q = 0 - 1 - (-2) = 1, \qquad y_r = m(x_p - x_r) - y_p = 0 - 1 = -1 . \]
+Jadi $R(1, -1)$, dan titik ini benar pada kurva karena $(-1)^2 = 1 = 1^3 - 3(1) + 3$.
+
+\textbf{(b) Penggandaan $2P$} (rumus $m = (3x_p^2 + a)/(2y_p)$):
+\[ m = \frac{3(1)^2 - 3}{2(1)} = \frac{0}{2} = 0, \]
+\[ x_r = m^2 - 2x_p = 0 - 2 = -2, \qquad y_r = m(x_p - x_r) - y_p = 0 - 1 = -1 . \]
+Diperoleh $2P(-2, -1)$, yang juga memenuhi kurva karena $(-1)^2 = (-2)^3 - 3(-2) + 3 = 1$.
+
+\subsection{Penjumlahan Titik pada Kurva \texorpdfstring{$y^2 \equiv x^3 + x + 1 \pmod{23}$}{y\^{}2 = x\^{}3 + x + 1 (mod 23)}}
+Titik $P(3,10)$ terletak pada kurva sebab $10^2 = 100 \equiv 8 \pmod{23}$ dan $3^3 + 3 + 1 = 31 \equiv 8 \pmod{23}$.
+
+\textbf{Penggandaan $2P$.} Dengan $a = 1$,
+\[ m \equiv \frac{3x_p^2 + a}{2y_p} \equiv \frac{3(3)^2 + 1}{2(10)} \equiv \frac{28}{20} \equiv 28 \cdot 20^{-1} \pmod{23} . \]
+Karena $20 \cdot 15 = 300 = 13 \cdot 23 + 1$, maka $20^{-1} \equiv 15$, sehingga $m \equiv 28 \cdot 15 = 420 \equiv 6 \pmod{23}$. Koordinatnya:
+\[ x_r \equiv m^2 - 2x_p \equiv 36 - 6 = 30 \equiv 7, \qquad y_r \equiv m(x_p - x_r) - y_p \equiv 6(3 - 7) - 10 = -34 \equiv 12 . \]
+Jadi $2P = (7, 12)$; periksa: $12^2 = 144 \equiv 6$ dan $7^3 + 7 + 1 = 351 \equiv 6 \pmod{23}$.
+
+\textbf{Penjumlahan $3P = 2P + P$.} Dengan $2P(7,12)$ dan $P(3,10)$:
+\[ m \equiv \frac{10 - 12}{3 - 7} = \frac{-2}{-4} = \frac{1}{2} \equiv 12 \pmod{23}, \]
+\[ x_r \equiv m^2 - 7 - 3 \equiv 144 - 10 = 134 \equiv 19, \qquad y_r \equiv 12(7 - 19) - 12 = -156 \equiv 5 . \]
+Jadi $3P = (19, 5)$.
+
+\subsection{Pertukaran Kunci ECDH pada Kurva yang Sama}
+Titik basis $B(3,10)$; Alice memilih $a = 2$ dan Bob $b = 3$. Kunci publik keduanya adalah $P_A = 2B = (7,12)$ dan $P_B = 3B = (19,5)$. Kunci bersama $K = abB = 6B$ dihitung dari dua arah:
+\[ K = a \cdot P_B = 2(19,5) = (12,4), \qquad K = b \cdot P_A = 3(7,12) = (12,4) . \]
+Kedua pihak memperoleh titik rahasia yang sama, yaitu $(12,4)$; penyerang yang hanya melihat $B$, $P_A$, dan $P_B$ harus memecahkan ECDLP untuk menemukan $a$ atau $b$.

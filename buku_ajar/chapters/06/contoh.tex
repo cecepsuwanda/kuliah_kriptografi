@@ -1,0 +1,44 @@
+\section{Contoh Terhitung}
+
+\begin{example}
+\textbf{ECB vs CBC.} Pakai blok mainan 4 bit: $E_K(P)$ adalah $(P\oplus K)$ yang digeser siklik ke kiri 1 bit, sedangkan $D_K(C)$ adalah hasil geser siklik ke kanan 1 bit atas $C$ yang di-XOR dengan $K$. Plainteks $1010\,0010\,0011\,1010\,1001$ (heksa $\code{A23A9}$), kunci $K=1011$ ($\code{B}$), dan $IV=\code{0000}$. Perhatikan blok ke-1 dan ke-4 sama, yaitu $A$.
+
+\textbf{ECB} ($C_i=E_K(P_i)$, tiap blok independen):
+\[
+\begin{aligned}
+E_K(1010)&=0010, & E_K(0010)&=0011, & E_K(0011)&=0001,\\
+E_K(1010)&=0010, & E_K(1001)&=0100.
+\end{aligned}
+\]
+sehingga $C=\code{23124}$. Blok $A$ yang berulang menghasilkan cipherteks $2$ yang sama, jadi pola plainteks tetap tampak.
+
+\textbf{CBC} ($C_0=IV$ dan $C_i=E_K(P_i\oplus C_{i-1})$):
+\[
+\begin{aligned}
+C_1&=E_K(1010\oplus0000)=E_K(1010)=0010,\\
+C_2&=E_K(0010\oplus0010)=E_K(0000)=0111,\\
+C_3&=E_K(0011\oplus0111)=E_K(0100)=1111,\\
+C_4&=E_K(1010\oplus1111)=E_K(0101)=1101,\\
+C_5&=E_K(1001\oplus1101)=E_K(0100)=1111,
+\end{aligned}
+\]
+sehingga $C=\code{27FDF}$. Blok $A$ di posisi 1 dan 4 kini berubah menjadi $2$ dan $D$, jadi pengulangan tersembunyi. Dekripsi dengan $P_i=D_K(C_i)\oplus C_{i-1}$ mengembalikan plainteks semula.
+\end{example}
+
+\begin{example}
+\textbf{Mode Counter (CTR).} Masih dengan kunci dan blok mainan di atas, tiap blok di-XOR dengan $E_K(\text{counter}_i)$ untuk $\text{counter}_i=i$:
+\[
+\begin{aligned}
+E_K(0001)&=0101, & E_K(0010)&=0011, & E_K(0011)&=0001,\\
+E_K(0100)&=1111, & E_K(0101)&=1101.
+\end{aligned}
+\]
+Kemudian $C_i=P_i\oplus E_K(\text{counter}_i)$:
+\[
+C_1=1010\oplus0101=1111,\quad C_2=0010\oplus0011=0001,\quad C_3=0011\oplus0001=0010,
+\]
+\[
+C_4=1010\oplus1111=0101,\quad C_5=1001\oplus1101=0100,\qquad C=\code{F1254}.
+\]
+Karena setiap blok hanya bergantung pada counternya, bukan pada cipherteks sebelumnya, blok dapat dienkripsi paralel dan diakses acak, berbeda dari CBC.
+\end{example}

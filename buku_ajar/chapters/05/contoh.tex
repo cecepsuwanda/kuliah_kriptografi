@@ -1,0 +1,37 @@
+\section{Contoh Terhitung}
+
+\begin{example}
+\textbf{Enkripsi dengan \textit{stream cipher}.} Plainteks dan keystream masing-masing 24 bit, ditulis dalam heksadesimal sebagai $P=\code{571964}$ dan $K=\code{F5923D}$. Nyatakan keduanya dalam biner, lalu XOR bit per bit, $c_i=p_i\oplus k_i$:
+\[
+\begin{array}{rcl}
+P &=& 0101\,0111\,0001\,1001\,0110\,0100\\
+K &=& 1111\,0101\,1001\,0010\,0011\,1101\\
+\hline
+C &=& 1010\,0010\,1000\,1011\,0101\,1001
+\end{array}
+\]
+sehingga cipherteksnya adalah $C=\code{A28B59}$. Dekripsi memakai keystream yang sama:
+\[
+C\oplus K=\code{A28B59}\oplus\code{F5923D}=\code{571964}=P.
+\]
+Karena tiap bit diproses sendiri-sendiri, galat satu bit pada cipherteks hanya merusak satu bit plainteks hasil dekripsi: mengubah bit ke-5 pada $C$ menjadi $\code{AA8B59}$ memberi $P'=\code{5F1964}$, yang berbeda dari $P$ tepat pada bit ke-5 saja.
+\end{example}
+
+\begin{example}
+\textbf{LFSR 4 bit.} Register diinisialisasi $1111$. Setiap langkah register bergeser ke kanan, bit keluaran adalah $b_0$, dan bit umpan balik $f=b_3\oplus b_0$ disisipkan pada posisi $b_3$:
+\[
+\begin{array}{c|cccc|c}
+i & b_3 & b_2 & b_1 & b_0 & \text{keluaran}\\
+\hline
+0 & 1 & 1 & 1 & 1 & 1\\
+1 & 0 & 1 & 1 & 1 & 1\\
+2 & 1 & 0 & 1 & 1 & 1\\
+3 & 0 & 1 & 0 & 1 & 1\\
+4 & 1 & 0 & 1 & 0 & 0\\
+5 & 1 & 1 & 0 & 1 & 1\\
+6 & 0 & 1 & 1 & 0 & 0\\
+7 & 1 & 0 & 1 & 1 & 1
+\end{array}
+\]
+Sebagai ilustrasi langkah $i=0\to1$: $f=1\oplus1=0$ sehingga register menjadi $0111$ dan keluarannya $b_0=1$. Barisan keluaran yang terbentuk adalah $1111\,0101\,1001\,000\ldots$ dengan periode $2^4-1=15$.
+\end{example}

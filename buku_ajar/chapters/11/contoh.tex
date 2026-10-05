@@ -1,0 +1,27 @@
+\section{Contoh Terhitung}
+
+\begin{example}[Pertukaran kunci Diffie-Hellman dengan bilangan kecil]
+Alice dan Bob menyepakati parameter publik $p = 11$ dan $g = 7$. Bilangan $7$ adalah akar primitif dari $11$ karena $7^1, 7^2, \dots, 7^{10} \pmod{11}$ menghasilkan semua nilai $1$ sampai $10$ (lihat Gambar~\ref{fig:contoh-numerik-dh}).
+\begin{enumerate}
+    \item Alice memilih kunci privat $a = 6$ dan menghitung kunci publiknya:
+    \[ A = g^a \bmod p = 7^6 \bmod 11 = 4. \]
+    \item Bob memilih kunci privat $b = 9$ dan menghitung kunci publiknya:
+    \[ B = g^b \bmod p = 7^9 \bmod 11 = 8. \]
+    \item Alice menerima $B = 8$ dan menghitung kunci rahasia bersama:
+    \[ K = B^a \bmod p = 8^6 \bmod 11 = 3. \]
+    \item Bob menerima $A = 4$ dan menghitung kunci rahasia bersama:
+    \[ K = A^b \bmod p = 4^9 \bmod 11 = 3. \]
+\end{enumerate}
+Kedua pihak memperoleh kunci rahasia bersama $K = 3$ tanpa pernah mengirimkan nilai $K$ melalui saluran publik.
+\end{example}
+
+\begin{example}[Contoh dengan bilangan prima yang lebih besar]
+Alice dan Bob menyepakati $p = 353$ dan $g = 3$; keduanya valid karena $3 < 353$ dan $3$ adalah akar primitif dari $353$.
+\begin{enumerate}
+    \item Alice memilih $a = 97$: \quad $A = g^a \bmod p = 3^{97} \bmod 353 = 40$.
+    \item Bob memilih $b = 233$: \quad $B = g^b \bmod p = 3^{233} \bmod 353 = 248$.
+    \item Alice menghitung: \quad $K = B^a \bmod p = 248^{97} \bmod 353 = 160$.
+    \item Bob menghitung: \quad $K = A^b \bmod p = 40^{233} \bmod 353 = 160$.
+\end{enumerate}
+Penyadap yang melihat $p, g, A = 40$, dan $B = 248$ harus menyelesaikan persoalan logaritma diskrit untuk memperoleh $a$ atau $b$. Untuk $p$ sebesar ini perhitungan masih terjangkau komputer, tetapi untuk $p$ berukuran ratusan digit (misalnya 2048 bit) menjadi tidak praktis.
+\end{example}

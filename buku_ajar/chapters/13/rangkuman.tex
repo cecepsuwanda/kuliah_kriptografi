@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item Persoalan \textit{knapsack} mencari bit $b_i \in \{0,1\}$ dengan $\sum_i b_i w_i = M$; versi umumnya tergolong \textbf{NP-complete} sehingga menjadi dasar awal keamanan sistem Merkle--Hellman.
+    \item Barisan \textit{superincreasing} memenuhi $w_i > \sum_{j<i} w_j$, sehingga solusinya dapat ditemukan secara \textit{greedy} dalam waktu linier $O(n)$.
+    \item Merkle--Hellman menyembunyikan barisan \textit{superincreasing} $W_{priv}$ menjadi kunci publik $w'_i = (w_i \cdot n) \bmod m$, dengan syarat $m > \sum_i w_i$ dan $\text{PBB}(n,m)=1$.
+    \item Enkripsi menjumlahkan elemen publik yang bitnya $1$, $C = \sum_i b_i w'_i$, dan menghasilkan satu kriptogram bilangan bulat per blok.
+    \item Dekripsi menghitung $C' = (C \cdot n^{-1}) \bmod m$ lalu memecahkan $C'$ dengan algoritma \textit{greedy} atas $W_{priv}$.
+    \item Keamanannya patah: Shamir (1982) merekonstruksi barisan \textit{superincreasing} dari kunci publik dalam waktu polinomial, sehingga algoritma ini tidak dipakai secara praktis.
+    \item Meski demikian, Knapsack berperan penting secara historis sebagai salah satu sistem kunci-publik pertama dan pendorong lahirnya konsep kriptografi kunci-publik.
+\end{itemize}

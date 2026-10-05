@@ -1,0 +1,26 @@
+\section{Contoh Terhitung}
+
+\begin{example}[Ruang kunci dan estimasi waktu \textit{brute-force}]
+Misalkan penyerang mampu menguji $v = 10^9$ kunci per detik. Bandingkan dua cipher substitusi berikut.
+\begin{enumerate}
+    \item \textbf{Caesar cipher.} Kunci hanyalah besar pergeseran $k = 0,1,\dots,25$, sehingga
+    \[ |\mathcal{K}| = 26. \]
+    Seluruh kunci habis diuji dalam waktu
+    \[ t = \frac{26}{10^9} = 2{,}6 \times 10^{-8}\ \text{detik} \approx 26\ \text{nanodetik}. \]
+    \item \textbf{Substitusi 26 huruf.} Kuncinya adalah permutasi seluruh alfabet, sehingga
+    \[ |\mathcal{K}| = 26! \approx 4{,}03 \times 10^{26}. \]
+    Waktu pengujian menyeluruh menjadi
+    \[ t = \frac{26!}{10^9} \approx 4{,}03 \times 10^{17}\ \text{detik}
+       \approx 1{,}28 \times 10^{10}\ \text{tahun}, \]
+    yaitu lebih lama daripada usia alam semesta ($\approx 1{,}38 \times 10^{10}$ tahun).
+\end{enumerate}
+Ruang kunci yang kecil membuat \textit{brute-force} seketika berhasil, sedangkan ruang kunci yang besar membuatnya tidak praktis.
+\end{example}
+
+\begin{example}[Ambang keamanan kunci 56-bit]
+Cipher dengan panjang kunci 56 bit memiliki
+\[ |\mathcal{K}| = 2^{56} \approx 7{,}21 \times 10^{16}. \]
+Dengan kecepatan uji $10^9$ kunci/detik,
+\[ t = \frac{2^{56}}{10^9} \approx 7{,}21 \times 10^{7}\ \text{detik} \approx 2{,}28\ \text{tahun}. \]
+Waktu sekitar dua tahun terlalu singkat untuk kerahasiaan jangka panjang, sehingga panjang kunci 56 bit (misalnya DES) kini dianggap tidak aman.
+\end{example}

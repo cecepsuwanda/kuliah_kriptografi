@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item Persoalan distribusi kunci pada kriptografi simetris diselesaikan dengan kriptografi hibrida atau protokol pertukaran kunci seperti Diffie-Hellman (1976).
+    \item Diffie-Hellman memungkinkan dua pihak menyepakati kunci rahasia bersama melalui saluran publik tanpa pernah mengirimkan kunci itu sendiri.
+    \item Parameter publiknya adalah bilangan prima besar $p$ dan akar primitif $g$ dari $p$ (dengan $g < p$).
+    \item Prosedurnya: Alice menghitung $A = g^a \bmod p$, Bob menghitung $B = g^b \bmod p$, lalu keduanya memperoleh kunci yang sama $K = B^a = A^b = g^{ab} \bmod p$.
+    \item Contoh: $p = 353$, $g = 3$, $a = 97$, dan $b = 233$ menghasilkan $A = 40$, $B = 248$, serta kunci bersama $K = 160$.
+    \item Keamanannya bersandar pada sulitnya menghitung logaritma diskrit: penyadap yang mengetahui $p, g, A, B$ tetap sukar menemukan $a$ atau $b$ bila $p$ sangat besar.
+    \item Diffie-Hellman aman terhadap penyadapan pasif tetapi rentan terhadap serangan aktif \textit{Man-in-the-Middle} karena tidak ada autentikasi; protokol ini dapat diperluas ke tiga pihak ($K = g^{abc} \bmod p$) dan menjadi dasar pengamanan SSL/TLS.
+\end{itemize}

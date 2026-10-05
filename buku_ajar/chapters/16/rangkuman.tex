@@ -1,0 +1,10 @@
+\section{Rangkuman}
+\begin{itemize}
+    \item Otentikasi entitas membuktikan identitas pihak pada saat sesi dibangun (dengan \textit{nonce} agar tahan \textit{replay}), sedangkan otentikasi pesan membuktikan keaslian dan keutuhan tiap pesan.
+    \item Tanda tangan digital mengikat identitas pengirim pada isi pesan melalui hash yang ditandatangani dengan kunci privat; verifikasinya memakai kunci publik.
+    \item RSA menandatangani dengan $s = H(m)^d \bmod n$ dan diverifikasi dengan $H(m) = s^e \bmod n$; DSS memakai DSA/ECDSA pada subgrup prima dengan tanda tangan $(r,s)$.
+    \item Pesan selalu di-hash lebih dulu karena hashing memampatkan pesan, mengefisienkan komputasi, dan mengikat tanda tangan pada isi pesan; keamanannya bergantung pada ketahanan kolisi ($2^{n/2}$).
+    \item \textit{Non-repudiation}, yaitu jaminan pengirim tidak dapat menyangkal pesannya, hanya dapat dijamin oleh tanda tangan digital, bukan oleh MAC yang bersifat simetris.
+    \item Sertifikat X.509 mengikat identitas subjek dengan kunci publiknya dan ditandatangani CA; keabsahannya diperiksa melalui rantai kepercayaan Root CA $\to$ Intermediate CA $\to$ sertifikat server.
+    \item Jabat tangan TLS memakai kriptografi asimetris untuk otentikasi dan penyepakatan kunci, lalu kriptografi simetris untuk sesi; TLS 1.3 mempersingkat proses dan mewajibkan \textit{forward secrecy}.
+\end{itemize}

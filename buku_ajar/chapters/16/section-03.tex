@@ -18,3 +18,11 @@ X.509 adalah standar format sertifikat digital yang mencakup:
 
 \input{figures/rantai-sertifikat}
 
+\subsection{Isi dan Tanda Tangan Sertifikat X.509}
+Selain butir-butir di atas, sertifikat X.509 versi 3 memuat \textit{issuer unique ID}, \textit{subject unique ID}, dan blok \textbf{ekstensi} (misalnya \textit{Basic Constraints}, \textit{Key Usage}, \textit{Subject Alternative Name}, dan \textit{CRL Distribution Point}) \citep{stallings2017}. Seluruh data sertifikat ditandatangani CA:
+\[ \mathrm{Sig} = \mathrm{Sign}_{K^{\text{CA}}_{\text{priv}}}\bigl(H(\text{data sertifikat})\bigr), \]
+sehingga perubahan satu bit pun menggugurkan verifikasi. Nomor seri dan masa berlaku dipakai untuk mencabut atau membatasi keabsahan sertifikat.
+
+\subsection{Rantai Kepercayaan (\textit{Chain of Trust})}
+Verifikasi tidak berhenti pada satu sertifikat. Peramban mengikuti rantai: \textbf{Root CA} (sertifikat \textit{self-signed} yang tertanam di \textit{trust store}) $\to$ \textbf{Intermediate CA} (ditandatangani Root) $\to$ \textbf{sertifikat server} (ditandatangani Intermediate). Tiap tautan diverifikasi memakai kunci publik penerbitnya; rantai dinyatakan gagal bila salah satu sertifikat kedaluwarsa, dicabut (melalui CRL/OCSP), atau namanya tidak cocok dengan domain yang diakses \citep{menezes1996}.
+

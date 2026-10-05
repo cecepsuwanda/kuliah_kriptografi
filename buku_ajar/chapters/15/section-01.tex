@@ -14,3 +14,14 @@ Sebuah fungsi hash dikatakan layak digunakan untuk keperluan kriptografi jika me
     \item \textbf{Collision Resistance}: Sangat sulit untuk menemukan dua pesan berbeda $m_1$ dan $m_2$ sedemikian sehingga $H(m_1) = H(m_2)$.
 \end{enumerate}
 
+\subsection{Serangan Birthday dan Batas Nyata Ketahanan Kolisi}
+Ketahanan kolisi tidak sebesar yang disarankan ukuran digest. Karena \textit{birthday paradox}, menemukan dua pesan berhash sama hanya membutuhkan sekitar $\sqrt{2^n} = 2^{n/2}$ percobaan acak, bukan $2^n$ \citep{stallings2017,menezes1996}. Untuk $k$ pesan acak, peluang terjadinya kolisi adalah
+\[ P(\text{kolisi}) \approx 1 - e^{-k(k-1)/(2\cdot 2^n)} \approx \frac{k^2}{2^{\,n+1}}, \]
+sehingga peluang $50\%$ dicapai pada $k \approx 1{,}177 \cdot 2^{n/2}$. Angka konkret:
+\begin{itemize}
+    \item MD5 ($n=128$): $k \approx 1{,}177 \cdot 2^{64} \approx 2{,}2\times10^{19}$ ($2^{64} = 18.446.744.073.709.551.616$).
+    \item SHA-1 ($n=160$): $k \approx 1{,}177 \cdot 2^{80} \approx 1{,}4\times10^{24}$.
+    \item SHA-256 ($n=256$): $k \approx 1{,}177 \cdot 2^{128} \approx 4{,}0\times10^{38}$.
+\end{itemize}
+\important{Ini berarti kekuatan efektif terhadap kolisi hanya $n/2$ bit, bukan $n$ bit.} SHA-256 setara 128 bit dan masih aman, sedangkan MD5 setara 64 bit dan sudah dapat ditembus GPU \citep{menezes1996}. Karena itu properti yang menentukan pilihan hash untuk tanda tangan digital adalah \textit{collision resistance}, bukan pre-image resistance.
+
