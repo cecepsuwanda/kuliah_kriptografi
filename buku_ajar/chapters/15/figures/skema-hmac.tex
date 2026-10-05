@@ -1,0 +1,30 @@
+% Konstruksi HMAC: hashing dua lapis dengan kunci yang dipad.
+% Dirujuk dari section-03.tex dengan \input{figures/skema-hmac}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center, font=\small, inner sep=5pt,
+                      minimum width=5.6cm, minimum height=0.75cm},
+        hash/.style={kotak, minimum width=2.2cm, fill=orange!12},
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+        node distance=0.45cm,
+    ]
+        \node[kotak, fill=blue!6] (a) {$M \;\|\; (K \oplus \text{ipad})$};
+        \node[hash, below=of a] (h1) {$H$};
+        \node[kotak, fill=gray!8, below=of h1] (b) {$h_1 \;\|\; (K \oplus \text{opad})$};
+        \node[hash, below=of b] (h2) {$H$};
+        \node[kotak, fill=green!10, below=of h2] (tag) {Tag MAC};
+
+        \draw[panah] (a) -- (h1);
+        \draw[panah] (h1) -- (b);
+        \draw[panah] (b) -- (h2);
+        \draw[panah] (h2) -- (tag);
+
+        \node[right=0.25cm of h1, font=\scriptsize, align=left]
+            {$h_1 = H\bigl((K \oplus \text{ipad}) \,\|\, M\bigr)$};
+        \node[right=0.25cm of h2, font=\scriptsize, align=left]
+            {$\text{Tag} = H\bigl((K \oplus \text{opad}) \,\|\, h_1\bigr)$};
+    \end{tikzpicture}
+    \caption{Konstruksi HMAC: hashing dua lapis dengan kunci yang dipad memakai ipad dan opad}
+    \label{fig:skema-hmac}
+\end{figure}

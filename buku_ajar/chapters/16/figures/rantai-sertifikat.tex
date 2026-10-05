@@ -1,0 +1,20 @@
+% Rantai kepercayaan sertifikat X.509.
+% Dirujuk dari section-03.tex dengan \input{figures/rantai-sertifikat}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center, font=\small, inner sep=5pt,
+                      minimum width=6.4cm, minimum height=1.0cm},
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+        node distance=1.0cm,
+    ]
+        \node[kotak, fill=gray!12] (root) {\textbf{Root CA}\\ \scriptsize kunci publik tertanam di peramban dan sistem operasi};
+        \node[kotak, fill=blue!6, below=of root] (inter) {\textbf{Intermediate CA}\\ \scriptsize sertifikatnya ditandatangani Root CA};
+        \node[kotak, fill=green!10, below=of inter] (server) {\textbf{Sertifikat Server}\\ \scriptsize ditandatangani Intermediate CA};
+
+        \draw[panah] (root) -- node[right, font=\scriptsize, align=left] {menandatangani} (inter);
+        \draw[panah] (inter) -- node[right, font=\scriptsize, align=left] {menandatangani} (server);
+    \end{tikzpicture}
+    \caption{Rantai kepercayaan sertifikat X.509: kepercayaan pada Root CA diteruskan ke sertifikat server melalui Intermediate CA}
+    \label{fig:rantai-sertifikat}
+\end{figure}

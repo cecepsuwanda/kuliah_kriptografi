@@ -1,0 +1,35 @@
+% Alur penandatanganan dan verifikasi tanda tangan digital.
+% Dirujuk dari section-02.tex dengan \input{figures/alur-tanda-tangan}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center, font=\small, inner sep=4pt,
+                      minimum height=0.8cm},
+        panah/.style={-{Latex[length=2mm]}, thick},
+    ]
+        % ---------- Penandatanganan ----------
+        \node[font=\small\bfseries] at (2.8,0.85) {Penandatanganan (oleh pengirim)};
+        \node[kotak, fill=blue!6, minimum width=1.4cm] (m1) at (0,0) {$M$};
+        \node[kotak, fill=orange!12, minimum width=1.8cm] (h1) at (2.0,0) {Hash};
+        \node[kotak, fill=gray!8, minimum width=2.4cm] (e1) at (4.4,0) {$E_{K_{priv}}$};
+        \node[kotak, fill=green!10, minimum width=1.8cm] (s1) at (7.0,0) {$S$};
+        \draw[panah] (m1) -- (h1);
+        \draw[panah] (h1) -- node[above, font=\scriptsize] {$h$} (e1);
+        \draw[panah] (e1) -- (s1);
+
+        % ---------- Verifikasi ----------
+        \node[font=\small\bfseries] at (2.8,-1.75) {Verifikasi (oleh penerima)};
+        \node[kotak, fill=blue!6, minimum width=1.4cm] (m2) at (0,-2.6) {$M$};
+        \node[kotak, fill=orange!12, minimum width=1.8cm] (h2) at (2.0,-2.6) {Hash};
+        \node[kotak, fill=blue!6, minimum width=1.4cm] (s2) at (0,-4.0) {$S$};
+        \node[kotak, fill=gray!8, minimum width=2.4cm] (d2) at (2.0,-4.0) {$D_{K_{pub}}$};
+        \node[kotak, fill=yellow!18, minimum width=2.6cm] (cmp) at (5.6,-3.3) {$h' = h$?};
+
+        \draw[panah] (m2) -- (h2);
+        \draw[panah] (s2) -- (d2);
+        \draw[panah] (h2) -- node[above, font=\scriptsize] {$h'$} (cmp);
+        \draw[panah] (d2) -- node[below, font=\scriptsize] {$h$} (cmp);
+    \end{tikzpicture}
+    \caption{Alur tanda tangan digital: penandatanganan memakai kunci privat pengirim, verifikasi memakai kunci publiknya}
+    \label{fig:alur-tanda-tangan}
+\end{figure}

@@ -1,0 +1,25 @@
+% Alur jabat tangan TLS yang disederhanakan (diagram urutan).
+% Dirujuk dari section-04.tex dengan \input{figures/alur-tls}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+        label/.style={font=\scriptsize, align=center, fill=white, inner sep=2pt},
+    ]
+        % Garis hidup (lifeline) kedua pihak
+        \node[draw, rounded corners, fill=blue!6, minimum width=2.6cm, minimum height=0.7cm]
+            (klien) at (0,0) {\small Klien};
+        \node[draw, rounded corners, fill=green!10, minimum width=2.6cm, minimum height=0.7cm]
+            (server) at (7,0) {\small Server};
+        \draw[dashed] (klien.south) -- ++(0,-6.2);
+        \draw[dashed] (server.south) -- ++(0,-6.2);
+
+        \draw[panah] (0,-1.0) -- node[label] {1. \textit{ClientHello}: versi, algoritma cipher} (7,-1.0);
+        \draw[panah] (7,-2.2) -- node[label] {2. \textit{ServerHello} + sertifikat X.509} (0,-2.2);
+        \draw[panah] (0,-3.4) -- node[label] {3. Verifikasi sertifikat,\\ kunci sesi dienkripsi kunci publik server} (7,-3.4);
+        \draw[panah] (7,-4.6) -- node[label] {4. Konfirmasi: kunci sesi sepakat} (0,-4.6);
+        \draw[panah, dashed] (0,-5.6) -- node[label] {5. Sesi aman dengan enkripsi simetris} (7,-5.6);
+    \end{tikzpicture}
+    \caption{Alur jabat tangan TLS yang disederhanakan: kunci publik hanya dipakai untuk menyepakati kunci sesi simetris}
+    \label{fig:alur-tls}
+\end{figure}

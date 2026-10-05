@@ -1,0 +1,21 @@
+% Alur fungsi hash: pesan berukuran bebas dipetakan menjadi digest berukuran tetap.
+% Dirujuk dari section-01.tex dengan \input{figures/alur-fungsi-hash}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center, font=\small, inner sep=6pt},
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+        node distance=1.4cm,
+    ]
+        \node[kotak, fill=blue!6, minimum width=3.4cm, minimum height=1.5cm] (m)
+            {Pesan $M$\\[2pt]\scriptsize panjang bebas};
+        \node[kotak, fill=orange!12, right=of m, minimum width=3.2cm, minimum height=1.9cm] (h)
+            {Fungsi hash\\[2pt]$h = H(M)$};
+        \node[kotak, fill=green!10, right=of h, minimum width=3.2cm, minimum height=1.5cm] (d)
+            {Digest $h$\\[2pt]\scriptsize panjang tetap};
+        \draw[panah] (m) -- (h);
+        \draw[panah] (h) -- (d);
+    \end{tikzpicture}
+    \caption{Alur kerja fungsi hash: pesan berukuran bebas dipetakan menjadi digest berukuran tetap}
+    \label{fig:alur-fungsi-hash}
+\end{figure}
