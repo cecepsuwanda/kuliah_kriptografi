@@ -1,0 +1,46 @@
+% Alur sistem kriptografi Merkle-Hellman (knapsack).
+% Dirujuk dari section-03.tex dengan \input{figures/alur-knapsack}.
+\begin{figure}[htbp]
+    \centering
+    % Diagram ini lebih lebar dari \linewidth, jadi diskalakan agar tidak
+    % menimbulkan Overfull \hbox (lebar teks: 21cm - 3cm - 2,5cm = 15,5cm).
+    \resizebox{0.97\linewidth}{!}{%
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center, font=\small, inner sep=5pt},
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+        kunci/.style={-{Latex[length=2.4mm]}, thick, dashed, gray!75},
+    ]
+        % Baris 1: transformasi kunci privat menjadi kunci publik
+        \node[kotak, fill=red!6, minimum width=4.2cm] (priv) at (0,0)
+            {Kunci privat: barisan\\ \textit{superincreasing} $W_{priv}$};
+        \node[kotak, fill=orange!12, minimum width=3.4cm] (tr) at (5.4,0)
+            {$w'_i = (w_i \cdot n) \bmod m$};
+        \node[kotak, fill=blue!6, minimum width=4.2cm] (pub) at (10.6,0)
+            {Kunci publik: barisan\\ $W_{pub}$ (non-\textit{superincreasing})};
+
+        \draw[panah] (priv) -- node[above, font=\scriptsize] {$n, m$} (tr);
+        \draw[panah] (tr) -- (pub);
+
+        % Baris 2: enkripsi dan dekripsi
+        \node[kotak, fill=green!10, minimum width=3.0cm] (msg) at (-2.9,-2.6)
+            {Pesan biner\\ $B = (b_1, \dots, b_n)$};
+        \node[kotak, fill=orange!12, minimum width=3.6cm] (enc) at (0.9,-2.6)
+            {$C = \sum_i b_i w'_i \bmod m$};
+        \node[kotak, fill=green!10, minimum width=1.6cm] (c) at (3.8,-2.6) {$C$};
+        \node[kotak, fill=orange!12, minimum width=4.4cm] (dec) at (7.4,-2.6)
+            {$C' = C \cdot n^{-1} \bmod m$,\\ lalu dipecahkan secara \textit{greedy}};
+        \node[kotak, fill=green!10, minimum width=3.0cm] (msg2) at (11.6,-2.6)
+            {Pesan biner\\ $B = (b_1, \dots, b_n)$};
+
+        \draw[kunci] (pub.south)  -- ++(0,-0.35) -| (enc.north);
+        \draw[kunci] (priv.south) -- ++(0,-0.35) -| (dec.north);
+
+        \draw[panah] (msg) -- (enc);
+        \draw[panah] (enc) -- (c);
+        \draw[panah] (c) -- (dec);
+        \draw[panah] (dec) -- (msg2);
+    \end{tikzpicture}%
+    }
+    \caption{Alur sistem Merkle-Hellman: kunci privat \textit{superincreasing} disamarkan menjadi kunci publik, enkripsi memakai kunci publik, sedangkan dekripsi menuntut kunci privat}
+    \label{fig:alur-knapsack}
+\end{figure}

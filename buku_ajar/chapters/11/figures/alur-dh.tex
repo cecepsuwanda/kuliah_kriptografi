@@ -1,0 +1,31 @@
+% Pertukaran kunci Diffie-Hellman sebagai diagram urutan.
+% Dirujuk dari section-02.tex dengan \input{figures/alur-dh}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+        label/.style={font=\scriptsize, align=center, fill=white, inner sep=2pt},
+        % Anotasi di sisi lifeline: `fill=white` menutup garis putus-putus
+        % agar teks tidak tertimpa.
+        sisi/.style={font=\scriptsize, align=center, fill=white, inner sep=2pt},
+        pihak/.style={draw, rounded corners, minimum width=2.8cm, minimum height=0.7cm},
+    ]
+        \node[pihak, fill=blue!6]  (a) at (0,0) {\small Alice};
+        \node[pihak, fill=green!10] (b) at (7,0) {\small Bob};
+        \draw[dashed] (a.south) -- ++(0,-4.75);
+        \draw[dashed] (b.south) -- ++(0,-4.75);
+
+        \node[sisi] at (0,-1.1) {parameter publik\\ $p$ dan $g$};
+        \node[sisi] at (7,-1.1) {parameter publik\\ $p$ dan $g$};
+        \node[sisi] at (0,-2.3) {pilih $a$ rahasia};
+        \node[sisi] at (7,-2.3) {pilih $b$ rahasia};
+
+        \draw[panah] (0,-3.3) -- node[label] {$A = g^{a} \bmod p$} (7,-3.3);
+        \draw[panah] (7,-4.2) -- node[label] {$B = g^{b} \bmod p$} (0,-4.2);
+
+        \node[sisi] at (0,-5.0) {$K = B^{a} \bmod p$};
+        \node[sisi] at (7,-5.0) {$K = A^{b} \bmod p$};
+    \end{tikzpicture}
+    \caption{Pertukaran kunci Diffie-Hellman: kedua pihak menyepakati kunci rahasia $K$ yang sama walau hanya bertukar $A$ dan $B$ di saluran publik}
+    \label{fig:alur-dh}
+\end{figure}

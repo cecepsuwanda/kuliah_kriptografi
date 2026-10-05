@@ -1,0 +1,36 @@
+% Alur algoritma RSA: pembangkitan kunci, enkripsi dengan kunci publik,
+% dekripsi dengan kunci privat.
+% Dirujuk dari section-03.tex dengan \input{figures/alur-rsa}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center, font=\small, inner sep=5pt},
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+        kunci/.style={-{Latex[length=2.4mm]}, thick, dashed, gray!75},
+    ]
+        \node[kotak, fill=gray!10, minimum width=8.4cm] (gen) at (2.6,0)
+            {Pembangkitan kunci: pilih $p$ dan $q$; hitung $n = pq$ dan $\phi(n) = (p-1)(q-1)$;\\
+             pilih $e$ lalu hitung $d \equiv e^{-1} \pmod{\phi(n)}$};
+        \node[kotak, fill=blue!6, minimum width=3.0cm] (pub)  at (0.4,-1.8) {Kunci publik $(e, n)$};
+        \node[kotak, fill=red!6,  minimum width=3.0cm] (priv) at (5.6,-1.8) {Kunci privat $(d, n)$};
+
+        \draw[panah] (gen.south) -- ++(0,-0.4) -| (pub.north);
+        \draw[panah] (gen.south) -- ++(0,-0.4) -| (priv.north);
+
+        \node[kotak, fill=green!10,  minimum width=2.4cm] (m)   at (-2.6,-3.7) {Pesan $m$};
+        \node[kotak, fill=orange!12, minimum width=3.0cm] (enc) at (0.4,-3.7)  {$c = m^{e} \bmod n$};
+        \node[kotak, fill=green!10,  minimum width=1.4cm] (c)   at (2.9,-3.7)  {$c$};
+        \node[kotak, fill=orange!12, minimum width=3.0cm] (dec) at (5.6,-3.7)  {$m = c^{d} \bmod n$};
+        \node[kotak, fill=green!10,  minimum width=2.4cm] (m2)  at (8.3,-3.7)  {Pesan $m$};
+
+        \draw[kunci] (pub.south)  -- (enc.north);
+        \draw[kunci] (priv.south) -- (dec.north);
+
+        \draw[panah] (m) -- (enc);
+        \draw[panah] (enc) -- (c);
+        \draw[panah] (c) -- (dec);
+        \draw[panah] (dec) -- (m2);
+    \end{tikzpicture}
+    \caption{Alur algoritma RSA: enkripsi memakai kunci publik penerima, dekripsi hanya dapat dilakukan dengan kunci privatnya}
+    \label{fig:alur-rsa}
+\end{figure}

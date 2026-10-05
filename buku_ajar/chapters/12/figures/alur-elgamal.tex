@@ -1,0 +1,38 @@
+% Alur algoritma ElGamal: pembangkitan kunci, enkripsi dengan kunci acak k,
+% dekripsi memakai kunci privat x.
+% Dirujuk dari section-03.tex dengan \input{figures/alur-elgamal}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center, font=\small, inner sep=5pt},
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+        kunci/.style={-{Latex[length=2.4mm]}, thick, dashed, gray!75},
+    ]
+        \node[kotak, fill=gray!10, minimum width=8.4cm] (gen) at (2.6,0)
+            {Pembangkitan kunci: pilih prima $p$ dan akar primitif $g$;\\
+             pilih kunci privat $x$ lalu hitung $y = g^{x} \bmod p$};
+        \node[kotak, fill=blue!6, minimum width=3.2cm] (pub)  at (0.4,-1.8) {Kunci publik $(y, g, p)$};
+        \node[kotak, fill=red!6,  minimum width=3.2cm] (priv) at (5.6,-1.8) {Kunci privat $x$};
+
+        \draw[panah] (gen.south) -- ++(0,-0.4) -| (pub.north);
+        \draw[panah] (gen.south) -- ++(0,-0.4) -| (priv.north);
+
+        \node[kotak, fill=green!10,  minimum width=2.4cm] (m)   at (-2.8,-4.0) {Pesan $m$};
+        \node[kotak, fill=orange!12, minimum width=3.6cm] (enc) at (0.5,-4.0)
+            {pilih $k$ acak;\\ $a = g^{k} \bmod p$;\\ $b = y^{k} m \bmod p$};
+        \node[kotak, fill=green!10,  minimum width=1.4cm] (c)   at (3.3,-4.0)  {$(a, b)$};
+        \node[kotak, fill=orange!12, minimum width=3.4cm] (dec) at (6.2,-4.0)
+            {$m = b \cdot (a^{x})^{-1}$\\ $\bmod p$};
+        \node[kotak, fill=green!10,  minimum width=2.4cm] (m2)  at (9.4,-4.0)  {Pesan $m$};
+
+        \draw[kunci] (pub.south)  -- (enc.north);
+        \draw[kunci] (priv.south) -- (dec.north);
+
+        \draw[panah] (m) -- (enc);
+        \draw[panah] (enc) -- (c);
+        \draw[panah] (c) -- (dec);
+        \draw[panah] (dec) -- (m2);
+    \end{tikzpicture}
+    \caption{Alur algoritma ElGamal: cipherteks berupa pasangan $(a, b)$ dan berubah setiap kali karena kunci acak $k$}
+    \label{fig:alur-elgamal}
+\end{figure}
