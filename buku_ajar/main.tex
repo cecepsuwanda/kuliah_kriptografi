@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 \documentclass[12pt, a4paper, oneside]{book}
 
 % Technical Configuration
@@ -8,17 +7,9 @@
 
 % Front Matter
 \frontmatter
-\include{frontmatter/titlepage}
-\include{frontmatter/preface}
-\include{frontmatter/syllabus_map}
-=======
-\documentclass[12pt, a4paper, draft]{book}
-\input{preamble}
-
-\begin{document}
-
-\subfile{frontmatter}
->>>>>>> worktree-fix-subfiles-v2
+\subfile{frontmatter/titlepage}
+\subfile{frontmatter/preface}
+\subfile{frontmatter/syllabus_map}
 
 \tableofcontents
 \listoffigures
@@ -43,33 +34,18 @@
 \subfile{chapters/ch15/chapter}
 \subfile{chapters/ch16/chapter}
 
-<<<<<<< HEAD
 % Back Matter
 \backmatter
-\include{appendices/glossary}
-\bibliography{references}
-\bibliographystyle{plain}
-=======
-% Jalur utama sesuai silabus (CPMK-1, CPMK-2): Bab I--XI
-\subfile{bab/bab-01}
-\subfile{bab/bab-02}
-\subfile{bab/bab-03}
-\subfile{bab/bab-04}
-\subfile{bab/bab-05}
-\subfile{bab/bab-06}
-\subfile{bab/bab-07}
-\subfile{bab/bab-08}
-\subfile{bab/bab-09}
-\subfile{bab/bab-10}
-\subfile{bab/bab-11}
-
-\backmatter
-
-% Lampiran
-\subfile{lampiran}
+\subfile{appendices/glossary}
 
 % Daftar Pustaka
-\subfile{backmatter}
->>>>>>> worktree-fix-subfiles-v2
+% \nocite{*} lists every entry in references.bib: the chapters cite their
+% sources in prose ("Menurut Schneier (1996)") rather than with \cite, so
+% without it the bibliography would render empty.
+\phantomsection
+\addcontentsline{toc}{chapter}{\bibname}
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{references}
 
 \end{document}

@@ -5,8 +5,12 @@
 
 \begin{document}
 
-\begin{titlepage}
-    \centering
+% Note: the standard `titlepage' environment resets the page counter to 1,
+% which collides with the page already emitted by \frontmatter and produces a
+% "destination with the same identifier (name{page.i})" hyperref warning.
+% A plain empty-styled page avoids that while looking identical.
+\thispagestyle{empty}
+\begingroup\centering
     \vspace*{1cm}
 
     {\Huge \textbf{KRIPTOGRAFI}}\\[0.5cm]
@@ -14,7 +18,9 @@
 
     \vfill
 
-    \includegraphics[width=0.4\textwidth]{assets/logo_itb.png}\\[2cm]
+    \IfFileExists{assets/logo_itb.png}{%
+        \includegraphics[width=0.4\textwidth]{assets/logo_itb.png}\\[2cm]%
+    }{\vspace{2cm}}%
 
     {\large \textbf{Oleh:}}\\
     {\Large \textbf{Rinaldi Munir}}\\[1cm]
@@ -25,7 +31,7 @@
     {\large \textbf{Sekolah Teknik Elektro dan Informatika}}\\
     {\large \textbf{Institut Teknologi Bandung}}\\
     {\large 2026}
-
-\end{titlepage}
+\par\endgroup
+\clearpage
 
 \end{document}

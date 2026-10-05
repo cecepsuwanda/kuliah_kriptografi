@@ -28,7 +28,7 @@ Kriptografi Kurva Eliptik (ECC) dibangun di atas konsep aljabar abstrak untuk me
     \item \textbf{Medan (\textit{Field})}: Struktur aljabar $\langle F, +, \cdot \rangle$ di mana $\langle F, + \rangle$ adalah grup abelian, $\langle F - \{0\}, \cdot \rangle$ adalah grup abelian, dan operasi perkalian bersifat distributif terhadap penjumlahan.
 \end{itemize}
 
-\subsection{Medan Galois $\text{GF}(p^m)$}
+\subsection{Medan Galois \texorpdfstring{$\text{GF}(p^m)$}{GF(p\textasciicircum m)}}
 ECC umumnya beroperasi pada medan berhingga atau \textbf{Medan Galois}, dinotasikan sebagai $\text{GF}(p^m)$.
 \begin{itemize}
     \item \textbf{GF($p$)}: Medan dengan elemen $\{0, 1, \dots, p-1\}$ di mana operasi dilakukan modulo $p$.
@@ -47,7 +47,7 @@ Titik-titik pada kurva eliptik bersama dengan titik tak hingga $\mathcal{O}$ (el
     \item \textbf{Penggandaan ($2P = R$)}: Jika $P = Q$, tarik garis tangen pada titik $P$. Titik potong garis tangen dengan kurva adalah $-R$, dan hasil akhirnya adalah $R$.
 \end{enumerate}
 
-\subsection{Analisis Koordinat ( Medan $\mathbb{R}$)
+\subsection{Analisis Koordinat (Medan \texorpdfstring{$\mathbb{R}$}{R})}
 Untuk dua titik $P(x_p, y_p)$ dan $Q(x_q, y_q)$, koordinat hasil $R(x_r, y_r)$ dihitung dengan:
 \[ m = \frac{y_q - y_p}{x_q - x_p} \quad \text{(untuk } P \neq Q \text{)} \quad \text{atau} \quad m = \frac{3x_p^2 + a}{2y_p} \quad \text{(untuk } P = Q \text{)} \]
 \[ x_r = m^2 - x_p - x_q \quad \text{dan} \quad y_r = m(x_p - x_r) - y_p \]
@@ -108,7 +108,7 @@ Hal ini membuat ECC sangat ideal untuk perangkat dengan sumber daya terbatas sep
 \end{obeassessment}
 
 \begin{competencychecklist}
-\begin{tabular}{|l|c|}
+\begin{tabularx}{\linewidth}{|X|c|}
 \hline
 Indikator Kompetensi & Tercapai \\
 \hline
@@ -122,8 +122,7 @@ Saya dapat membedakan ECDH dan ECEG & [ ] \\
 \hline
 Saya dapat menganalisis trade-off panjang kunci RSA vs ECC & [ ] \\
 \hline
-\end{tabular}
-\end{center}
+\end{tabularx}
 \end{competencychecklist}
 
 \end{document}

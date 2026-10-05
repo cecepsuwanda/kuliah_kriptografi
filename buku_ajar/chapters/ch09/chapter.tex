@@ -6,6 +6,9 @@
 \begin{document}
 
 \chapter{Kriptografi Modern Simetris: Studi Algoritma Block Cipher Lainnya}
+% Running head only: the full chapter title is wider than the header line
+% (90pt overfull), so the header uses this shorter form.
+\chaptermark{Kriptografi Modern Simetris: Block Cipher Lainnya}
 
 \begin{learningoutcome}
 Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
@@ -56,7 +59,7 @@ RC5 dikenal karena fleksibilitas parameternya, di mana pengguna dapat menentukan
 RC5 menggunakan operasi XOR, penjumlahan modulo $2^w$, dan rotasi bit sirkuler.
 
 \subsection{RC6}
-RC6 adalah pengembangan dari RC5 yang dirancang untuk kompetisi AES. RC6 beroperasi pada blok 128-bit dengan kunci variabel (128, 192, hingga 2040 bit). Perbedaan utama dengan RC5 adalah penggunaan operasi \textbf{perkalian modulo $2^w}$ untuk meningkatkan difusi.
+RC6 adalah pengembangan dari RC5 yang dirancang untuk kompetisi AES. RC6 beroperasi pada blok 128-bit dengan kunci variabel (128, 192, hingga 2040 bit). Perbedaan utama dengan RC5 adalah penggunaan operasi \textbf{perkalian modulo $2^w$} untuk meningkatkan difusi.
 
 \section{Algoritma Block Cipher Lainnya}
 Selain DES, AES, dan RC, terdapat beberapa algoritma penting lainnya yang memiliki karakteristik unik:
@@ -95,7 +98,7 @@ Selain DES, AES, dan RC, terdapat beberapa algoritma penting lainnya yang memili
 \end{obeassessment}
 
 \begin{competencychecklist}
-\begin{tabular}{|l|c|}
+\begin{tabularx}{\linewidth}{|X|c|}
 \hline
 Indikator Kompetensi & Tercapai \\
 \hline
@@ -109,8 +112,7 @@ Saya dapat menganalisis trade-off antara jumlah putaran dan efisiensi komputasi 
 \hline
 Saya dapat membedakan struktur Jaringan Feistel dan Substitusi-Permutasi & [ ] \\
 \hline
-\end{tabular}
-\end{center}
+\end{tabularx}
 \end{competencychecklist}
 
 \end{document}

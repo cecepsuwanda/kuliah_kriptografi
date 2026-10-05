@@ -4,4 +4,4 @@ Jalankan perintah di bawah ini :
 3. baca dan pahami silabus di C:\Matakuliah\kuliah_kriptografi\rps_silabus\silabus_kriptografi.tex
 4. baca dan pahami struktur buku di C:\Matakuliah\kuliah_kriptografi\struktur_bab_buku_ajar_OBE.text
 5. baca dan pahami arsitektur buku di C:\Matakuliah\kuliah_kriptografi\Arsitektur_Buku_Ajar.md 
-6. 
+6. dengan menggunakan materi dan gambar pada langkah 2, lengkapi buku pada langkah 1, patuhi silabus (langkah 3), patuhi struktur buku (langkah 4), patuhi arsitektur buku (langkah 5)

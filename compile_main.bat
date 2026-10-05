@@ -88,7 +88,15 @@ goto :end
 :cleanup
 set "TARGET_FOLDER=%~1"
 pushd "%TARGET_FOLDER%"
-for %%E in (aux bbl blg toc lof lot lol out bcf fls fdb_latexmk nav snm vrb idx ilg ind acn acr alg glg glo gls ist xdy run.xml synctex pdfsync synctex.gz) do (
+REM File terkait daftar pustaka SENGAJA tidak dihapus:
+REM   *.bib  - basis data pustaka (references.bib), sumber dari bibtex
+REM   *.bbl  - hasil olahan bibtex, dipakai pdflatex untuk mencetak daftar pustaka
+REM   *.blg  - log bibtex, untuk menelusuri entri/sitasi yang bermasalah
+REM Keduanya dipertahankan agar hasil bibliografi tetap tersimpan setelah build
+REM dan bisa diperiksa atau dipakai ulang tanpa harus menjalankan bibtex lagi.
+REM Ekstensi bibliografi yang hanya dihasilkan biblatex (bcf, run.xml) tetap
+REM dibersihkan karena proyek ini memakai bibtex klasik.
+for %%E in (aux toc lof lot lol out bcf fls fdb_latexmk nav snm vrb idx ilg ind acn acr alg glg glo gls ist xdy run.xml synctex pdfsync synctex.gz) do (
     del /s /q "*.%%E" >nul 2>&1
 )
 popd

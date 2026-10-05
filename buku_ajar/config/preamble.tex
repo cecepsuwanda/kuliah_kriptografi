@@ -1,6 +1,9 @@
 % --- Packages ---
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+% Latin Modern: scalable Type1 fonts. Also required by microtype's font
+% expansion (the default T1/EC fonts are bitmap at some sizes).
+\usepackage{lmodern}
 \usepackage[indonesian]{babel}
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{graphicx}
@@ -10,9 +13,27 @@
 \usepackage{xcolor}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
 \usepackage{enumitem}
 \usepackage{tcolorbox}
 \usepackage{subfiles}
+
+% --- Micro-typography: character protrusion + font expansion.
+%     Greatly reduces overfull/underfull boxes without changing content.
+\usepackage{microtype}
+
+% --- Hyphenation hints ---------------------------------------------------
+% Indonesian hyphenation patterns (babel) do not cover these English /
+% technical terms, which otherwise produce loose or overfull lines.
+% Must be given per-language: a plain \hyphenation in the preamble would be
+% registered for the default language, not for the active (indonesian) one.
+\babelhyphenation[indonesian]{su-per-in-creas-ing non-su-per-in-creas-ing Po-ly-al-pha-be-tic}
+
+% --- Overfull safety net -------------------------------------------------
+% Allows TeX a final pass with extra inter-word stretch, but only for
+% paragraphs that would otherwise overflow the margin.
+\setlength{\emergencystretch}{2em}
 
 % --- Page Layout ---
 \geometry{
