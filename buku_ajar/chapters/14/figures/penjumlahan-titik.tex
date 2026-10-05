@@ -1,0 +1,30 @@
+% Penjumlahan titik pada kurva eliptik y^2 = x^3 - 3x + 3.
+% Dirujuk dari section-02.tex dengan \input{figures/penjumlahan-titik}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[scale=1.25, >=Latex]
+        % Kurva y^2 = x^3 - 3x + 3 (dua cabang: y positif dan y negatif)
+        \draw[domain=-2.08:2.1, samples=200, smooth, thick, blue!70]
+            plot (\x, {sqrt(\x*\x*\x - 3*\x + 3)});
+        \draw[domain=-2.08:2.1, samples=200, smooth, thick, blue!70]
+            plot (\x, {-sqrt(\x*\x*\x - 3*\x + 3)});
+
+        % Sumbu koordinat
+        \draw[->, gray] (-2.6,0) -- (2.6,0) node[right, font=\scriptsize] {$x$};
+        \draw[->, gray] (0,-2.7) -- (0,2.7) node[above, font=\scriptsize] {$y$};
+
+        % Garis lurus melalui P dan Q (memotong kurva untuk ketiga kalinya di -R)
+        \draw[thick, red!70] (-2.0,2.237) -- (1.4,0.835);
+
+        % Titik-titik penting
+        \fill (-1.5,2.031) circle (2pt) node[above left, font=\scriptsize] {$P$};
+        \fill (1,1) circle (2pt) node[right, font=\scriptsize] {$Q$};
+        \fill (0.6697,1.1361) circle (2pt) node[above left, font=\scriptsize] {$-R$};
+        \fill (0.6697,-1.1361) circle (2pt) node[below right, font=\scriptsize] {$R = P + Q$};
+
+        % Pencerminan -R terhadap sumbu-x menghasilkan R
+        \draw[dashed, gray] (0.6697,1.1361) -- (0.6697,-1.1361);
+    \end{tikzpicture}
+    \caption{Penjumlahan dua titik pada kurva eliptik $y^2 = x^3 - 3x + 3$: garis melalui $P$ dan $Q$ memotong kurva di $-R$, lalu hasilnya $R$ adalah pencerminan $-R$ terhadap sumbu-$x$}
+    \label{fig:penjumlahan-titik}
+\end{figure}
