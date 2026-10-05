@@ -13,106 +13,12 @@ Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
 \end{itemize}
 \end{learningoutcome}
 
-\section{Teori Bilangan Dasar}
-Kriptografi modern sangat bergantung pada teori bilangan. Berikut adalah beberapa konsep fundamental yang digunakan:
-
-\subsection{Aritmetika Modulo}
-Aritmetika modulo adalah sistem aritmetika untuk bilangan bulat, di mana angka-angka "berputar kembali" setelah mencapai nilai tertentu yang disebut modulus.
-Jika $a$ dan $n$ adalah bilangan bulat, maka $a \pmod{n}$ adalah sisa bagi dari $a$ oleh $n$.
-
-\textbf{Contoh:}
-\begin{itemize}
-    \item $23 \pmod{5} = 3$ (karena $23 = 4 \times 5 + 3$)
-    \item $-41 \pmod{9} = 4$ (karena $|-41| \pmod{9} = 5$, maka $9 - 5 = 4$)
-\end{itemize}
-
-\subsection{Kekongruenan}
-Dua bilangan bulat $a$ dan $b$ dikatakan kongruen modulo $n$ jika $a$ dan $b$ memiliki sisa bagi yang sama saat dibagi oleh $n$. Hal ini ditulis sebagai:
-\[ a \equiv b \pmod{n} \]
-Artinya, $n$ membagi habis selisih antara $a$ dan $b$ ($n \mid (a - b)$).
-
-\textbf{Contoh:}
-\begin{itemize}
-    \item $17 \equiv 2 \pmod{3}$ karena $3$ membagi habis $17 - 2 = 15$.
-    \item $-7 \equiv 15 \pmod{11}$ karena $11$ membagi habis $-7 - 15 = -22$.
-\end{itemize}
-
-\subsection{Relatif Prima dan PBB}
-Dua bilangan bulat $a$ dan $b$ dikatakan relatif prima (atau \textit{coprime}) jika pembagi persekutuan terbesar (PBB) atau \textit{Greatest Common Divisor} (GCD) dari keduanya adalah 1.
-\[ \text{PBB}(a, b) = 1 \]
-Konsep ini sangat penting dalam menentukan keberadaan invers modulo.
-
-\subsection{Invers Modulo}
-Invers modulo dari $a \pmod{n}$ adalah bilangan $x$ sedemikian sehingga:
-\[ a \cdot x \equiv 1 \pmod{n} \]
-Invers modulo $a \pmod{n}$ ada jika dan hanya jika $a$ dan $n$ relatif prima ($\text{PBB}(a, n) = 1$). Invers ini dapat dicari menggunakan Algoritma Euclidean yang Diperluas (\textit{Extended Euclidean Algorithm}).
-
-\textbf{Contoh:}
-\begin{itemize}
-    \item $4^{-1} \pmod{9} \equiv 7 \pmod{9}$ karena $4 \cdot 7 = 28$, dan $28 \equiv 1 \pmod{9}$.
-    \item $23^{-1} \pmod{10} = -3 \pmod{10}$ karena $23 \cdot (-3) = -69$, dan $-69 \equiv 1 \pmod{10}$.
-\end{itemize}
-
-\section{Teori Informasi dan Entropi}
-Teori informasi mempelajari kuantisasi, penyimpanan, transmisi, dan pengolahan informasi. Salah satu metrik terpenting dalam kriptografi adalah \textbf{entropi}.
-
-\subsection{Konsep Entropi Shannon}
-Entropi mengukur tingkat ketidakpastian atau jumlah rata-rata informasi di dalam sebuah pesan. Semakin acak suatu data, semakin tinggi entropinya. Dalam kriptografi, cipherteks yang baik harus memiliki entropi yang tinggi agar sulit dianalisis.
-
-Rumus entropi Shannon untuk variabel acak $X$:
-\[ H(X) = - \sum_{i=1}^{n} p(x_i) \log_2 p(x_i) \]
-di mana:
-\begin{itemize}
-    \item $x_i$ adalah simbol ke-$i$ di dalam pesan.
-    \item $p(x_i)$ adalah peluang kemunculan simbol $x_i$.
-\end{itemize}
-
-\subsection{Rentang Nilai Entropi}
-Nilai entropi berkisar antara:
-\[ 0 \le H(X) \le \log_2(n) \]
-\begin{itemize}
-    \item \textbf{Entropi Minimum (0 bit)}: Terjadi jika tidak ada ketidakpastian (hanya satu simbol yang muncul dengan peluang 1).
-    \item \textbf{Entropi Maksimum ($\log_2 n$ bit)}: Terjadi jika semua simbol muncul dengan peluang yang sama ($1/n$).
-\end{itemize}
-
-\textbf{Contoh Kasus:}
-Untuk teks yang hanya terdiri dari 26 huruf alfabet (A--Z), entropi maksimumnya adalah $\log_2 26 \approx 4,7004$ bit/karakter. Jika sebuah cipherteks memiliki entropi yang mendekati nilai ini, maka ia sangat sulit dipecahkan menggunakan analisis frekuensi.
-
-\begin{obeactivity}
-\textbf{Aktivitas 3.1: Eksperimen Modulo dan Invers}
-1. Pilihlah dua bilangan acak $a$ dan $n$.
-2. Periksa apakah $\text{PBB}(a, n) = 1$.
-3. Jika ya, carilah invers modulo $a \pmod{n}$ menggunakan metode coba-coba atau Algoritma Euclidean.
-4. Diskusikan apa yang terjadi jika $\text{PBB}(a, n) \neq 1$. Apakah invers modulo tetap ada?
-\end{obeactivity}
-
-\begin{obereflection}
-\textbf{Latihan 3.1}
-1. Hitunglah nilai dari $-24 \pmod{11}$.
-2. Tentukan invers modulo dari $12 \pmod{5}$.
-3. Diketahui sebuah pesan memiliki huruf A, B, C, D dengan probabilitas masing-masing $p(A)=0.25, p(B)=0.25, p(C)=0.25, p(D)=0.25$. Hitunglah entropi pesan tersebut.
-\end{obereflection}
-
-\begin{obeassessment}
-\textbf{Kuis Bab 3}
-1. Mengapa pemahaman tentang bilangan prima dan relatif prima sangat penting dalam algoritma kunci publik seperti RSA?
-2. Jika sebuah cipherteks memiliki nilai entropi yang sangat rendah, apa implikasinya terhadap keamanan pesan tersebut?
-\end{obeassessment}
-
-\begin{competencychecklist}
-\begin{tabularx}{\linewidth}{|X|c|}
-\hline
-Indikator Kompetensi & Tercapai \\
-\hline
-Saya dapat melakukan operasi aritmetika modulo dan kekongruenan & [ ] \\
-\hline
-Saya dapat menentukan apakah dua bilangan relatif prima & [ ] \\
-\hline
-Saya dapat menghitung invers modulo & [ ] \\
-\hline
-Saya dapat menjelaskan konsep entropi dan menghitung nilainya & [ ] \\
-\hline
-\end{tabularx}
-\end{competencychecklist}
+\subfile{section-01}
+\subfile{section-02}
+\input{contoh}
+\input{praktikum}
+\input{latihan}
+\input{rangkuman}
+\input{evaluasi}
 
 \end{document}

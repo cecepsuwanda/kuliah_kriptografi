@@ -1,0 +1,11 @@
+\section{Landasan Matematis}
+Keamanan ElGamal bergantung pada \textbf{Persoalan Logaritma Diskrit}.
+
+\subsection{Logaritma Diskrit}
+Misalkan $p$ adalah bilangan prima besar, dan $g$ adalah akar primitif dari $p$. Jika diberikan bilangan bulat $y$ sedemikian sehingga:
+\[ g^x \equiv y \pmod{p} \]
+Maka menemukan nilai $x$ (yang disebut sebagai logaritma diskrit dari $y$ terhadap basis $g$ modulo $p$) adalah sangat sulit secara komputasi untuk $p$ yang cukup besar.
+
+\subsection{Akar Primitif}
+Bilangan $g$ disebut \textbf{akar primitif} dari $p$ jika perpangkatan $g^1, g^2, \dots, g^{p-1} \pmod{p}$ menghasilkan semua nilai dari $1$ hingga $p-1$ dalam urutan yang berbeda. Properti ini memastikan bahwa ruang kunci publik adalah maksimal.
+

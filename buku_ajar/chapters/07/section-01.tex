@@ -1,0 +1,26 @@
+\section{Data Encryption Standard (DES)}
+\textit{Data Encryption Standard} (DES) adalah standar enkripsi blok yang diadopsi secara luas sejak tahun 1976. Algoritma yang mendasarinya disebut \textit{Data Encryption Algorithm} (DEA).
+
+\subsection{Karakteristik Teknis DES}
+\begin{itemize}
+    \item \textbf{Ukuran Blok}: 64 bit.
+    \item \textbf{Ukuran Kunci}: Kunci eksternal adalah 64 bit, namun hanya 56 bit yang digunakan untuk enkripsi (8 bit lainnya digunakan sebagai bit paritas).
+    \item \textbf{Struktur}: Menggunakan Jaringan Feistel dengan 16 putaran (\textit{rounds}).
+\end{itemize}
+
+\subsection{Mekanisme Kerja DES}
+Proses enkripsi DES terdiri dari tiga tahap utama:
+\begin{enumerate}
+    \item \textbf{Permutasi Awal (\textit{Initial Permutation} - IP)}: Mengacak urutan bit plainteks sebelum masuk ke putaran Feistel.
+    \item \textbf{16 Putaran Feistel}: Setiap putaran melakukan transformasi yang melibatkan fungsi $f$ (terdiri dari ekspansi, XOR dengan kunci putaran, substitusi S-Box, dan permutasi P).
+    \item \textbf{Inversi Permutasi Awal ($\text{IP}^{-1}$)}: Permutasi terakhir untuk menghasilkan cipherteks.
+\end{enumerate}
+
+\subsection{Pembangkitan Kunci Putaran (\textit{Key Scheduling})}
+Kunci eksternal 56-bit diolah untuk menghasilkan 16 buah kunci putaran (\textit{round keys}) yang masing-masing berukuran 48 bit. Proses ini melibatkan:
+\begin{itemize}
+    \item \textbf{PC-1 (Permuted Choice 1)}: Membuang bit paritas dan membagi kunci menjadi dua bagian ($C_0$ dan $D_0$).
+    \item \textbf{Left Shift}: Melakukan pergeseran bit ke kiri pada setiap putaran.
+    \item \textbf{PC-2 (Permuted Choice 2)}: Memilih 48 bit dari hasil pergeseran untuk menjadi kunci putaran $K_i$.
+\end{itemize}
+

@@ -1,0 +1,21 @@
+\section{Serangan Pasif vs Serangan Aktif}
+Berdasarkan keterlibatan penyerang dalam komunikasi:
+
+\subsection{Serangan Pasif (\textit{Passive Attack})}
+Penyerang tidak mengubah data atau terlibat aktif dalam komunikasi; ia hanya menyadap informasi.
+\begin{itemize}
+    \item \textbf{Interception}: Menyadap konten pesan.
+    \item \textbf{Traffic Analysis}: Mengamati pola lalu lintas data (siapa berkomunikasi dengan siapa, kapan, dan berapa banyak data yang dikirim).
+\end{itemize}
+Contoh alat: \textbf{Wireshark} dapat digunakan untuk memantau lalu lintas jaringan dan menemukan plainteks jika data tidak dienkripsi.
+
+\subsection{Serangan Aktif (\textit{Active Attack})}
+Penyerang mengintervensi komunikasi dan memodifikasi sistem.
+\begin{itemize}
+    \item \textbf{Interruption}: Memutus koneksi sehingga layanan tidak tersedia (DoS).
+    \item \textbf{Fabrication}: Mengirimkan pesan palsu yang seolah-olah sah.
+    \item \textbf{Modification}: Mengubah isi pesan di tengah jalan.
+    \item \textbf{Replay}: Mengirim ulang pesan sah.
+    \item \textbf{Man-in-the-Middle (MITM)}: Penyerang menempatkan dirinya di antara pengirim dan penerima, mengintersepsi dan memodifikasi komunikasi kedua belah pihak secara real-time.
+\end{itemize}
+

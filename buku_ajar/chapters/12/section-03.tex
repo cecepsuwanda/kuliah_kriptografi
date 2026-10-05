@@ -1,0 +1,34 @@
+\section{Prosedur Algoritma ElGamal}
+Sistem ElGamal terdiri dari tiga tahap: pembangkitan kunci, enkripsi, dan dekripsi.
+
+\subsection{Pembangkitan Pasangan Kunci}
+Untuk menciptakan pasangan kunci, dilakukan langkah-langkah berikut:
+\begin{enumerate}
+    \item Pilih bilangan prima besar $p$.
+    \item Pilih akar primitif $g$ dari $p$.
+    \item Pilih bilangan bulat acak $x$ sebagai kunci privat, dengan $2 \le x \le p-2$.
+    \item Hitung kunci publik $y$ dengan rumus:
+    \[ y = g^x \pmod{p} \]
+\end{enumerate}
+\textbf{Hasil}: Kunci Publik $(y, g, p)$ dan Kunci Privat $x$.
+
+\subsection{Proses Enkripsi}
+Untuk mengirim pesan $m$ (di mana $0 \le m < p$) kepada pemilik kunci publik:
+\begin{enumerate}
+    \item Pilih bilangan acak $k$ (efemeral key), dengan $1 \le k \le p-2$.
+    \item Hitung bagian pertama cipherteks $a$:
+    \[ a = g^k \pmod{p} \]
+    \item Hitung bagian kedua cipherteks $b$:
+    \[ b = y^k \cdot m \pmod{p} \]
+\end{enumerate}
+\textbf{Hasil}: Cipherteks berupa pasangan $(a, b)$.
+
+\subsection{Proses Dekripsi}
+Penerima menggunakan kunci privat $x$ untuk mengembalikan pesan $m$:
+\begin{enumerate}
+    \item Hitung invers dari $a^x$ modulo $p$:
+    \[ (a^x)^{-1} \equiv a^{p-1-x} \pmod{p} \]
+    \item Hitung plainteks $m$:
+    \[ m = b \cdot (a^x)^{-1} \pmod{p} \]
+\end{enumerate}
+

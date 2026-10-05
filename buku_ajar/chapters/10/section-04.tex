@@ -1,0 +1,22 @@
+\section{Analisis Keamanan RSA}
+Keamanan RSA terletak pada sulitnya menentukan $d$ jika hanya diketahui $(e, n)$. Untuk mendapatkan $d$, penyerang harus mengetahui $\phi(n)$, yang berarti penyerang harus mampu memfaktorkan $n$ menjadi $p$ dan $q$.
+
+\subsection{Ukuran Kunci dan Komputasi}
+Semakin besar $n$, semakin sulit proses pemfaktoran. Saat ini, panjang kunci RSA minimal 1024 bit direkomendasikan, namun 2048 bit atau lebih lebih disarankan untuk keamanan jangka panjang.
+
+\subsection{Kriptografi Hibrida (\textit{Hybrid Cryptography})}
+Karena RSA jauh lebih lambat daripada algoritma simetris (seperti AES), dalam praktiknya RSA tidak digunakan untuk mengenkripsi pesan besar. Sebaliknya, digunakan sistem \textbf{Kriptografi Hibrida}:
+\begin{enumerate}
+    \item Sesi dimulai dengan membangkitkan kunci simetris acak (Kunci Sesi).
+    \item Kunci Sesi dienkripsi menggunakan kunci publik penerima (menggunakan RSA).
+    \item Pesan utama dienkripsi menggunakan Kunci Sesi (menggunakan AES/DES).
+    \item Penerima mendekripsi Kunci Sesi dengan kunci privatnya, lalu menggunakan kunci tersebut untuk mendekripsi pesan.
+\end{enumerate}
+
+\subsection{Serangan Man-in-the-Middle (MITM)}
+Kelemahan utama distribusi kunci publik adalah kemungkinan adanya penyerang (Carol) yang mencegat komunikasi. Carol dapat mengirimkan kunci publik palsu kepada Alice dan Bob, sehingga Carol dapat mendekripsi semua pesan yang mereka kirimkan satu sama lain tanpa terdeteksi.
+
+
+
+
+

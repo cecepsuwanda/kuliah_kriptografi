@@ -15,114 +15,14 @@ Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
 \end{itemize}
 \end{learningoutcome}
 
-\section{Otentikasi dan Non-Repudiation}
-Dalam keamanan informasi, mengetahui \textit{siapa} yang mengirimkan pesan sama pentingnya dengan menjaga kerahasiaan isi pesan tersebut.
-
-\subsection{Otentikasi}
-Otentikasi adalah proses pembuktian identitas seorang pengguna atau sistem. Terdapat tiga faktor utama otentikasi:
-\begin{enumerate}
-    \item \textbf{Something you know}: Kata sandi (\textit{password}), PIN.
-    \item \textbf{Something you have}: Token fisik, kartu pintar (\textit{smart card}), sertifikat digital.
-    \item \textbf{Something you are}: Biometrik (sidik jari, scan retina).
-\end{enumerate}
-
-\subsection{Non-Repudiation (Nir-Sangkalan)}
-\textit{Non-repudiation} adalah jaminan bahwa pengirim pesan tidak dapat menyangkal telah mengirimkan pesan tersebut, dan penerima tidak dapat menyangkal telah menerima pesan tersebut. Hal ini dicapai melalui penggunaan tanda tangan digital.
-
-\section{Tanda Tangan Digital}
-Tanda tangan digital bukanlah salinan digital dari tanda tangan basah, melainkan sebuah mekanisme kriptografis yang mengikat identitas pengirim dengan isi pesan.
-
-\subsection{Mekanisme Kerja Tanda Tangan Digital}
-Berbeda dengan enkripsi pesan (di mana pesan dienkripsi dengan kunci publik penerima), tanda tangan digital dibuat menggunakan \textbf{kunci privat pengirim}.
-
-\textbf{Proses Penandatanganan (Signing):}
-\begin{enumerate}
-    \item Pengirim membuat \textit{hash} dari pesan asli: $h = \text{Hash}(M)$.
-    \item Pengirim mengenkripsi nilai hash tersebut menggunakan kunci privatnya: $S = E_{K_{priv}}(h)$.
-    \item Pesan $M$ dan tanda tangan $S$ dikirimkan kepada penerima.
-\end{enumerate}
-
-\textbf{Proses Verifikasi (Verification):}
-\begin{enumerate}
-    \item Penerima menghitung hash dari pesan $M$ yang diterima: $h' = \text{Hash}(M)$.
-    \item Penerima mendekripsi tanda tangan $S$ menggunakan kunci publik pengirim: $h = D_{K_{pub}}(S)$.
-    \item Jika $h = h'$, maka tanda tangan valid. Ini membuktikan dua hal:
-    \begin{itemize}
-        \item \textbf{Integritas}: Pesan tidak berubah sejak ditandatangani.
-        \item \textbf{Otentikasi}: Pesan benar-benar berasal dari pemilik kunci privat tersebut.
-    \end{itemize}
-\end{enumerate}
-
-\subsection{Digital Signature Standard (DSS)}
-DSS adalah standar pemerintah AS yang menggunakan algoritma DSA (Digital Signature Algorithm). Berbeda dengan RSA, DSA hanya digunakan untuk tanda tangan digital dan tidak bisa digunakan untuk enkripsi data. DSS menawarkan efisiensi lebih tinggi dalam proses pembuatan tanda tangan.
-
-\section{Public Key Infrastructure (PKI)}
-Masalah utama kriptografi asimetris adalah: \textit{Bagaimana kita tahu bahwa kunci publik yang kita gunakan benar-benar milik orang yang bersangkutan?}
-
-\subsection{Otoritas Sertifikat (Certificate Authority - CA)}
-CA adalah pihak ketiga terpercaya yang menerbitkan sertifikat digital. Sertifikat ini mengikat identitas seseorang (misal: nama perusahaan) dengan kunci publiknya.
-
-\subsection{Sertifikat X.509}
-X.509 adalah standar format sertifikat digital yang mencakup:
-\begin{itemize}
-    \item Versi sertifikat.
-    \item Nomor seri.
-    \item Nama penerbit (CA).
-    \item Masa berlaku (valid from/to).
-    \item Nama pemilik sertifikat (Subject).
-    \item Kunci publik pemilik.
-    \item Tanda tangan digital dari CA.
-\end{itemize}
-
-\section{Protokol SSL/TLS}
-Secure Sockets Layer (SSL) dan penerusnya, Transport Layer Security (TLS), adalah protokol yang mengimplementasikan semua konsep di atas untuk mengamankan komunikasi HTTPS.
-
-\textbf{Alur Kerja (Simplified Handshake):}
-\begin{enumerate}
-    \item \textbf{Hello}: Client dan server menyepakati versi protokol dan algoritma cipher.
-    \item \textbf{Sertifikat}: Server mengirimkan sertifikat X.509 yang berisi kunci publik server.
-    \item \textbf{Key Exchange}: Client memverifikasi sertifikat, lalu membangkitkan kunci sesi simetris, mengenkripsinya dengan kunci publik server, dan mengirimkannya kembali.
-    \item \textbf{Secure Session}: Kedua pihak menggunakan kunci sesi simetris tersebut untuk mengenkripsi seluruh data yang dikirimkan.
-\end{enumerate}
-
-\begin{obeactivity}
-\textbf{Aktivitas 16.1: Analisis Sertifikat Digital Browser}
-1. Buka browser (Chrome/Firefox) dan akses situs dengan HTTPS (misal: google.com).
-2. Klik ikon gembok di samping URL $\rightarrow$ \textit{Connection is secure} $\rightarrow$ \textit{Certificate is valid}.
-3. Identifikasi siapa penerbit sertifikatnya (CA), kapan masa berlakunya, dan apa kunci publik yang digunakan.
-4. Diskusikan apa yang terjadi jika sertifikat tersebut kedaluwarsa atau tidak diterbitkan oleh CA terpercaya.
-\end{obeactivity}
-
-\begin{obereflection}
-\textbf{Latihan 16.1}
-1. Mengapa tanda tangan digital menggunakan hash dari pesan, bukan mengenkripsi seluruh pesan dengan kunci privat?
-2. Apa perbedaan antara otentikasi menggunakan password dibandingkan dengan otentikasi menggunakan tanda tangan digital?
-3. Bagaimana PKI mencegah serangan \textit{Man-in-the-Middle} dalam distribusi kunci publik?
-\end{obereflection}
-
-\begin{obeassessment}
-\textbf{Kuis Bab 16}
-1. Jelaskan kaitan antara hash, kunci privat, dan kunci publik dalam proses tanda tangan digital.
-2. Apa peran sertifikat X.509 dalam ekosistem Public Key Infrastructure?
-3. Mengapa protokol TLS menggunakan kombinasi kriptografi asimetris (di awal) dan simetris (selama sesi)?
-\end{obeassessment}
-
-\begin{competencychecklist}
-\begin{tabularx}{\linewidth}{|X|c|}
-\hline
-Indikator Kompetensi & Tercapai \\
-\hline
-Saya dapat membedakan otentikasi dan non-repudiation & [ ] \\
-\hline
-Saya dapat menguraikan alur pembuatan dan verifikasi tanda tangan digital & [ ] \\
-\hline
-Saya dapat menjelaskan fungsi CA dan sertifikat X.509 & [ ] \\
-\hline
-Saya dapat menganalisis mekanisme handshake SSL/TLS & [ ] \\
-\hline
-Saya dapat mengidentifikasi komponen PKI dalam aplikasi HTTPS & [ ] \\
-\hline
-\end{tabularx}
-\end{competencychecklist}
+\subfile{section-01}
+\subfile{section-02}
+\subfile{section-03}
+\subfile{section-04}
+\input{contoh}
+\input{praktikum}
+\input{latihan}
+\input{rangkuman}
+\input{evaluasi}
 
 \end{document}

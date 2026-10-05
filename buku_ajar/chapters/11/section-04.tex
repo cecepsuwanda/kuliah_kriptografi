@@ -1,0 +1,17 @@
+\section{Ekstensi Diffie-Hellman}
+\subsection{Pertukaran Kunci Tiga Pihak}
+Protokol DH dapat diperluas untuk lebih dari dua pihak. Untuk Alice, Bob, dan Carol, prosesnya melibatkan pertukaran bertahap:
+\begin{enumerate}
+    \item Alice mengirim $g^a \bmod p$ ke Bob.
+    \item Bob menghitung $(g^a)^b \bmod p$ dan mengirimkannya ke Carol.
+    \item Carol menghitung $K = (g^{ab})^c \bmod p = g^{abc} \bmod p$.
+    \item Proses serupa dilakukan secara siklis sehingga akhirnya semua pihak memiliki kunci rahasia yang sama, yaitu $K = g^{abc} \bmod p$.
+\end{enumerate}
+
+\subsection{Implementasi Modern}
+Protokol Diffie-Hellman digunakan secara luas dalam standar keamanan internet modern, seperti dalam protokol SSL (\textit{Secure Sockets Layer}) dan TLS (\textit{Transport Layer Security}) untuk mengamankan koneksi HTTPS.
+
+
+
+
+

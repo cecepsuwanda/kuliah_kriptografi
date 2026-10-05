@@ -1,0 +1,20 @@
+\section{Kriptografi Berbasis Kurva Eliptik}
+Inti dari keamanan ECC adalah \textbf{Elliptic Curve Discrete Logarithm Problem (ECDLP)}.
+
+\subsection{ECDLP}
+Diberikan titik basis $P$ dan titik $Q$ pada kurva eliptik, sangat sulit untuk menemukan integer $k$ sedemikian sehingga:
+\[ Q = kP = \underbrace{P + P + \dots + P}_{k \text{ kali}} \]
+Jika $k$ adalah bilangan yang sangat besar, mencari $k$ dari $P$ dan $Q$ secara komputasi tidak praktis.
+
+\subsection{Mekanisme Kunci}
+\begin{itemize}
+    \item \textbf{Kunci Privat}: Integer acak $k \in [1, p-1]$.
+    \item \textbf{Kunci Publik}: Titik $Q = kP$ pada kurva eliptik.
+\end{itemize}
+
+\subsection{Protokol Utama}
+\begin{enumerate}
+    \item \textbf{ECDH (Elliptic Curve Diffie-Hellman)}: Pertukaran kunci rahasia bersama menggunakan operasi perkalian titik.
+    \item \textbf{ECEG (Elliptic Curve ElGamal)}: Enkripsi pesan dengan mengkodekan pesan menjadi titik $P_M$ dan menghasilkan cipherteks berupa pasangan titik $[(kB), (P_M + kP_B)]$.
+\end{enumerate}
+

@@ -1,0 +1,23 @@
+\section{Jenis-Jenis Serangan Berdasarkan Informasi}
+Berdasarkan informasi yang dimiliki oleh penyerang, serangan dapat dikategorikan menjadi beberapa jenis:
+
+\subsection{Ciphertext-Only Attack}
+Ini adalah serangan yang paling sulit karena kriptanalis hanya memiliki akses ke cipherteks saja. Teknik yang digunakan biasanya meliputi:
+\begin{itemize}
+    \item \textit{Exhaustive key search} (Brute force).
+    \item Analisis frekuensi karakter.
+\end{itemize}
+Contoh: Pada Caesar Cipher, jika penyerang hanya memiliki cipherteks \texttt{KHOORZRUOG}, ia dapat mencoba semua 25 kemungkinan pergeseran huruf hingga menemukan plainteks yang masuk akal (\texttt{HELLOWORLD}).
+
+\subsection{Known-Plaintext Attack}
+Penyerang memiliki sejumlah pasangan plainteks dan cipherteks yang berkoresponden ($P_i$ dan $C_i = E_k(P_i)$). Serangan ini sering terjadi jika sebagian isi pesan dapat ditebak, seperti \textit{header} file, protokol standar, atau salam pembuka email (misalnya "Dengan hormat").
+
+\subsection{Chosen-Plaintext Attack}
+Penyerang dapat memilih plainteks tertentu untuk dienkripsi oleh sistem dan mendapatkan cipherteksnya. Dengan memilih plainteks yang strategis (misalnya rangkaian huruf 'AAAAA'), penyerang dapat lebih mudah mendeduksi kunci.
+
+\subsection{Adaptive Chosen-Plaintext Attack}
+Variasi dari chosen-plaintext attack di mana penyerang dapat menyesuaikan plainteks berikutnya berdasarkan hasil cipherteks dari query sebelumnya. Penyerang belajar secara bertahap untuk menggali informasi kunci.
+
+\subsection{Chosen-Ciphertext Attack}
+Penyerang dapat memilih cipherteks tertentu dan mendapatkan hasil dekripsinya melalui sebuah \textit{oracle} (sistem yang bisa mendekripsi). Informasi ini kemudian digunakan untuk memecahkan cipher atau menemukan kunci.
+

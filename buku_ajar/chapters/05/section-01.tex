@@ -1,0 +1,39 @@
+\section{Pengantar Kriptografi Modern}
+Kriptografi modern menandai era setelah penemuan komputer digital, di mana algoritma tidak lagi beroperasi pada level karakter (seperti pada kriptografi klasik), melainkan pada level bit atau byte.
+
+\subsection{Karakteristik Utama}
+Perubahan paradigma dari kriptografi klasik ke modern melibatkan beberapa poin kunci:
+\begin{itemize}
+    \item \textbf{Representasi Biner}: Data (plainteks), kunci, dan cipherteks direpresentasikan sebagai rangkaian bit ($0$ dan $1$).
+    \item \textbf{Operasi Dasar}: Operasi \textbf{XOR} ($\oplus$) menjadi operasi yang paling dominan karena efisiensinya dalam perangkat keras dan perangkat lunak.
+    \item \textbf{Kompleksitas}: Meskipun tetap menggunakan prinsip substitusi dan transposisi, operasi modern dibuat jauh lebih kompleks melalui putaran (\textit{rounds}), rotasi, dan fungsi non-linear untuk mencegah kriptanalisis.
+\end{itemize}
+
+\subsection{Operasi XOR dan Bitwise}
+Operasi XOR (\textit{Exclusive OR}) adalah fondasi dari banyak cipher modern.
+Tabel kebenaran XOR:
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+$a$ & $b$ & $a \oplus b$ \\
+\hline
+0 & 0 & 0 \\
+0 & 1 & 1 \\
+1 & 0 & 1 \\
+1 & 1 & 0 \\
+\hline
+\end{tabular}
+\end{center}
+
+Sifat-sifat penting XOR:
+\begin{enumerate}
+    \item $a \oplus a = 0$
+    \item $a \oplus 0 = a$
+    \item $a \oplus b = b \oplus a$ (Komutatif)
+    \item $a \oplus (b \oplus c) = (a \oplus b) \oplus c$ (Asosiatif)
+\end{enumerate}
+
+Sifat $a \oplus a = 0$ memungkinkan proses enkripsi dan dekripsi menggunakan fungsi yang sama:
+\[ \text{Enkripsi: } C = P \oplus K \]
+\[ \text{Dekripsi: } P = C \oplus K = (P \oplus K) \oplus K = P \oplus (K \oplus K) = P \oplus 0 = P \]
+

@@ -1,0 +1,28 @@
+\section{Mode Operasi Block Cipher}
+Karena \textit{block cipher} hanya dapat mengenkripsi satu blok data, diperlukan \textbf{mode operasi} untuk mengenkripsi pesan yang panjangnya lebih dari satu blok.
+
+\subsection{Electronic Code Book (ECB)}
+Mode paling sederhana di mana setiap blok plainteks $P_i$ dienkripsi secara independen:
+\[ C_i = E_K(P_i) \]
+\textbf{Kelemahan}: Blok plainteks yang sama akan selalu menghasilkan blok cipherteks yang sama. Hal ini menyebabkan pola data asli tetap terlihat pada cipherteks, sehingga rentan terhadap analisis statistik.
+
+\subsection{Cipher Block Chaining (CBC)}
+Untuk mengatasi kelemahan ECB, CBC memperkenalkan ketergantungan antar blok. Setiap blok plainteks di-XOR dengan blok cipherteks sebelumnya sebelum dienkripsi:
+\[ C_0 = IV \quad (\text{Initialization Vector}) \]
+\[ C_i = E_K(P_i \oplus C_{i-1}) \]
+Dekripsinya adalah:
+\[ P_i = D_K(C_i) \oplus C_{i-1} \]
+CBC memastikan bahwa blok plainteks yang sama menghasilkan cipherteks yang berbeda tergantung posisinya.
+
+\subsection{Cipher Feedback (CFB) dan Output Feedback (OFB)}
+Kedua mode ini mengubah \textit{block cipher} agar bekerja menyerupai \textit{stream cipher}:
+\begin{itemize}
+    \item \textbf{CFB}: Hasil enkripsi dari blok sebelumnya di-XOR dengan plainteks saat ini. Cocok untuk data yang belum mencapai ukuran satu blok penuh.
+    \item \textbf{OFB}: Mirip dengan CFB, tetapi yang di-XOR dengan plainteks adalah keluaran dari generator kunci internal (tidak bergantung pada cipherteks). Ini mencegah penjalaran kesalahan (\textit{error propagation}).
+\end{itemize}
+
+\subsection{Counter Mode (CTR)}
+Mode CTR mengenkripsi sebuah nilai \textit{counter} yang terus bertambah, kemudian hasil enkripsinya di-XOR dengan plainteks:
+\[ C_i = P_i \oplus E_K(\text{counter}_i) \]
+\textbf{Kelebihan}: Mendukung pemrosesan paralel karena setiap blok tidak bergantung pada blok sebelumnya.
+

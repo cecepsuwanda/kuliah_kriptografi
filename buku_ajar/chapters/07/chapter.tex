@@ -15,98 +15,13 @@ Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
 \end{itemize}
 \end{learningoutcome}
 
-\section{Data Encryption Standard (DES)}
-\textit{Data Encryption Standard} (DES) adalah standar enkripsi blok yang diadopsi secara luas sejak tahun 1976. Algoritma yang mendasarinya disebut \textit{Data Encryption Algorithm} (DEA).
-
-\subsection{Karakteristik Teknis DES}
-\begin{itemize}
-    \item \textbf{Ukuran Blok}: 64 bit.
-    \item \textbf{Ukuran Kunci}: Kunci eksternal adalah 64 bit, namun hanya 56 bit yang digunakan untuk enkripsi (8 bit lainnya digunakan sebagai bit paritas).
-    \item \textbf{Struktur}: Menggunakan Jaringan Feistel dengan 16 putaran (\textit{rounds}).
-\end{itemize}
-
-\subsection{Mekanisme Kerja DES}
-Proses enkripsi DES terdiri dari tiga tahap utama:
-\begin{enumerate}
-    \item \textbf{Permutasi Awal (\textit{Initial Permutation} - IP)}: Mengacak urutan bit plainteks sebelum masuk ke putaran Feistel.
-    \item \textbf{16 Putaran Feistel}: Setiap putaran melakukan transformasi yang melibatkan fungsi $f$ (terdiri dari ekspansi, XOR dengan kunci putaran, substitusi S-Box, dan permutasi P).
-    \item \textbf{Inversi Permutasi Awal ($\text{IP}^{-1}$)}: Permutasi terakhir untuk menghasilkan cipherteks.
-\end{enumerate}
-
-\subsection{Pembangkitan Kunci Putaran (\textit{Key Scheduling})}
-Kunci eksternal 56-bit diolah untuk menghasilkan 16 buah kunci putaran (\textit{round keys}) yang masing-masing berukuran 48 bit. Proses ini melibatkan:
-\begin{itemize}
-    \item \textbf{PC-1 (Permuted Choice 1)}: Membuang bit paritas dan membagi kunci menjadi dua bagian ($C_0$ dan $D_0$).
-    \item \textbf{Left Shift}: Melakukan pergeseran bit ke kiri pada setiap putaran.
-    \item \textbf{PC-2 (Permuted Choice 2)}: Memilih 48 bit dari hasil pergeseran untuk menjadi kunci putaran $K_i$.
-\end{itemize}
-
-\section{Keamanan dan Kriptanalisis DES}
-Keamanan DES sangat bergantung pada panjang kuncinya. Dengan hanya 56 bit, ruang kunci DES adalah $2^{56}$, yang saat ini dianggap terlalu kecil.
-
-\subsection{Serangan Brute Force}
-Serangan \textit{exhaustive key search} mencoba semua kemungkinan kunci hingga ditemukan yang benar. Dengan kemajuan komputasi, serangan ini dapat dilakukan dalam waktu yang sangat singkat (hitungan jam atau hari menggunakan perangkat keras khusus).
-
-\subsection{Efek Longsoran (\textit{Avalanche Effect})}
-DES memiliki efek longsoran yang kuat: perubahan satu bit pada plainteks atau kunci akan mengakibatkan perubahan signifikan pada banyak bit di cipherteks. Hal ini mencegah penyerang melakukan prediksi terhadap kunci berdasarkan pola cipherteks.
-
-\subsection{Kunci Lemah DES}
-Terdapat beberapa kunci yang disebut \textit{weak keys} di mana enkripsi dan dekripsi menjadi operasi yang sama ($E_K(E_K(x)) = x$). Penggunaan kunci ini harus dihindari karena menurunkan tingkat keamanan.
-
-\section{Varian DES: Double DES dan Triple DES}
-Untuk memperpanjang umur DES tanpa mengubah algoritma dasarnya, dikembangkanlah metode enkripsi berganda.
-
-\subsection{Double DES dan Meet-in-the-Middle Attack}
-\textit{Double DES} menggunakan dua kunci berbeda ($K_1$ dan $K_2$):
-\[ C = E_{K_2}(E_{K_1}(P)) \]
-Meskipun secara teoritis memperluas ruang kunci menjadi $2^{112}$, Double DES rentan terhadap \textbf{Meet-in-the-Middle Attack}. Serangan ini memungkinkan penyerang menemukan kunci dengan kompleksitas sekitar $2^{57}$, bukan $2^{112}$, sehingga tidak memberikan peningkatan keamanan yang signifikan.
-
-\subsection{Triple DES (3DES)}
-Triple DES mengatasi kelemahan Double DES dengan melakukan tiga tahap proses (Enkripsi-Dekripsi-Enkripsi atau EDE):
-\[ C = E_{K_3}(D_{K_2}(E_{K_1}(P))) \]
-\begin{itemize}
-    \item \textbf{Opsi 2 Kunci}: $K_1 = K_3$ (Kunci efektif: 112 bit).
-    \item \textbf{Opsi 3 Kunci}: $K_1, K_2, K_3$ berbeda (Kunci efektif: 168 bit).
-\end{itemize}
-Mode EDE digunakan agar 3DES tetap kompatibel dengan DES tunggal (jika $K_1=K_2=K_3$).
-
-\begin{obeactivity}
-\textbf{Aktivitas 7.1: Analisis Kompleksitas Kunci}
-1. Hitung berapa lama waktu yang dibutuhkan untuk melakukan brute force terhadap DES (56 bit) jika sebuah komputer dapat mencoba $10^9$ kunci per detik.
-2. Bandingkan hasil tersebut dengan waktu yang dibutuhkan untuk menyerang AES-128 ($2^{128}$ kemungkinan).
-3. Diskusikan mengapa peningkatan panjang kunci secara eksponensial jauh lebih efektif daripada sekadar mengulang algoritma yang sama (seperti pada Double DES).
-\end{obeactivity}
-
-\begin{obereflection}
-\textbf{Latihan 7.1}
-1. Mengapa Triple DES menggunakan urutan Enkripsi-Dekripsi-Enkripsi (EDE) alih-alih Enkripsi-Enkripsi-Enkripsi (EEE)?
-2. Jelaskan mekanisme kerja serangan \textit{Meet-in-the-Middle} pada Double DES secara sederhana.
-3. Apa dampak dari penggunaan kunci lemah (\textit{weak keys}) pada algoritma DES?
-\end{obereflection}
-
-\begin{obeassessment}
-\textbf{Kuis Bab 7}
-1. Jelaskan perbedaan antara kunci eksternal dan kunci putaran (\textit{round key}) pada DES.
-2. Mengapa DES dianggap tidak aman untuk standar keamanan modern, meskipun memiliki struktur Jaringan Feistel yang kompleks?
-3. Bagaimana Triple DES meningkatkan keamanan dibandingkan dengan Single DES?
-\end{obeassessment}
-
-\begin{competencychecklist}
-\begin{tabularx}{\linewidth}{|X|c|}
-\hline
-Indikator Kompetensi & Tercapai \\
-\hline
-Saya dapat menjelaskan struktur global algoritma DES & [ ] \\
-\hline
-Saya dapat menguraikan proses pembangkitan kunci internal DES & [ ] \\
-\hline
-Saya dapat menganalisis kelemahan Double DES terhadap Meet-in-the-Middle attack & [ ] \\
-\hline
-Saya dapat membedakan varian Triple DES (2 kunci vs 3 kunci) & [ ] \\
-\hline
-Saya dapat menjelaskan konsep efek longsoran (\textit{avalanche effect}) & [ ] \\
-\hline
-\end{tabularx}
-\end{competencychecklist}
+\subfile{section-01}
+\subfile{section-02}
+\subfile{section-03}
+\input{contoh}
+\input{praktikum}
+\input{latihan}
+\input{rangkuman}
+\input{evaluasi}
 
 \end{document}

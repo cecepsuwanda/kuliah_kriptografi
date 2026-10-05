@@ -1,0 +1,34 @@
+\section{Protokol Pertukaran Kunci Diffie-Hellman}
+Dipublikasikan oleh Whitfield Diffie dan Martin Hellman pada tahun 1976, protokol ini memungkinkan dua pihak (misalnya Alice dan Bob) untuk menyepakati sebuah kunci rahasia bersama melalui saluran publik yang tidak aman.
+
+\subsection{Parameter Publik}
+Sebelum memulai pertukaran, Alice dan Bob menyepakati dua parameter publik yang tidak perlu dirahasiakan:
+\begin{enumerate}
+    \item Sebuah bilangan prima besar, $p$.
+    \item Sebuah bilangan bulat $g$, sedemikian sehingga $g$ adalah akar primitif dari $p$ (di mana $g < p$).
+\end{enumerate}
+
+\subsection{Prosedur Pertukaran Kunci}
+Langkah-langkah perhitungan Diffie-Hellman adalah sebagai berikut:
+\begin{enumerate}
+    \item \textbf{Pembangkitan Kunci Privat}:
+    \begin{itemize}
+        \item Alice memilih bilangan bulat acak $a$ sebagai kunci privatnya.
+        \item Bob memilih bilangan bulat acak $b$ sebagai kunci privatnya.
+    \end{itemize}
+    \item \textbf{Perhitungan dan Pertukaran Kunci Publik}:
+    \begin{itemize}
+        \item Alice menghitung $A = g^a \bmod p$ dan mengirimkan $A$ kepada Bob.
+        \item Bob menghitung $B = g^b \bmod p$ dan mengirimkan $B$ kepada Alice.
+    \end{itemize}
+    \item \textbf{Penghitungan Kunci Rahasia Bersama}:
+    \begin{itemize}
+        \item Alice menghitung $K = B^a \bmod p$.
+        \item Bob menghitung $K = A^b \bmod p$.
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Pembuktian Matematis}:
+Kunci yang dihasilkan oleh Alice dan Bob adalah sama karena:
+\[ K = B^a \bmod p = (g^b)^a \bmod p = g^{ba} \bmod p = (g^a)^b \bmod p = A^b \bmod p \]
+

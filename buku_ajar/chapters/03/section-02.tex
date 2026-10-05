@@ -1,0 +1,29 @@
+\section{Teori Informasi dan Entropi}
+Teori informasi mempelajari kuantisasi, penyimpanan, transmisi, dan pengolahan informasi. Salah satu metrik terpenting dalam kriptografi adalah \textbf{entropi}.
+
+\subsection{Konsep Entropi Shannon}
+Entropi mengukur tingkat ketidakpastian atau jumlah rata-rata informasi di dalam sebuah pesan. Semakin acak suatu data, semakin tinggi entropinya. Dalam kriptografi, cipherteks yang baik harus memiliki entropi yang tinggi agar sulit dianalisis.
+
+Rumus entropi Shannon untuk variabel acak $X$:
+\[ H(X) = - \sum_{i=1}^{n} p(x_i) \log_2 p(x_i) \]
+di mana:
+\begin{itemize}
+    \item $x_i$ adalah simbol ke-$i$ di dalam pesan.
+    \item $p(x_i)$ adalah peluang kemunculan simbol $x_i$.
+\end{itemize}
+
+\subsection{Rentang Nilai Entropi}
+Nilai entropi berkisar antara:
+\[ 0 \le H(X) \le \log_2(n) \]
+\begin{itemize}
+    \item \textbf{Entropi Minimum (0 bit)}: Terjadi jika tidak ada ketidakpastian (hanya satu simbol yang muncul dengan peluang 1).
+    \item \textbf{Entropi Maksimum ($\log_2 n$ bit)}: Terjadi jika semua simbol muncul dengan peluang yang sama ($1/n$).
+\end{itemize}
+
+\textbf{Contoh Kasus:}
+Untuk teks yang hanya terdiri dari 26 huruf alfabet (A--Z), entropi maksimumnya adalah $\log_2 26 \approx 4,7004$ bit/karakter. Jika sebuah cipherteks memiliki entropi yang mendekati nilai ini, maka ia sangat sulit dipecahkan menggunakan analisis frekuensi.
+
+
+
+
+

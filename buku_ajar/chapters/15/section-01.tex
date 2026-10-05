@@ -1,0 +1,14 @@
+\section{Konsep Dasar Fungsi Hash}
+Fungsi hash adalah algoritma yang memetakan data input dengan ukuran variabel menjadi output dengan ukuran tetap (fixed size), yang sering disebut sebagai \textit{hash value}, \textit{digest}, atau \textit{fingerprint}.
+
+Berbeda dengan enkripsi yang bersifat dua arah (ada enkripsi dan dekripsi), fungsi hash adalah \textbf{fungsi satu arah} (\textit{one-way function}). Artinya, sangat mudah untuk menghitung hash dari sebuah pesan, tetapi secara komputasi tidak mungkin untuk mengembalikan pesan asli dari nilai hash-nya.
+
+\subsection{Karakteristik Fungsi Hash Kriptografis}
+Sebuah fungsi hash dikatakan layak digunakan untuk keperluan kriptografi jika memenuhi properti berikut:
+\begin{enumerate}
+    \item \textbf{Efisiensi}: Perhitungan hash untuk input apa pun harus dapat dilakukan dengan cepat.
+    \item \textbf{Pre-image Resistance}: Diberikan nilai hash $h$, sangat sulit untuk menemukan pesan $m$ sedemikian sehingga $H(m) = h$.
+    \item \textbf{Second Pre-image Resistance}: Diberikan pesan $m_1$, sangat sulit untuk menemukan pesan $m_2 \neq m_1$ sedemikian sehingga $H(m_1) = H(m_2)$.
+    \item \textbf{Collision Resistance}: Sangat sulit untuk menemukan dua pesan berbeda $m_1$ dan $m_2$ sedemikian sehingga $H(m_1) = H(m_2)$.
+\end{enumerate}
+

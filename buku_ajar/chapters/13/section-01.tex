@@ -1,0 +1,11 @@
+\section{Persoalan Knapsack (\textit{Knapsack Problem})}
+Algoritma kriptografi Knapsack, atau sistem Merkle-Hellman, didasarkan pada persoalan matematika klasik yang dikenal sebagai \textit{Knapsack Problem}.
+
+\subsection{Definisi Matematika}
+Diberikan sebuah kapasitas bobot total $M$ dan sekumpulan $n$ buah objek dengan bobot $w_1, w_2, \dots, w_n$. Persoalannya adalah menentukan nilai biner $b_i \in \{0, 1\}$ sedemikian sehingga:
+\[ M = \sum_{i=1}^{n} b_i w_i = b_1w_1 + b_2w_2 + \dots + b_nw_n \]
+Di mana $b_i = 1$ berarti objek ke-$i$ dimasukkan ke dalam tas (\textit{knapsack}), dan $b_i = 0$ berarti tidak dimasukkan.
+
+\subsection{Kompleksitas Komputasi}
+Dalam teori kompleksitas, \textit{Knapsack Problem} umum termasuk dalam kategori \textbf{NP-complete}. Artinya, tidak ada algoritma yang diketahui dapat memecahkan persoalan ini dalam waktu polinomial seiring dengan bertambahnya jumlah objek $n$. Sifat inilah yang awalnya menjadi landasan keamanan algoritma kriptografi Knapsack.
+

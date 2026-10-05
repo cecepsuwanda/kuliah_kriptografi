@@ -1,0 +1,15 @@
+\section{Keluarga Algoritma RC (RC5 dan RC6)}
+Algoritma RC (\textit{Rivest Cipher}) dirancang oleh Ronald Rivest dan timnya di RSA Laboratories.
+
+\subsection{RC5}
+RC5 dikenal karena fleksibilitas parameternya, di mana pengguna dapat menentukan:
+\begin{itemize}
+    \item $w$: Ukuran blok (16, 32, atau 64 bit).
+    \item $r$: Jumlah putaran (0 hingga 255).
+    \item $b$: Panjang kunci eksternal (0 hingga 255 byte).
+\end{itemize}
+RC5 menggunakan operasi XOR, penjumlahan modulo $2^w$, dan rotasi bit sirkuler.
+
+\subsection{RC6}
+RC6 adalah pengembangan dari RC5 yang dirancang untuk kompetisi AES. RC6 beroperasi pada blok 128-bit dengan kunci variabel (128, 192, hingga 2040 bit). Perbedaan utama dengan RC5 adalah penggunaan operasi \textbf{perkalian modulo $2^w$} untuk meningkatkan difusi.
+

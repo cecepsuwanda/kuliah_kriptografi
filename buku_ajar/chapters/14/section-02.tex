@@ -1,0 +1,17 @@
+\section{Geometri Kurva Eliptik}
+Kurva eliptik yang digunakan dalam kriptografi umumnya memiliki bentuk persamaan Weierstrass:
+\[ y^2 = x^3 + ax + b \]
+dengan syarat $4a^3 + 27b^2 \neq 0$ untuk memastikan kurva tidak memiliki titik singular (titik tajam atau perpotongan diri).
+
+\subsection{Operasi Penjumlahan Titik}
+Titik-titik pada kurva eliptik bersama dengan titik tak hingga $\mathcal{O}$ (elemen netral) membentuk sebuah grup abelian.
+\begin{enumerate}
+    \item \textbf{Penjumlahan ($P + Q = R$)}: Jika $P \neq Q$, tarik garis melalui $P$ dan $Q$. Garis tersebut akan memotong kurva di titik $-R$. Hasil penjumlahan $R$ adalah pencerminan $-R$ terhadap sumbu-x.
+    \item \textbf{Penggandaan ($2P = R$)}: Jika $P = Q$, tarik garis tangen pada titik $P$. Titik potong garis tangen dengan kurva adalah $-R$, dan hasil akhirnya adalah $R$.
+\end{enumerate}
+
+\subsection{Analisis Koordinat (Medan \texorpdfstring{$\mathbb{R}$}{R})}
+Untuk dua titik $P(x_p, y_p)$ dan $Q(x_q, y_q)$, koordinat hasil $R(x_r, y_r)$ dihitung dengan:
+\[ m = \frac{y_q - y_p}{x_q - x_p} \quad \text{(untuk } P \neq Q \text{)} \quad \text{atau} \quad m = \frac{3x_p^2 + a}{2y_p} \quad \text{(untuk } P = Q \text{)} \]
+\[ x_r = m^2 - x_p - x_q \quad \text{dan} \quad y_r = m(x_p - x_r) - y_p \]
+

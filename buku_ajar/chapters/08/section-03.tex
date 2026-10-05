@@ -1,0 +1,8 @@
+\section{Pembangkitan Kunci Putaran (Key Expansion)}
+Fungsi \textit{KeyExpansion()} membangkitkan seluruh kunci putaran yang diperlukan dari satu kunci eksternal. Proses ini melibatkan operasi:
+\begin{itemize}
+    \item \textbf{RotWord}: Pergeseran sirkuler byte dalam sebuah \textit{word}.
+    \item \textbf{SubWord}: Substitusi byte menggunakan S-box.
+    \item \textbf{Rcon (Round Constant)}: XOR dengan konstanta putaran untuk mencegah simetri antar kunci putaran.
+\end{itemize}
+

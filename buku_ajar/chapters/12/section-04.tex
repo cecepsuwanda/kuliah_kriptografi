@@ -1,0 +1,18 @@
+\section{Analisis Properti ElGamal}
+\subsection{Probabilistic Encryption}
+Salah satu karakteristik unik ElGamal adalah sifat \textbf{enkripsi probabilistik}. Karena penggunaan bilangan acak $k$ yang berbeda untuk setiap sesi enkripsi, pesan yang sama ($m$) jika dienkripsi dua kali dengan kunci publik yang sama akan menghasilkan cipherteks $(a, b)$ yang berbeda. Hal ini mencegah serangan \textit{codebook} dan meningkatkan keamanan terhadap analisis statistik.
+
+\subsection{Ekspansi Cipherteks}
+Kelemahan utama ElGamal adalah \textbf{ekspansi cipherteks}. Karena satu blok pesan $m$ diubah menjadi pasangan $(a, b)$, maka ukuran cipherteks menjadi dua kali lipat dari ukuran plainteks aslinya.
+
+\subsection{Perbandingan: ElGamal vs RSA}
+\begin{itemize}
+    \item \textbf{Basis Keamanan}: RSA berdasarkan pemfaktoran $n=pq$, ElGamal berdasarkan logaritma diskrit $g^x \bmod p$.
+    \item \textbf{Sifat}: RSA adalah deterministik (tanpa padding), ElGamal adalah probabilistik secara inheren.
+    \item \textbf{Efisiensi}: RSA umumnya lebih cepat dalam proses enkripsi, tetapi ElGamal menawarkan properti keamanan tertentu yang berguna dalam tanda tangan digital.
+\end{itemize}
+
+
+
+
+

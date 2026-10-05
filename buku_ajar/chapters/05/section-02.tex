@@ -1,0 +1,18 @@
+\section{Konsep Stream Cipher (Cipher Alir)}
+\textit{Stream cipher} adalah kategori cipher simetris yang mengenkripsi plainteks satu bit atau satu byte pada satu waktu.
+
+\subsection{Mekanisme Kerja}
+Inti dari \textit{stream cipher} adalah \textbf{Keystream Generator}. Generator ini menerima kunci rahasia (dan seringkali sebuah \textit{Initialization Vector} atau IV) sebagai \textit{seed} untuk membangkitkan aliran bit acak yang panjangnya sama dengan pesan, yang disebut \textbf{keystream}.
+
+Proses enkripsi dilakukan dengan meng-XOR-kan setiap bit plainteks $p_i$ dengan bit keystream $k_i$ yang berkoresponden:
+\[ c_i = p_i \oplus k_i \]
+
+\subsection{Karakteristik Keystream}
+Karena tidak mungkin mengirimkan kunci sepanjang pesan, \textit{keystream} dibangkitkan menggunakan algoritma \textit{Pseudo-Random Number Generator} (PRNG). Artinya, aliran bit tersebut terlihat acak, tetapi dapat dibangkitkan ulang secara identik oleh penerima asalkan menggunakan \textit{seed} yang sama.
+
+\subsection{Stream Cipher vs Block Cipher}
+\begin{itemize}
+    \item \textbf{Stream Cipher}: Memproses data secara kontinu (bit-per-bit/byte-per-byte). Sangat cepat dan cocok untuk data \textit{real-time} (misal: percakapan telepon).
+    \item \textbf{Block Cipher}: Memproses data dalam blok berukuran tetap (misal: 128 bit). Lebih kompleks dan umumnya digunakan untuk enkripsi file atau database.
+\end{itemize}
+

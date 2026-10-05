@@ -1,0 +1,27 @@
+\section{Analisis Algoritma Stream Cipher}
+
+\subsection{RC4 (Rivest Cipher 4)}
+RC4 adalah salah satu \textit{stream cipher} yang paling populer (digunakan dalam WEP dan SSL/TLS lama). RC4 menggunakan status internal berupa larik $S$ berukuran 256 byte yang dipermutasikan berdasarkan kunci.
+\begin{itemize}
+    \item \textbf{KSA (Key-Scheduling Algorithm)}: Menginisialisasi dan mengacak larik $S$ berdasarkan kunci.
+    \item \textbf{PRGA (Pseudo-Random Generation Algorithm)}: Membangkitkan byte keystream dengan melakukan pertukaran (\textit{swap}) elemen dalam $S$.
+\end{itemize}
+\textit{Catatan Keamanan}: RC4 kini dianggap tidak aman karena adanya korelasi antara byte-byte awal keystream dengan kunci.
+
+\subsection{A5/1 (GSM Encryption)}
+A5/1 digunakan untuk mengamankan komunikasi seluler GSM. Ia menggunakan tiga buah \textit{Linear Feedback Shift Registers} (LFSR) dengan panjang berbeda (19, 22, dan 23 bit). Penentuan apakah sebuah register bergeser atau tidak menggunakan \textbf{kaidah mayoritas} (\textit{majority clocking}).
+
+\subsection{Trivium}
+Trivium adalah \textit{lightweight stream cipher} yang dirancang untuk efisiensi tinggi pada perangkat keras. Ia menggunakan tiga buah \textit{Non-Linear Feedback Shift Registers} (NLFSR) yang saling berinteraksi melalui operasi XOR dan AND.
+
+\subsection{Salsa20 dan ChaCha20}
+Salsa20 (oleh Daniel J. Bernstein) menggunakan operasi ARX (\textit{Addition, Rotation, XOR}) pada matriks status $4 \times 4$.
+\begin{itemize}
+    \item \textbf{Salsa20}: Menggunakan \textit{counter} untuk memungkinkan akses acak ke bagian mana pun dari keystream.
+    \item \textbf{ChaCha20}: Modifikasi dari Salsa20 untuk meningkatkan difusi. ChaCha20 sangat populer saat ini dan digunakan dalam protokol TLS 1.3.
+\end{itemize}
+
+
+
+
+

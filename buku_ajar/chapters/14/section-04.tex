@@ -1,0 +1,17 @@
+\section{Implementasi dan Efisiensi}
+\subsection{Encoding Pesan}
+Karena ECC beroperasi pada titik-titik kurva, pesan teks harus diubah menjadi koordinat $(x, y)$. Salah satu metodenya adalah menggunakan parameter basis $k$:
+\[ x = mk + \text{offset} \]
+Kemudian mencari nilai $y$ yang memenuhi persamaan kurva. Jika tidak ditemukan, offset ditambah hingga ditemukan titik yang valid.
+
+\subsection{Perbandingan Keamanan: ECC vs RSA}
+Kelebihan utama ECC adalah efisiensi panjang kunci. Untuk tingkat keamanan yang sama, ECC membutuhkan kunci yang jauh lebih pendek daripada RSA:
+\begin{itemize}
+    \item \textbf{Kunci AES-128} $\approx$ \textbf{Kunci RSA 3072-bit} $\approx$ \textbf{Kunci ECC 256-bit}.
+\end{itemize}
+Hal ini membuat ECC sangat ideal untuk perangkat dengan sumber daya terbatas seperti \textit{smart cards} dan perangkat IoT.
+
+
+
+
+

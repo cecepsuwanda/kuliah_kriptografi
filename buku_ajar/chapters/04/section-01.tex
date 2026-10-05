@@ -1,0 +1,23 @@
+\section{Cipher Substitusi dan Transposisi}
+Kriptografi klasik umumnya terbagi menjadi dua kategori utama berdasarkan cara pengubahan plainteks menjadi cipherteks: substitusi dan transposisi.
+
+\subsection{Cipher Substitusi}
+Cipher substitusi adalah teknik enkripsi di mana satu atau lebih simbol dalam plainteks digantikan oleh simbol lain.
+
+\subsubsection{Cipher Abjad-Tunggal (\textit{Monoalphabetic Cipher})}
+Dalam \textit{monoalphabetic cipher}, setiap huruf dalam plainteks dipetakan secara konsisten ke satu huruf cipherteks. Contoh yang paling sederhana adalah \textbf{Caesar Cipher}, yang melakukan pergeseran tetap sejauh $k$ posisi dalam alfabet.
+
+Namun, substitusi tidak harus berupa pergeseran. Kita dapat membuat tabel substitusi sembarang. Jumlah kemungkinan tabel substitusi untuk alfabet 26 huruf adalah $26!$ (faktorial 26), sebuah angka yang sangat besar:
+\[ 26! \approx 4.03 \times 10^{26} \]
+
+Tabel substitusi dapat dibentuk secara acak atau menggunakan kalimat kunci (\textit{keyword}) untuk memudahkan penghafalan. Misalnya, dengan kalimat kunci \texttt{"di bawah sinar bulan purnama hati resah jadi senang"}, huruf-huruf yang unik diekstraksi dan disambung dengan sisa alfabet untuk membentuk tabel pemetaan.
+
+\subsection{Kriptanalisis Cipher Abjad-Tunggal}
+Kelemahan utama dari cipher abjad-tunggal adalah ketidakmampuannya menyembunyikan struktur statistik bahasa. Huruf yang sering muncul dalam plainteks akan tetap sering muncul sebagai huruf cipherteks yang berkoresponden.
+
+\subsubsection{Teknik Analisis Frekuensi}
+Kriptanalis menggunakan \textbf{analisis frekuensi} untuk memecahkan cipher ini. Dengan membandingkan frekuensi kemunculan huruf dalam cipherteks dengan frekuensi umum huruf dalam bahasa natural (misal: Bahasa Inggris atau Bahasa Indonesia), kunci dapat dideduksi.
+
+Dalam Bahasa Inggris, huruf yang paling sering muncul adalah \textbf{E}, diikuti oleh T, A, O, I, N, S, H, R, D. Selain huruf tunggal (\textit{monogram}), analisis juga dapat dilakukan pada pasangan huruf (\textit{bigram}) seperti \texttt{TH, HE, IN} atau tiga huruf (\textit{trigram}) seperti \texttt{THE, AND}.
+
+

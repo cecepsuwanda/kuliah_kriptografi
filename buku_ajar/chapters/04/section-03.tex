@@ -1,0 +1,18 @@
+\section{Polygram Cipher}
+Polygram cipher melakukan substitusi pada blok huruf (bukan huruf tunggal).
+
+\subsection{Playfair Cipher}
+Playfair Cipher bekerja pada unit \textbf{bigram} (pasangan dua huruf). Kunci disusun dalam matriks $5 \times 5$ (huruf J biasanya digabung dengan I).
+
+\textbf{Aturan Enkripsi:}
+\begin{enumerate}
+    \item Jika dua huruf berada di \textbf{baris yang sama}, ganti dengan huruf di kanannya (siklik).
+    \item Jika dua huruf berada di \textbf{kolom yang sama}, ganti dengan huruf di bawahnya (siklik).
+    \item Jika membentuk \textbf{persegi panjang}, ganti dengan huruf pada sudut berlawanan di baris yang sama.
+\end{enumerate}
+
+\subsection{Hill Cipher}
+Hill Cipher adalah polygram cipher berbasis aljabar linier. Enkripsi dilakukan menggunakan perkalian matriks:
+\[ \mathbf{C} = \mathbf{KP} \pmod{26} \]
+di mana $\mathbf{K}$ adalah matriks kunci dan $\mathbf{P}$ adalah vektor plainteks. Dekripsi membutuhkan invers matriks kunci $\mathbf{K}^{-1} \pmod{26}$, yang hanya ada jika $\det(\mathbf{K})$ relatif prima dengan 26.
+

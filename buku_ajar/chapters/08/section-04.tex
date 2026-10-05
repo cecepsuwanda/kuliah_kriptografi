@@ -1,0 +1,17 @@
+\section{Dasar Matematika: Galois Field \texorpdfstring{$\text{GF}(2^8)$}{GF(2\textasciicircum8)}}
+Operasi dalam AES, terutama \textit{MixColumns} dan S-box, dilakukan di dalam \textbf{Galois Field $\text{GF}(2^8)$}, yang merupakan medan berhingga biner.
+
+\subsection{Representasi Polinomial}
+Setiap byte (8 bit) direpresentasikan sebagai polinomial derajat 7 dengan koefisien dalam $\text{GF}(2)$:
+\[ a = b_7x^7 + b_6x^6 + \dots + b_1x + b_0 \]
+
+\subsection{Operasi Aritmetika}
+\begin{itemize}
+    \item \textbf{Penjumlahan}: Dilakukan dengan operasi XOR bitwise.
+    \item \textbf{Perkalian}: Perkalian polinomial yang hasilnya kemudian direduksi menggunakan \textit{irreducible polynomial} $f(x) = x^8 + x^4 + x^3 + x + 1$.
+\end{itemize}
+
+
+
+
+

@@ -1,0 +1,20 @@
+\section{Konsep Dasar Block Cipher}
+Berbeda dengan \textit{stream cipher} yang memproses data bit-per-bit, \textit{block cipher} membagi plainteks menjadi blok-blok bit dengan panjang yang sama.
+
+\subsection{Karakteristik Utama}
+\begin{itemize}
+    \item \textbf{Ukuran Blok}: Plainteks dibagi menjadi blok berukuran $n$ bit. Ukuran blok yang umum digunakan adalah 64 bit, 128 bit, atau 256 bit.
+    \item \textbf{Panjang Output}: Panjang blok cipherteks selalu sama dengan panjang blok plainteks.
+    \item \textbf{Operasi}: Enkripsi dilakukan pada setiap blok plainteks menggunakan kunci $K$.
+\end{itemize}
+
+Secara matematis, jika $P$ adalah blok plainteks dan $C$ adalah blok cipherteks, maka:
+\[ C = E_K(P) \quad \text{dan} \quad P = D_K(C) \]
+di mana $E$ adalah fungsi enkripsi dan $D$ adalah fungsi dekripsi.
+
+\subsection{Contoh Sederhana Block Cipher}
+Sebagai ilustrasi, misalkan sebuah fungsi enkripsi sederhana yang melakukan XOR antara plainteks $P$ dengan kunci $K$, kemudian menggeser bit-bitnya satu posisi ke kiri secara \textit{wrapping}:
+\[ E_K(P) = (P \oplus K) \ll 1 \]
+Maka fungsi dekripsinya adalah kebalikan dari proses tersebut:
+\[ D_K(C) = (C \gg 1) \oplus K \]
+

@@ -1,0 +1,27 @@
+\section{Prosedur Algoritma RSA}
+Sistem RSA bekerja melalui tiga tahap utama: pembangkitan kunci, enkripsi, dan dekripsi.
+
+\subsection{Pembangkitan Pasangan Kunci}
+Untuk membuat pasangan kunci, langkah-langkah berikut dilakukan:
+\begin{enumerate}
+    \item Pilih dua bilangan prima besar yang berbeda, $p$ dan $q$.
+    \item Hitung modulus $n = p \cdot q$.
+    \item Hitung nilai $\phi(n) = (p - 1)(q - 1)$.
+    \item Pilih bilangan bulat $e$ sebagai kunci publik sedemikian sehingga $1 < e < \phi(n)$ dan $\text{PBB}(e, \phi(n)) = 1$.
+    \item Hitung kunci privat $d$ sebagai invers modulo dari $e$ terhadap $\phi(n)$:
+    \[ d \equiv e^{-1} \pmod{\phi(n)} \quad \text{atau} \quad e \cdot d \equiv 1 \pmod{\phi(n)} \]
+\end{enumerate}
+\textbf{Hasil}: Kunci Publik $(e, n)$ dan Kunci Privat $(d, n)$.
+
+\subsection{Proses Enkripsi}
+Jika Bob ingin mengirim pesan $m$ kepada Alice, Bob menggunakan kunci publik Alice $(e, n)$:
+\begin{enumerate}
+    \item Ubah pesan $m$ menjadi integer sedemikian sehingga $0 \le m < n$.
+    \item Hitung cipherteks $c$ dengan rumus:
+    \[ c = m^e \pmod{n} \]
+\end{enumerate}
+
+\subsection{Proses Dekripsi}
+Alice menerima cipherteks $c$ dan menggunakan kunci privatnya $(d, n)$ untuk mengembalikan pesan asli:
+\[ m = c^d \pmod{n} \]
+

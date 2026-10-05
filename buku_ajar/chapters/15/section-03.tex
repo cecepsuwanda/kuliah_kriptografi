@@ -1,0 +1,15 @@
+\section{Message Authentication Code (MAC)}
+Fungsi hash standar menjamin integritas (bahwa pesan tidak berubah), tetapi tidak menjamin otentikasi (siapa yang mengirim pesan). Untuk itu, digunakan \textbf{MAC}.
+
+\subsection{Konsep MAC}
+MAC adalah fungsi hash yang menggunakan kunci rahasia bersama ($K$).
+\[ \text{Tag} = \text{MAC}(K, m) \]
+Hanya pihak yang memiliki kunci $K$ yang dapat membangkitkan atau memverifikasi tag tersebut. Hal ini memastikan bahwa pesan benar-benar berasal dari pihak yang memegang kunci.
+
+\subsection{HMAC (Hash-based MAC)}
+HMAC adalah konstruksi MAC yang menggunakan fungsi hash kriptografis (seperti SHA-256) dengan menambahkan kunci rahasia melalui proses \textit{padding} dan \textit{hashing} dua lapis untuk mencegah serangan \textit{length-extension}.
+
+
+
+
+

@@ -1,0 +1,11 @@
+\section{Landasan Matematis RSA}
+Keamanan RSA didasarkan pada fakta bahwa mengalikan dua bilangan prima besar adalah mudah, tetapi memfaktorkan hasil perkaliannya kembali menjadi dua bilangan prima asalnya adalah sangat sulit secara komputasi.
+
+\subsection{Fungsi Totient Euler}
+Fungsi Totient Euler, $\phi(n)$, menentukan jumlah bilangan bulat positif kurang dari $n$ yang relatif prima terhadap $n$. Untuk $n = p \cdot q$ (di mana $p$ dan $q$ adalah bilangan prima), maka:
+\[ \phi(n) = (p - 1)(q - 1) \]
+
+\subsection{Teorema Euler}
+RSA memanfaatkan Teorema Euler yang menyatakan bahwa jika $\text{PBB}(a, n) = 1$, maka:
+\[ a^{\phi(n)} \equiv 1 \pmod{n} \]
+

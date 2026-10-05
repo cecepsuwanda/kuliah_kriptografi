@@ -1,0 +1,27 @@
+\section{Tanda Tangan Digital}
+Tanda tangan digital bukanlah salinan digital dari tanda tangan basah, melainkan sebuah mekanisme kriptografis yang mengikat identitas pengirim dengan isi pesan.
+
+\subsection{Mekanisme Kerja Tanda Tangan Digital}
+Berbeda dengan enkripsi pesan (di mana pesan dienkripsi dengan kunci publik penerima), tanda tangan digital dibuat menggunakan \textbf{kunci privat pengirim}.
+
+\textbf{Proses Penandatanganan (Signing):}
+\begin{enumerate}
+    \item Pengirim membuat \textit{hash} dari pesan asli: $h = \text{Hash}(M)$.
+    \item Pengirim mengenkripsi nilai hash tersebut menggunakan kunci privatnya: $S = E_{K_{priv}}(h)$.
+    \item Pesan $M$ dan tanda tangan $S$ dikirimkan kepada penerima.
+\end{enumerate}
+
+\textbf{Proses Verifikasi (Verification):}
+\begin{enumerate}
+    \item Penerima menghitung hash dari pesan $M$ yang diterima: $h' = \text{Hash}(M)$.
+    \item Penerima mendekripsi tanda tangan $S$ menggunakan kunci publik pengirim: $h = D_{K_{pub}}(S)$.
+    \item Jika $h = h'$, maka tanda tangan valid. Ini membuktikan dua hal:
+    \begin{itemize}
+        \item \textbf{Integritas}: Pesan tidak berubah sejak ditandatangani.
+        \item \textbf{Otentikasi}: Pesan benar-benar berasal dari pemilik kunci privat tersebut.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Digital Signature Standard (DSS)}
+DSS adalah standar pemerintah AS yang menggunakan algoritma DSA (Digital Signature Algorithm). Berbeda dengan RSA, DSA hanya digunakan untuk tanda tangan digital dan tidak bisa digunakan untuk enkripsi data. DSS menawarkan efisiensi lebih tinggi dalam proses pembuatan tanda tangan.
+

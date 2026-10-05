@@ -1,0 +1,31 @@
+\section{Cipher Abjad-Majemuk (\textit{Polyalphabetic})}
+Untuk mengatasi kelemahan analisis frekuensi, dikembangkanlah \textit{polyalphabetic cipher} di mana satu huruf plainteks dapat dienkripsi menjadi huruf cipherteks yang berbeda-beda, tergantung pada posisinya.
+
+\subsection{Vigen\`ere Cipher}
+Vigen\`ere Cipher menggunakan kata kunci yang diulang secara periodik sepanjang pesan. Jika panjang kunci adalah $m$, maka setiap huruf ke-$i$ dienkripsi menggunakan pergeseran yang ditentukan oleh huruf kunci ke-$(i \pmod m)$.
+
+\textbf{Mekanisme Kerja:}
+Enkripsi dapat dilakukan menggunakan \textit{Vigenere Square} (Tabel Vigenere) atau secara matematis dengan rumus:
+\[ c_j = (p_j + k_i) \pmod{26} \]
+\[ p_j = (c_j - k_i) \pmod{26} \]
+
+Karakteristik utama dari Vigen\`ere Cipher adalah distribusi frekuensi huruf pada cipherteks cenderung lebih seragam (\textit{flat}) dibandingkan monoalphabetic cipher, sehingga lebih sulit dipecahkan dengan analisis frekuensi sederhana.
+
+\subsection{Kriptanalisis Vigen\`ere: Metode Kasiski}
+Meskipun lebih kuat, Vigen\`ere Cipher dapat dipecahkan jika pesan cukup panjang. Friedrich Kasiski (1863) menemukan bahwa jika sebuah kata dalam plainteks muncul berulang kali dan kebetulan berada pada posisi yang merupakan kelipatan panjang kunci, maka mereka akan menghasilkan kriptogram yang sama.
+
+Langkah-langkah Metode Kasiski:
+\begin{enumerate}
+    \item Cari kriptogram yang berulang dalam cipherteks.
+    \item Hitung jarak antar perulangan tersebut.
+    \item Cari faktor pembagi dari jarak-jarak tersebut; irisan dari faktor-faktor ini memberikan estimasi panjang kunci $m$.
+    \item Setelah $m$ diketahui, bagi cipherteks menjadi $m$ kelompok. Setiap kelompok sekarang merupakan monoalphabetic cipher yang dapat dipecahkan dengan analisis frekuensi.
+\end{enumerate}
+
+\subsection{Varian Vigen\`ere}
+\begin{itemize}
+    \item \textbf{Full Vigen\`ere}: Menggunakan tabel permutasi acak alih-alih pergeseran Caesar.
+    \item \textbf{Auto-Key Vigen\`ere}: Menyambungkan kunci awal dengan plainteks itu sendiri untuk memperpanjang kunci.
+    \item \textbf{Running-Key Vigen\`ere}: Menggunakan teks bermakna yang sangat panjang (misal: halaman buku) sebagai kunci.
+\end{itemize}
+

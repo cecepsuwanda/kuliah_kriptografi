@@ -1,0 +1,14 @@
+\section{Analisis Keamanan}
+Keamanan Diffie-Hellman didasarkan pada sulitnya menghitung \textbf{logaritma diskrit} dalam grup perkalian bilangan bulat modulo $p$.
+
+Seorang penyadap (Eve) yang mengamati komunikasi hanya akan mengetahui nilai $p, g, A$, dan $B$. Untuk mendapatkan kunci rahasia $K$, Eve harus mengetahui nilai $a$ atau $b$. Namun, untuk mencari $a$ dari persamaan $A = g^a \bmod p$ memerlukan komputasi yang sangat berat jika $p$ adalah bilangan prima yang sangat besar.
+
+\subsection{Serangan Man-in-the-Middle (MITM)}
+Meskipun aman terhadap penyadapan pasif, Diffie-Hellman rentan terhadap serangan aktif berupa \textit{Man-in-the-Middle}. Dalam serangan ini, penyerang (Mallory) mencegat komunikasi antara Alice dan Bob:
+\begin{enumerate}
+    \item Mallory mencegat $A$ dari Alice dan mengirimkan $M_1 = g^m \bmod p$ kepada Bob.
+    \item Mallory mencegat $B$ dari Bob dan mengirimkan $M_2 = g^m \bmod p$ kepada Alice.
+    \item Alice menghitung kunci $K_1 = (M_2)^a \bmod p$, dan Bob menghitung kunci $K_2 = (M_1)^b \bmod p$.
+    \item Mallory dapat menghitung kedua kunci tersebut ($K_1$ dan $K_2$) dan bertindak sebagai perantara yang mendekripsi, membaca, dan mengenkripsi kembali pesan tanpa diketahui Alice dan Bob.
+\end{enumerate}
+

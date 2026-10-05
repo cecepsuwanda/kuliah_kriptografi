@@ -1,0 +1,35 @@
+\section{Mekanisme Kerja AES}
+Berbeda dengan DES yang menggunakan Jaringan Feistel, AES menggunakan struktur \textbf{Substitusi-Permutasi} (\textit{Substitution-Permutation Network}). Data diproses dalam orientasi \textit{byte} menggunakan matriks dua dimensi berukuran $4 \times 4$ yang disebut \textbf{state}.
+
+\subsection{Representasi State}
+Blok plainteks 128-bit dipetakan ke dalam matriks \texttt{state} $4 \times 4$ sebagai berikut:
+\[
+\text{State} = \begin{bmatrix}
+s_{0,0} & s_{0,1} & s_{0,2} & s_{0,3} \\
+s_{1,0} & s_{1,1} & s_{1,2} & s_{1,3} \\
+s_{2,0} & s_{2,1} & s_{2,2} & s_{2,3} \\
+s_{3,0} & s_{3,1} & s_{3,2} & s_{3,3}
+\end{bmatrix}
+\]
+
+\subsection{Tahapan Enkripsi}
+Proses enkripsi AES terdiri dari putaran awal, beberapa putaran utama, dan satu putaran akhir.
+
+\subsubsection{Initial Round}
+\begin{itemize}
+    \item \textbf{AddRoundKey}: Melakukan operasi XOR antara \texttt{state} awal (plainteks) dengan kunci awal (\textit{cipher key}).
+\end{itemize}
+
+\subsubsection{Main Rounds (Putaran Utama)}
+Setiap putaran utama terdiri dari empat transformasi:
+\begin{enumerate}
+    \item \textbf{SubBytes}: Substitusi setiap byte dalam \texttt{state} menggunakan tabel \textbf{S-box} non-linear. Tahap ini memberikan efek \textit{confusion}.
+    \item \textbf{ShiftRows}: Pergeseran siklik (\textit{wrapping}) pada baris-baris matriks \texttt{state}. Baris 0 tetap, baris 1 geser 1 byte, baris 2 geser 2 byte, dan baris 3 geser 3 byte. Tahap ini memberikan efek \textit{diffusion}.
+    \item \textbf{MixColumns}: Operasi perkalian matriks antara \texttt{state} dengan matriks konstanta tetap dalam field $\text{GF}(2^8)$. Tahap ini semakin memperkuat difusi antar kolom.
+    \item \textbf{AddRoundKey}: XOR antara \texttt{state} hasil transformasi dengan kunci putaran (\textit{round key}) saat itu.
+\end{enumerate}
+
+\subsubsection{Final Round (Putaran Akhir)}
+Putaran terakhir hampir sama dengan putaran utama, namun \textbf{tanpa tahap MixColumns}:
+\[ \text{SubBytes} \rightarrow \text{ShiftRows} \rightarrow \text{AddRoundKey} \]
+

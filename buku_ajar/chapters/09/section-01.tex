@@ -1,0 +1,26 @@
+\section{Algoritma GOST (Magma)}
+GOST merupakan standar \textit{block cipher} dari Rusia (sebelumnya Uni Soviet) yang dirancang sebagai alternatif terhadap DES. Versi terbarunya dikenal dengan nama \textbf{Magma}.
+
+\subsection{Karakteristik Teknis}
+\begin{itemize}
+    \item \textbf{Ukuran Blok}: 64 bit.
+    \item \textbf{Panjang Kunci}: 256 bit.
+    \item \textbf{Struktur}: Menggunakan Jaringan Feistel dengan 32 putaran.
+    \item \textbf{Kunci Putaran}: Terdapat 8 kunci internal ($K_1, \dots, K_8$) yang dijadwalkan penggunaannya di seluruh 32 putaran.
+\end{itemize}
+
+\subsection{Mekanisme Fungsi Putaran}
+Fungsi transformasi $f$ pada GOST melibatkan:
+\begin{enumerate}
+    \item Penjumlahan modulo $2^{32}$ antara bagian kanan blok dengan kunci putaran.
+    \item Substitusi menggunakan 8 buah S-box ($4 \times 4$ bit).
+    \item Pergeseran sirkuler ke kiri sejauh 11 bit.
+\end{enumerate}
+
+\subsection{Perbandingan GOST vs DES}
+\begin{itemize}
+    \item \textbf{Keamanan}: Kunci GOST (256 bit) jauh lebih panjang daripada DES (56 bit), sehingga lebih tahan terhadap \textit{brute force}.
+    \item \textbf{Kompleksitas}: GOST memiliki 32 putaran, sedangkan DES hanya 16.
+    \item \textbf{S-Box}: S-box GOST berukuran $4 \times 4$, sedangkan DES berukuran $6 \times 4$.
+\end{itemize}
+

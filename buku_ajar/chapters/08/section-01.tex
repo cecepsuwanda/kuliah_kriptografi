@@ -1,0 +1,21 @@
+\section{Latar Belakang AES}
+Kelemahan utama DES terletak pada panjang kuncinya (56 bit) yang terlalu pendek untuk menghadapi serangan \textit{brute force} modern. Hal ini mendorong \textit{National Institute of Standards and Technology} (NIST) untuk mengadakan kompetisi terbuka guna mencari standar enkripsi blok baru yang lebih kuat, efisien, dan publik.
+
+Pada tahun 2001, algoritma \textbf{Rijndael}, yang dirancang oleh Vincent Rijmen dan Joan Daemen, dipilih dan ditetapkan sebagai \textbf{Advanced Encryption Standard (AES)}.
+
+\subsection{Persyaratan dan Spesifikasi AES}
+AES dirancang dengan beberapa kriteria utama:
+\begin{itemize}
+    \item \textbf{Sifat Algoritma}: Harus merupakan \textit{symmetric block cipher} dengan rancangan yang sepenuhnya publik.
+    \item \textbf{Ukuran Blok}: Tetap pada 128 bit.
+    \item \textbf{Panjang Kunci}: Fleksibel, mendukung 128, 192, dan 256 bit.
+    \item \textbf{Implementasi}: Harus efisien baik dalam perangkat lunak (\textit{software}) maupun perangkat keras (\textit{hardware}).
+\end{itemize}
+
+Varian AES ditentukan oleh panjang kuncinya:
+\begin{itemize}
+    \item \textbf{AES-128}: Kunci 128 bit, 10 putaran.
+    \item \textbf{AES-192}: Kunci 192 bit, 12 putaran.
+    \item \textbf{AES-256}: Kunci 256 bit, 14 putaran.
+\end{itemize}
+

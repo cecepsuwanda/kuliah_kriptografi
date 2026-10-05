@@ -17,99 +17,13 @@ Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
 \end{itemize}
 \end{learningoutcome}
 
-\section{Algoritma GOST (Magma)}
-GOST merupakan standar \textit{block cipher} dari Rusia (sebelumnya Uni Soviet) yang dirancang sebagai alternatif terhadap DES. Versi terbarunya dikenal dengan nama \textbf{Magma}.
-
-\subsection{Karakteristik Teknis}
-\begin{itemize}
-    \item \textbf{Ukuran Blok}: 64 bit.
-    \item \textbf{Panjang Kunci}: 256 bit.
-    \item \textbf{Struktur}: Menggunakan Jaringan Feistel dengan 32 putaran.
-    \item \textbf{Kunci Putaran}: Terdapat 8 kunci internal ($K_1, \dots, K_8$) yang dijadwalkan penggunaannya di seluruh 32 putaran.
-\end{itemize}
-
-\subsection{Mekanisme Fungsi Putaran}
-Fungsi transformasi $f$ pada GOST melibatkan:
-\begin{enumerate}
-    \item Penjumlahan modulo $2^{32}$ antara bagian kanan blok dengan kunci putaran.
-    \item Substitusi menggunakan 8 buah S-box ($4 \times 4$ bit).
-    \item Pergeseran sirkuler ke kiri sejauh 11 bit.
-\end{enumerate}
-
-\subsection{Perbandingan GOST vs DES}
-\begin{itemize}
-    \item \textbf{Keamanan}: Kunci GOST (256 bit) jauh lebih panjang daripada DES (56 bit), sehingga lebih tahan terhadap \textit{brute force}.
-    \item \textbf{Kompleksitas}: GOST memiliki 32 putaran, sedangkan DES hanya 16.
-    \item \textbf{S-Box}: S-box GOST berukuran $4 \times 4$, sedangkan DES berukuran $6 \times 4$.
-\end{itemize}
-
-\section{Keluarga Algoritma RC (RC5 dan RC6)}
-Algoritma RC (\textit{Rivest Cipher}) dirancang oleh Ronald Rivest dan timnya di RSA Laboratories.
-
-\subsection{RC5}
-RC5 dikenal karena fleksibilitas parameternya, di mana pengguna dapat menentukan:
-\begin{itemize}
-    \item $w$: Ukuran blok (16, 32, atau 64 bit).
-    \item $r$: Jumlah putaran (0 hingga 255).
-    \item $b$: Panjang kunci eksternal (0 hingga 255 byte).
-\end{itemize}
-RC5 menggunakan operasi XOR, penjumlahan modulo $2^w$, dan rotasi bit sirkuler.
-
-\subsection{RC6}
-RC6 adalah pengembangan dari RC5 yang dirancang untuk kompetisi AES. RC6 beroperasi pada blok 128-bit dengan kunci variabel (128, 192, hingga 2040 bit). Perbedaan utama dengan RC5 adalah penggunaan operasi \textbf{perkalian modulo $2^w$} untuk meningkatkan difusi.
-
-\section{Algoritma Block Cipher Lainnya}
-Selain DES, AES, dan RC, terdapat beberapa algoritma penting lainnya yang memiliki karakteristik unik:
-
-\subsection{Blowfish dan Twofish}
-\begin{itemize}
-    \item \textbf{Blowfish}: Dirancang oleh Bruce Schneier, menggunakan blok 64-bit dan kunci variabel (32-448 bit). Menggunakan struktur Feistel dengan 16 putaran.
-    \item \textbf{Twofish}: Kelanjutan dari Blowfish dan merupakan salah satu finalis AES. Menggunakan blok 128-bit dan kunci hingga 256 bit.
-\end{itemize}
-
-\subsection{Serpent dan MARS}
-\begin{itemize}
-    \item \textbf{Serpent}: Finalis AES yang sangat menekankan keamanan. Menggunakan 32 putaran dengan operasi substitusi-permutasi, menjadikannya salah satu yang paling konservatif dan aman.
-    \item \textbf{MARS}: FinalH AES dari IBM. Memiliki jumlah putaran yang besar (32 putaran) dan menggunakan struktur yang kompleks untuk mencapai keamanan tinggi.
-\end{itemize}
-
-\begin{obeactivity}
-\textbf{Aktivitas 9.1: Perbandingan Struktur Cipher}
-1. Buatlah tabel perbandingan antara DES, AES, dan GOST berdasarkan: ukuran blok, panjang kunci, jumlah putaran, dan struktur (Feistel vs Substitusi-Permutasi).
-2. Analisis mengapa algoritma dengan jumlah putaran lebih banyak (seperti GOST atau Serpent) cenderung lebih aman tetapi lebih lambat.
-3. Diskusikan keuntungan fleksibilitas parameter pada RC5 dibandingkan dengan algoritma yang parameternya tetap.
-\end{obeactivity}
-
-\begin{obereflection}
-\textbf{Latihan 9.1}
-1. Mengapa penggunaan operasi perkalian pada RC6 memberikan keuntungan keamanan dibandingkan hanya menggunakan XOR dan rotasi seperti pada RC5?
-2. Jelaskan mengapa GOST dianggap lebih sulit diserang dengan \textit{brute force} dibandingkan DES.
-3. Apa perbedaan mendasar antara pendekatan desain Blowfish dan Twofish?
-\end{obereflection}
-
-\begin{obeassessment}
-\textbf{Kuis Bab 9}
-1. Jelaskan mekanisme kerja fungsi $f$ pada algoritma GOST.
-2. Apa yang dimaksud dengan parameter $w, r, b$ pada RC5 dan bagaimana pengaruhnya terhadap performa cipher?
-3. Bandingkan antara Serpent dan AES dari sisi jumlah putaran dan filosofi desainnya.
-\end{obeassessment}
-
-\begin{competencychecklist}
-\begin{tabularx}{\linewidth}{|X|c|}
-\hline
-Indikator Kompetensi & Tercapai \\
-\hline
-Saya dapat menjelaskan mekanisme kerja GOST dan perbedaannya dengan DES & [ ] \\
-\hline
-Saya dapat menguraikan parameter fleksibel pada RC5 dan RC6 & [ ] \\
-\hline
-Saya dapat membedakan karakteristik Blowfish, Twofish, Serpent, dan MARS & [ ] \\
-\hline
-Saya dapat menganalisis trade-off antara jumlah putaran dan efisiensi komputasi & [ ] \\
-\hline
-Saya dapat membedakan struktur Jaringan Feistel dan Substitusi-Permutasi & [ ] \\
-\hline
-\end{tabularx}
-\end{competencychecklist}
+\subfile{section-01}
+\subfile{section-02}
+\subfile{section-03}
+\input{contoh}
+\input{praktikum}
+\input{latihan}
+\input{rangkuman}
+\input{evaluasi}
 
 \end{document}

@@ -1,0 +1,15 @@
+\section{Protokol SSL/TLS}
+Secure Sockets Layer (SSL) dan penerusnya, Transport Layer Security (TLS), adalah protokol yang mengimplementasikan semua konsep di atas untuk mengamankan komunikasi HTTPS.
+
+\textbf{Alur Kerja (Simplified Handshake):}
+\begin{enumerate}
+    \item \textbf{Hello}: Client dan server menyepakati versi protokol dan algoritma cipher.
+    \item \textbf{Sertifikat}: Server mengirimkan sertifikat X.509 yang berisi kunci publik server.
+    \item \textbf{Key Exchange}: Client memverifikasi sertifikat, lalu membangkitkan kunci sesi simetris, mengenkripsinya dengan kunci publik server, dan mengirimkannya kembali.
+    \item \textbf{Secure Session}: Kedua pihak menggunakan kunci sesi simetris tersebut untuk mengenkripsi seluruh data yang dikirimkan.
+\end{enumerate}
+
+
+
+
+

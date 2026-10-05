@@ -1,0 +1,40 @@
+\section{Teori Bilangan Dasar}
+Kriptografi modern sangat bergantung pada teori bilangan. Berikut adalah beberapa konsep fundamental yang digunakan:
+
+\subsection{Aritmetika Modulo}
+Aritmetika modulo adalah sistem aritmetika untuk bilangan bulat, di mana angka-angka "berputar kembali" setelah mencapai nilai tertentu yang disebut modulus.
+Jika $a$ dan $n$ adalah bilangan bulat, maka $a \pmod{n}$ adalah sisa bagi dari $a$ oleh $n$.
+
+\textbf{Contoh:}
+\begin{itemize}
+    \item $23 \pmod{5} = 3$ (karena $23 = 4 \times 5 + 3$)
+    \item $-41 \pmod{9} = 4$ (karena $|-41| \pmod{9} = 5$, maka $9 - 5 = 4$)
+\end{itemize}
+
+\subsection{Kekongruenan}
+Dua bilangan bulat $a$ dan $b$ dikatakan kongruen modulo $n$ jika $a$ dan $b$ memiliki sisa bagi yang sama saat dibagi oleh $n$. Hal ini ditulis sebagai:
+\[ a \equiv b \pmod{n} \]
+Artinya, $n$ membagi habis selisih antara $a$ dan $b$ ($n \mid (a - b)$).
+
+\textbf{Contoh:}
+\begin{itemize}
+    \item $17 \equiv 2 \pmod{3}$ karena $3$ membagi habis $17 - 2 = 15$.
+    \item $-7 \equiv 15 \pmod{11}$ karena $11$ membagi habis $-7 - 15 = -22$.
+\end{itemize}
+
+\subsection{Relatif Prima dan PBB}
+Dua bilangan bulat $a$ dan $b$ dikatakan relatif prima (atau \textit{coprime}) jika pembagi persekutuan terbesar (PBB) atau \textit{Greatest Common Divisor} (GCD) dari keduanya adalah 1.
+\[ \text{PBB}(a, b) = 1 \]
+Konsep ini sangat penting dalam menentukan keberadaan invers modulo.
+
+\subsection{Invers Modulo}
+Invers modulo dari $a \pmod{n}$ adalah bilangan $x$ sedemikian sehingga:
+\[ a \cdot x \equiv 1 \pmod{n} \]
+Invers modulo $a \pmod{n}$ ada jika dan hanya jika $a$ dan $n$ relatif prima ($\text{PBB}(a, n) = 1$). Invers ini dapat dicari menggunakan Algoritma Euclidean yang Diperluas (\textit{Extended Euclidean Algorithm}).
+
+\textbf{Contoh:}
+\begin{itemize}
+    \item $4^{-1} \pmod{9} \equiv 7 \pmod{9}$ karena $4 \cdot 7 = 28$, dan $28 \equiv 1 \pmod{9}$.
+    \item $23^{-1} \pmod{10} = -3 \pmod{10}$ karena $23 \cdot (-3) = -69$, dan $-69 \equiv 1 \pmod{10}$.
+\end{itemize}
+

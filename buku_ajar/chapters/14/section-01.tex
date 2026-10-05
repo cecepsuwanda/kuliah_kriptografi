@@ -1,0 +1,16 @@
+\section{Landasan Aljabar Abstrak}
+Kriptografi Kurva Eliptik (ECC) dibangun di atas konsep aljabar abstrak untuk memastikan operasi matematika yang konsisten dan aman.
+
+\subsection{Grup dan Medan}
+\begin{itemize}
+    \item \textbf{Grup}: Sebuah himpunan $G$ dengan operasi biner $*$ yang memenuhi aksioma \textit{closure}, asosiatif, memiliki elemen netral, dan setiap elemen memiliki invers. Jika berlaku komutatif ($a*b = b*a$), maka disebut \textbf{Grup Abelian}.
+    \item \textbf{Medan (\textit{Field})}: Struktur aljabar $\langle F, +, \cdot \rangle$ di mana $\langle F, + \rangle$ adalah grup abelian, $\langle F - \{0\}, \cdot \rangle$ adalah grup abelian, dan operasi perkalian bersifat distributif terhadap penjumlahan.
+\end{itemize}
+
+\subsection{Medan Galois \texorpdfstring{$\text{GF}(p^m)$}{GF(p\textasciicircum m)}}
+ECC umumnya beroperasi pada medan berhingga atau \textbf{Medan Galois}, dinotasikan sebagai $\text{GF}(p^m)$.
+\begin{itemize}
+    \item \textbf{GF($p$)}: Medan dengan elemen $\{0, 1, \dots, p-1\}$ di mana operasi dilakukan modulo $p$.
+    \item \textbf{GF($2^m$)}: Medan biner di mana elemen direpresentasikan sebagai polinomial dengan koefisien dalam $\text{GF}(2)$. Operasi perkalian dilakukan modulo \textit{irreducible polynomial}.
+\end{itemize}
+

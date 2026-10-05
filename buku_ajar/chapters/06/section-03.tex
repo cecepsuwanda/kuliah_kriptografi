@@ -1,0 +1,9 @@
+\section{Prinsip Confusion dan Diffusion}
+Claude Shannon memperkenalkan dua prinsip utama dalam desain cipher untuk menangkal kriptanalisis statistik:
+
+\subsection{Confusion (Konfusi)}
+\textit{Confusion} bertujuan untuk membuat hubungan antara kunci dan cipherteks menjadi serumit mungkin. Hal ini biasanya direalisasikan melalui teknik \textbf{substitusi} non-linear, seperti penggunaan \textbf{S-Box} (Substitution Box) yang memetakan input ke output berdasarkan tabel pencarian.
+
+\subsection{Diffusion (Difusi)}
+\textit{Diffusion} bertujuan untuk menyebarkan pengaruh satu bit plainteks ke banyak bit cipherteks. Artinya, perubahan satu bit pada plainteks harus menyebabkan perubahan signifikan (sekitar setengah) pada bit-bit cipherteks. Hal ini direalisasikan melalui teknik \textbf{permutasi} atau transposisi (misal: $P$-box atau \textit{ShiftRows} pada AES).
+

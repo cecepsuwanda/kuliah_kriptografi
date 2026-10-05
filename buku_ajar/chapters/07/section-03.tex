@@ -1,0 +1,21 @@
+\section{Varian DES: Double DES dan Triple DES}
+Untuk memperpanjang umur DES tanpa mengubah algoritma dasarnya, dikembangkanlah metode enkripsi berganda.
+
+\subsection{Double DES dan Meet-in-the-Middle Attack}
+\textit{Double DES} menggunakan dua kunci berbeda ($K_1$ dan $K_2$):
+\[ C = E_{K_2}(E_{K_1}(P)) \]
+Meskipun secara teoritis memperluas ruang kunci menjadi $2^{112}$, Double DES rentan terhadap \textbf{Meet-in-the-Middle Attack}. Serangan ini memungkinkan penyerang menemukan kunci dengan kompleksitas sekitar $2^{57}$, bukan $2^{112}$, sehingga tidak memberikan peningkatan keamanan yang signifikan.
+
+\subsection{Triple DES (3DES)}
+Triple DES mengatasi kelemahan Double DES dengan melakukan tiga tahap proses (Enkripsi-Dekripsi-Enkripsi atau EDE):
+\[ C = E_{K_3}(D_{K_2}(E_{K_1}(P))) \]
+\begin{itemize}
+    \item \textbf{Opsi 2 Kunci}: $K_1 = K_3$ (Kunci efektif: 112 bit).
+    \item \textbf{Opsi 3 Kunci}: $K_1, K_2, K_3$ berbeda (Kunci efektif: 168 bit).
+\end{itemize}
+Mode EDE digunakan agar 3DES tetap kompatibel dengan DES tunggal (jika $K_1=K_2=K_3$).
+
+
+
+
+

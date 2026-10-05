@@ -1,0 +1,18 @@
+\section{Public Key Infrastructure (PKI)}
+Masalah utama kriptografi asimetris adalah: \textit{Bagaimana kita tahu bahwa kunci publik yang kita gunakan benar-benar milik orang yang bersangkutan?}
+
+\subsection{Otoritas Sertifikat (Certificate Authority - CA)}
+CA adalah pihak ketiga terpercaya yang menerbitkan sertifikat digital. Sertifikat ini mengikat identitas seseorang (misal: nama perusahaan) dengan kunci publiknya.
+
+\subsection{Sertifikat X.509}
+X.509 adalah standar format sertifikat digital yang mencakup:
+\begin{itemize}
+    \item Versi sertifikat.
+    \item Nomor seri.
+    \item Nama penerbit (CA).
+    \item Masa berlaku (valid from/to).
+    \item Nama pemilik sertifikat (Subject).
+    \item Kunci publik pemilik.
+    \item Tanda tangan digital dari CA.
+\end{itemize}
+

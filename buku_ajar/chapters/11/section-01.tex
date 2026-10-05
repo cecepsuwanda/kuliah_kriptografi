@@ -1,0 +1,9 @@
+\section{Persoalan Distribusi Kunci}
+Dalam kriptografi kunci-simetri (seperti AES atau DES), pengirim dan penerima harus memiliki kunci rahasia yang identik. Namun, muncul tantangan besar: \textit{Bagaimana cara mendistribusikan kunci tersebut secara aman melalui saluran komunikasi yang tidak aman tanpa diketahui oleh pihak ketiga?}
+
+Ada dua solusi utama untuk masalah ini:
+\begin{enumerate}
+    \item \textbf{Kriptografi Hibrida}: Menggunakan kriptografi kunci-publik (seperti RSA) untuk mengenkripsi kunci simetri yang akan dikirimkan.
+    \item \textbf{Protokol Pertukaran Kunci}: Menggunakan algoritma yang memungkinkan kedua pihak menghasilkan kunci rahasia yang sama tanpa pernah mengirimkan kunci tersebut secara langsung. Salah satu protokol yang paling fundamental adalah Diffie-Hellman (DH).
+\end{enumerate}
+
