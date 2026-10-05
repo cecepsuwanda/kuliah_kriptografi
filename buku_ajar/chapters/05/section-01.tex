@@ -9,21 +9,47 @@ Perubahan paradigma dari kriptografi klasik ke modern melibatkan beberapa poin k
     \item \textbf{Kompleksitas}: Meskipun tetap menggunakan prinsip substitusi dan transposisi, operasi modern dibuat jauh lebih kompleks melalui putaran (\textit{rounds}), rotasi, dan fungsi non-linear untuk mencegah kriptanalisis.
 \end{itemize}
 
+Ringkasan perbedaan kedua era disajikan pada Tabel~\ref{tab:klasik-vs-modern}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Perbandingan kriptografi klasik dan kriptografi modern}
+    \label{tab:klasik-vs-modern}
+    \begin{tabularx}{\linewidth}{|l|X|X|}
+    \hline
+    \textbf{Aspek} & \textbf{Kriptografi Klasik} & \textbf{Kriptografi Modern} \\
+    \hline
+    Unit pemrosesan & Karakter atau huruf & Bit dan byte \\
+    \hline
+    Operasi dominan & Substitusi dan transposisi manual & XOR, rotasi, dan fungsi non-linear \\
+    \hline
+    Ukuran kunci & Kecil, sering berupa kata kunci & Besar, puluhan hingga ratusan bit \\
+    \hline
+    Sumber keamanan & Kerahasiaan algoritma & Kerahasiaan kunci \\
+    \hline
+    Media penerapan & Pena dan kertas & Perangkat keras dan perangkat lunak \\
+    \hline
+    \end{tabularx}
+\end{table}
+
 \subsection{Operasi XOR dan Bitwise}
-Operasi XOR (\textit{Exclusive OR}) adalah fondasi dari banyak cipher modern.
-Tabel kebenaran XOR:
-\begin{center}
-\begin{tabular}{|c|c|c|}
-\hline
-$a$ & $b$ & $a \oplus b$ \\
-\hline
-0 & 0 & 0 \\
-0 & 1 & 1 \\
-1 & 0 & 1 \\
-1 & 1 & 0 \\
-\hline
-\end{tabular}
-\end{center}
+Operasi XOR (\textit{Exclusive OR}) adalah fondasi dari banyak cipher modern. Tabel kebenarannya ditunjukkan pada Tabel~\ref{tab:kebenaran-xor}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Tabel kebenaran operasi XOR}
+    \label{tab:kebenaran-xor}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    $a$ & $b$ & $a \oplus b$ \\
+    \hline
+    0 & 0 & 0 \\
+    0 & 1 & 1 \\
+    1 & 0 & 1 \\
+    1 & 1 & 0 \\
+    \hline
+    \end{tabular}
+\end{table}
 
 Sifat-sifat penting XOR:
 \begin{enumerate}

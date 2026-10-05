@@ -40,12 +40,10 @@
 \subfile{appendices/glossary}
 
 % Daftar Pustaka
-% \nocite{*} lists every entry in references.bib: the chapters cite their
-% sources in prose ("Menurut Schneier (1996)") rather than with \cite, so
-% without it the bibliography would render empty.
+% Setiap entri di references.bib dikutip dari bab tempat sumber itu dipakai
+% (\citet/\citep), jadi daftar pustaka terisi tanpa \nocite{*}.
 \phantomsection
 \addcontentsline{toc}{chapter}{\bibname}
-\nocite{*}
 % apalike: gaya author-year, sesuai Arsitektur_Buku_Ajar.md Bagian 20 dan
 % sesuai dengan natbib yang dimuat di config/packages.tex.
 \bibliographystyle{apalike}

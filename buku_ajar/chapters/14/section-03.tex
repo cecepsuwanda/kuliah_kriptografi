@@ -18,3 +18,27 @@ Jika $k$ adalah bilangan yang sangat besar, mencari $k$ dari $P$ dan $Q$ secara 
     \item \textbf{ECEG (Elliptic Curve ElGamal)}: Enkripsi pesan dengan mengkodekan pesan menjadi titik $P_M$ dan menghasilkan cipherteks berupa pasangan titik $[(kB), (P_M + kP_B)]$.
 \end{enumerate}
 
+\subsection{Perbandingan dengan RSA}
+Keunggulan utama ECC adalah ukuran kunci yang jauh lebih pendek untuk tingkat keamanan yang setara, seperti ditunjukkan pada Tabel~\ref{tab:ecc-vs-rsa}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Ukuran kunci ECC dan RSA untuk tingkat keamanan yang setara}
+    \label{tab:ecc-vs-rsa}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Keamanan (bit)} & \textbf{Kunci ECC (bit)} & \textbf{Kunci RSA (bit)} \\
+    \hline
+    80 & 160 & 1024 \\
+    \hline
+    112 & 224 & 2048 \\
+    \hline
+    128 & 256 & 3072 \\
+    \hline
+    192 & 384 & 7680 \\
+    \hline
+    256 & 512 & 15360 \\
+    \hline
+    \end{tabular}
+\end{table}
+
