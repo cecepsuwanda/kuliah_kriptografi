@@ -1,0 +1,128 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Layanan Keamanan dan Serangan Kriptografi}
+
+\begin{learningoutcome}
+Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
+\begin{itemize}
+    \item Menjelaskan konsep dasar serangan terhadap sistem kriptografi dan tujuan dari serangan tersebut (Sub-CPMK 2.1).
+    \item Mengidentifikasi dan membedakan berbagai jenis serangan kriptografi berdasarkan informasi yang tersedia (Ciphertext-only, Known-plaintext, Chosen-plaintext, dll) (Sub-CPMK 2.1).
+    \item Membedakan antara serangan pasif dan serangan aktif serta memberikan contoh masing-masing (Sub-CPMK 2.1).
+    \item Memahami konsep keamanan komputasi (\textit{computationally secure}) dan serangan side-channel (Sub-CPMK 2.1).
+\end{itemize}
+\end{learningoutcome}
+
+\section{Konsep Dasar Serangan}
+Tujuan utama dari kriptografi adalah menjaga kerahasiaan pesan atau kunci dari pihak ketiga, yang dalam konteks ini disebut sebagai musuh, lawan, penyadap, atau kriptanalis.
+
+Sebuah \textbf{serangan (\textit{attack})} diartikan sebagai setiap usaha atau percobaan yang dilakukan oleh pihak lawan untuk menemukan kunci atau menemukan plainteks dari cipherteksnya. Dalam menganalisis serangan, kita menggunakan \textbf{Prinsip Kerckhoffs}:
+\begin{quote}
+    \textit{Semua algoritma kriptografi harus publik; hanya kunci yang rahasia.}
+\end{quote}
+Oleh karena itu, keamanan sistem kriptografi tidak terletak pada kerahasiaan algoritma, melainkan sepenuhnya terletak pada kerahasiaan \textbf{kunci}.
+
+\section{Jenis-Jenis Serangan Berdasarkan Informasi}
+Berdasarkan informasi yang dimiliki oleh penyerang, serangan dapat dikategorikan menjadi beberapa jenis:
+
+\subsection{Ciphertext-Only Attack}
+Ini adalah serangan yang paling sulit karena kriptanalis hanya memiliki akses ke cipherteks saja. Teknik yang digunakan biasanya meliputi:
+\begin{itemize}
+    \item \textit{Exhaustive key search} (Brute force).
+    \item Analisis frekuensi karakter.
+\end{itemize}
+Contoh: Pada Caesar Cipher, jika penyerang hanya memiliki cipherteks \texttt{KHOORZRUOG}, ia dapat mencoba semua 25 kemungkinan pergeseran huruf hingga menemukan plainteks yang masuk akal (\texttt{HELLOWORLD}).
+
+\subsection{Known-Plaintext Attack}
+Penyerang memiliki sejumlah pasangan plainteks dan cipherteks yang berkoresponden ($P_i$ dan $C_i = E_k(P_i)$). Serangan ini sering terjadi jika sebagian isi pesan dapat ditebak, seperti \textit{header} file, protokol standar, atau salam pembuka email (misalnya "Dengan hormat").
+
+\subsection{Chosen-Plaintext Attack}
+Penyerang dapat memilih plainteks tertentu untuk dienkripsi oleh sistem dan mendapatkan cipherteksnya. Dengan memilih plainteks yang strategis (misalnya rangkaian huruf 'AAAAA'), penyerang dapat lebih mudah mendeduksi kunci.
+
+\subsection{Adaptive Chosen-Plaintext Attack}
+Variasi dari chosen-plaintext attack di mana penyerang dapat menyesuaikan plainteks berikutnya berdasarkan hasil cipherteks dari query sebelumnya. Penyerang belajar secara bertahap untuk menggali informasi kunci.
+
+\subsection{Chosen-Ciphertext Attack}
+Penyerang dapat memilih cipherteks tertentu dan mendapatkan hasil dekripsinya melalui sebuah \textit{oracle} (sistem yang bisa mendekripsi). Informasi ini kemudian digunakan untuk memecahkan cipher atau menemukan kunci.
+
+\section{Tujuan Serangan (Hasil yang Ingin Dicapai)}
+Selain berdasarkan informasi, serangan juga dapat dibedakan berdasarkan target akhirnya:
+\begin{itemize}
+    \item \textbf{Key-Recovery Attack}: Tujuan utamanya adalah memperoleh kunci kriptografi.
+    \item \textbf{Plaintext-Recovery Attack}: Tujuan utamanya adalah memperoleh plainteks, meskipun kunci tidak ditemukan.
+    \item \textbf{Distinguishing Attack}: Menentukan apakah suatu data adalah keluaran algoritma kriptografi atau data acak (\textit{random}).
+    \item \textbf{Forgery Attack}: Membuat pesan palsu yang terlihat sah bagi sistem (sangat krusial pada MAC dan tanda tangan digital).
+    \item \textbf{Replay Attack}: Mengirim kembali pesan sah yang pernah dicegat sebelumnya untuk memicu tindakan berulang tanpa perlu memecahkan enkripsi.
+\end{itemize}
+
+\section{Serangan Pasif vs Serangan Aktif}
+Berdasarkan keterlibatan penyerang dalam komunikasi:
+
+\subsection{Serangan Pasif (\textit{Passive Attack})}
+Penyerang tidak mengubah data atau terlibat aktif dalam komunikasi; ia hanya menyadap informasi.
+\begin{itemize}
+    \item \textbf{Interception}: Menyadap konten pesan.
+    \item \textbf{Traffic Analysis}: Mengamati pola lalu lintas data (siapa berkomunikasi dengan siapa, kapan, dan berapa banyak data yang dikirim).
+\end{itemize}
+Contoh alat: \textbf{Wireshark} dapat digunakan untuk memantau lalu lintas jaringan dan menemukan plainteks jika data tidak dienkripsi.
+
+\subsection{Serangan Aktif (\textit{Active Attack})}
+Penyerang mengintervensi komunikasi dan memodifikasi sistem.
+\begin{itemize}
+    \item \textbf{Interruption}: Memutus koneksi sehingga layanan tidak tersedia (DoS).
+    \item \textbf{Fabrication}: Mengirimkan pesan palsu yang seolah-olah sah.
+    \item \textbf{Modification}: Mengubah isi pesan di tengah jalan.
+    \item \textbf{Replay}: Mengirim ulang pesan sah.
+    \item \textbf{Man-in-the-Middle (MITM)}: Penyerang menempatkan dirinya di antara pengirim dan penerima, mengintersepsi dan memodifikasi komunikasi kedua belah pihak secara real-time.
+\end{itemize}
+
+\section{Keamanan Komputasi dan Side-Channel Attack}
+Sebuah algoritma dikatakan \textbf{aman secara komputasi (\textit{computationally secure})} jika:
+1. Persamaan matematikanya terlalu kompleks untuk dipecahkan secara analitik.
+2. Biaya untuk memecahkan cipherteks melebihi nilai informasi di dalamnya.
+3. Waktu yang dibutuhkan untuk memecahkan cipherteks melebihi masa berlaku kerahasiaan informasi tersebut.
+
+\subsection{Side-Channel Attack}
+Serangan ini tidak menyerang algoritma matematika, melainkan memanfaatkan kebocoran fisik saat algoritma dijalankan pada perangkat:
+\begin{itemize}
+    \item \textbf{Timing Attack}: Menganalisis perbedaan waktu eksekusi.
+    \item \textbf{Power Analysis}: Menganalisis konsumsi daya (SPA/DPA).
+    \item \textbf{Electromagnetic Attack}: Menganalisis radiasi elektromagnetik.
+    \item \textbf{Fault Injection}: Sengaja membuat kesalahan pada perangkat untuk menganalisis output yang salah (DFA).
+\end{itemize}
+
+\begin{obeactivity}
+\textbf{Aktivitas 2.1: Simulasi Analisis Paket dengan Wireshark}
+Gunakan aplikasi Wireshark untuk menangkap paket data dari protokol yang tidak terenkripsi (misalnya HTTP biasa). Cobalah cari paket \textit{POST} dan lihat apakah Anda dapat menemukan \textit{username} atau \textit{password} dalam bentuk plainteks. Diskusikan mengapa penggunaan HTTPS sangat krusial untuk mencegah serangan pasif.
+\end{obeactivity}
+
+\begin{obereflection}
+\textbf{Latihan 2.1}
+1. Mengapa \textit{Chosen-Plaintext Attack} dianggap lebih berbahaya daripada \textit{Ciphertext-Only Attack}? Berikan contoh skenario di mana penyerang bisa melakukan serangan ini.
+2. Berikan contoh nyata dari \textit{Replay Attack} dalam sistem perbankan online dan jelaskan bagaimana penggunaan \textit{nonce} atau \textit{timestamp} dapat mencegahnya.
+\end{obereflection}
+
+\begin{obeassessment}
+\textbf{Kuis Bab 2}
+1. Apa perbedaan mendasar antara serangan pasif dan serangan aktif? Manakah yang lebih sulit dideteksi? Jelaskan alasannya.
+2. Dalam kondisi apa sebuah algoritma yang secara matematis kuat tetap bisa ditembus menggunakan \textit{Side-Channel Attack}?
+\end{obeassessment}
+
+\begin{competencychecklist}
+\begin{tabularx}{\linewidth}{|X|c|}
+\hline
+Indikator Kompetensi & Tercapai \\
+\hline
+Saya dapat menjelaskan prinsip Kerckhoffs dan mengapa kunci harus rahasia & [ ] \\
+\hline
+Saya dapat membedakan jenis serangan berdasarkan informasi (COA, KPA, CPA, CCA) & [ ] \\
+\hline
+Saya dapat mengidentifikasi perbedaan antara serangan pasif dan aktif & [ ] \\
+\hline
+Saya dapat menjelaskan konsep keamanan komputasi dan side-channel attack & [ ] \\
+\hline
+\end{tabularx}
+\end{competencychecklist}
+
+\end{document}

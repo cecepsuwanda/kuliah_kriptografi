@@ -1,0 +1,121 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Kriptografi Kunci-Publik: Algoritma Knapsack}
+
+\begin{learningoutcome}
+Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
+\begin{itemize}
+    \item Menjelaskan konsep dasar persoalan \textit{Knapsack Problem} dan kaitannya dengan kriptografi kunci-publik (Sub-CPMK 2.3).
+    \item Membedakan secara jelas antara barisan \textit{superincreasing} dan barisan \textit{non-superincreasing} (Sub-CPMK 2.3).
+    \item Menerapkan prosedur enkripsi dan dekripsi pada sistem kriptografi Merkle-Hellman (Sub-CPMK 2.3).
+    \item Menganalisis proses transformasi kunci privat menjadi kunci publik dalam sistem Knapsack (Sub-CPMK 2.3).
+    \item Mengevaluasi keamanan algoritma Knapsack dan memahami alasan mengapa sistem ini tidak lagi dianggap aman (Sub-CPMK 2.3).
+\end{itemize}
+\end{learningoutcome}
+
+\section{Persoalan Knapsack (\textit{Knapsack Problem})}
+Algoritma kriptografi Knapsack, atau sistem Merkle-Hellman, didasarkan pada persoalan matematika klasik yang dikenal sebagai \textit{Knapsack Problem}.
+
+\subsection{Definisi Matematika}
+Diberikan sebuah kapasitas bobot total $M$ dan sekumpulan $n$ buah objek dengan bobot $w_1, w_2, \dots, w_n$. Persoalannya adalah menentukan nilai biner $b_i \in \{0, 1\}$ sedemikian sehingga:
+\[ M = \sum_{i=1}^{n} b_i w_i = b_1w_1 + b_2w_2 + \dots + b_nw_n \]
+Di mana $b_i = 1$ berarti objek ke-$i$ dimasukkan ke dalam tas (\textit{knapsack}), dan $b_i = 0$ berarti tidak dimasukkan.
+
+\subsection{Kompleksitas Komputasi}
+Dalam teori kompleksitas, \textit{Knapsack Problem} umum termasuk dalam kategori \textbf{NP-complete}. Artinya, tidak ada algoritma yang diketahui dapat memecahkan persoalan ini dalam waktu polinomial seiring dengan bertambahnya jumlah objek $n$. Sifat inilah yang awalnya menjadi landasan keamanan algoritma kriptografi Knapsack.
+
+\section{Superincreasing Knapsack}
+Untuk memungkinkan proses dekripsi yang efisien, sistem ini menggunakan variasi khusus yang disebut \textit{Superincreasing Knapsack}.
+
+\subsection{Barisan \textit{Superincreasing}}
+Sebuah barisan bobot $\{w_1, w_2, \dots, w_n\}$ disebut \textbf{barisan \textit{superincreasing}} jika setiap elemen di dalam barisan lebih besar daripada jumlah semua elemen sebelumnya:
+\[ w_i > \sum_{j=1}^{i-1} w_j \quad \text{untuk semua } i = 2, \dots, n \]
+Contoh: $\{2, 3, 6, 13, 27, 52\}$ adalah barisan \textit{superincreasing} karena $52 > (2+3+6+13+27) = 51$.
+
+\subsection{Prosedur Dekripsi Mudah}
+Berbeda dengan \textit{knapsack} umum, \textit{superincreasing knapsack} dapat dipecahkan dalam waktu linier $O(n)$ dengan algoritma \textit{greedy}:
+\begin{enumerate}
+    \item Bandingkan bobot total $M$ dengan bobot terbesar $w_n$.
+    \item Jika $w_n \le M$, maka $b_n = 1$ dan kurangi $M$ dengan $w_n$ ($M = M - w_n$). Jika tidak, $b_n = 0$.
+    \item Ulangi proses tersebut untuk bobot $w_{n-1}, w_{n-2}, \dots, w_1$.
+    \item Jika pada akhir proses $M = 0$, maka solusi ditemukan.
+\end{enumerate}
+
+\section{Sistem Kriptografi Merkle-Hellman}
+Karena \textit{superincreasing knapsack} terlalu mudah dipecahkan, Merkle dan Hellman mengusulkan untuk menyembunyikannya di balik sebuah transformasi modulo.
+
+\subsection{Pembangkitan Kunci}
+\begin{enumerate}
+    \item \textbf{Kunci Privat}: Pilih sebuah barisan \textit{superincreasing} $W_{priv} = \{w_1, w_2, \dots, w_n\}$.
+    \item \textbf{Parameter Transformasi}: Pilih modulus $m$ yang lebih besar dari jumlah seluruh elemen $W_{priv}$, dan pilih pengali $n$ sedemikian sehingga $\text{PBB}(n, m) = 1$.
+    \item \textbf{Kunci Publik}: Hitung barisan \textit{non-superincreasing} $W_{pub} = \{w'_1, w'_2, \dots, w'_n\}$ dengan rumus:
+    \[ w'_i = (w_i \cdot n) \bmod m \]
+\end{enumerate}
+
+\subsection{Proses Enkripsi}
+Pengirim menggunakan kunci publik $W_{pub}$ untuk mengenkripsi pesan biner $B = (b_1, b_2, \dots, b_n)$:
+\[ C = \sum_{i=1}^{n} b_i w'_i \pmod{m} \]
+Hasil enkripsi adalah sebuah angka tunggal $C$ (kriptogram).
+
+\subsection{Proses Dekripsi}
+Penerima menggunakan kunci privat $W_{priv}$ dan parameter $(n, m)$ untuk mendekripsi:
+\begin{enumerate}
+    \item Hitung invers modulo dari $n$ terhadap $m$, yaitu $n^{-1} \bmod m$.
+    \item Transformasikan kriptogram $C$ kembali menjadi bentuk \textit{superincreasing}:
+    \[ C' = (C \cdot n^{-1}) \bmod m \]
+    \item Pecahkan $C'$ menggunakan algoritma \textit{greedy} terhadap barisan $W_{priv}$ untuk mendapatkan bit-bit plainteks $b_i$.
+\end{enumerate}
+
+\section{Kriptanalisis dan Keamanan}
+Meskipun terlihat kuat, sistem Merkle-Hellman telah terbukti tidak aman.
+
+\subsection{Serangan Adi Shamir}
+Pada tahun 1982, Adi Shamir mempublikasikan algoritma yang mampu merekonstruksi barisan \textit{superincreasing} dari kunci publik dalam waktu polinomial. Shamir menunjukkan bahwa struktur modular yang digunakan untuk menyembunyikan barisan \textit{superincreasing} dapat ditembus menggunakan teknik matematika tertentu, sehingga kunci privat dapat ditemukan dari kunci publik.
+
+\subsection{Kesimpulan Keamanan}
+Saat ini, algoritma Knapsack tidak digunakan dalam implementasi praktis karena kerentanannya terhadap serangan kriptanalisis. Namun, algoritma ini memberikan kontribusi sejarah yang penting dalam pengembangan konsep kunci-publik.
+
+\begin{obeactivity}
+\textbf{Aktivitas 13.1: Simulasi Merkle-Hellman}
+1. Tentukan kunci privat (barisan \textit{superincreasing}): $W_{priv} = \{2, 3, 6, 13, 27, 52\}$.
+2. Gunakan $m = 105$ dan $n = 31$. Hitung kunci publik $W_{pub}$.
+3. Enkripsi plainteks $B = (0, 1, 1, 0, 0, 0)$ menggunakan $W_{pub}$.
+4. Hitung $n^{-1} \bmod 105$.
+5. Dekripsi hasil kriptogram tersebut menggunakan $n^{-1}$ dan $W_{priv}$.
+\end{obeactivity}
+
+\begin{obereflection}
+\textbf{Latihan 13.1}
+1. Mengapa jumlah elemen di dalam barisan \textit{superincreasing} harus cukup besar untuk keamanan praktis?
+2. Apa yang terjadi jika $\text{PBB}(n, m) \neq 1$ dalam proses pembangkitan kunci?
+3. Jelaskan mengapa algoritma \textit{greedy} hanya bekerja pada barisan \textit{superincreasing} dan gagal pada barisan normal.
+\end{obereflection}
+
+\begin{obeassessment}
+\textbf{Kuis Bab 13}
+1. Apa perbedaan antara \textit{NP-complete problem} dan persoalan yang dapat diselesaikan dalam waktu polinomial?
+2. Jelaskan langkah-langkah transformasi dari kunci privat ke kunci publik pada sistem Merkle-Hellman.
+3. Mengapa penemuan Adi Shamir membuat algoritma Knapsack tidak lagi aman?
+\end{obeassessment}
+
+\begin{competencychecklist}
+\begin{tabularx}{\linewidth}{|X|c|}
+\hline
+Indikator Kompetensi & Tercapai \\
+\hline
+Saya dapat menjelaskan konsep \textit{Knapsack Problem} & [ ] \\
+\hline
+Saya dapat membedakan barisan \textit{superincreasing} dan normal & [ ] \\
+\hline
+Saya dapat menghitung enkripsi sistem Merkle-Hellman & [ ] \\
+\hline
+Saya dapat melakukan dekripsi dengan bantuan invers modulo & [ ] \\
+\hline
+Saya dapat menganalisis penyebab kegagalan keamanan algoritma Knapsack & [ ] \\
+\hline
+\end{tabularx}
+\end{competencychecklist}
+
+\end{document}

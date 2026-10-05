@@ -1,36 +1,35 @@
 \documentclass[../main.tex]{subfiles}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[indonesian]{babel}
 
 \begin{document}
 
-% Note: the standard `titlepage' environment resets the page counter to 1,
-% which collides with the page already emitted by \frontmatter and produces a
-% "destination with the same identifier (name{page.i})" hyperref warning.
-% A plain empty-styled page avoids that while looking identical.
+% Catatan: environment `titlepage' bawaan menyetel ulang nomor halaman ke 1,
+% sehingga bertabrakan dengan halaman yang sudah dikeluarkan \frontmatter dan
+% memunculkan peringatan hyperref "destination with the same identifier
+% (name{page.i})". Halaman bergaya kosong ini menghindarinya dengan tampilan
+% yang sama.
 \thispagestyle{empty}
 \begingroup\centering
     \vspace*{1cm}
 
-    {\Huge \textbf{KRIPTOGRAFI}}\\[0.5cm]
-    {\Large \textbf{Buku Ajar Berbasis Outcome-Based Education (OBE)}}\\[2cm]
+    {\Huge \textbf{\MakeUppercase{\BookTitle}}}\\[0.5cm]
+    {\Large \textbf{\BookSubtitle}}\\[0.5cm]
+    {\large \BookEdition}\\[2cm]
 
     \vfill
 
-    \IfFileExists{assets/logo_itb.png}{%
-        \includegraphics[width=0.4\textwidth]{assets/logo_itb.png}\\[2cm]%
+    \IfFileExists{assets/logos/logo_itb.png}{%
+        \includegraphics[width=0.4\textwidth]{assets/logos/logo_itb.png}\\[2cm]%
     }{\vspace{2cm}}%
 
     {\large \textbf{Oleh:}}\\
-    {\Large \textbf{Rinaldi Munir}}\\[1cm]
+    {\Large \textbf{\BookAuthor}}\\[1cm]
 
     \vfill
 
-    {\large \textbf{Program Studi Teknik Informatika}}\\
-    {\large \textbf{Sekolah Teknik Elektro dan Informatika}}\\
-    {\large \textbf{Institut Teknologi Bandung}}\\
-    {\large 2026}
+    {\large \textbf{\BookProgram}}\\
+    {\large \textbf{\BookFaculty}}\\
+    {\large \textbf{\BookInstitution}}\\
+    {\large \BookYear}
 \par\endgroup
 \clearpage
 

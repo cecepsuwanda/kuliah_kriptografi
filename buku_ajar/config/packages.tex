@@ -1,0 +1,67 @@
+% =====================================================================
+%  config/packages.tex
+%  Semua paket yang dipakai SELURUH buku didefinisikan di sini.
+%  Bab tidak boleh memuat \usepackage sendiri (Aturan AI #3).
+%  Isi file ini dipindahkan dari config/preamble.tex lama.
+% =====================================================================
+
+% --- Bahasa & pengkodean -------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% Latin Modern: font Type1 yang scalable. Diperlukan oleh font expansion
+% microtype (font T1/EC bawaan bersifat bitmap pada sebagian ukuran).
+\usepackage{lmodern}
+\usepackage[indonesian]{babel}
+
+% --- Matematika ----------------------------------------------------------
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+
+% --- Grafik & gambar -----------------------------------------------------
+\usepackage{graphicx}
+\usepackage{float}   % menyediakan opsi [H] pada figure dan table
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, calc, fit, backgrounds}
+
+% --- Tabel ---------------------------------------------------------------
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
+
+% --- Warna & kode program ------------------------------------------------
+\usepackage{xcolor}
+\usepackage{listings}
+
+% --- Daftar & kotak ------------------------------------------------------
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+% --- Kompilasi per bab ---------------------------------------------------
+\usepackage{subfiles}
+
+% --- Sitasi & daftar pustaka ---------------------------------------------
+% natbib dimuat SEBELUM hyperref (Arsitektur_Buku_Ajar.md Bagian 20).
+\usepackage{natbib}
+
+% --- Tata letak halaman --------------------------------------------------
+\usepackage{geometry}
+
+% --- Tautan & PDF --------------------------------------------------------
+\usepackage[hidelinks,breaklinks]{hyperref}
+\usepackage{url}
+
+% --- Mikro-tipografi -----------------------------------------------------
+% Dimuat setelah paket font. Character protrusion + font expansion sangat
+% menekan jumlah overfull/underfull box tanpa mengubah isi.
+\usepackage{microtype}
+
+% --- Hyphenation (per bahasa) --------------------------------------------
+% Pola hyphenation Indonesia (babel) tidak mencakup istilah Inggris/teknis
+% berikut. Harus diberikan per-bahasa: \hyphenation biasa akan terdaftar
+% untuk bahasa default, bukan untuk bahasa aktif (indonesian).
+\babelhyphenation[indonesian]{su-per-in-creas-ing non-su-per-in-creas-ing Po-ly-al-pha-be-tic}
+
+% --- Jaring pengaman overfull --------------------------------------------
+% Memberi TeX kesempatan terakhir menambah rentangan antar-kata, tetapi
+% hanya untuk paragraf yang jika tidak akan melampaui margin.
+\setlength{\emergencystretch}{2em}

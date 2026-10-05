@@ -1,0 +1,136 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Analisis Algoritma Block Cipher: AES}
+
+\begin{learningoutcome}
+Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
+\begin{itemize}
+    \item Menjelaskan latar belakang pengembangan \textit{Advanced Encryption Standard} (AES) sebagai pengganti DES (Sub-CPMK 1.2).
+    \item Menganalisis spesifikasi teknis AES, termasuk varian panjang kunci (128, 192, dan 256 bit) (Sub-CPMK 1.2).
+    \item Menguraikan mekanisme kerja internal AES, termasuk transformasi \textit{SubBytes}, \textit{ShiftRows}, \textit{MixColumns}, dan \textit{AddRoundKey} (Sub-CPMK 1.2).
+    \item Memahami konsep \textit{state} dan representasi data dalam matriks $4 \times 4$ pada AES (Sub-CPMK 1.2).
+    \item Menjelaskan proses pembangkitan kunci putaran (\textit{Key Expansion}) pada AES (Sub-CPMK 1.2).
+    \item Memahami dasar matematika $\text{GF}(2^8)$ yang digunakan dalam operasi AES (Sub-CPMK 1.2).
+\end{itemize}
+\end{learningoutcome}
+
+\section{Latar Belakang AES}
+Kelemahan utama DES terletak pada panjang kuncinya (56 bit) yang terlalu pendek untuk menghadapi serangan \textit{brute force} modern. Hal ini mendorong \textit{National Institute of Standards and Technology} (NIST) untuk mengadakan kompetisi terbuka guna mencari standar enkripsi blok baru yang lebih kuat, efisien, dan publik.
+
+Pada tahun 2001, algoritma \textbf{Rijndael}, yang dirancang oleh Vincent Rijmen dan Joan Daemen, dipilih dan ditetapkan sebagai \textbf{Advanced Encryption Standard (AES)}.
+
+\subsection{Persyaratan dan Spesifikasi AES}
+AES dirancang dengan beberapa kriteria utama:
+\begin{itemize}
+    \item \textbf{Sifat Algoritma}: Harus merupakan \textit{symmetric block cipher} dengan rancangan yang sepenuhnya publik.
+    \item \textbf{Ukuran Blok}: Tetap pada 128 bit.
+    \item \textbf{Panjang Kunci}: Fleksibel, mendukung 128, 192, dan 256 bit.
+    \item \textbf{Implementasi}: Harus efisien baik dalam perangkat lunak (\textit{software}) maupun perangkat keras (\textit{hardware}).
+\end{itemize}
+
+Varian AES ditentukan oleh panjang kuncinya:
+\begin{itemize}
+    \item \textbf{AES-128}: Kunci 128 bit, 10 putaran.
+    \item \textbf{AES-192}: Kunci 192 bit, 12 putaran.
+    \item \textbf{AES-256}: Kunci 256 bit, 14 putaran.
+\end{itemize}
+
+\section{Mekanisme Kerja AES}
+Berbeda dengan DES yang menggunakan Jaringan Feistel, AES menggunakan struktur \textbf{Substitusi-Permutasi} (\textit{Substitution-Permutation Network}). Data diproses dalam orientasi \textit{byte} menggunakan matriks dua dimensi berukuran $4 \times 4$ yang disebut \textbf{state}.
+
+\subsection{Representasi State}
+Blok plainteks 128-bit dipetakan ke dalam matriks \texttt{state} $4 \times 4$ sebagai berikut:
+\[
+\text{State} = \begin{bmatrix}
+s_{0,0} & s_{0,1} & s_{0,2} & s_{0,3} \\
+s_{1,0} & s_{1,1} & s_{1,2} & s_{1,3} \\
+s_{2,0} & s_{2,1} & s_{2,2} & s_{2,3} \\
+s_{3,0} & s_{3,1} & s_{3,2} & s_{3,3}
+\end{bmatrix}
+\]
+
+\subsection{Tahapan Enkripsi}
+Proses enkripsi AES terdiri dari putaran awal, beberapa putaran utama, dan satu putaran akhir.
+
+\subsubsection{Initial Round}
+\begin{itemize}
+    \item \textbf{AddRoundKey}: Melakukan operasi XOR antara \texttt{state} awal (plainteks) dengan kunci awal (\textit{cipher key}).
+\end{itemize}
+
+\subsubsection{Main Rounds (Putaran Utama)}
+Setiap putaran utama terdiri dari empat transformasi:
+\begin{enumerate}
+    \item \textbf{SubBytes}: Substitusi setiap byte dalam \texttt{state} menggunakan tabel \textbf{S-box} non-linear. Tahap ini memberikan efek \textit{confusion}.
+    \item \textbf{ShiftRows}: Pergeseran siklik (\textit{wrapping}) pada baris-baris matriks \texttt{state}. Baris 0 tetap, baris 1 geser 1 byte, baris 2 geser 2 byte, dan baris 3 geser 3 byte. Tahap ini memberikan efek \textit{diffusion}.
+    \item \textbf{MixColumns}: Operasi perkalian matriks antara \texttt{state} dengan matriks konstanta tetap dalam field $\text{GF}(2^8)$. Tahap ini semakin memperkuat difusi antar kolom.
+    \item \textbf{AddRoundKey}: XOR antara \texttt{state} hasil transformasi dengan kunci putaran (\textit{round key}) saat itu.
+\end{enumerate}
+
+\subsubsection{Final Round (Putaran Akhir)}
+Putaran terakhir hampir sama dengan putaran utama, namun \textbf{tanpa tahap MixColumns}:
+\[ \text{SubBytes} \rightarrow \text{ShiftRows} \rightarrow \text{AddRoundKey} \]
+
+\section{Pembangkitan Kunci Putaran (Key Expansion)}
+Fungsi \textit{KeyExpansion()} membangkitkan seluruh kunci putaran yang diperlukan dari satu kunci eksternal. Proses ini melibatkan operasi:
+\begin{itemize}
+    \item \textbf{RotWord}: Pergeseran sirkuler byte dalam sebuah \textit{word}.
+    \item \textbf{SubWord}: Substitusi byte menggunakan S-box.
+    \item \textbf{Rcon (Round Constant)}: XOR dengan konstanta putaran untuk mencegah simetri antar kunci putaran.
+\end{itemize}
+
+\section{Dasar Matematika: Galois Field \texorpdfstring{$\text{GF}(2^8)$}{GF(2\textasciicircum8)}}
+Operasi dalam AES, terutama \textit{MixColumns} dan S-box, dilakukan di dalam \textbf{Galois Field $\text{GF}(2^8)$}, yang merupakan medan berhingga biner.
+
+\subsection{Representasi Polinomial}
+Setiap byte (8 bit) direpresentasikan sebagai polinomial derajat 7 dengan koefisien dalam $\text{GF}(2)$:
+\[ a = b_7x^7 + b_6x^6 + \dots + b_1x + b_0 \]
+
+\subsection{Operasi Aritmetika}
+\begin{itemize}
+    \item \textbf{Penjumlahan}: Dilakukan dengan operasi XOR bitwise.
+    \item \textbf{Perkalian}: Perkalian polinomial yang hasilnya kemudian direduksi menggunakan \textit{irreducible polynomial} $f(x) = x^8 + x^4 + x^3 + x + 1$.
+\end{itemize}
+
+\begin{obeactivity}
+\textbf{Aktivitas 8.1: Simulasi Transformasi AES}
+1. Ambil sebuah blok data 16-byte (misal: "Kriptografi-AES!").
+2. Representasikan data tersebut ke dalam matriks \texttt{state} $4 \times 4$.
+3. Lakukan simulasi tahap \textit{ShiftRows} secara manual pada matriks tersebut.
+4. Amati bagaimana posisi byte berubah dan diskusikan pengaruhnya terhadap difusi data.
+\end{obeactivity}
+
+\begin{obereflection}
+\textbf{Latihan 8.1}
+1. Mengapa tahap \textit{MixColumns} dihilangkan pada putaran terakhir AES?
+2. Jelaskan bagaimana kombinasi \textit{SubBytes}, \textit{ShiftRows}, dan \textit{MixColumns} secara kolektif mengimplementasikan prinsip \textit{confusion} dan \textit{diffusion} Shannon.
+3. Berikan analisis singkat: mengapa AES-256 lebih tahan terhadap serangan \textit{quantum computing} (misal: algoritma Grover) dibandingkan AES-128?
+\end{obereflection}
+
+\begin{obeassessment}
+\textbf{Kuis Bab 8}
+1. Apa perbedaan utama antara struktur internal DES (Feistel) dan AES (Substitusi-Permutasi)?
+2. Jelaskan peran \textit{S-box} dalam AES dan bagaimana ia dibentuk secara matematis.
+3. Mengapa operasi dalam AES dilakukan dalam $\text{GF}(2^8)$ dan bukan aritmetika bilangan bulat biasa?
+\end{obeassessment}
+
+\begin{competencychecklist}
+\begin{tabularx}{\linewidth}{|X|c|}
+\hline
+Indikator Kompetensi & Tercapai \\
+\hline
+Saya dapat menjelaskan alasan penggantian DES menjadi AES & [ ] \\
+\hline
+Saya dapat membedakan varian AES-128, 192, dan 256 & [ ] \\
+\hline
+Saya dapat menguraikan alur kerja \textit{SubBytes, ShiftRows, MixColumns} & [ ] \\
+\hline
+Saya dapat menjelaskan konsep matriks \textit{state} pada AES & [ ] \\
+\hline
+Saya dapat memahami dasar operasi aritmetika pada $\text{GF}(2^8)$ & [ ] \\
+\hline
+\end{tabularx}
+\end{competencychecklist}
+
+\end{document}

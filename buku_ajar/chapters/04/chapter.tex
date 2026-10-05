@@ -1,0 +1,149 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Kriptografi Klasik}
+
+\begin{learningoutcome}
+Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
+\begin{itemize}
+    \item Menjelaskan prinsip dasar cipher substitusi dan transposisi serta memberikan contoh implementasinya (Sub-CPMK 2.3).
+    \item Menganalisis kelemahan cipher abjad-tunggal dan menerapkan teknik analisis frekuensi untuk memecahkan cipherteks (Sub-CPMK 2.3).
+    \item Mengimplementasikan Vigen\`ere Cipher dan memahami konsep cipher abjad-majemuk (\textit{polyalphabetic}) (Sub-CPMK 2.3).
+    \item Menjelaskan mekanisme kerja Playfair Cipher sebagai bentuk substitusi digram (Sub-CPMK 2.3).
+    \item Menerapkan konsep Affine Cipher dan Hill Cipher berbasis aljabar linier (Sub-CPMK 2.3).
+    \item Memahami sejarah dan mekanisme kerja mesin Enigma sebagai tonggak kriptografi elektromekanik (Sub-CPMK 2.3).
+\end{itemize}
+\end{learningoutcome}
+
+\section{Cipher Substitusi dan Transposisi}
+Kriptografi klasik umumnya terbagi menjadi dua kategori utama berdasarkan cara pengubahan plainteks menjadi cipherteks: substitusi dan transposisi.
+
+\subsection{Cipher Substitusi}
+Cipher substitusi adalah teknik enkripsi di mana satu atau lebih simbol dalam plainteks digantikan oleh simbol lain.
+
+\subsubsection{Cipher Abjad-Tunggal (\textit{Monoalphabetic Cipher})}
+Dalam \textit{monoalphabetic cipher}, setiap huruf dalam plainteks dipetakan secara konsisten ke satu huruf cipherteks. Contoh yang paling sederhana adalah \textbf{Caesar Cipher}, yang melakukan pergeseran tetap sejauh $k$ posisi dalam alfabet.
+
+Namun, substitusi tidak harus berupa pergeseran. Kita dapat membuat tabel substitusi sembarang. Jumlah kemungkinan tabel substitusi untuk alfabet 26 huruf adalah $26!$ (faktorial 26), sebuah angka yang sangat besar:
+\[ 26! \approx 4.03 \times 10^{26} \]
+
+Tabel substitusi dapat dibentuk secara acak atau menggunakan kalimat kunci (\textit{keyword}) untuk memudahkan penghafalan. Misalnya, dengan kalimat kunci \texttt{"di bawah sinar bulan purnama hati resah jadi senang"}, huruf-huruf yang unik diekstraksi dan disambung dengan sisa alfabet untuk membentuk tabel pemetaan.
+
+\subsection{Kriptanalisis Cipher Abjad-Tunggal}
+Kelemahan utama dari cipher abjad-tunggal adalah ketidakmampuannya menyembunyikan struktur statistik bahasa. Huruf yang sering muncul dalam plainteks akan tetap sering muncul sebagai huruf cipherteks yang berkoresponden.
+
+\subsubsection{Teknik Analisis Frekuensi}
+Kriptanalis menggunakan \textbf{analisis frekuensi} untuk memecahkan cipher ini. Dengan membandingkan frekuensi kemunculan huruf dalam cipherteks dengan frekuensi umum huruf dalam bahasa natural (misal: Bahasa Inggris atau Bahasa Indonesia), kunci dapat dideduksi.
+
+Dalam Bahasa Inggris, huruf yang paling sering muncul adalah \textbf{E}, diikuti oleh T, A, O, I, N, S, H, R, D. Selain huruf tunggal (\textit{monogram}), analisis juga dapat dilakukan pada pasangan huruf (\textit{bigram}) seperti \texttt{TH, HE, IN} atau tiga huruf (\textit{trigram}) seperti \texttt{THE, AND}.
+
+\begin{obeactivity}
+\textbf{Aktivitas 4.1: Praktik Analisis Frekuensi}
+1. Gunakan alat \textit{online} seperti \url{https://www.cryptool.org/en/cto/n-gram-analysis}.
+2. Masukkan sebuah cipherteks yang dihasilkan dari monoalphabetic cipher.
+3. Analisis distribusi frekuensi hurufnya dan coba petakan huruf yang paling sering muncul ke huruf 'E' atau 'A'.
+4. Lakukan iterasi \textit{trial-and-error} hingga pesan dapat terbaca sepenuhnya.
+\end{obeactivity}
+
+\section{Cipher Abjad-Majemuk (\textit{Polyalphabetic})}
+Untuk mengatasi kelemahan analisis frekuensi, dikembangkanlah \textit{polyalphabetic cipher} di mana satu huruf plainteks dapat dienkripsi menjadi huruf cipherteks yang berbeda-beda, tergantung pada posisinya.
+
+\subsection{Vigen\`ere Cipher}
+Vigen\`ere Cipher menggunakan kata kunci yang diulang secara periodik sepanjang pesan. Jika panjang kunci adalah $m$, maka setiap huruf ke-$i$ dienkripsi menggunakan pergeseran yang ditentukan oleh huruf kunci ke-$(i \pmod m)$.
+
+\textbf{Mekanisme Kerja:}
+Enkripsi dapat dilakukan menggunakan \textit{Vigenere Square} (Tabel Vigenere) atau secara matematis dengan rumus:
+\[ c_j = (p_j + k_i) \pmod{26} \]
+\[ p_j = (c_j - k_i) \pmod{26} \]
+
+Karakteristik utama dari Vigen\`ere Cipher adalah distribusi frekuensi huruf pada cipherteks cenderung lebih seragam (\textit{flat}) dibandingkan monoalphabetic cipher, sehingga lebih sulit dipecahkan dengan analisis frekuensi sederhana.
+
+\subsection{Kriptanalisis Vigen\`ere: Metode Kasiski}
+Meskipun lebih kuat, Vigen\`ere Cipher dapat dipecahkan jika pesan cukup panjang. Friedrich Kasiski (1863) menemukan bahwa jika sebuah kata dalam plainteks muncul berulang kali dan kebetulan berada pada posisi yang merupakan kelipatan panjang kunci, maka mereka akan menghasilkan kriptogram yang sama.
+
+Langkah-langkah Metode Kasiski:
+\begin{enumerate}
+    \item Cari kriptogram yang berulang dalam cipherteks.
+    \item Hitung jarak antar perulangan tersebut.
+    \item Cari faktor pembagi dari jarak-jarak tersebut; irisan dari faktor-faktor ini memberikan estimasi panjang kunci $m$.
+    \item Setelah $m$ diketahui, bagi cipherteks menjadi $m$ kelompok. Setiap kelompok sekarang merupakan monoalphabetic cipher yang dapat dipecahkan dengan analisis frekuensi.
+\end{enumerate}
+
+\subsection{Varian Vigen\`ere}
+\begin{itemize}
+    \item \textbf{Full Vigen\`ere}: Menggunakan tabel permutasi acak alih-alih pergeseran Caesar.
+    \item \textbf{Auto-Key Vigen\`ere}: Menyambungkan kunci awal dengan plainteks itu sendiri untuk memperpanjang kunci.
+    \item \textbf{Running-Key Vigen\`ere}: Menggunakan teks bermakna yang sangat panjang (misal: halaman buku) sebagai kunci.
+\end{itemize}
+
+\section{Polygram Cipher}
+Polygram cipher melakukan substitusi pada blok huruf (bukan huruf tunggal).
+
+\subsection{Playfair Cipher}
+Playfair Cipher bekerja pada unit \textbf{bigram} (pasangan dua huruf). Kunci disusun dalam matriks $5 \times 5$ (huruf J biasanya digabung dengan I).
+
+\textbf{Aturan Enkripsi:}
+\begin{enumerate}
+    \item Jika dua huruf berada di \textbf{baris yang sama}, ganti dengan huruf di kanannya (siklik).
+    \item Jika dua huruf berada di \textbf{kolom yang sama}, ganti dengan huruf di bawahnya (siklik).
+    \item Jika membentuk \textbf{persegi panjang}, ganti dengan huruf pada sudut berlawanan di baris yang sama.
+\end{enumerate}
+
+\subsection{Hill Cipher}
+Hill Cipher adalah polygram cipher berbasis aljabar linier. Enkripsi dilakukan menggunakan perkalian matriks:
+\[ \mathbf{C} = \mathbf{KP} \pmod{26} \]
+di mana $\mathbf{K}$ adalah matriks kunci dan $\mathbf{P}$ adalah vektor plainteks. Dekripsi membutuhkan invers matriks kunci $\mathbf{K}^{-1} \pmod{26}$, yang hanya ada jika $\det(\mathbf{K})$ relatif prima dengan 26.
+
+\section{Mesin Enigma}
+Enigma adalah mesin kriptografi elektromekanik yang digunakan secara masif oleh Jerman pada Perang Dunia II.
+
+\textbf{Komponen Utama:}
+\begin{itemize}
+    \item \textbf{Rotors}: Cakram yang berputar untuk melakukan substitusi. Setiap putaran mengubah pemetaan huruf, sehingga Enigma adalah polyalphabetic cipher dengan periode yang sangat panjang.
+    \item \textbf{Plugboard}: Menukarkan pasangan huruf sebelum dan sesudah melewati rotor untuk menambah kompleksitas.
+    \item \textbf{Reflector}: Memantulkan sinyal kembali melalui rotor, yang memastikan proses enkripsi dan dekripsi adalah operasi yang sama (simetris).
+\end{itemize}
+
+Kriptanalisis Enigma dilakukan melalui upaya kolaboratif kriptografer Polandia dan Inggris (termasuk Alan Turing dengan mesin \textit{Bombe}), yang secara signifikan memperpendek durasi perang.
+
+\section{Affine Cipher}
+Affine Cipher adalah generalisasi dari Caesar Cipher yang menggunakan fungsi linier:
+\[ C \equiv mP + b \pmod{n} \]
+Kunci terdiri dari dua parameter: $m$ (slope) dan $b$ (intercept). Agar dapat didekripsi, $m$ harus relatif prima dengan $n$.
+
+\begin{obereflection}
+\textbf{Latihan 4.1}
+1. Gunakan kunci \texttt{Kripto} (dengan $m=7, b=10, n=26$) untuk mengenkripsi kata \texttt{halo}.
+2. Diberikan cipherteks Vigen\`ere \texttt{LSimMNVWGRR} dengan kunci \texttt{soreang}, lakukan dekripsi untuk menemukan plainteksnya.
+3. Buatlah matriks kunci $2 \times 2$ untuk Hill Cipher, hitung determinannya, dan tentukan apakah matriks tersebut memiliki invers modulo 26.
+\end{obereflection}
+
+\begin{obeassessment}
+\textbf{Kuis Bab 4}
+1. Mengapa Vigen\`ere Cipher lebih aman daripada Caesar Cipher terhadap serangan analisis frekuensi?
+2. Jelaskan mengapa dalam Playfair Cipher huruf 'J' biasanya dihilangkan atau digabung dengan 'I'.
+3. Apa syarat utama agar sebuah matriks dapat digunakan sebagai kunci dalam Hill Cipher?
+\end{obeassessment}
+
+\begin{competencychecklist}
+\begin{tabularx}{\linewidth}{|X|c|}
+\hline
+Indikator Kompetensi & Tercapai \\
+\hline
+Saya dapat membedakan cipher substitusi dan transposisi & [ ] \\
+\hline
+Saya dapat melakukan analisis frekuensi untuk memecahkan monoalphabetic cipher & [ ] \\
+\hline
+Saya dapat melakukan enkripsi dan dekripsi Vigen\`ere Cipher & [ ] \\
+\hline
+Saya dapat menerapkan aturan enkripsi Playfair Cipher & [ ] \\
+\hline
+Saya dapat menghitung operasi matriks pada Hill Cipher & [ ] \\
+\hline
+Saya dapat menjelaskan prinsip kerja rotor pada mesin Enigma & [ ] \\
+\hline
+\end{tabularx}
+\end{competencychecklist}
+
+\end{document}

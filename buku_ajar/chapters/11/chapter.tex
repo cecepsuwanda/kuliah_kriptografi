@@ -1,0 +1,130 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Pertukaran Kunci: Protokol Diffie-Hellman}
+
+\begin{learningoutcome}
+Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
+\begin{itemize}
+    \item Menjelaskan persoalan distribusi kunci pada kriptografi simetri dan bagaimana protokol pertukaran kunci menyelesaikannya (Sub-CPMK 2.3).
+    \item Menguraikan mekanisme kerja Protokol Pertukaran Kunci Diffie-Hellman (DH) (Sub-CPMK 2.3).
+    \item Menerapkan perhitungan matematis Diffie-Hellman untuk menghasilkan kunci rahasia bersama (\textit{shared secret key}) (Sub-CPMK 2.3).
+    \item Menganalisis landasan keamanan Diffie-Hellman berdasarkan sulitnya perhitungan logaritma diskrit (Sub-CPMK 2.3).
+    \item Mengevaluasi kerentanan protokol Diffie-Hellman terhadap serangan aktif, khususnya \textit{Man-in-the-Middle Attack} (Sub-CPMK 2.3).
+    \item Menjelaskan perluasan protokol Diffie-Hellman untuk komunikasi lebih dari dua pihak (Sub-CPMK 2.3).
+\end{itemize}
+\end{learningoutcome}
+
+\section{Persoalan Distribusi Kunci}
+Dalam kriptografi kunci-simetri (seperti AES atau DES), pengirim dan penerima harus memiliki kunci rahasia yang identik. Namun, muncul tantangan besar: \textit{Bagaimana cara mendistribusikan kunci tersebut secara aman melalui saluran komunikasi yang tidak aman tanpa diketahui oleh pihak ketiga?}
+
+Ada dua solusi utama untuk masalah ini:
+\begin{enumerate}
+    \item \textbf{Kriptografi Hibrida}: Menggunakan kriptografi kunci-publik (seperti RSA) untuk mengenkripsi kunci simetri yang akan dikirimkan.
+    \item \textbf{Protokol Pertukaran Kunci}: Menggunakan algoritma yang memungkinkan kedua pihak menghasilkan kunci rahasia yang sama tanpa pernah mengirimkan kunci tersebut secara langsung. Salah satu protokol yang paling fundamental adalah Diffie-Hellman (DH).
+\end{enumerate}
+
+\section{Protokol Pertukaran Kunci Diffie-Hellman}
+Dipublikasikan oleh Whitfield Diffie dan Martin Hellman pada tahun 1976, protokol ini memungkinkan dua pihak (misalnya Alice dan Bob) untuk menyepakati sebuah kunci rahasia bersama melalui saluran publik yang tidak aman.
+
+\subsection{Parameter Publik}
+Sebelum memulai pertukaran, Alice dan Bob menyepakati dua parameter publik yang tidak perlu dirahasiakan:
+\begin{enumerate}
+    \item Sebuah bilangan prima besar, $p$.
+    \item Sebuah bilangan bulat $g$, sedemikian sehingga $g$ adalah akar primitif dari $p$ (di mana $g < p$).
+\end{enumerate}
+
+\subsection{Prosedur Pertukaran Kunci}
+Langkah-langkah perhitungan Diffie-Hellman adalah sebagai berikut:
+\begin{enumerate}
+    \item \textbf{Pembangkitan Kunci Privat}:
+    \begin{itemize}
+        \item Alice memilih bilangan bulat acak $a$ sebagai kunci privatnya.
+        \item Bob memilih bilangan bulat acak $b$ sebagai kunci privatnya.
+    \end{itemize}
+    \item \textbf{Perhitungan dan Pertukaran Kunci Publik}:
+    \begin{itemize}
+        \item Alice menghitung $A = g^a \bmod p$ dan mengirimkan $A$ kepada Bob.
+        \item Bob menghitung $B = g^b \bmod p$ dan mengirimkan $B$ kepada Alice.
+    \end{itemize}
+    \item \textbf{Penghitungan Kunci Rahasia Bersama}:
+    \begin{itemize}
+        \item Alice menghitung $K = B^a \bmod p$.
+        \item Bob menghitung $K = A^b \bmod p$.
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Pembuktian Matematis}:
+Kunci yang dihasilkan oleh Alice dan Bob adalah sama karena:
+\[ K = B^a \bmod p = (g^b)^a \bmod p = g^{ba} \bmod p = (g^a)^b \bmod p = A^b \bmod p \]
+
+\section{Analisis Keamanan}
+Keamanan Diffie-Hellman didasarkan pada sulitnya menghitung \textbf{logaritma diskrit} dalam grup perkalian bilangan bulat modulo $p$.
+
+Seorang penyadap (Eve) yang mengamati komunikasi hanya akan mengetahui nilai $p, g, A$, dan $B$. Untuk mendapatkan kunci rahasia $K$, Eve harus mengetahui nilai $a$ atau $b$. Namun, untuk mencari $a$ dari persamaan $A = g^a \bmod p$ memerlukan komputasi yang sangat berat jika $p$ adalah bilangan prima yang sangat besar.
+
+\subsection{Serangan Man-in-the-Middle (MITM)}
+Meskipun aman terhadap penyadapan pasif, Diffie-Hellman rentan terhadap serangan aktif berupa \textit{Man-in-the-Middle}. Dalam serangan ini, penyerang (Mallory) mencegat komunikasi antara Alice dan Bob:
+\begin{enumerate}
+    \item Mallory mencegat $A$ dari Alice dan mengirimkan $M_1 = g^m \bmod p$ kepada Bob.
+    \item Mallory mencegat $B$ dari Bob dan mengirimkan $M_2 = g^m \bmod p$ kepada Alice.
+    \item Alice menghitung kunci $K_1 = (M_2)^a \bmod p$, dan Bob menghitung kunci $K_2 = (M_1)^b \bmod p$.
+    \item Mallory dapat menghitung kedua kunci tersebut ($K_1$ dan $K_2$) dan bertindak sebagai perantara yang mendekripsi, membaca, dan mengenkripsi kembali pesan tanpa diketahui Alice dan Bob.
+\end{enumerate}
+
+\section{Ekstensi Diffie-Hellman}
+\subsection{Pertukaran Kunci Tiga Pihak}
+Protokol DH dapat diperluas untuk lebih dari dua pihak. Untuk Alice, Bob, dan Carol, prosesnya melibatkan pertukaran bertahap:
+\begin{enumerate}
+    \item Alice mengirim $g^a \bmod p$ ke Bob.
+    \item Bob menghitung $(g^a)^b \bmod p$ dan mengirimkannya ke Carol.
+    \item Carol menghitung $K = (g^{ab})^c \bmod p = g^{abc} \bmod p$.
+    \item Proses serupa dilakukan secara siklis sehingga akhirnya semua pihak memiliki kunci rahasia yang sama, yaitu $K = g^{abc} \bmod p$.
+\end{enumerate}
+
+\subsection{Implementasi Modern}
+Protokol Diffie-Hellman digunakan secara luas dalam standar keamanan internet modern, seperti dalam protokol SSL (\textit{Secure Sockets Layer}) dan TLS (\textit{Transport Layer Security}) untuk mengamankan koneksi HTTPS.
+
+\begin{obeactivity}
+\textbf{Aktivitas 11.1: Simulasi Perhitungan Diffie-Hellman}
+1. Gunakan parameter publik $p = 353$ dan $g = 3$.
+2. Alice memilih kunci privat $a = 97$, hitunglah nilai $A$.
+3. Bob memilih kunci privat $b = 233$, hitunglah nilai $B$.
+4. Hitunglah kunci rahasia bersama $K$ yang dihasilkan oleh Alice dan Bob.
+5. Diskusikan bagaimana jika $p$ yang digunakan adalah bilangan kecil; apakah keamanan tetap terjamin?
+\end{obeactivity}
+
+\begin{obereflection}
+\textbf{Latihan 11.1}
+1. Mengapa pemilihan akar primitif $g$ sangat penting dalam protokol Diffie-Hellman?
+2. Jelaskan perbedaan mendasar antara peran kunci publik dan kunci privat dalam RSA dibandingkan dengan dalam protokol Diffie-Hellman.
+3. Bagaimana cara mencegah serangan \textit{Man-in-the-Middle} pada pertukaran kunci Diffie-Hellman? (Petunjuk: Pikirkan tentang tanda tangan digital atau sertifikat).
+\end{obereflection}
+
+\begin{obeassessment}
+\textbf{Kuis Bab 11}
+1. Jelaskan langkah-langkah matematis yang terjadi dalam pertukaran kunci Diffie-Hellman.
+2. Apa yang dimaksud dengan masalah logaritma diskrit dan mengapa hal ini menjadi fondasi keamanan DH?
+3. Gambarkan alur serangan \textit{Man-in-the-Middle} pada protokol DH dan jelaskan mengapa hal tersebut bisa terjadi.
+\end{obeassessment}
+
+\begin{competencychecklist}
+\begin{tabularx}{\linewidth}{|X|c|}
+\hline
+Indikator Kompetensi & Tercapai \\
+\hline
+Saya dapat menjelaskan masalah distribusi kunci pada simetri & [ ] \\
+\hline
+Saya dapat menguraikan prosedur pertukaran kunci Diffie-Hellman & [ ] \\
+\hline
+Saya dapat menghitung kunci rahasia bersama $K$ menggunakan parameter DH & [ ] \\
+\hline
+Saya dapat menganalisis risiko serangan MITM pada protokol DH & [ ] \\
+\hline
+Saya dapat menjelaskan implementasi DH pada protokol TLS/SSL & [ ] \\
+\hline
+\end{tabularx}
+\end{competencychecklist}
+
+\end{document}

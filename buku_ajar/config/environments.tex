@@ -1,0 +1,47 @@
+% =====================================================================
+%  config/environments.tex
+%  Environment bersama: pernyataan matematis bergaya amsthm dan kotak OBE.
+%  Kelima kotak OBE di bawah ini adalah komponen wajib setiap bab.
+% =====================================================================
+
+% --- Environment matematis (Arsitektur_Buku_Ajar.md Bagian 7) -----------
+\newtheorem{definition}{Definisi}[chapter]
+\newtheorem{theorem}{Teorema}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{example}{Contoh}[chapter]
+
+% --- Kotak OBE -----------------------------------------------------------
+\newtcolorbox{learningoutcome}{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    title=Tujuan Pembelajaran (Learning Outcomes),
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{obeactivity}{
+    colback=green!5!white,
+    colframe=green!75!black,
+    title=Aktivitas Rekomendasi,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{obereflection}{
+    colback=yellow!5!white,
+    colframe=yellow!75!black,
+    title=Latihan dan Refleksi,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{obeassessment}{
+    colback=red!5!white,
+    colframe=red!75!black,
+    title=Asesmen Kompetensi,
+    fonttitle=\bfseries
+}
+
+\newtcolorbox{competencychecklist}{
+    colback=gray!5!white,
+    colframe=gray!75!black,
+    title=Checklist Kompetensi,
+    fonttitle=\bfseries
+}

@@ -1,0 +1,119 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Pengantar dan Urgensi Kriptografi}
+
+\begin{learningoutcome}
+Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
+\begin{itemize}
+    \item Menjelaskan definisi, terminologi, sejarah, dan layanan keamanan utama dalam kriptografi (Sub-CPMK 2.1).
+    \item Menjelaskan urgensi kriptografi dalam teknologi informasi, termasuk privasi data dan transaksi elektronik (Sub-CPMK 2.2).
+\end{itemize}
+\end{learningoutcome}
+
+\section{Konsep Dasar Komunikasi}
+Dalam dunia nyata, komunikasi terjadi antara dua pihak, misalnya Alice (pengirim) dan Bob (penerima). Mereka dapat berkomunikasi melalui berbagai saluran publik seperti:
+\begin{itemize}
+    \item Surat menyurat (pos)
+    \item Telepon
+    \item Email
+    \item SMS/Chatting
+\end{itemize}
+Pihak yang terlibat tidak selalu berupa manusia; bisa juga berupa interaksi antara manusia dengan mesin (misalnya mesin penjawab), atau mesin dengan mesin (misalnya \textit{client} dan \textit{server} dalam jaringan komputer).
+
+\section{Masalah Keamanan dalam Komunikasi}
+Ketika menggunakan saluran komunikasi publik, muncul beberapa risiko keamanan yang harus diatasi:
+
+\subsection{Kerahasiaan (Confidentiality)}
+Bagaimana Alice memastikan pesan-pesannya tidak dapat dibaca oleh penyadap (\textit{eavesdropper}) yang menguping komunikasinya dengan Bob? Inilah yang disebut dengan masalah kerahasiaan.
+
+\subsection{Otentikasi (Authentication)}
+Bagaimana cara Bob memastikan bahwa pesan tersebut benar-benar berasal dari Alice dan bukan dari pihak ketiga (misalnya Carol) yang menyamar menjadi Alice?
+
+\subsection{Integritas Data (Data Integrity)}
+Bagaimana cara Bob memastikan bahwa pesan dari Alice masih utuh, asli, dan tidak dimanipulasi selama proses pengiriman?
+
+\subsection{Nir-penyangkalan (Non-repudiation)}
+Bagaimana Bob dapat membuktikan bahwa Alice benar-benar mengirim pesan tersebut jika di kemudian hari Alice menyangkal telah mengirimkannya?
+
+\section{Apa itu Kriptografi?}
+\textbf{Kriptografi} berasal dari bahasa Yunani: \textit{cryptos} (secret/hidden) dan \textit{graphein} (writing), yang secara harfiah berarti "tulisan rahasia".
+
+Menurut Schneier (1996), kriptografi adalah ilmu dan seni untuk menjaga keamanan pesan. Secara lebih teknis, kriptografi adalah ilmu yang mempelajari teknik-teknik matematika yang berhubungan dengan aspek keamanan informasi seperti kerahasiaan, integritas data, serta otentikasi (Menezes, 1996).
+
+\subsection{Layanan Kriptografi}
+Untuk mengatasi masalah keamanan di atas, kriptografi menyediakan empat layanan utama:
+\begin{enumerate}
+    \item \textbf{Kerahasiaan pesan} (\textit{Confidentiality/privacy/secrecy})
+    \item \textbf{Keaslian pesan} (\textit{Data integrity})
+    \item \textbf{Keaslian pengirim dan penerima} (\textit{Authentication})
+    \item \textbf{Anti penyangkalan} (\textit{Non-repudiation})
+\end{enumerate}
+
+\section{Terminologi Dasar}
+Untuk memahami kriptografi, kita perlu mengenal beberapa istilah kunci:
+\begin{itemize}
+    \item \textbf{Plainteks (\textit{plaintext})}: Pesan asli yang dapat dibaca dan dimengerti maknanya.
+    \item \textbf{Cipherteks (\textit{ciphertext})}: Pesan yang telah disandikan sehingga tidak bermakna bagi pihak yang tidak berhak.
+    \item \textbf{Enkripsi (\textit{encryption})}: Proses mengubah plainteks menjadi cipherteks.
+    \item \textbf{Dekripsi (\textit{decryption})}: Proses mengembalikan cipherteks menjadi plainteks.
+    \item \textbf{Kunci (\textit{key})}: Parameter rahasia yang digunakan dalam proses enkripsi dan dekripsi.
+    \item \textbf{Cipher}: Algoritma atau aturan yang digunakan untuk enkripsi dan dekripsi.
+\end{itemize}
+
+\subsection{Sistem Kriptografi}
+Secara formal, sebuah sistem kriptografi dapat dinyatakan sebagai \textit{quintuple} $(\mathcal{E},\allowbreak \mathcal{D},\allowbreak \mathcal{M},\allowbreak \mathcal{K},\allowbreak \mathcal{C})$ di mana:
+\begin{itemize}
+    \item $\mathcal{M}$ adalah himpunan plainteks.
+    \item $\mathcal{K}$ adalah himpunan kunci.
+    \item $\mathcal{C}$ adalah himpunan cipherteks.
+    \item $\mathcal{E}$ adalah himpunan fungsi enkripsi $E: \mathcal{M} \times \mathcal{K} \to \mathcal{C}$.
+    \item $\mathcal{D}$ adalah himpunan fungsi dekripsi $D: \mathcal{C} \times \mathcal{K} \to \mathcal{M}$.
+\end{itemize}
+
+\section{Kriptanalisis dan Kriptologi}
+\textbf{Kriptanalisis} adalah ilmu dan seni untuk memecahkan cipherteks menjadi plainteks tanpa mengetahui kunci yang digunakan. Pelakunya disebut kriptanalis. Teknik tertua yang terkenal adalah \textit{analisis frekuensi} yang dikembangkan oleh Al-Kindi pada abad ke-9.
+
+\textbf{Kriptologi} adalah studi menyeluruh yang mencakup kriptografi (pembuatan kode) dan kriptanalisis (pemecahan kode).
+
+\section{Urgensi Kriptografi dalam Teknologi Informasi}
+Kriptografi bukan sekadar teori, melainkan inti dari keamanan siber. Beberapa kasus nyata yang menunjukkan urgensinya antara lain:
+\begin{itemize}
+    \item \textbf{Kebocoran Data}: Kasus kebocoran data BPJS Kesehatan, Tokopedia, dan Kemenhan menunjukkan betapa fatalnya jika data pribadi tidak dilindungi.
+    \item \textbf{Penyadapan Negara}: Kasus penyadapan telepon Presiden SBY oleh Australia dan penyadapan KBRI di Myanmar.
+    \item \textbf{Keamanan Transaksi}: Penggunaan HTTPS/TLS dalam perbankan online dan e-commerce untuk menjamin privasi dan otentikasi.
+\end{itemize}
+
+\begin{obeactivity}
+\textbf{Aktivitas 1.1: Analisis Sertifikat HTTPS}
+Buka browser Anda, kunjungi situs perbankan atau e-commerce terpercaya, lalu klik ikon gembok pada address bar. Perhatikan informasi sertifikat digital yang ditampilkan. Diskusikan bagaimana sertifikat tersebut menjamin bahwa Anda berkomunikasi dengan server yang asli (Otentikasi) dan bukan pihak ketiga yang menyamar.
+\end{obeactivity}
+
+\begin{obereflection}
+\textbf{Latihan 1.1}
+1. Jelaskan perbedaan antara \textit{confidentiality} dan \textit{integrity} menggunakan contoh kasus pengiriman nilai ujian mahasiswa.
+2. Mengapa prinsip Kerckhoffs menyatakan bahwa algoritma harus publik dan hanya kunci yang harus rahasia? Apa risikonya jika algoritma juga dirahasiakan?
+\end{obereflection}
+
+\begin{obeassessment}
+\textbf{Kuis Bab 1}
+1. Apa yang dimaksud dengan \textit{non-repudiation} dan mengapa hal ini sangat penting dalam transaksi elektronik?
+2. Jika seseorang mengklaim bahwa enkripsi sama dengan hashing, jelaskan mengapa pernyataan tersebut salah berdasarkan tujuan utamanya.
+\end{obeassessment}
+
+\begin{competencychecklist}
+\begin{tabularx}{\linewidth}{|X|c|}
+\hline
+Indikator Kompetensi & Tercapai \\
+\hline
+Saya dapat menjelaskan definisi dan terminologi dasar kriptografi & [ ] \\
+\hline
+Saya dapat membedakan 4 layanan utama kriptografi (CIA + Non-repudiation) & [ ] \\
+\hline
+Saya dapat memberikan contoh kasus urgensi kriptografi di dunia TI & [ ] \\
+\hline
+\end{tabularx}
+\end{competencychecklist}
+
+\end{document}

@@ -1,7 +1,8 @@
 \documentclass[12pt, a4paper, oneside]{book}
 
 % Technical Configuration
-\input{config/preamble}
+% preamble.tex memuat config/{packages,styles,commands,environments,listings}
+\input{preamble}
 
 \begin{document}
 
@@ -17,22 +18,22 @@
 
 % Main Matter
 \mainmatter
-\subfile{chapters/ch01/chapter}
-\subfile{chapters/ch02/chapter}
-\subfile{chapters/ch03/chapter}
-\subfile{chapters/ch04/chapter}
-\subfile{chapters/ch05/chapter}
-\subfile{chapters/ch06/chapter}
-\subfile{chapters/ch07/chapter}
-\subfile{chapters/ch08/chapter}
-\subfile{chapters/ch09/chapter}
-\subfile{chapters/ch10/chapter}
-\subfile{chapters/ch11/chapter}
-\subfile{chapters/ch12/chapter}
-\subfile{chapters/ch13/chapter}
-\subfile{chapters/ch14/chapter}
-\subfile{chapters/ch15/chapter}
-\subfile{chapters/ch16/chapter}
+\subfile{chapters/01/chapter}
+\subfile{chapters/02/chapter}
+\subfile{chapters/03/chapter}
+\subfile{chapters/04/chapter}
+\subfile{chapters/05/chapter}
+\subfile{chapters/06/chapter}
+\subfile{chapters/07/chapter}
+\subfile{chapters/08/chapter}
+\subfile{chapters/09/chapter}
+\subfile{chapters/10/chapter}
+\subfile{chapters/11/chapter}
+\subfile{chapters/12/chapter}
+\subfile{chapters/13/chapter}
+\subfile{chapters/14/chapter}
+\subfile{chapters/15/chapter}
+\subfile{chapters/16/chapter}
 
 % Back Matter
 \backmatter
@@ -45,7 +46,9 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{\bibname}
 \nocite{*}
-\bibliographystyle{plain}
+% apalike: gaya author-year, sesuai Arsitektur_Buku_Ajar.md Bagian 20 dan
+% sesuai dengan natbib yang dimuat di config/packages.tex.
+\bibliographystyle{apalike}
 \bibliography{references}
 
 \end{document}

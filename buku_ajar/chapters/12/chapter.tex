@@ -1,0 +1,120 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Kriptografi Kunci-Publik: Algoritma ElGamal}
+
+\begin{learningoutcome}
+Setelah mempelajari bab ini, mahasiswa diharapkan mampu:
+\begin{itemize}
+    \item Menjelaskan konsep dasar algoritma ElGamal dan hubungannya dengan masalah logaritma diskrit (Sub-CPMK 2.3).
+    \item Menguraikan prosedur pembangkitan pasangan kunci publik dan privat pada sistem ElGamal (Sub-CPMK 2.3).
+    \item Menerapkan rumus enkripsi dan dekripsi ElGamal untuk mengamankan pesan (Sub-CPMK 2.3).
+    \item Menganalisis properti keamanan ElGamal, termasuk sifat \textit{probabilistic encryption} (Sub-CPMK 2.3).
+    \item Membandingkan mekanisme kerja ElGamal dengan RSA dan Diffie-Hellman (Sub-CPMK 2.3).
+\end{itemize}
+\end{learningoutcome}
+
+\section{Pendahuluan}
+Algoritma ElGamal, yang diperkenalkan oleh Taher ElGamal pada tahun 1985, adalah sistem kriptografi kunci-publik yang didasarkan pada kesulitan komputasi dari masalah logaritma diskrit dalam grup finit. Berbeda dengan RSA yang didasarkan pada pemfaktoran bilangan bulat besar, ElGamal lebih erat kaitannya dengan protokol pertukaran kunci Diffie-Hellman.
+
+\section{Landasan Matematis}
+Keamanan ElGamal bergantung pada \textbf{Persoalan Logaritma Diskrit}.
+
+\subsection{Logaritma Diskrit}
+Misalkan $p$ adalah bilangan prima besar, dan $g$ adalah akar primitif dari $p$. Jika diberikan bilangan bulat $y$ sedemikian sehingga:
+\[ g^x \equiv y \pmod{p} \]
+Maka menemukan nilai $x$ (yang disebut sebagai logaritma diskrit dari $y$ terhadap basis $g$ modulo $p$) adalah sangat sulit secara komputasi untuk $p$ yang cukup besar.
+
+\subsection{Akar Primitif}
+Bilangan $g$ disebut \textbf{akar primitif} dari $p$ jika perpangkatan $g^1, g^2, \dots, g^{p-1} \pmod{p}$ menghasilkan semua nilai dari $1$ hingga $p-1$ dalam urutan yang berbeda. Properti ini memastikan bahwa ruang kunci publik adalah maksimal.
+
+\section{Prosedur Algoritma ElGamal}
+Sistem ElGamal terdiri dari tiga tahap: pembangkitan kunci, enkripsi, dan dekripsi.
+
+\subsection{Pembangkitan Pasangan Kunci}
+Untuk menciptakan pasangan kunci, dilakukan langkah-langkah berikut:
+\begin{enumerate}
+    \item Pilih bilangan prima besar $p$.
+    \item Pilih akar primitif $g$ dari $p$.
+    \item Pilih bilangan bulat acak $x$ sebagai kunci privat, dengan $2 \le x \le p-2$.
+    \item Hitung kunci publik $y$ dengan rumus:
+    \[ y = g^x \pmod{p} \]
+\end{enumerate}
+\textbf{Hasil}: Kunci Publik $(y, g, p)$ dan Kunci Privat $x$.
+
+\subsection{Proses Enkripsi}
+Untuk mengirim pesan $m$ (di mana $0 \le m < p$) kepada pemilik kunci publik:
+\begin{enumerate}
+    \item Pilih bilangan acak $k$ (efemeral key), dengan $1 \le k \le p-2$.
+    \item Hitung bagian pertama cipherteks $a$:
+    \[ a = g^k \pmod{p} \]
+    \item Hitung bagian kedua cipherteks $b$:
+    \[ b = y^k \cdot m \pmod{p} \]
+\end{enumerate}
+\textbf{Hasil}: Cipherteks berupa pasangan $(a, b)$.
+
+\subsection{Proses Dekripsi}
+Penerima menggunakan kunci privat $x$ untuk mengembalikan pesan $m$:
+\begin{enumerate}
+    \item Hitung invers dari $a^x$ modulo $p$:
+    \[ (a^x)^{-1} \equiv a^{p-1-x} \pmod{p} \]
+    \item Hitung plainteks $m$:
+    \[ m = b \cdot (a^x)^{-1} \pmod{p} \]
+\end{enumerate}
+
+\section{Analisis Properti ElGamal}
+\subsection{Probabilistic Encryption}
+Salah satu karakteristik unik ElGamal adalah sifat \textbf{enkripsi probabilistik}. Karena penggunaan bilangan acak $k$ yang berbeda untuk setiap sesi enkripsi, pesan yang sama ($m$) jika dienkripsi dua kali dengan kunci publik yang sama akan menghasilkan cipherteks $(a, b)$ yang berbeda. Hal ini mencegah serangan \textit{codebook} dan meningkatkan keamanan terhadap analisis statistik.
+
+\subsection{Ekspansi Cipherteks}
+Kelemahan utama ElGamal adalah \textbf{ekspansi cipherteks}. Karena satu blok pesan $m$ diubah menjadi pasangan $(a, b)$, maka ukuran cipherteks menjadi dua kali lipat dari ukuran plainteks aslinya.
+
+\subsection{Perbandingan: ElGamal vs RSA}
+\begin{itemize}
+    \item \textbf{Basis Keamanan}: RSA berdasarkan pemfaktoran $n=pq$, ElGamal berdasarkan logaritma diskrit $g^x \bmod p$.
+    \item \textbf{Sifat}: RSA adalah deterministik (tanpa padding), ElGamal adalah probabilistik secara inheren.
+    \item \textbf{Efisiensi}: RSA umumnya lebih cepat dalam proses enkripsi, tetapi ElGamal menawarkan properti keamanan tertentu yang berguna dalam tanda tangan digital.
+\end{itemize}
+
+\begin{obeactivity}
+\textbf{Aktivitas 12.1: Simulasi ElGamal dengan Bilangan Kecil}
+1. Gunakan parameter publik $p = 2357, g = 2$.
+2. Bob memilih kunci privat $x = 1751$, hitung kunci publik $y$.
+3. Alice ingin mengirim pesan $m = 2035$ dengan memilih $k = 1520$. Hitunglah pasangan cipherteks $(a, b)$.
+4. Bob melakukan dekripsi menggunakan kunci privatnya. Verifikasi apakah hasilnya kembali menjadi $m = 2035$.
+\end{obeactivity}
+
+\begin{obereflection}
+\textbf{Latihan 12.1}
+1. Apa yang terjadi jika pengirim menggunakan nilai $k$ yang sama untuk dua pesan yang berbeda? Analisis risikonya terhadap keamanan pesan.
+2. Jelaskan mengapa pemilihan $g$ sebagai akar primitif dari $p$ sangat penting dalam algoritma ElGamal.
+3. Mengapa ukuran cipherteks ElGamal selalu dua kali lipat dari ukuran plainteksnya?
+\end{obereflection}
+
+\begin{obeassessment}
+\textbf{Kuis Bab 12}
+1. Jelaskan perbedaan mendasar antara masalah logaritma diskrit dan masalah pemfaktoran bilangan bulat.
+2. Uraikan langkah-langkah pembangkitan kunci pada sistem ElGamal.
+3. Mengapa ElGamal disebut sebagai sistem enkripsi probabilistik?
+\end{obeassessment}
+
+\begin{competencychecklist}
+\begin{tabularx}{\linewidth}{|X|c|}
+\hline
+Indikator Kompetensi & Tercapai \\
+\hline
+Saya dapat menjelaskan konsep logaritma diskrit dan akar primitif & [ ] \\
+\hline
+Saya dapat menghitung kunci publik dan privat ElGamal & [ ] \\
+\hline
+Saya dapat melakukan proses enkripsi dan dekripsi ElGamal & [ ] \\
+\hline
+Saya dapat menganalisis efek penggunaan kunci efemeral $k$ & [ ] \\
+\hline
+Saya dapat membandingkan ElGamal dengan RSA & [ ] \\
+\hline
+\end{tabularx}
+\end{competencychecklist}
+
+\end{document}
