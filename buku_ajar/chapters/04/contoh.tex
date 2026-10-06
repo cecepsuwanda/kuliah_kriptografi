@@ -44,3 +44,44 @@ C=P\oplus K=10110011\oplus01101101=11011110.
 \]
 Dekripsi: $C\oplus K=11011110\oplus01101101=10110011=P$. Jika kunci yang sama dipakai lagi untuk $P_2=11001010$, diperoleh $C_2=10100111$; maka $C\oplus C_2=01111001=P\oplus P_2$, sehingga XOR dua plainteks terbuka tanpa mengetahui kuncinya.
 \end{example}
+
+\begin{example}
+\textbf{Transposisi pagar rel dengan $k=4$.} Plainteks \code{HELLOWORLD} dituliskan pada empat baris secara zigzag. Pola barisnya berulang sebagai $0,1,2,3,2,1,0,1,2,3$, sehingga huruf-hurufnya terbagi sebagai berikut.
+\[
+\begin{array}{c|l}
+\text{Baris 0} & \text{H O}\\
+\text{Baris 1} & \text{E W R}\\
+\text{Baris 2} & \text{L O L}\\
+\text{Baris 3} & \text{L D}
+\end{array}
+\]
+Cipherteksnya diperoleh dengan membaca baris demi baris dari atas ke bawah, yaitu \code{HOEWRLOLLD}. Perhatikan bahwa menambah jumlah baris dari 3 menjadi 4 memperbesar jumlah kemungkinan kunci, tetapi tidak mengubah sifat dasar cipher: huruf-hurufnya tetap sama, hanya urutannya yang diacak. Karena itu cipherteks tetap membawa distribusi frekuensi plainteks, dan dengan bantuan bigram serta trigram bahasa teks itu dapat dibaca kembali.
+\end{example}
+
+\begin{example}
+\textbf{Pemulihan kunci OTP dari plainteks yang diketahui.} Diberikan cipherteks \code{HOJKOREGHP}. Jika kriptanalis berhasil mengetahui bahwa empat huruf pertama plainteksnya adalah \code{SALM}, ia dapat menghitung potongan kunci yang bersesuaian dengan
+\[
+K_i = (C_i - P_i) \bmod 26.
+\]
+\[
+\begin{array}{c|cccc}
+C_i & \text{H}=7 & \text{O}=14 & \text{J}=9 & \text{K}=10\\
+P_i & \text{S}=18 & \text{A}=0 & \text{L}=11 & \text{M}=12\\
+\hline
+K_i & -11 \equiv 15 = \text{P} & 14 = \text{O} & -2 \equiv 24 = \text{Y} & -2 \equiv 24 = \text{Y}
+\end{array}
+\]
+Empat huruf pertama kuncinya adalah \code{POYY}. Bila potongan plainteks itu diperoleh dari percakapan yang sedang berlangsung dan kuncinya dipakai ulang, sisa pesan pada posisi tersebut langsung terbaca. Kasus inilah yang menegaskan mengapa syarat ``kunci hanya dipakai sekali'' tidak dapat dilanggar.
+\end{example}
+
+\begin{example}
+\textbf{Analisis frekuensi pada kriptogram 45 huruf.} Diberikan cipherteks hasil cipher abjad-tunggal (substitusi) atas sebuah kalimat bahasa Indonesia:
+\[
+\code{IQDOTMBQGHDIJGRDIRGLBGTKSLGQDIULTUIEDOSJGFGQD}
+\]
+Penghitungan frekuensi menghasilkan huruf tersering \code{G} sebanyak 7 kali (15,6\%), diikuti \code{D} sebanyak 6 kali (13,3\%), \code{I} sebanyak 5 kali (11,1\%), lalu \code{Q} sebanyak 4 kali (8,9\%). Karena huruf tersering di dalam bahasa Indonesia adalah \code{A} (sekitar 17,5\%), langkah pertama kriptanalis adalah menebak bahwa \code{G} adalah padanan \code{A}. Mengganti seluruh \code{G} menjadi \code{A} dan \code{D} menjadi \code{I} atau \code{N}, lalu memeriksa bigram dan trigram yang terbentuk, akhirnya mengungkap keseluruhan pemetaan. Abjad substitusinya ternyata dibangkitkan dari kata kunci \code{GANESHA}, yaitu
+\[
+\code{GANESHBCDFIJKLMOPQRTUVWXYZ},
+\]
+dan plainteksnya adalah \code{KRIPTOGRAFIKLASIKSANGATMENARIKUNTUKDIPELAJARI}. Sebagai pemeriksaan tambahan, indeks kebetulan kriptogram ini adalah $CI = 0{,}0646$, sangat dekat dengan nilai acuan sekitar $0{,}065$ untuk cipher abjad-tunggal (lihat Bagian~\ref{sec:indeks-kebetulan}). Nilai itu jauh lebih tinggi daripada indeks kebetulan cipher abjad-majemuk, dan justru dari selisih itulah kriptanalis dapat menyimpulkan bahwa cipherteks ini dihasilkan oleh cipher abjad-tunggal.
+\end{example}

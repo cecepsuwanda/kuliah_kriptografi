@@ -1,39 +1,813 @@
 \section{Cipher Substitusi dan Transposisi}
-Kriptografi klasik umumnya terbagi menjadi dua kategori utama berdasarkan cara pengubahan plainteks menjadi cipherteks: substitusi dan transposisi.
+\label{sec:substitusi-transposisi}
+
+Seluruh cipher pada bab ini bekerja pada \emph{huruf}, bukan pada bit atau blok
+64-bit. Meskipun demikian, keduanya meletakkan dasar yang tetap berlaku pada
+cipher modern. Cipher substitusi mengajarkan \emph{confusion}, yaitu usaha
+menyembunyikan hubungan antara plainteks dan cipherteks; cipher transposisi
+mengajarkan \emph{diffusion}, yaitu usaha menyebarkan pengaruh satu huruf
+plainteks ke seluruh bagian cipherteks \citep{stinson2018}. Cipher modern
+seperti DES dan AES pada dasarnya adalah gabungan kedua operasi tersebut yang
+diulang berkali-kali dengan aturan yang dibuat sekompleks mungkin
+\citep{stinson2018}.
+
+Ada tiga alasan mengapa cipher klasik tetap dipelajari meskipun sudah tidak
+digunakan untuk melindungi data nyata. Pertama, cipher klasik memperkenalkan
+seluruh persoalan pokok kriptografi dalam bentuk yang masih dapat dihitung
+dengan tangan: bagaimana sebuah kunci bekerja, mengapa panjang kunci
+menentukan kekuatan, dan apa artinya sebuah cipher dipecahkan. Kedua, cipher
+klasik memberi latihan kriptanalisis yang paling murni, karena kelemahannya
+dapat dilihat langsung dari struktur bahasa, tanpa perlu alat bantu
+komputasi. Ketiga, cipher seperti Caesar, Vigen\`ere, dan Playfair masih
+muncul dalam soal teka-teki, permainan, dan kompetisi keamanan siber, sehingga
+mengenalinya tetap berguna \citep{menezes1996}.
 
 \subsection{Cipher Substitusi}
-Cipher substitusi adalah teknik enkripsi di mana satu atau lebih simbol dalam plainteks digantikan oleh simbol lain.
+\label{sec:cipher-substitusi}
 
-\subsubsection{Cipher Abjad-Tunggal (\textit{Monoalphabetic Cipher})}
-Dalam \textit{monoalphabetic cipher}, setiap huruf dalam plainteks dipetakan secara konsisten ke satu huruf cipherteks. Contoh yang paling sederhana adalah \textbf{Caesar Cipher}, yang melakukan pergeseran tetap sejauh $k$ posisi dalam alfabet.
+Cipher substitusi (\textit{substitution cipher}) adalah teknik enkripsi yang
+menggantikan satu atau lebih simbol di dalam plainteks dengan simbol lain,
+tanpa mengubah urutan simbol tersebut. Cipher transposisi, sebaliknya,
+mempertahankan simbol apa adanya dan hanya memindahkan posisinya. Perbedaan
+ini paling mudah dilihat pada contoh berikut: dengan substitusi sederhana,
+\code{MENGANTUK} berubah menjadi \code{CQBSIBONW} (urutan hurufnya tetap,
+identitas setiap huruf berubah), sedangkan dengan transposisi \code{MENGANTUK}
+berubah menjadi \code{TNEAKMNGU} (himpunan hurufnya sama persis, hanya
+posisinya yang dipermutasikan).
 
-Namun, substitusi tidak harus berupa pergeseran. Kita dapat membuat tabel substitusi sembarang. Jumlah kemungkinan tabel substitusi untuk alfabet 26 huruf adalah $26!$ (faktorial 26), sebuah angka yang sangat besar:
-\[ 26! \approx 4.03 \times 10^{26} \]
-
-Tabel substitusi dapat dibentuk secara acak atau menggunakan kalimat kunci (\textit{keyword}) untuk memudahkan penghafalan. Misalnya, dengan kalimat kunci \texttt{"di bawah sinar bulan purnama hati resah jadi senang"}, huruf-huruf yang unik diekstraksi dan disambung dengan sisa alfabet untuk membentuk tabel pemetaan.
-
-\subsection{Kriptanalisis Cipher Abjad-Tunggal}
-Kelemahan utama dari cipher abjad-tunggal adalah ketidakmampuannya menyembunyikan struktur statistik bahasa. Huruf yang sering muncul dalam plainteks akan tetap sering muncul sebagai huruf cipherteks yang berkoresponden.
-
-\subsubsection{Teknik Analisis Frekuensi}
-Kriptanalis menggunakan \textbf{analisis frekuensi} untuk memecahkan cipher ini. Dengan membandingkan frekuensi kemunculan huruf dalam cipherteks dengan frekuensi umum huruf dalam bahasa natural (misal: Bahasa Inggris atau Bahasa Indonesia), kunci dapat dideduksi.
-
-Dalam Bahasa Inggris, huruf yang paling sering muncul adalah \textbf{E}, diikuti oleh T, A, O, I, N, S, H, R, D. Selain huruf tunggal (\textit{monogram}), analisis juga dapat dilakukan pada pasangan huruf (\textit{bigram}) seperti \texttt{TH, HE, IN} atau tiga huruf (\textit{trigram}) seperti \texttt{THE, AND}.
-
-
+Perbedaan itu punya akibat langsung pada kriptanalisis. Karena transposisi
+tidak mengganti huruf sama sekali, sebaran frekuensi huruf pada cipherteks
+\emph{identik} dengan sebaran frekuensi plainteksnya. Analisis frekuensi
+tidak dapat dimulai dari huruf tunggal; penyerang harus memanfaatkan pola
+pasangan atau rangkaian huruf, sebagaimana dibahas pada
+Sub-bab~\ref{sec:analisis-frekuensi}. Gambar~\ref{fig:kriptologi-hierarki}
+menempatkan kedua jenis cipher ini di dalam peta kriptologi.
+Sebagian besar cipher pada bab ini adalah cipher substitusi, karena
+substitusilah yang benar-benar mengubah isi pesan, bukan sekadar
+menyusunnya kembali.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.5\linewidth, height=0.6\textheight, keepaspectratio]{figures/cakram-caesar.png}
-    \caption{Cakram Caesar dengan dua lingkar alfabet konsentris; pergeseran sebesar kunci memetakan setiap huruf plainteks ke huruf cipherteks}
+    \includegraphics[width=0.95\linewidth, height=0.35\textheight, keepaspectratio]{figures/kriptologi-hierarki.png}
+    \caption{Peta kriptologi: kriptografi klasik terbagi atas cipher substitusi dan cipher transposisi, sedangkan kriptografi modern terbagi atas cipher simetrik dan asimetrik}
+    \label{fig:kriptologi-hierarki}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsubsection{Cipher Abjad-Tunggal (\textit{Monoalphabetic Cipher})}
+
+Dalam \textit{monoalphabetic cipher}, setiap huruf di dalam plainteks
+dipetakan secara konsisten ke satu huruf cipherteks. Pemetaan itu bersifat
+satu-ke-satu dan berlaku untuk seluruh pesan: huruf \code{E} pada posisi mana
+pun selalu menjadi huruf yang sama. Contoh yang paling sederhana adalah
+\textbf{Caesar cipher}, yang melakukan pergeseran tetap sejauh $k$ posisi di
+dalam alfabet.
+
+Substitusi tidak harus berupa pergeseran. Kita dapat membuat tabel substitusi
+sembarang, dan itulah sebabnya cipher abjad-tunggal sering juga disebut cipher
+substitusi umum (\textit{general substitution cipher}). Karena setiap dari 26
+huruf harus dipetakan ke huruf yang berbeda, jumlah tabel substitusi yang
+mungkin adalah $26!$ (faktorial 26), sebuah angka yang sangat besar:
+\[ 26! \approx 4{,}03 \times 10^{26}. \]
+Angka ini jauh melampaui kemampuan pencarian menyeluruh: dengan kecepatan satu
+triliun kunci per detik pun, mencoba seluruh kemungkinan membutuhkan waktu
+lebih dari $10^{7}$ tahun. Meskipun demikian --- dan inilah pelajaran penting
+bab ini --- cipher substitusi umum tetap dapat dipecahkan tanpa mencoba
+seluruh kunci, karena struktur statistik bahasa Indonesia atau Inggris tetap
+lolos ke dalam cipherteks.
+
+Tabel substitusi dapat dibentuk secara acak atau menggunakan kalimat kunci
+(\textit{keyword}) agar lebih mudah dihafal. Prosedurnya: tulis kalimat kunci,
+buang huruf yang berulang dan huruf yang bukan alfabet, lalu sambungkan huruf
+yang tersisa dengan sisa alfabet yang belum terpakai. Misalnya, dengan kalimat
+kunci \code{di bawah sinar bulan purnama hati resah jadi senang}, urutan huruf
+unik yang diperoleh dimulai dengan \code{D,I,B,A,W,H,S,N,R,U,L,P,M,T,E,G,J},
+dan sisa alfabet melengkapinya menjadi tabel substitusi 26 huruf. Perhatikan
+bahwa kalimat kunci hanya mempermudah \emph{penghafalan}; keamanannya tidak
+bertambah, karena tabel hasilnya tetap dapat ditemukan dengan analisis
+frekuensi.
+
+\subsubsection{Caesar Cipher}
+\label{sec:caesar}
+
+Caesar cipher adalah cipher substitusi tertua yang terdokumentasi dengan baik.
+Julius Caesar dilaporkan menggeser setiap huruf pesannya tiga posisi ke depan
+agar surat-surat militernya tidak terbaca jika jatuh ke tangan musuh. Dengan
+demikian \code{A} menjadi \code{D}, \code{B} menjadi \code{E}, dan seterusnya,
+sedangkan \code{X}, \code{Y}, \code{Z} melingkar kembali ke \code{A}, \code{B},
+\code{C}. Pergeseran tiga posisi itu hanyalah contoh; nilai pergeseran
+$k$ secara umum dapat bernilai $0$ sampai $25$, dan itulah kuncinya.
+
+Secara matematis, dengan pemetaan $A=0$, $B=1$, $\dots$, $Z=25$, enkripsi dan
+dekripsi Caesar cipher untuk kunci $k$ dirumuskan sebagai berikut.
+\begin{equation}
+    c = E(p) = (p + k) \bmod 26,
+    \qquad
+    p = D(c) = (c - k) \bmod 26.
+    \label{eq:caesar}
+\end{equation}
+Pergeseran pada Gambar~\ref{fig:caesar-pergeseran} menunjukkan pemetaan huruf
+untuk $k=3$, sedangkan Gambar~\ref{fig:cakram-caesar} memperlihatkan alat
+bantu penghitungannya, yaitu cakram berisi dua lingkar alfabet yang dapat
+diputar relatif satu terhadap yang lain.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\linewidth, height=0.25\textheight, keepaspectratio]{figures/caesar-pergeseran.png}
+    \caption{Pergeseran alfabet pada Caesar cipher: huruf \code{A} menjadi \code{D}, \code{B} menjadi \code{E}, dan seterusnya sejauh $k=3$ posisi}
+    \label{fig:caesar-pergeseran}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.32\linewidth, height=0.4\textheight, keepaspectratio]{figures/cakram-caesar.png}
+    \caption{Cakram Caesar (\textit{Caesar wheel}): dua lingkar alfabet yang dapat diputar relatif satu terhadap yang lain, dipakai sebagai alat bantu menghitung pergeseran secara manual}
     \label{fig:cakram-caesar}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
 
+Tabel konversi huruf ke angka sering dipisahkan dari tabel substitusi agar
+perhitungannya lebih mudah diperiksa. Contoh berikut memakai $k=3$ untuk
+mengenkripsi kalimat \code{temui saya di jembatan merah nanti malam}. Langkah
+pertama adalah membuang spasi dan menyatakan setiap huruf sebagai angkanya:
+$t=19$, $e=4$, $m=12$, $u=20$, $i=8$, dan seterusnya. Setiap nilai kemudian
+ditambah 3 modulo 26:
+\begin{itemize}
+    \item $t=19 \;\rightarrow\; (19+3) \bmod 26 = 22 = $ \code{W}
+    \item $e=4 \;\rightarrow\; (4+3) \bmod 26 = 7 = $ \code{H}
+    \item $m=12 \;\rightarrow\; (12+3) \bmod 26 = 15 = $ \code{P}
+    \item $u=20 \;\rightarrow\; (20+3) \bmod 26 = 23 = $ \code{X}
+    \item $i=8 \;\rightarrow\; (8+3) \bmod 26 = 11 = $ \code{L}
+\end{itemize}
+Hasil lengkapnya adalah
+\begin{center}
+\texttt{WHPXL VDBD GL MHPEDWDQ PHUDK QDQWL PDODP}
+\end{center}
+yang sering dituliskan kembali sebagai cipherteks tanpa spasi,
+\begin{center}
+\texttt{WHPXLVDBDGLMHPEDWDQPHUDKQDQWLPDODP},
+\end{center}
+atau dikelompokkan menjadi blok empat huruf:
+\begin{center}
+\texttt{WHPX LVDB DGLM HPED WDQP HUDK QDQW LPDO DP}.
+\end{center}
+Konvensi mengelompokkan cipherteks menjadi blok $n$ huruf dan membuang spasi
+bukan sekadar kerapian penulisan. Membuang spasi menghapus salah satu petunjuk
+kriptanalisis yang paling murah, yaitu panjang kata, sehingga penyerang tidak
+lagi dapat menebak letak kata \emph{di}, \emph{ke}, atau \emph{dan} dari
+panjangnya. Dekripsi dilakukan dengan operasi kebalikannya, $p=(c-k) \bmod 26$
+pada Persamaan~\ref{eq:caesar}: \code{W}$=22 \rightarrow (22-3)=19=t$,
+\code{H}$=7 \rightarrow 4=e$, \code{P}$=15 \rightarrow 12=m$,
+\code{X}$=23 \rightarrow 20=u$, \code{L}$=11 \rightarrow 8=i$, sehingga
+kembali diperoleh \code{temui}.
+
+Untuk data biner, cipher pergeseran tetap dapat dipakai dengan alfabet 256
+karakter ASCII, yaitu $c=(p+k) \bmod 256$ dan $p=(c-k) \bmod 256$. Pada
+dasarnya tidak ada perbedaan konsep: yang berubah hanya ukuran alfabetnya.
+Contoh penerapannya adalah program Caesar cipher 256 karakter ASCII pada
+bagian praktikum bab ini, yang mampu mengenkripsi pesan berisi angka dan tanda
+baca, bukan hanya 26 huruf.
+
+\subsubsection{Kriptanalisis Caesar Cipher: Pencarian Kunci Menyeluruh}
+\label{sec:kriptanalisis-caesar}
+
+Karena kunci Caesar cipher hanya bernilai $0$ sampai $25$, hanya ada 26
+kemungkinan kunci --- jauh lebih sedikit daripada jumlah kata di dalam kamus.
+Penyerang tidak perlu memakai analisis frekuensi; ia cukup mencoba seluruh
+kunci satu per satu (\textit{exhaustive key search}) dan membaca hasilnya. Ini
+disebut serangan \textit{brute force} terhadap ruang kunci
+(lihat Bab~\ref{chap:layanan-keamanan}).
+
+Misalkan cipherteks yang disadap adalah \code{XMZVH}. Tabel~\ref{tab:caesar-exhaustive}
+memperlihatkan hasil dekripsi untuk seluruh 26 kunci. Hanya satu baris yang
+menghasilkan kata bermakna, yaitu $k=21$ yang menghasilkan \code{CREAM},
+sehingga kunci ditemukan dan pesan terbaca.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}l l @{\hspace{18pt}} l l@{}}
+\hline
+$k$ & Dekripsi & $k$ & Dekripsi \\
+\hline
+0  & \code{XMZVH} & 13 & \code{KZMIU} \\
+1  & \code{WLYUG} & 14 & \code{JYLHT} \\
+2  & \code{VKXTF} & 15 & \code{IXKGS} \\
+3  & \code{UJWSE} & 16 & \code{HWJFR} \\
+4  & \code{TIVRD} & 17 & \code{GVIEQ} \\
+5  & \code{SHUQC} & 18 & \code{FUHDP} \\
+6  & \code{RGTPB} & 19 & \code{ETGCO} \\
+7  & \code{QFSOA} & 20 & \code{DSFBN} \\
+8  & \code{PERNZ} & 21 & \textbf{\code{CREAM}} \\
+9  & \code{ODQMY} & 22 & \code{BQDZL} \\
+10 & \code{NCPLX} & 23 & \code{APCYK} \\
+11 & \code{MBOKW} & 24 & \code{ZOBXJ} \\
+12 & \code{LANJV} & 25 & \code{YNAWI} \\
+\hline
+\end{tabular}
+\caption{Pencarian kunci menyeluruh atas cipherteks \code{XMZVH}: hanya $k=21$ yang menghasilkan kata bermakna}
+\label{tab:caesar-exhaustive}
+\sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{table}
+
+Kunci yang panjang pun dapat ditemukan dengan cara yang sama. Cipherteks
+\code{VIVBQ SQBI SMBMUC LQ ICTI} baru menghasilkan kalimat yang bermakna pada
+$k=8$, yaitu \code{nanti kita ketemu di aula}. Perlu dicatat bahwa
+kadang-kadang dua kunci menghasilkan kata yang sama-sama bermakna: cipherteks
+\code{HSPPW} menghasilkan \code{dolls} (\emph{boneka}) untuk $k=4$ dan
+\code{wheel} (\emph{roda}) untuk $k=11$. Dalam kasus seperti itu penyerang
+harus memakai konteks pesan untuk memutuskan. Namun secara umum, pencarian
+menyeluruh atas 26 kunci adalah pekerjaan yang sepele, dan itulah bukti
+terkuat bahwa Caesar cipher tidak layak dipakai untuk melindungi data nyata
+\citep{menezes1996}.
+
+\subsubsection{ROT13}
+
+ROT13 (\textit{rotate by 13 places}) adalah Caesar cipher dengan $k=13$.
+Pilihan angka 13 bukan kebetulan: karena alfabet berjumlah 26 huruf, menggeser
+13 posisi dua kali mengembalikan huruf ke tempat semula. Dengan kata lain,
+ROT13 adalah fungsi yang menjadi kebalikan dirinya sendiri:
+\[ \mathrm{ROT13}(\mathrm{ROT13}(x)) = \mathrm{ROT26}(x) = x. \]
+Sebagai contoh, $\mathrm{ROT13}(\code{ROTATE}) = \code{EBGNGR}$ dan
+$\mathrm{ROT13}(\code{HELLO}) = \code{URYYB}$, sehingga tidak diperlukan
+prosedur dekripsi yang berbeda; enkripsi dan dekripsi memakai operasi yang
+persis sama. Sifat itu juga membuat ROT13 menyandikan huruf \code{A}--\code{M}
+ke \code{N}--\code{Z} dan sebaliknya, sebagaimana digambarkan pada
+Gambar~\ref{fig:rot13}.
+
+Istilah ROT13 mulai populer di jaringan \code{net.jokes} pada awal 1980-an
+untuk menyembunyikan lelucon dan bocoran cerita agar tidak terbaca sekilas.
+Perlu ditegaskan bahwa \important{ROT13 \emph{bukan} enkripsi, karena tidak
+ada kunci yang perlu dirahasiakan.} Nilainya terletak pada aspek
+\emph{mengaburkan}, bukan pada kerahasiaan: siapa pun yang mengenal algoritmanya
+dapat membaliknya dalam sekejap.
+
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\linewidth, height=0.6\textheight, keepaspectratio]{figures/transposisi-kolom.png}
+    \includegraphics[width=0.85\linewidth, height=0.35\textheight, keepaspectratio]{figures/rot13.png}
+    \caption{ROT13 memetakan huruf \code{A}--\code{M} ke \code{N}--\code{Z} dan sebaliknya; karena periode pergeserannya tepat setengah alfabet, fungsi ini menjadi kebalikan dirinya sendiri}
+    \label{fig:rot13}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsection{Cipher Transposisi}
+\label{sec:transposisi}
+
+Cipher transposisi memperoleh cipherteks dengan mengubah \emph{posisi} huruf di
+dalam plainteks, bukan menggantinya. Algoritma ini melakukan \textit{transpose}
+atas rangkaian huruf, sehingga nama lain untuk metode ini adalah \textit{cipher
+permutasi}. Karena tidak ada huruf yang berubah, panjang plainteks dan
+cipherteks selalu sama, dan sebaran frekuensi hurufnya identik. Konsekuensi
+kriptanalisisnya jelas: penyerang yang hanya memiliki cipherteks tidak dapat
+menggunakan frekuensi huruf tunggal, tetapi sebaran \emph{bigram} dan
+\emph{trigram} --- khususnya kemunculan rangkaian huruf yang khas seperti
+\code{TH}, \code{THE}, atau \code{ING} --- tetap memberi petunjuk
+\citep{stinson2018}.
+
+\subsubsection{Columnar Transposition Cipher}
+\label{sec:transposisi-kolom}
+
+Pada columnar transposition cipher, plainteks dituliskan baris demi baris ke
+dalam sebuah grid, kemudian dibaca kolom demi kolom. Ukuran grid ditentukan
+oleh panjang kunci, yang pada versi paling sederhana adalah jumlah kolomnya.
+Misalkan plainteks yang akan dikirim adalah kalimat berikut, dengan panjang
+kunci 6.
+\begin{center}
+\texttt{sistem dan teknologi informasi itb}
+\end{center}
+Langkah pertama adalah membuang spasi sehingga tersisa 30 huruf. Ke-30 huruf itu
+kemudian dituliskan ke dalam grid berukuran 6 kolom dan 5 baris:
+\begin{center}
+\begin{tabular}{@{}cccccc@{}}
+s & i & s & t & e & m \\
+d & a & n & t & e & k \\
+n & o & l & o & g & i \\
+i & n & f & o & r & m \\
+a & s & i & i & t & b \\
+\end{tabular}
+\end{center}
+Cipherteks diperoleh dengan membaca kolom demi kolom dari kiri ke kanan:
+kolom 1 menghasilkan \code{SDNIA}, kolom 2 \code{IAONS}, kolom 3
+\code{SNLFI}, kolom 4 \code{TTOOI}, kolom 5 \code{EEGRT}, dan kolom 6
+\code{MKIMB}. Cipherteks lengkapnya adalah
+\begin{center}
+\texttt{SDNIAIAONSSNLFITTOOIEEGRTMKIMB}
+\end{center}
+atau, dalam blok empat huruf, \texttt{SDNI AIAO NSSN LFIT TOOI EEGR TMKI MB}.
+Proses penyusunan grid dan arah pembacaan kolomnya diperlihatkan pada
+Gambar~\ref{fig:columnar-transposisi}.
+
+Dekripsi menempuh jalan sebaliknya. Panjang cipherteks dibagi panjang kunci
+untuk mengetahui jumlah baris, yaitu $30/6=5$. Cipherteks dituliskan
+\emph{tegak lurus}, yaitu lima huruf pertama mengisi kolom pertama, lima huruf
+berikutnya mengisi kolom kedua, dan seterusnya. Setelah grid penuh,
+plainteks dibaca baris demi baris dan spasi ditambahkan kembali, sehingga
+diperoleh \texttt{sistem dan teknologi informasi itb}.
+
+Untuk membuat enkripsi lebih kompleks, dipakai kata kunci yang huruf-hurufnya
+berbeda. Urutan alfabetis huruf-huruf kata kunci menentukan urutan pembacaan
+kolom, sehingga penyerang yang tidak mengetahui kata kuncinya harus menebak
+permutasi kolom, bukan hanya jumlah kolom. Misalkan kata kuncinya adalah
+\code{TOMBAK}. Bila huruf-hurufnya diurutkan menurut alfabet, urutannya
+menjadi \code{A}, \code{B}, \code{K}, \code{M}, \code{O}, \code{T}, yang berada
+pada posisi 5, 4, 6, 3, 2, dan 1. Jadi setiap huruf kata kunci memperoleh
+nomor: $T=6$, $O=5$, $M=4$, $B=2$, $A=1$, $K=3$. Kolom kemudian dibaca
+menurut nomor itu, yaitu $5, 4, 6, 3, 2, 1$. Hasilnya,
+\begin{center}
+\texttt{EEGRTTTOOIMKIMBSNLFIIAONSSDNIA},
+\end{center}
+sebagaimana diperlihatkan pada Gambar~\ref{fig:transposisi-kolom}. Perhatikan
+bahwa cipherteks ini memuat huruf-huruf yang persis sama dengan cipherteks
+sebelumnya, hanya urutannya berbeda --- ciri khas cipher transposisi.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth, height=0.3\textheight, keepaspectratio]{figures/columnar-transposisi.png}
+    \caption{Enkripsi columnar transposition: plainteks disusun ke dalam grid baris demi baris, lalu dibaca kolom demi kolom}
+    \label{fig:columnar-transposisi}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.22\linewidth, height=0.6\textheight, keepaspectratio]{figures/transposisi-kolom.png}
     \caption{Penyusunan plainteks ke dalam grid transposisi kolom dengan kata kunci; urutan kolom hasil pengurutan kata kunci menentukan cara pembacaan cipherteks}
     \label{fig:transposisi-kolom}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
+
+\subsubsection{Rail Fence Transposition Cipher}
+
+Rail Fence cipher menyusun plainteks secara zigzag ke beberapa baris ---
+disebut \textit{rail} atau pagar --- kemudian membacanya baris demi baris.
+Misalkan plainteksnya adalah
+\begin{center}
+\texttt{CRYPTOGRAPHY AND DATA SECURITY}.
+\end{center}
+Setelah spasi dibuang tersisa 27 huruf, dan dengan $k=3$ baris huruf-huruf itu
+diletakkan berselang-seling mengikuti pola baris $1$, $2$, $3$, $2$, $1$,
+$2$, \dots\ sehingga terbentuk pola zigzag pada Gambar~\ref{fig:rail-fence}.
+Baris pertama berisi \code{CTAAAEI}, baris kedua
+\code{RPORPYNDTSCRT}, dan baris ketiga \code{YGHDAUY}. Ketiga baris
+disambungkan menurut urutannya, sehingga cipherteks yang diperoleh adalah
+\begin{center}
+\texttt{CTAAAEIRPORPYNDTSCRTYGHDAUY}.
+\end{center}
+
+Jumlah baris $k$ adalah kuncinya, dan jumlah kemungkinan kuncinya sangat
+kecil. Untuk pesan pendek, seluruh nilai $k$ dapat dicoba dalam sekejap. Nilai
+$k$ juga tidak boleh terlalu besar, karena bila $k$ sama dengan panjang pesan,
+cipherteks menjadi identik dengan plainteksnya. Sebagai gambaran skala,
+perhatikan plainteks \code{HELLOWORLD}: untuk $k=2$ barisnya adalah
+\code{HLOOL} dan \code{ELWRD} sehingga cipherteksnya \code{HLOOLELWRD},
+sedangkan untuk $k=3$ barisnya menjadi \code{HOL}, \code{ELWRD}, dan
+\code{LO} sehingga cipherteksnya \code{HOLELWRDLO}. Perubahan $k$ mengubah
+cipherteks secara menyeluruh, namun keduanya tetap dapat dibalik dengan
+mencoba dua nilai $k$ saja.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth, height=0.2\textheight, keepaspectratio]{figures/rail-fence-3baris.png}
+    \caption{Penyusunan huruf plainteks dalam pola zigzag tiga baris pada Rail Fence cipher; cipherteks diperoleh dengan membaca baris demi baris}
+    \label{fig:rail-fence}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsubsection{Transposisi Blok}
+
+Variasi cipher transposisi dapat dibuat dengan aturan yang kita definisikan
+sendiri, asalkan penerima mengetahui aturan yang sama. Salah satu bentuk yang
+umum adalah \textbf{transposisi blok}: plainteks dipotong menjadi blok-blok
+berukuran tetap, setiap blok dipermutasikan dengan aturan yang sama, dan blok
+yang tidak penuh ditambahi huruf \textit{dummy} (huruf pengisi yang tidak
+bermakna) agar panjangnya seragam.
+
+Misalkan plainteksnya adalah \code{ITB GANESHA SEPULUH}. Setelah spasi dibuang
+tersisa 17 huruf, yang dipotong menjadi blok 8 huruf: \code{ITBGANES},
+\code{HASEPULU}, dan satu blok sisa berisi \code{H}. Blok terakhir dilengkapi
+huruf dummy menjadi \code{HABDCEFG}. Aturan permutasi yang dipakai di sini
+adalah membaca huruf ke-8, ke-2, ke-3, ke-5, ke-4, ke-6, ke-7, dan terakhir
+huruf ke-1. Dengan aturan itu, \code{ITBGANES} menjadi \code{STBAGNEI},
+\code{HASEPULU} menjadi \code{UASPEULH}, dan \code{HABDCEFG} menjadi
+\code{GABDCEFH}, sehingga cipherteks akhirnya adalah
+\begin{center}
+\texttt{STBAGNEIUASPEULHGABDCEFH}.
+\end{center}
+Tabel~\ref{tab:transposisi-blok} memperlihatkan pemetaan setiap blok.
+Gambar~\ref{fig:transposisi-blok} menampilkan diagram prosesnya. Karena
+aturannya buatan sendiri, kekuatan transposisi blok sepenuhnya bergantung pada
+kerahasiaan aturan tersebut, dan inilah yang bertentangan dengan Prinsip
+Kerckhoffs: seharusnya keamanan bergantung pada kunci, bukan pada kerahasiaan
+algoritma \citep{menezes1996}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}l l l@{}}
+\hline
+Blok & Sebelum & Sesudah \\
+\hline
+1 & \code{ITBGANES} & \code{STBAGNEI} \\
+2 & \code{HASEPULU} & \code{UASPEULH} \\
+3 & \code{HABDCEFG} & \code{GABDCEFH} \\
+\hline
+\end{tabular}
+\caption{Transposisi blok 8 huruf dengan aturan bacaan $8,2,3,5,4,6,7,1$; blok ketiga memuat huruf \textit{dummy}}
+\label{tab:transposisi-blok}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; tabel disusun dari contoh tersebut.}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth, height=0.3\textheight, keepaspectratio]{figures/transposisi-blok.png}
+    \caption{Pemetaan huruf-huruf tiap blok plainteks ke urutan baru untuk membentuk cipherteks pada transposisi blok}
+    \label{fig:transposisi-blok}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsection{Super-Enkripsi (\textit{Product Cipher})}
+\label{sec:super-enkripsi}
+
+Menggabungkan cipher substitusi dengan cipher transposisi menghasilkan
+\textbf{super-enkripsi}, yang juga disebut \textit{product cipher}. Idenya
+sederhana tetapi kuat: substitusi menyembunyikan identitas huruf, sedangkan
+transposisi menyembunyikan posisinya. Karena substitusi menghancurkan
+frekuensi huruf tunggal dan transposisi menghancurkan frekuensi bigram dan
+trigram, gabungan keduanya jauh lebih sulit dipecahkan daripada masing-masing
+bagiannya. Urutan penerapannya dapat dibolak-balik; yang penting pengirim dan
+penerima menyepakati urutan yang sama.
+
+Misalkan plainteksnya adalah \code{hello world}. Langkah pertama, pesan
+dienkripsi dengan Caesar cipher menggunakan $k=3$:
+\begin{center}
+\texttt{hello world} $\;\longrightarrow\;$ \texttt{KHOOR ZRUOG}.
+\end{center}
+Langkah kedua, hasil itu dienkripsi dengan cipher transposisi menggunakan 4
+kolom. Spasi dibuang sehingga tersisa 10 huruf, yang dituliskan ke grid 4
+kolom. Karena 10 tidak habis dibagi 4, dua sel terakhir diisi huruf
+\textit{dummy} \code{Z}:
+\begin{center}
+\begin{tabular}{@{}cccc@{}}
+K & H & O & O \\
+R & Z & R & U \\
+O & G & Z & Z \\
+\end{tabular}
+\end{center}
+Pembacaan kolom demi kolom menghasilkan cipherteks akhir
+\begin{center}
+\texttt{KROHZGORZOUZ}.
+\end{center}
+Proses dua tahap itu diperlihatkan pada Gambar~\ref{fig:super-enkripsi}.
+Untuk membaliknya, penerima harus membatalkan transposisi lebih dahulu ---
+menyusun cipherteks ke grid 4 kolom, membacanya baris demi baris sehingga
+diperoleh \code{KHOORZRUOG}, lalu mengabaikan huruf dummy --- baru kemudian
+membatalkan pergeseran Caesar sebesar $k=3$ untuk memperoleh \code{helloworld}
+\citep{menezes1996}.
+
+Cipher modern memakai konsep super-enkripsi yang sama, tetapi operasinya
+diulang berkali-kali dengan aturan yang dibuat sekompleks mungkin. Blok cipher
+seperti DES dan AES (Bab~\ref{chap:des} dan Bab~\ref{chap:aes}) melakukan
+substitusi melalui \textit{S-box} dan transposisi melalui tahap permutasi
+secara bergantian pada setiap putarannya, sehingga pengaruh satu bit plainteks
+menyebar ke seluruh blok cipherteks \citep{stinson2018}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth, height=0.2\textheight, keepaspectratio]{figures/super-enkripsi.png}
+    \caption{Super-enkripsi dua tahap: \code{hello world} dienkripsi Caesar ($k=3$) menjadi \code{KHOORZRUOG}, lalu ditransposisikan dengan 4 kolom menjadi \code{KROHZGORZOUZ}}
+    \label{fig:super-enkripsi}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsection{Kriptanalisis Cipher Abjad-Tunggal}
+\label{sec:analisis-frekuensi}
+
+Kelemahan utama cipher abjad-tunggal adalah ketidakmampuannya menyembunyikan
+struktur statistik bahasa. Karena pemetaan huruf tetap, huruf yang sering
+muncul di dalam plainteks akan tetap sering muncul di dalam cipherteks, hanya
+dengan lambang yang berbeda. Bahasa alami sangatlah tidak acak: di dalam teks
+Indonesia, huruf \code{A} muncul sekitar 17 dari 100 huruf, sedangkan huruf
+\code{X} hampir tidak pernah muncul. Ketidakrataan itu tidak hilang oleh
+substitusi sederhana, dan justru itulah pintu masuk bagi kriptanalis. Inilah
+alasan mengapa Bab~\ref{chap:landasan-matematika} menempatkan entropi sebagai
+alat diagnosis: cipherteks yang entropinya jauh di bawah $\log_2 26$ berarti
+sebarannya masih tidak rata dan masih memperlihatkan tanda-tanda bahasa.
+
+Kriptanalis menggunakan \textbf{analisis frekuensi} untuk memecahkan cipher
+ini. Dengan membandingkan frekuensi kemunculan huruf di dalam cipherteks
+dengan frekuensi umum huruf di dalam bahasa alami, pemetaan substitusinya
+dapat dideduksi.
+
+\subsubsection{Teknik Analisis Frekuensi}
+
+Prosedur analisis frekuensi dapat dijalankan secara sistematis dalam empat
+langkah \citep{stallings2017}:
+\begin{enumerate}
+    \item Hitung frekuensi relatif setiap huruf di dalam cipherteks.
+    \item Bandingkan hasilnya dengan tabel frekuensi bahasa: huruf cipherteks
+          yang paling sering muncul paling mungkin merupakan padanan huruf
+          \code{E}, dan seterusnya menurut urutan peringkat tabel.
+    \item Ulangi untuk huruf-huruf berikutnya menurut peringkat; biasanya cukup
+          dua sampai tiga huruf teratas untuk mulai menebak kata.
+    \item Ulangi langkah 1--3 untuk bigram, trigram, dan seterusnya, guna
+          memastikan dan memperbaiki tebakan awal.
+\end{enumerate}
+Setiap tebakan yang berhasil memunculkan pola baru --- misalnya sebuah kata
+yang mirip \code{th\_t} atau \code{\_e\_\_e\_} --- yang pada gilirannya
+mengungkap huruf lain. Proses ini bersifat iteratif: setiap tebakan yang benar
+mempermudah tebakan berikutnya.
+
+Dalam bahasa Inggris, huruf yang paling sering muncul adalah \code{E} sebesar
+sekitar 12,7\%, diikuti \code{T} (9,0\%), \code{A} (8,2\%), \code{O} (7,5\%),
+\code{I} (7,0\%), \code{N} (6,7\%), \code{S} (6,3\%), \code{H} (6,1\%),
+\code{R} (6,0\%), dan \code{D} (4,2\%). Tabel~\ref{tab:frekuensi-inggris}
+memuat ke-26 huruf beserta peluangnya; tabel ini disusun dari contoh sekitar
+300.000 karakter yang diambil dari novel dan surat kabar
+\citep{stallings2017}, dan bentuk grafiknya diperlihatkan pada
+Gambar~\ref{fig:frekuensi-huruf-inggris}. Untuk bahasa Indonesia,
+Tabel~\ref{tab:frekuensi-indonesia} memuat sepuluh huruf teratas. Perhatikan
+perbedaan pentingnya: huruf tersering di dalam bahasa Inggris adalah \code{E},
+sedangkan di dalam bahasa Indonesia adalah \code{A} dengan peluang yang jauh
+lebih besar (17,5\%). Karena itu, \emph{pemilihan tabel acuan harus
+disesuaikan dengan bahasa plainteksnya}; memakai tabel bahasa Inggris untuk
+cipherteks berbahasa Indonesia akan menyesatkan.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}l r @{\hspace{12pt}} l r @{\hspace{12pt}} l r @{\hspace{12pt}} l r@{}}
+\hline
+Huruf & Peluang (\%) & Huruf & Peluang (\%) & Huruf & Peluang (\%) & Huruf & Peluang (\%) \\
+\hline
+A & 8,2  & H & 6,1  & O & 7,5  & V & 1,0 \\
+B & 1,5  & I & 7,0  & P & 1,9  & W & 2,4 \\
+C & 2,8  & J & 0,1  & Q & 0,1  & X & 2,0 \\
+D & 4,2  & K & 0,8  & R & 6,0  & Y & 0,1 \\
+E & 12,7 & L & 4,0  & S & 6,3  & Z & 0,1 \\
+F & 2,2  & M & 2,4  & T & 9,0  &   &     \\
+G & 2,0  & N & 6,7  & U & 2,8  &   &     \\
+\hline
+\end{tabular}
+\caption{Frekuensi relatif huruf alfabet bahasa Inggris, disusun dari contoh sekitar 300.000 karakter}
+\label{tab:frekuensi-inggris}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; nilai mengikuti \citet{stallings2017}.}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}c l r@{}}
+\hline
+Peringkat & Huruf & Peluang (\%) \\
+\hline
+1  & A & 17,50 \\
+2  & N & 10,30 \\
+3  & I & 8,70  \\
+4  & E & 7,50  \\
+5  & K & 5,65  \\
+6  & T & 5,10  \\
+7  & R & 4,60  \\
+8  & D & 4,50  \\
+9  & S & 4,50  \\
+10 & M & 4,50  \\
+\hline
+\end{tabular}
+\caption{Sepuluh huruf teratas dalam bahasa Indonesia beserta peluang kemunculannya}
+\label{tab:frekuensi-indonesia}
+\sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth, height=0.45\textheight, keepaspectratio]{figures/frekuensi-huruf-inggris.png}
+    \caption{Grafik batang frekuensi relatif kemunculan setiap huruf alfabet bahasa Inggris; puncaknya pada \code{E}, \code{T}, dan \code{A}}
+    \label{fig:frekuensi-huruf-inggris}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.28\linewidth, height=0.5\textheight, keepaspectratio]{figures/frekuensi-huruf-indonesia.png}
+    \caption{Peringkat sepuluh huruf teratas bahasa Indonesia; huruf \code{A} mendominasi dengan peluang 17,50\%}
+    \label{fig:frekuensi-huruf-indonesia}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+Selain huruf tunggal (\textit{monogram}), analisis juga dapat dilakukan pada
+pasangan huruf (\textit{bigram}) dan tiga huruf (\textit{trigram}).
+Sebagaimana diperlihatkan pada Gambar~\ref{fig:histogram-flat}, cipher
+abjad-majemuk seperti Vigen\`ere berhasil membuat histogram frekuensi
+cipherteks menjadi lebih rata, sedangkan cipher abjad-tunggal tidak. Karena
+itu, kerataan histogram merupakan indikator pertama untuk membedakan kedua
+jenis cipher tersebut sebelum analisis yang lebih dalam dilakukan.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth, height=0.35\textheight, keepaspectratio]{figures/histogram-flat.png}
+    \caption{Perbandingan histogram frekuensi huruf yang rata (\textit{flat}) dan yang tidak rata; cipher abjad-majemuk menghasilkan sebaran mendekati rata, sedangkan cipher abjad-tunggal tidak}
+    \label{fig:histogram-flat}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsubsection{Frekuensi Bigram dan Trigram}
+\label{sec:bigram-trigram}
+
+Huruf tunggal jarang cukup untuk memecahkan cipherteks yang pendek. Karena itu
+kriptanalis memakai satuan yang lebih panjang. \textbf{Bigram} adalah pasangan
+huruf yang berurutan, dan sebarannya sangat khas: di dalam bahasa Inggris,
+\code{TH} muncul sekitar 2,71\% dari seluruh bigram, diikuti \code{HE}
+(2,33\%), \code{IN} (2,03\%), \code{ER} (1,78\%), dan \code{AN} (1,61\%).
+Tabel~\ref{tab:bigram} memuat 30 bigram tersering, dan bentuk grafiknya
+diperlihatkan pada Gambar~\ref{fig:bigram-frekuensi}. Sepuluh bigram teratas
+adalah \code{TH}, \code{HE}, \code{IN}, \code{EN}, \code{NT}, \code{RE},
+\code{ER}, \code{AN}, \code{TI}, dan \code{ES}.
+
+\textbf{Trigram} adalah rangkaian tiga huruf, dan sebarannya bahkan lebih
+tegas. Trigram \code{THE} muncul sekitar 1,81\% --- hampir tiga kali lipat
+trigram berikutnya, \code{AND} (0,73\%) --- lalu \code{ING} (0,72\%),
+\code{ENT} (0,42\%), dan \code{ION} (0,42\%). Tabel~\ref{tab:trigram} memuat
+30 trigram tersering. Trigram sangat berharga karena rangkaian tiga huruf
+\code{THE} biasanya muncul cukup sering bahkan di dalam pesan pendek, sehingga
+kehadirannya dapat dikenali langsung tanpa menghitung frekuensi.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}l r @{\hspace{16pt}} l r @{\hspace{16pt}} l r @{\hspace{16pt}} l r@{}}
+\hline
+Bigram & (\%) & Bigram & (\%) & Bigram & (\%) & Bigram & (\%) \\
+\hline
+TH & 2,71 & ED & 1,08 & AR & 0,98 & HA & 0,83 \\
+HE & 2,33 & ND & 1,07 & TE & 0,98 & ET & 0,76 \\
+IN & 2,03 & TO & 1,07 & NG & 0,89 & SE & 0,73 \\
+ER & 1,78 & OR & 1,06 & AL & 0,88 & OU & 0,72 \\
+AN & 1,61 & EA & 1,00 & IT & 0,88 & OF & 0,71 \\
+RE & 1,41 & TI & 0,99 & AS & 0,87 &    &     \\
+ES & 1,32 &          &      & IS & 0,86 &    &     \\
+ON & 1,32 &          &      &    &      &    &     \\
+ST & 1,25 &          &      &    &      &    &     \\
+NT & 1,17 &          &      &    &      &    &     \\
+EN & 1,13 &          &      &    &      &    &     \\
+AT & 1,12 &          &      &    &      &    &     \\
+\hline
+\end{tabular}
+\caption{Tiga puluh bigram tersering dalam bahasa Inggris beserta peluangnya (dalam persen)}
+\label{tab:bigram}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}l r @{\hspace{16pt}} l r @{\hspace{16pt}} l r @{\hspace{16pt}} l r@{}}
+\hline
+Trigram & (\%) & Trigram & (\%) & Trigram & (\%) & Trigram & (\%) \\
+\hline
+THE & 1,81 & EST & 0,28 & HAT & 0,26 & ITH & 0,21 \\
+AND & 0,73 & ERS & 0,28 & ATE & 0,25 & FTH & 0,21 \\
+ING & 0,72 & ATI & 0,26 & ALL & 0,25 & STH & 0,21 \\
+ENT & 0,42 & HES & 0,24 & ETH & 0,24 & OTH & 0,21 \\
+ION & 0,42 & VER & 0,24 & HIS & 0,24 & RES & 0,21 \\
+HER & 0,36 & OFT & 0,22 &    &      & ONT & 0,20 \\
+FOR & 0,34 &          &      &    &      &    &     \\
+THA & 0,33 &          &      &    &      &    &     \\
+NTH & 0,33 &          &      &    &      &    &     \\
+INT & 0,32 &          &      &    &      &    &     \\
+ERE & 0,31 &          &      &    &      &    &     \\
+TIO & 0,31 &          &      &    &      &    &     \\
+TER & 0,30 &          &      &    &      &    &     \\
+\hline
+\end{tabular}
+\caption{Tiga puluh trigram tersering dalam bahasa Inggris beserta peluangnya (dalam persen)}
+\label{tab:trigram}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth, height=0.3\textheight, keepaspectratio]{figures/bigram-frekuensi.png}
+    \caption{Grafik batang frekuensi bigram bahasa Inggris; \code{TH} tertinggi (3,21 pada sampel ini) dan \code{ST} terendah (1,22)}
+    \label{fig:bigram-frekuensi}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsubsection{Indeks Kebetulan (\textit{Index of Coincidence})}
+\label{sec:indeks-kebetulan}
+
+Sebelum menebak pemetaan huruf satu per satu, kriptanalis perlu menjawab
+pertanyaan yang lebih mendasar: apakah cipherteks ini benar-benar hasil cipher
+abjad-tunggal? Jawabannya dapat diukur secara kuantitatif dengan
+\textbf{indeks kebetulan} (\textit{index of coincidence}), yang didefinisikan
+sebagai peluang bahwa dua huruf yang diambil secara acak dari cipherteks
+merupakan huruf yang sama:
+\begin{equation}
+    CI = \frac{\sum_{i=1}^{n} f_i (f_i - 1)}{N (N - 1)},
+    \label{eq:indeks-kebetulan}
+\end{equation}
+dengan $f_i$ cacah kemunculan huruf ke-$i$, $n$ banyaknya huruf berbeda yang
+muncul, dan $N$ panjang cipherteks dalam huruf.
+
+Nilai acuannya sangat membantu. Untuk teks bahasa Inggris biasa, $CI$ berada
+di sekitar $0{,}065$; untuk teks yang benar-benar acak --- atau untuk cipher
+abjad-majemuk yang frekuensinya sudah diratakan --- $CI \approx 1/26 \approx
+0{,}038$. Jadi bila hasil perhitungan mendekati $0{,}065$, cipherteks hampir
+pasti berasal dari cipher abjad-tunggal dan analisis frekuensi layak
+dijalankan; bila mendekati $0{,}038$, penyerang harus lebih dahulu mencari
+panjang kunci.
+
+Sebagai contoh, perhatikan cipherteks berikut, yang diambil dari
+\citet{stallings2017}:
+\begin{quote}
+\raggedright
+\texttt{UZ QSO VUOHXMOPV GPOZPEVSG ZWSZ OPFPESX UDBMETSX AIZ VUEPHZ HMDZSHZO WSFP APPD TSVP QUZW YMXUZUHSX EPYEPOPDZSZUFPO MB ZWP FUPZ HMDJ UD TMOHMQ}
+\end{quote}
+Cipherteks ini memuat $N=120$ huruf dengan 21 huruf berbeda. Sebaran
+cacahnya sangat tidak rata: \code{P} muncul 16 kali, \code{Z} 14 kali,
+\code{U} dan \code{S} masing-masing 10 kali, \code{O} 9 kali, dan sisanya
+semakin jarang sampai \code{I} dan \code{J} yang hanya muncul sekali,
+sebagaimana dirangkum pada Tabel~\ref{tab:ic-stalling}. Dengan cacah-cacah
+itu diperoleh $\sum f_i(f_i-1) = 916$, sehingga
+\[
+CI = \frac{916}{120 \cdot 119} = \frac{916}{14.280} \approx 0{,}0641.
+\]
+Angka $0{,}0641$ sangat dekat dengan $0{,}065$ dan jauh dari $0{,}038$.
+Kesimpulannya: cipherteks ini hampir pasti dihasilkan oleh cipher
+abjad-tunggal, bukan cipher abjad-majemuk. Tanpa menghitung satu pun tebakan
+huruf, kriptanalis sudah memperoleh arah yang tepat
+\citep{stallings2017}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}l r @{\hspace{16pt}} l r @{\hspace{16pt}} l r@{}}
+\hline
+Huruf & Cacah & Huruf & Cacah & Huruf & Cacah \\
+\hline
+P & 16 & D & 6  & T & 3 \\
+Z & 14 & V & 5  & G & 2 \\
+U & 10 & X & 5  & B & 2 \\
+S & 10 & W & 4  & A & 2 \\
+O & 9  & F & 4  & Y & 2 \\
+M & 8  & Q & 3  & I & 1 \\
+H & 7  &    &    & J & 1 \\
+E & 6  &    &    &   &   \\
+\hline
+\end{tabular}
+\caption{Sebaran cacah huruf pada cipherteks contoh dari \citet{stallings2017}: $N=120$ huruf, 21 huruf berbeda, dan $\sum f_i(f_i-1)=916$}
+\label{tab:ic-stalling}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; nilai diperiksa ulang terhadap \citet{stallings2017}.}
+\end{table}
+
+\subsubsection{Studi Kasus: Memecahkan Kriptogram Monoalfabetis}
+
+Cipherteks pada Tabel~\ref{tab:ic-stalling} dapat dipecahkan langkah demi
+langkah. Dua huruf tersering, \code{P} dan \code{Z}, paling mungkin merupakan
+padanan \code{E} dan \code{T}. Perhatikan kata \code{ZWP} yang muncul dua kali
+di dalam cipherteks. Bila \code{Z}=\code{T} dan \code{P}=\code{E}, pola
+\code{ZWP} menjadi \code{T\_E}, sedangkan kata \code{ZWSZ} menjadi
+\code{T\_\_T}. Kata berbahasa Inggris yang cocok dengan pola \code{T\_E} dan
+\code{T\_\_T} adalah \code{the} dan \code{that}, sehingga diperoleh
+\code{W}=\code{H} dan \code{S}=\code{A}. Inilah \emph{iterasi pertama}.
+
+Pada iterasi kedua, kata \code{WSFP} sekarang berbentuk \code{HA\_E}, yang
+dengan mudah dilengkapi menjadi \code{have}, sehingga \code{F}=\code{V}.
+Dengan huruf-huruf yang sudah diketahui, rangkaian panjang
+\code{EPYEPOPDZSZUFPO} terbaca sebagai pola
+\code{\_E\_E\_E\_TAT\_VE\_}, yang hanya cocok dengan kata
+\emph{representatives}. Dari situ diperoleh \code{E}=\code{R},
+\code{Y}=\code{P}, \code{U}=\code{I}, \code{O}=\code{S}, dan
+\code{D}=\code{N}. Iterasi berikutnya melengkapi sisa huruf sampai seluruh
+cipherteks terbaca:
+\begin{quote}
+\itshape
+It was disclosed yesterday that several informal but direct contacts have
+been made with political representatives of the viet cong in Moscow.
+\end{quote}
+Tiga iterasi sudah cukup untuk memecahkan kriptogram 120 huruf
+\citep{stallings2017}. Proses semacam ini, dengan kriptogram yang lebih
+panjang, adalah dasar dari pemecahan cerita \textit{The Gold-Bug} karya Edgar
+Allan Poe, yang memperlihatkan bagaimana frekuensi huruf, bigram, dan trigram
+bekerja bersama-sama.
+
+\subsubsection{Penangkal: Bagaimana Substitusi Diperkuat}
+
+Pelajaran dari analisis frekuensi adalah bahwa substitusi \emph{abjad-tunggal}
+gagal karena pemetaannya tetap. Tiga arah perbaikan yang kemudian ditempuh
+adalah sebagai berikut.
+\begin{itemize}
+    \item \textbf{Substitusi homofonik}: satu huruf plainteks yang sering
+          muncul dipetakan ke beberapa huruf cipherteks secara bergiliran,
+          sehingga frekuensinya terbagi dan puncaknya menghilang.
+    \item \textbf{Cipher abjad-majemuk}: pemetaan diubah dari huruf ke huruf,
+          sehingga huruf plainteks yang sama menghasilkan cipherteks berbeda
+          pada posisi berbeda. Inilah jalan yang ditempuh Vigen\`ere dan
+          dibahas pada Sub-bab~\ref{sec:abjad-majemuk}.
+    \item \textbf{Substitusi poligram}: yang digantikan bukan satu huruf
+          melainkan blok huruf, sehingga pola bigram dan trigram pun runtuh.
+          Playfair dan Hill adalah wakil pendekatan ini, dibahas pada
+          Sub-bab~\ref{sec:polygram}.
+\end{itemize}
+Ketiga arah itu bergerak menuju tujuan yang sama: membuat cipherteks berentropi
+setinggi mungkin, yaitu sedekat mungkin dengan $\log_2 26$ bit per karakter
+\citep{stinson2018}.

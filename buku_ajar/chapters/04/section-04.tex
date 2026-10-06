@@ -1,12 +1,190 @@
 \section{Mesin Enigma}
-Enigma adalah mesin kriptografi elektromekanik yang digunakan secara masif oleh Jerman pada Perang Dunia II.
+\label{sec:enigma}
 
-\textbf{Komponen Utama:}
+Enigma adalah mesin kriptografi elektromekanik yang dianggap sebagai tonggak
+peralihan dari cipher klasik berbasis kertas ke cipher modern berbasis mesin.
+Mesin ini digunakan secara masif oleh Jerman pada Perang Dunia II untuk
+mengenkripsi komunikasi militer, dan kriptanalisis atasnya menjadi salah satu
+episode paling berpengaruh dalam sejarah kriptografi
+\citep{stinson2018}.
+
+\subsection{Sejarah dan Konteks}
+
+Enigma dirancang dan dipatenkan oleh Arthur Scherbius, seorang insinyur
+Jerman, untuk keperluan komersial, diplomatik, dan militer. Namanya berasal
+dari kata Latin \textit{enigmae} yang berarti ``teka-teki''. Mesin ini semula
+dipasarkan sebagai alat untuk melindungi rahasia dagang, tetapi Angkatan
+Bersenjata Jerman segera mengadopsinya sebagai perangkat standar komunikasi
+dinas. Pada puncaknya, Jerman menganggap Enigma tidak mungkin dipecahkan; satu
+penilaian resmi menyatakan bahwa bahkan bila seluruh dunia dipersenjatai
+mesin serupa untuk mencoba memecahkannya, Enigma tetap aman. Anggapan itu
+ternyata keliru, dan kekeliruan itulah yang memperpendek jalannya perang.
+
+\subsection{Komponen Mesin}
+
+Enigma bekerja sepenuhnya secara elektromekanik, dan memahami komponennya
+adalah prasyarat untuk memahami mengapa mesin ini kuat sekaligus mengapa ia
+akhirnya dapat dipecahkan. Bagian-bagian utamanya adalah sebagai berikut
+(lihat Gambar~\ref{fig:enigma-bagian}):
 \begin{itemize}
-    \item \textbf{Rotors}: Cakram yang berputar untuk melakukan substitusi. Setiap putaran mengubah pemetaan huruf, sehingga Enigma adalah polyalphabetic cipher dengan periode yang sangat panjang.
-    \item \textbf{Plugboard}: Menukarkan pasangan huruf sebelum dan sesudah melewati rotor untuk menambah kompleksitas.
-    \item \textbf{Reflector}: Memantulkan sinyal kembali melalui rotor, yang memastikan proses enkripsi dan dekripsi adalah operasi yang sama (simetris).
+    \item \textbf{Papan tombol} (\textit{keyboard}): operator menuliskan
+          plainteks huruf demi huruf di sini.
+    \item \textbf{Papan lampu} (\textit{lampboard}): papan berisi 26 lampu
+          yang menampilkan huruf cipherteks. Ketika satu tombol ditekan, satu
+          lampu menyala, dan operator mencatat huruf yang menyala itu sebagai
+          cipherteks.
+    \item \textbf{Papan steker} (\textit{plugboard}): menukarkan pasangan
+          huruf sebelum sinyal masuk ke rotor dan sesudah keluar dari rotor.
+          Setelannya diubah setiap hari dan dirahasiakan.
+    \item \textbf{Rotor}: tiga (kemudian empat) cakram yang berputar, dan
+          masing-masing melakukan satu substitusi abjad-tunggal. Keluaran
+          rotor pertama menjadi masukan rotor kedua, keluaran rotor kedua
+          menjadi masukan rotor ketiga, dan keluaran rotor terakhir adalah
+          cipherteksnya.
+    \item \textbf{Reflektor}: memantulkan sinyal kembali melalui rotor-rotor,
+          sehingga mesin yang sama dapat dipakai untuk mengenkripsi dan
+          mendekripsi tanpa perlu diubah pengaturannya.
+    \item \textbf{Jendela pengamat}: menunjukkan posisi setiap rotor, yang
+          merupakan bagian dari kuncinya.
 \end{itemize}
+Aliran sinyal melalui reflektor dan ketiga rotor itu diperlihatkan pada
+Gambar~\ref{fig:enigma-skema}. Perhatikan sifat penting yang muncul dari
+adanya reflektor: karena sinyal selalu melewati jalur yang sama dua kali
+dalam arah berlawanan, sebuah huruf \emph{tidak pernah} dienkripsi menjadi
+dirinya sendiri. Sifat ini terdengar seperti jaminan keamanan, tetapi justru
+menjadi kelemahan terbesar Enigma, karena kriptanalis dapat memakainya untuk
+menyingkirkan banyak kemungkinan seketika.
 
-Kriptanalisis Enigma dilakukan melalui upaya kolaboratif kriptografer Polandia dan Inggris (termasuk Alan Turing dengan mesin \textit{Bombe}), yang secara signifikan memperpendek durasi perang.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\linewidth, height=0.5\textheight, keepaspectratio]{figures/enigma-bagian.png}
+    \caption{Mesin Enigma beserta bagian-bagian utamanya: rotor, papan tombol, papan lampu, dan papan steker}
+    \label{fig:enigma-bagian}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth, height=0.2\textheight, keepaspectratio]{figures/enigma-skema.png}
+    \caption{Skema aliran sinyal Enigma melalui reflektor dan ketiga rotor; karena reflektor memantulkan sinyal pada jalur yang sama, sebuah huruf tidak pernah dienkripsi menjadi dirinya sendiri}
+    \label{fig:enigma-skema}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsection{Mekanisme Rotor dan Periode}
+
+Setiap rotor adalah abjad substitusi yang berbeda, dan substitusi itu berubah
+setiap kali rotor berputar. Setelah setiap huruf dienkripsi, rotor pertama
+maju satu posisi. Setelah rotor pertama menyelesaikan 26 posisi penuh (satu
+putaran penuh), rotor kedua maju satu posisi; setelah rotor kedua
+menyelesaikan 26 putaran, rotor ketiga maju satu posisi; demikian seterusnya
+seperti odometer pada alat penghitung jarak.
+
+Karena setiap rotor kembali ke posisi semula setelah 26 huruf, Enigma pada
+dasarnya adalah cipher abjad-majemuk dengan \emph{periode} 26 untuk satu rotor.
+Dengan tiga rotor, periode pengulangannya menjadi $26 \times 26 \times 26 =
+17.576$ huruf, dan dengan empat rotor menjadi
+\[
+26 \times 26 \times 26 \times 26 = 456.976
+\]
+huruf sebelum rangkaian substitusinya terulang. Periode yang sangat panjang
+inilah yang membuat analisis frekuensi sederhana tidak berguna: pada pesan
+yang jauh lebih pendek daripada 456.976 huruf, tidak ada pola pengulangan
+yang cukup panjang untuk dimanfaatkan. Posisi awal rotor merupakan bagian
+utama dari kuncinya, dan itulah yang harus diketahui penerima untuk dapat
+mendekripsi pesan.
+
+\subsection{Contoh Enkripsi Huruf Demi Huruf}
+
+Untuk memperlihatkan mekanisme rotor secara konkret, bayangkan Enigma
+disederhanakan menjadi alfabet enam huruf saja, dengan tiga rotor. Misalkan
+huruf \code{D} diketikkan pada papan tombol. Rotor pertama menerima \code{D}
+dan mengeluarkan \code{E}; \code{E} menjadi masukan rotor kedua yang
+mengeluarkannya sebagai \code{B}; \code{B} kemudian menjadi masukan rotor
+ketiga yang mengeluarkannya sebagai \code{E}. Jadi, dengan memperhitungkan
+pula perjalanan pulang melalui reflektor, hasil akhir pada papan lampu adalah
+\code{D} $\rightarrow$ \code{E}, sebagaimana diperlihatkan pada
+Gambar~\ref{fig:enigma-rotor}. Sekarang rotor ketiga bergeser satu huruf,
+sehingga substitusi yang dilakukannya berubah. Bila huruf \code{D} yang sama
+ditekan sekali lagi, hasilnya \emph{bukan} \code{E} lagi, melainkan \code{A}.
+Dua hasil berbeda untuk huruf masukan yang sama, dan itulah bukti bahwa
+Enigma benar-benar bersifat abjad-majemuk.
+
+Pada mesin yang sesungguhnya, jalur sinyalnya jauh lebih panjang karena
+melewati papan steker, tiga rotor, reflektor, lalu kembali melalui ketiga
+rotor dan papan steker. Tabel~\ref{tab:enigma-langkah} memperlihatkan rincian
+untuk tiga huruf pertama dari pesan \code{PESAWATMENDARAT}, yang pada simulasi
+menghasilkan cipherteks \code{GUFYLFRKQEJXVHM}. Perhatikan bahwa posisi rotor
+berubah pada setiap huruf, dan itulah sebabnya substitusi untuk huruf yang
+sama tidak pernah berulang dalam pesan yang pendek.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}c c >{\raggedright\arraybackslash}X c@{}}
+\hline
+Huruf & Posisi rotor & Jalur sinyal & Keluaran \\
+\hline
+\code{P} & \texttt{ABE} & steker \code{P} $\rightarrow$ R3 \code{W}
+$\rightarrow$ R2 \code{U} $\rightarrow$ R1 \code{A} $\rightarrow$ reflektor
+\code{Y} $\rightarrow$ R1 \code{O} $\rightarrow$ R2 \code{T} $\rightarrow$ R3
+\code{G} $\rightarrow$ steker \code{G} & \textbf{\code{G}} \\[3pt]
+\code{E} & \texttt{ABM} & steker \code{E} $\rightarrow$ R3 \code{W}
+$\rightarrow$ R2 \code{U} $\rightarrow$ R1 \code{A} $\rightarrow$ reflektor
+\code{Y} $\rightarrow$ R1 \code{O} $\rightarrow$ R2 \code{T} $\rightarrow$ R3
+\code{Q} $\rightarrow$ steker \code{Q} & \textbf{\code{Q}} \\[3pt]
+\code{S} & \texttt{ABG} & steker \code{S} $\rightarrow$ R3 \code{K}
+$\rightarrow$ R2 \code{G} $\rightarrow$ R1 \code{D} $\rightarrow$ reflektor
+\code{H} $\rightarrow$ R1 \code{P} $\rightarrow$ R2 \code{P} $\rightarrow$ R3
+\code{F} $\rightarrow$ steker \code{F} & \textbf{\code{F}} \\
+\hline
+\end{tabularx}
+\caption{Jalur enkripsi tiga huruf pertama pesan Enigma: posisi rotor berubah setiap huruf, sehingga substitusinya tidak pernah berulang}
+\label{tab:enigma-langkah}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; tabel disusun dari contoh tersebut.}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth, height=0.4\textheight, keepaspectratio]{figures/enigma-rotor.png}
+    \caption{Aliran enkripsi huruf \code{D} melalui tiga rotor pada Enigma beralfabet enam huruf; ketika rotor ketiga bergeser satu langkah, huruf \code{D} yang sama menghasilkan keluaran yang berbeda}
+    \label{fig:enigma-rotor}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsection{Kriptanalisis Enigma}
+
+Kriptanalisis pertama atas Enigma dilakukan pada 1932 oleh tiga kriptografer
+Polandia: Marian Rejewski, Jerzy R\'o\.zycki, dan Henryk Zygalski. Rejewski
+berhasil merekonstruksi susunan rotor secara matematis dari pola pengulangan
+di dalam pesan-pesan sandi. Keberhasilan itu memaksa Jerman merancang ulang
+mesinnya pada 1939 dengan menambahkan papan steker dan mengubah konfigurasi
+reflektor, sehingga serangan lama menjadi tidak berlaku. Polandia kemudian
+membagikan seluruh hasil kerjanya kepada Inggris dan Prancis, dan kerja sama
+itulah yang menentukan.
+
+Di Bletchley Park, Inggris, upaya itu dilanjutkan dengan mesin \textit{Bombe}
+yang dirancang Alan Turing beserta timnya. Mesin itu memanfaatkan beberapa
+kelemahan struktural Enigma secara sistematis: kecenderungan operator memakai
+pengaturan rotor yang dapat ditebak, kalimat pembuka (misalnya laporan
+cuaca) yang isinya berulang, dan sifat reflektor yang melarang sebuah huruf
+dienkripsi menjadi dirinya sendiri. Foto mesin \textit{Bombe} diperlihatkan
+pada Gambar~\ref{fig:enigma-bombe}. Keberhasilan memecahkan Enigma dinilai
+memperpendek Perang Dunia II di Eropa sekitar dua tahun
+\citep{stinson2018}.
+
+Kisah Enigma memberi dua pelajaran pokok. Pertama, kekuatan sebuah cipher
+tidak dapat dinilai hanya dari panjang kuncinya: Enigma memiliki ruang kunci
+yang sangat besar, tetapi kerapuhan struktural --- terutama sifat reflektor
+--- membuatnya dapat dipecahkan tanpa mencoba seluruh kunci. Kedua,
+kriptanalisis yang berhasil biasanya merupakan kerja sama panjang dan
+bertahap, bukan hasil satu terobosan tunggal
+\citep{stinson2018}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.55\linewidth, height=0.45\textheight, keepaspectratio]{figures/enigma-bombe.png}
+    \caption{Mesin \textit{Bombe} di Bletchley Park, yang dirancang Alan Turing beserta timnya untuk memecahkan sandi Enigma secara sistematis}
+    \label{fig:enigma-bombe}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

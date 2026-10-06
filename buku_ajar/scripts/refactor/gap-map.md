@@ -6,6 +6,9 @@ Sasaran: ±4.000–6.000 kata/bab (prosa naratif), tabel, contoh terhitung, gamb
 
 Legenda status: `[ ]` belum · `[~]` sedang dikerjakan · `[x]` selesai.
 
+**Kemajuan:** Tahap 1–4 (Bab 01–04) selesai. Buku 220 halaman, gerbang kebersihan
+`output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 5 (Bab 05).
+
 ---
 
 ## Bab 01 — Pengantar dan Urgensi Kriptografi  `[x]` SELESAI
@@ -70,19 +73,53 @@ Sumber: `referensi/02-*` (**hanya 1.071 kata, 2 topik — paling tipis**); lengk
       `scripts/refactor/figures/entropi_ternate.py`)
 - [x] Sitasi: `menezes1996`, `stinson2018`, `katz2020`, `stallings2017`
 
-## Bab 04 — Kriptografi Klasik
+## Bab 04 — Kriptografi Klasik  `[x]` SELESAI
 Sumber: `referensi/03-*` (3.455) + `04-*` (11.746) + `05-*` (2.565). Target: ±6.000 kata.
+**Hasil: 15.594 kata berkas (dari 1.941), 55 hlm jadi bab mandiri, 25 gambar,
+7 tabel baru, 3 contoh baru, 3 sitasi baru (`shannon1949`, `vernam1919`, `kasiski1863`);
+buku penuh 178 → 220 hlm.**
 
-- [ ] Transposisi kolom (kata kunci TOMBAK), Rail Fence $k=3$, transposisi blok
-- [ ] Super-enkripsi (Caesar+transposisi → KROHZGZOUZ), ROT13
-- [ ] Analisis frekuensi: tabel bigram & trigram, indeks kebetulan
-- [ ] Kasiski dengan contoh nyata (jarak 15/15/15/10/10 → SCRAM)
-- [ ] Hill 3×3 + kriptanalisis *known-plaintext*
-- [ ] Affine: contoh, kriptanalisis, ruang kunci 300, varian blok 4 huruf
-- [ ] Vigenère varian: Full, Auto-Key, Running-Key
-- [ ] Playfair: sejarah, alasan J dihapus, kriptanalisis bigram
-- [ ] Enigma: rotor/plugboard, contoh rotor 6 huruf + gambar
-- [ ] OTP: syarat formal, Vernam, contoh, Shannon 1949, alasan tak cocok untuk WhatsApp/HTTPS
+- [x] Transposisi: kolom dengan kata kunci, pagar rel (\textit{Rail Fence}) $k=3$/$k=4$,
+      transposisi blok; tabel + 3 gambar
+- [x] Super-enkripsi (Caesar+transposisi), ROT13, dan kaitannya ke cipher modern
+- [x] Analisis frekuensi: tabel frekuensi Inggris & Indonesia, bigram, trigram,
+      indeks kebetulan (`eq:indeks-kebetulan`, `tab:ic-stalling`), studi kasus Stallings
+      $CI = 916/(120\cdot119) = 0{,}0641$
+- [x] Kasiski dengan contoh nyata (jarak 15/15/15/10/10 → panjang kunci 5 → SCRAM)
+- [x] Hill: matriks 2×2 dan 3×3, determinan/invers, kriptanalisis *known-plaintext*
+- [x] Affine: rumusan + syarat $\gcd(m,26)=1$, contoh \code{kripto} → \code{CZOLNE},
+      kriptanalisis dua kongruensi simultan, ruang kunci 300, varian blok 4 huruf
+- [x] Vigenère varian: Full Vigenère, Auto-Key, Running-Key (`tab:varian-vigenere`)
+- [x] Playfair: sejarah Wheatstone, alasan \code{J} dihapus, 3 aturan + contoh bigram
+- [x] Enigma: Scherbius, rotor/plugboard/reflektor, periode $26^3$/$26^4$,
+      contoh huruf demi huruf (\code{PESAWATMENDARAT}), Bombe Turing
+- [x] OTP: syarat formal $|K| = |P|$, Vernam 1919, kerahasiaan sempurna Shannon 1949
+      (`eq:perfect-secrecy`), \code{onetimepad} + \code{tbfrgfarhm} → \code{HOJKOREGHP},
+      alasan tak cocok untuk WhatsApp/HTTPS/VPN/cloud/IoT + telusur sejarah (hotline Moskow)
+- [x] Perbaikan cacat: `fig:cakram-caesar` dirujuk tetapi belum pernah didefinisikan →
+      blok `figure` disisipkan di `section-01.tex`; gambar duplikat
+      `columnar-tombak.png` dihapus (identik byte-per-byte dengan `transposisi-kolom.png`)
+
+### Koreksi terhadap sumber (wajib dicatat)
+- **Super-enkripsi**: `KROHZGORZOUZ` (dek mencetak `KROHZGZOUZ` — kurang satu huruf).
+- **Playfair**: cacah bigram = **676** (dek mencetak 677).
+- **Affine varian blok**: invers dari $m = 21\,035\,433$ modulo $25\,252\,525$ adalah
+  **$11\,837\,547$** (dek mencetak $5\,174\,971$; sudah diverifikasi \textit{round-trip}
+  $P=10\,170\,815 \rightarrow C=22\,837\,395 \rightarrow P=10\,170\,815$).
+- **OTP Contoh 1**: dek mencetak cipherteks `HOJKOREGHP` dan kunci `tbfrgfarfm` yang
+  saling tidak konsisten. Bukti silang: dengan membaca cipherteks sebagai `HOJKOREGHP`
+  (huruf ke-9 kunci = `h`), kunci Contoh 3 dek (`LMCCAWAAZD`, `ZDVUZOEYEO`) tereproduksi
+  **10/10**; dengan pembacaan sebaliknya hanya 9/10. Karena itu dipakai
+  \code{onetimepad} + \code{tbfrgfarhm} → \code{HOJKOREGHP}.
+- **OTP Contoh 3**: kunci dek (`LMCCAWAAZD`/`ZDVUZOEYEO`) adalah kunci Konvensi cermin
+  (Beaufort, $K = P - C$). Buku memakai negatifnya modulo 26,
+  \code{POYYAEAABX} → \code{SALMONEGGS} dan \code{BXFGBMWCWM} → \code{GREENFIELD},
+  sesuai aturan yang dinyatakan buku ($P = (C-K) \bmod 26$).
+- **OTP Contoh 2 tidak dipakai**: plainteks 41 huruf, kunci 41 huruf, tetapi cipherteks
+  yang dicetak dek hanya 40 huruf dan menyimpang sejak posisi 10; contoh itu tidak dapat
+  direproduksi sehingga dihilangkan dari buku.
+- **Ruang kunci Affine**: kepala tulisan memakai **300** ($12 \times 25$) mengikuti dek dan
+  rencana; secara ketat $b \in 0..25$ memberi 312, dan hal itu dijelaskan dalam teks.
 
 ## Bab 05 — Stream Cipher
 Sumber: `referensi/07-*` (9.039 kata, 35 topik, 94 gambar). Target: ±4.500 kata.
@@ -220,8 +257,31 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   referensi `11-*` menyatakan sebaliknya (2²⁵⁶ → 2¹⁷⁸). Perbaiki + imbangi di `praktikum.tex`.
 - [~] **Environment `equation`/`align` ber-nomor** mulai dipakai sejak Bab 03
   (`eq:pembagian`, `eq:mod-tambah`, `eq:mod-kali`, `eq:invers`, `eq:euler`,
-  `eq:entropi`). Lanjutkan untuk penurunan RSA, ElGamal, ECDLP, hash.
+  `eq:entropi`); Bab 04 menambah 8 persamaan bernomor (`eq:caesar`,
+  `eq:indeks-kebetulan`, `eq:hill`, `eq:affine-enkripsi`, `eq:affine-dekripsi`,
+  `eq:affine-simultan-1/2`, `eq:otp-enkripsi`, `eq:otp-dekripsi`, `eq:two-time-pad`,
+  `eq:perfect-secrecy`). Lanjutkan untuk penurunan RSA, ElGamal, ECDLP, hash.
 - [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
-- [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 sudah punya satu.)
+- [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 dan 04 sudah punya.)
   Skrip pembuat gambar raster: `scripts/refactor/figures/entropi_ternate.py`.
-- [ ] **Bab tanpa sitasi: 05, 06, 07, 14.** (02 dan 03 sudah selesai.)
+- [ ] **Bab tanpa sitasi: 05, 06, 07, 14.** (02, 03, dan 04 sudah selesai; Bab 04 kini
+  menyitasi `stinson2018`, `menezes1996`, `stallings2017`, `katz2020`, `shannon1949`,
+  `vernam1919`, `kasiski1863`.)
+
+## Catatan lintas bab: tabel lebar & panjang baris
+
+Bab 04 sempat menghasilkan 6 cacat tipografis (`Overfull`/`Underfull`) yang sudah
+diperbaiki; polanya akan terulang di bab-bab berikut, jadi perhatikan sejak awal:
+
+- **Rangkaian huruf panjang di dalam paragraf** (cipherteks tanpa spasi, nilai heksadesimal
+  panjang) tidak bisa dipotong TeX → taruh di `center` tersendiri, bukan inline.
+- **Bilangan panjang di dalam matematika inline** ($25! = 15.511.\ldots$) → jadikan
+  tampilan `\[ ... \]`.
+- **`tabularx` tanpa kolom `X`** → pakai `tabular` biasa (tab:affine-enkripsi sempat
+  `Underfull ... in alignment` karena ini).
+- **Kolom `X` harus diberi `>{\raggedright\arraybackslash}`**; `X` yang rata kanan-kiri
+  mudah `Underfull` (`badness 10000`).
+- **Tabel 8 kolom dengan `@{\hspace{16pt}}`** bisa melebihi `\linewidth` → turunkan
+  jarak antar kelompok kolom.
+- **Blok `quote` berisi satu string `\texttt` panjang** → tambahkan `\raggedright`
+  agar baris terakhir tidak dipaksa rata kanan.

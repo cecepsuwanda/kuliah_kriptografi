@@ -20,3 +20,20 @@ menyelaraskan huruf tersering ke urutan huruf bahasa Indonesia.
 
 Program yang sama tersedia dalam C++ (\texttt{code/cpp/caesar.cpp}) dan MATLAB
 (\texttt{code/matlab/caesar.m}).
+
+\begin{obeactivity}
+\textbf{Aktivitas 4.2: Kriptanalisis Vigen\`ere dengan Metode Kasiski}
+1. Bangkitkan sebuah cipherteks Vigen\`ere dari kalimat bahasa Indonesia yang panjang (minimal 200 huruf) dengan kunci berpanjang 4 sampai 6 huruf. Gunakan alat \textit{online} seperti \url{https://www.dcode.fr/vigenere-cipher} atau \url{https://cryptii.com/pipes/vigenere-cipher}.
+2. Tanpa melihat kunci, cari kriptogram (rangkaian huruf cipherteks) yang berulang dan catat jarak antar kemunculannya.
+3. Faktorkan setiap jarak, lalu tentukan panjang kunci $m$ sebagai faktor yang muncul pada semua himpunan faktor.
+4. Bagi cipherteks menjadi $m$ kelompok menurut posisi modulo $m$, lalu jalankan analisis frekuensi pada masing-masing kelompok untuk menebak huruf kunci.
+5. Bandingkan kunci yang Anda peroleh dengan kunci aslinya. Catat berapa banyak huruf yang benar.
+\end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 4.3: Membandingkan Cipher Klasik secara Terukur}
+1. Enkripsikan satu kalimat yang sama (misalnya \texttt{kriptografi klasik menarik untuk dipelajari}) dengan empat cipher: Caesar, Vigen\`ere, Playfair, dan Hill $2 \times 2$.
+2. Hitung frekuensi huruf tiap cipherteks, lalu hitung indeks kebetulannya dengan rumus pada Bagian~\ref{sec:indeks-kebetulan}.
+3. Susun tabel yang memuat indeks kebetulan keempat cipherteks beserta indeks kebetulan plainteksnya.
+4. Simpulkan cipher mana yang paling berhasil menyembunyikan distribusi frekuensi bahasa, dan jelaskan mengapa Hill cipher unggul pada ukuran itu.
+\end{obeactivity}

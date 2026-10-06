@@ -8,4 +8,9 @@
     \item Enigma adalah mesin elektromekanik abjad-majemuk berperiode sangat panjang; kelemahannya dimanfaatkan kriptanalisis Polandia--Inggris (mesin \textit{Bombe} Turing).
     \item One-Time Pad (Vernam 1917; dibuktikan Shannon 1949) adalah satu-satunya cipher berkerahasiaan sempurna, dengan syarat kunci acak sejati, panjang kunci sama dengan panjang pesan, dan kunci hanya dipakai sekali.
     \item Kelemahan praktis OTP: pembangkitan dan distribusi kunci sepanjang pesan sulit, serta pemakaian ulang kunci (\textit{two-time pad}) langsung membocorkan XOR dua plainteks.
+    \item Transposisi --- transposisi kolom dengan kata kunci, pagar rel, dan transposisi blok --- mengacak urutan huruf tanpa mengubah identitas hurufnya, sehingga distribusi frekuensi huruf tunggal tetap terbaca; yang terganggu hanya bigram dan trigram.
+    \item Super-enkripsi (\textit{product cipher}) menggabungkan substitusi dan transposisi secara berurutan, sehingga kelemahan salah satu dikompensasi oleh yang lain; gagasan inilah yang menjadi benih cipher modern.
+    \item Kriptanalisis cipher klasik tidak hanya memakai frekuensi huruf tunggal, tetapi juga tabel bigram (misalnya \code{TH} dan \code{HE}) serta trigram (\code{THE}), ditambah indeks kebetulan yang bernilai sekitar $0{,}065$ untuk cipher abjad-tunggal.
+    \item Affine cipher adalah perluasan Caesar cipher dengan kunci $(m,b)$; karena $m$ harus relatif prima dengan 26, ruang kuncinya berisi $12 \times 25 = 300$ kemungkinan, dan kunci itu dapat dihitung langsung dari dua pasang plainteks--cipherteks.
+    \item OTP memang berkerahasiaan sempurna, tetapi hanya untuk serangan atas cipherteks; ia tidak menjamin keutuhan pesan, peka terhadap kesalahan sinkronisasi, dan tidak sesuai untuk komunikasi dinamis seperti HTTPS, VPN, penyimpanan awan, dan perangkat IoT.
 \end{itemize}

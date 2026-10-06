@@ -1,8 +1,265 @@
 \section{Affine Cipher}
-Affine Cipher adalah generalisasi dari Caesar Cipher yang menggunakan fungsi linier:
-\[ C \equiv mP + b \pmod{n} \]
-Kunci terdiri dari dua parameter: $m$ (slope) dan $b$ (intercept). Agar dapat didekripsi, $m$ harus relatif prima dengan $n$.
+\label{sec:affine}
 
+Affine cipher adalah perluasan langsung dari Caesar cipher. Bila Caesar cipher
+hanya menggeser setiap huruf dengan sejumlah langkah yang tetap, affine cipher
+melakukan dua operasi sekaligus: \emph{mengalikan} posisi huruf dengan sebuah
+bilangan, lalu \emph{menambahkan} sebuah pergeseran. Namanya berasal dari
+istilah \textit{affine transformation} di dalam geometri, yaitu pemetaan yang
+mempertahankan garis lurus, karena bentuk fungsinya memang fungsi linier
+$f(x) = mx + b$. Penambahan parameter perkalian itulah yang memperbesar ruang
+kunci dari 25 kemungkinan pada Caesar cipher menjadi 300 kemungkinan pada
+affine cipher, meskipun keduanya tetap merupakan cipher abjad-tunggal
+\citep{stinson2018}.
 
+\subsection{Rumusan dan Syarat Kunci}
+\label{sec:affine-rumusan}
 
+Secara matematis, enkripsi dan dekripsi affine cipher dinyatakan sebagai
+\begin{equation}
+    C \equiv mP + b \pmod{n},
+    \label{eq:affine-enkripsi}
+\end{equation}
+\begin{equation}
+    P \equiv m^{-1}(C - b) \pmod{n},
+    \label{eq:affine-dekripsi}
+\end{equation}
+dengan keterangan sebagai berikut.
+\begin{enumerate}
+    \item $n$ adalah ukuran alfabet. Untuk alfabet Latin baku, $n = 26$.
+    \item $m$ adalah bilangan bulat yang \emph{relatif prima} dengan $n$,
+          yaitu $\gcd(m, n) = 1$. Faktor $m$ inilah yang membedakan affine
+          cipher dari Caesar cipher.
+    \item $b$ adalah jumlah pergeseran, yang peranannya sama seperti kunci pada
+          Caesar cipher.
+    \item $m^{-1}$ adalah invers perkalian dari $m$ modulo $n$, yaitu bilangan
+          yang memenuhi $m \cdot m^{-1} \equiv 1 \pmod{n}$.
+    \item Kuncinya adalah pasangan $(m, b)$. Karena itu penulisan kunci affine
+          selalu memuat dua bilangan, bukan satu.
+    \item Caesar cipher adalah kasus khusus affine cipher dengan $m = 1$;
+          dalam hal ini Persamaan~\ref{eq:affine-enkripsi} menyusut menjadi
+          $C \equiv P + b \pmod{26}$.
+\end{enumerate}
 
+\textbf{Mengapa $m$ harus relatif prima dengan $n$?} Syarat itu bukan sekadar
+keindahan matematis, melainkan keharusan agar cipher dapat didekripsi. Fungsi
+enkripsi harus merupakan pemetaan satu-ke-satu dari himpunan huruf ke dirinya
+sendiri; bila dua huruf plainteks yang berbeda menghasilkan huruf cipherteks
+yang sama, maka cipherteks itu tidak dapat dikembalikan secara unik. Sekarang
+perhatikan apa yang terjadi bila $\gcd(m, 26) = d > 1$. Karena $m$ dan 26
+mempunyai faktor bersama $d$, nilai $mP \bmod 26$ hanya dapat menempuh $26/d$
+nilai yang berbeda, sehingga sebagian huruf cipherteks tidak akan pernah
+muncul. Sebagai contoh, untuk $m = 2$ dan $b = 0$ berlaku $C \equiv 2P
+\pmod{26}$, sehingga hanya huruf cipherteks bernomor genap yang mungkin
+muncul, sedangkan
+\[
+P = 0 \ (\code{A}) \quad\text{dan}\quad P = 13 \ (\code{N})
+\]
+sama-sama menghasilkan $C = 0$ (\code{A}). Begitu pula $m = 13$ memberikan
+$P = 0$ dan $P = 2$ yang keduanya menghasilkan \code{A}. Karena itu $m$ harus
+dipilih dari himpunan bilangan yang relatif prima dengan 26, yaitu
+\[
+m \in \{1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25\},
+\]
+yang berjumlah $\varphi(26) = 12$ buah. Perhatikan bahwa himpunan itu memuat
+$m = 1$ (Caesar cipher) dan $m = 25$, yang karena $25 \equiv -1 \pmod{26}$
+ekuivalen dengan pembalikan urutan alfabet.
+
+Dengan 12 pilihan untuk $m$ dan 25 pilihan untuk $b$ (yaitu pergeseran 1 sampai
+25, sebab $b = 0$ berarti tidak ada pergeseran sama sekali), ruang kunci affine
+cipher berisi
+\[
+12 \times 25 = 300
+\]
+kemungkinan pasangan kunci. Angka itu masih sangat kecil: sebuah komputer
+biasa dapat mencoba seluruh 300 kunci itu dalam waktu jauh kurang dari satu
+detik. Perluasan ruang kunci memang terjadi, tetapi tidak cukup besar untuk
+memberi keamanan. Tabel~\ref{tab:ruang-kunci-abjad-tunggal} membandingkan
+ketiga cipher abjad-tunggal yang telah dibahas.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.4cm} r >{\raggedright\arraybackslash}X@{}}
+\hline
+\textbf{Cipher} & \textbf{Ukuran ruang kunci} & \textbf{Keterangan} \\
+\hline
+Caesar cipher & 25 & Hanya pergeseran tetap; $m = 1$ dan $b \in \{1, \dots, 25\}$ \\[4pt]
+Affine cipher & 300 & $12$ nilai $m$ yang relatif prima dengan 26 dikali 25 nilai
+$b$; masih dapat dicoba seluruhnya dalam sekejap \\[4pt]
+Substitusi abjad-tunggal & $26! \approx 4{,}03 \times 10^{26}$ & Ruang kunci
+raksasa, tetapi tetap runtuh karena distribusi frekuensi huruf tidak berubah
+\\
+\hline
+\end{tabularx}
+\caption{Perbandingan ruang kunci tiga cipher abjad-tunggal. Ukuran ruang kunci
+yang besar tidak menjamin keamanan bila struktur statistik plainteks masih
+terbaca pada cipherteks}
+\label{tab:ruang-kunci-abjad-tunggal}
+\sumber{Dihitung dari Munir, \textit{IF4020 Kriptografi}, ITB; tabel disusun dari uraian tersebut.}
+\end{table}
+
+\subsection{Contoh Enkripsi dan Dekripsi}
+\label{sec:affine-contoh}
+
+Misalkan kuncinya adalah $m = 7$ dan $b = 10$, sedangkan plainteksnya adalah
+\code{kripto}. Setiap huruf diubah lebih dahulu menjadi bilangan menurut
+pemetaan $\code{A} = 0$ sampai $\code{Z} = 25$, kemudian dikenai
+Persamaan~\ref{eq:affine-enkripsi}. Tabel~\ref{tab:affine-enkripsi}
+memperlihatkan perhitungannya huruf demi huruf.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}c c c c c@{}}
+\hline
+\textbf{Plainteks} & \textbf{Nilai $P$} & \textbf{$7P + 10$} &
+\textbf{$(7P+10) \bmod 26$} & \textbf{Cipherteks} \\
+\hline
+\code{k} & 10 & 80  & 2  & \code{C} \\[2pt]
+\code{r} & 17 & 129 & 25 & \code{Z} \\[2pt]
+\code{i} & 8  & 66  & 14 & \code{O} \\[2pt]
+\code{p} & 15 & 115 & 11 & \code{L} \\[2pt]
+\code{t} & 19 & 143 & 13 & \code{N} \\[2pt]
+\code{o} & 14 & 108 & 4  & \code{E} \\
+\hline
+\end{tabular}
+\caption{Enkripsi \code{kripto} dengan affine cipher berkunci $m = 7$ dan
+$b = 10$. Hasil akhirnya adalah \code{CZOLNE}}
+\label{tab:affine-enkripsi}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; tabel disusun dari contoh tersebut.}
+\end{table}
+
+Perhatikan huruf pertama: $\code{k} = 10$ sehingga $7 \cdot 10 + 10 = 80$,
+dan $80 \bmod 26 = 2$ karena $80 = 3 \cdot 26 + 2$. Bilangan 2 bersesuaian
+dengan huruf \code{C}. Cara yang sama menghasilkan cipherteks
+\begin{center}
+\texttt{CZOLNE}.
+\end{center}
+
+Untuk mendekripsi, diperlukan invers dari $m = 7$ modulo 26. Karena
+$7 \cdot 15 = 105 = 4 \cdot 26 + 1$, maka $7^{-1} \equiv 15 \pmod{26}$.
+Dengan Persamaan~\ref{eq:affine-dekripsi}, huruf pertama cipherteks
+\code{C} $= 2$ memberi
+\[
+P \equiv 15\,(2 - 10) = 15 \cdot (-8) = -120 \equiv 10 \pmod{26},
+\]
+dan $10$ bersesuaian dengan huruf \code{k} --- kembali ke plainteks semula.
+Sebagai catatan, perhitungan modulo atas bilangan negatif dilakukan dengan
+menambahkan kelipatan 26 secukupnya: $-120 + 5 \cdot 26 = 10$. Pembaca yang
+belum terbiasa dengan aritmetika modulo sebaiknya meninjau kembali
+Bagian~\ref{sec:kekongruenan} pada Bab~\ref{chap:landasan-matematika}.
+
+\subsection{Kriptanalisis Affine Cipher}
+\label{sec:kriptanalisis-affine}
+
+Meskipun ruang kuncinya lebih besar daripada Caesar cipher, affine cipher jauh
+lebih rapuh daripada yang tersirat oleh angka 300. Kelemahannya bersumber dari
+sifatnya yang \emph{linier}: hubungan antara plainteks dan cipherteks dapat
+dirumuskan sebagai sistem persamaan linier, dan sistem persamaan linier dapat
+diselesaikan secara langsung tanpa pencarian.
+
+\textbf{Serangan dengan known-plaintext.} Misalkan kriptanalis mengetahui dua
+huruf plainteks beserta padanan cipherteksnya, yaitu $P_1 \to C_1$ dan
+$P_2 \to C_2$. Dari Persamaan~\ref{eq:affine-enkripsi} diperoleh dua
+kekongruenan simultan
+\begin{align}
+    C_1 &\equiv mP_1 + b \pmod{26}, \label{eq:affine-simultan-1} \\
+    C_2 &\equiv mP_2 + b \pmod{26}. \label{eq:affine-simultan-2}
+\end{align}
+Dengan mengurangkan Persamaan~\ref{eq:affine-simultan-2} dari
+Persamaan~\ref{eq:affine-simultan-1}, parameter $b$ tereliminasi dan tersisa
+\[
+C_1 - C_2 \equiv m\,(P_1 - P_2) \pmod{26}.
+\]
+Bila selisih $P_1 - P_2$ relatif prima dengan 26, maka
+\[
+m \equiv (C_1 - C_2)\,(P_1 - P_2)^{-1} \pmod{26},
+\]
+dan setelah $m$ diketahui, nilai $b$ langsung diperoleh dari salah satu
+persamaan di atas. Jadi kunci affine cipher dapat dihitung dari dua huruf saja.
+
+Sebagai contoh, misalkan kriptanalis mengamati bahwa huruf \code{C}
+berpadanan dengan \code{K} dan huruf \code{E} berpadanan dengan \code{O}.
+Dengan nilai numeriknya, $\code{C} = 2$, $\code{K} = 10$, $\code{E} = 4$, dan
+$\code{O} = 14$, diperoleh
+\[
+\begin{aligned}
+2 &\equiv 10m + b \pmod{26},\\
+4 &\equiv 14m + b \pmod{26}.
+\end{aligned}
+\]
+Pengurangan kedua persamaan menghasilkan
+\[
+2 \equiv 4m \pmod{26}.
+\]
+Kekongruenan ini mempunyai dua penyelesaian di dalam rentang $0$ sampai $25$,
+yaitu $m = 7$ dan $m = 20$, karena keduanya memberi $4m \bmod 26 = 2$. Namun
+$\gcd(20, 26) = 2 \ne 1$, sehingga $m = 20$ tidak sah sebagai kunci affine.
+Satu-satunya nilai yang sah adalah $m = 7$. Substitusi ke persamaan pertama
+memberi $b \equiv 2 - 70 = -68 \equiv 10 \pmod{26}$, sehingga kunci yang
+diperoleh adalah $(m, b) = (7, 10)$ --- persis kunci yang dipakai pada
+Tabel~\ref{tab:affine-enkripsi}. Perhatikan bahwa ketika
+$\gcd(P_1 - P_2, 26) \ne 1$, penyelesaian $m$ tidak tunggal; kriptanalis
+kemudian menyaring calon-calon itu dengan syarat $\gcd(m, 26) = 1$ dan menguji
+sisanya pada huruf ketiga.
+
+\textbf{Serangan tanpa known-plaintext.} Bila kriptanalis tidak mempunyai
+pasangan plainteks dan cipherteks sama sekali, affine cipher masih dapat
+dipecahkan dengan \emph{exhaustive key search}: cukup mencoba seluruh
+$12 \times 25 = 300$ pasangan $(m, b)$ dan memeriksa mana yang menghasilkan
+teks bermakna. Jumlah 300 itu terlalu kecil untuk menjadi penghalang, sehingga
+affine cipher pada praktiknya hanya bertahan bila penyerang tidak berusaha
+sama sekali.
+
+\subsubsection{Varian: Affine Cipher atas Blok Huruf}
+
+Salah satu cara memperbesar faktor kerja pencarian menyeluruh adalah dengan
+tidak mengenkripsi huruf secara individual, melainkan mengenkripsi blok yang
+terdiri atas beberapa huruf sekaligus. Misalkan pesan \code{kriptografi}
+dipecah menjadi kelompok empat huruf,
+\begin{center}
+\texttt{krip togr afi},
+\end{center}
+dan setiap kelompok dipandang sebagai bilangan desimal delapan angka dengan
+setiap hurufnya disandikan sebagai dua angka (karena $A = 0$ sampai $Z = 25$
+selalu dapat dinyatakan dengan dua angka). Kelompok pertama menjadi
+\[
+\code{krip} \rightarrow 10\,17\,08\,15 \rightarrow 10170815,
+\]
+kelompok kedua \code{togr} $\rightarrow 19140617$, dan kelompok ketiga
+\code{afi} $\rightarrow 00\,05\,08 \rightarrow 000508$, dengan angka nol di
+depan sebagai pengisi agar panjangnya tetap delapan angka.
+
+Karena bloknya dinyatakan sebagai bilangan delapan angka, modulus yang dipakai
+tidak lagi 26. Nilai terbesar yang mungkin muncul adalah $25252525$ (padanan
+dari \code{ZZZZ}, yaitu empat huruf bernomor 25 berturut-turut), sehingga
+bilangan itu dapat dipilih sebagai modulus $n$. Dengan memilih $m = 21035433$
+yang relatif prima dengan $25252525$ dan $b = 23210025$, fungsi enkripsinya
+menjadi
+\[
+C \equiv 21\,035\,433\,P + 23\,210\,025 \pmod{25\,252\,525}.
+\]
+Sebagai contoh, blok pertama $P = 10170815$ menghasilkan
+\[
+C = (21\,035\,433 \cdot 10\,170\,815 + 23\,210\,025) \bmod 25\,252\,525
+= 22\,837\,395.
+\]
+Fungsi dekripsinya adalah
+\[
+P \equiv 11\,837\,547\,(C - 23\,210\,025) \pmod{25\,252\,525},
+\]
+karena $21\,035\,433 \cdot 11\,837\,547 \equiv 1 \pmod{25\,252\,525}$.
+Sebagai pemeriksaan, dekripsi $C = 22\,837\,395$ mengembalikan
+$P = 10\,170\,815$, yaitu \code{krip} semula.
+
+Varian blok ini memperbesar ruang kunci menjadi kelipatan $25\,252\,525$,
+jauh lebih besar daripada 300. Namun perlu ditekankan bahwa memperbesar ruang
+kunci \emph{tidak} memperbaiki kelemahan struktur: affine cipher atas blok
+huruf tetap merupakan fungsi linier, sehingga penyerang yang mengetahui dua
+pasang blok plainteks--cipherteks tetap dapat menghitung $m$ dan $b$ secara
+langsung dengan cara yang sama seperti pada Persamaan~\ref{eq:affine-simultan-1}
+dan~\ref{eq:affine-simultan-2}. Pelajaran inilah yang membawa kita ke Hill
+cipher pada Bagian~\ref{sec:hill}: cipher blok yang lebih kuat justru karena
+memanfaatkan percampuran antarhuruf di dalam blok, bukan sekadar karena
+memperbesar alfabet \citep{stinson2018}.

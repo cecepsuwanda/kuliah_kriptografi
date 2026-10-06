@@ -3,15 +3,50 @@
 \begin{document}
 
 \section{One-Time Pad (OTP)}
-OTP adalah satu-satunya algoritma kriptografi yang terbukti aman sempurna (\textit{perfect secrecy}). Ditemukan Gilbert Vernam pada 1917 dan dibuktikan Shannon pada 1949, OTP menyempurnakan Vigen\`ere Cipher dengan menghilangkan perulangan kunci periodik yang menjadi celah metode Kasiski.
+\label{sec:otp}
+
+One-Time Pad (OTP) adalah satu-satunya algoritma kriptografi yang terbukti
+\emph{aman sempurna} (\textit{perfectly secret}) secara matematis. Cipher ini
+ditemukan oleh Gilbert Vernam pada 1917 dan sifat amannya baru dibuktikan oleh
+Claude Shannon pada 1949 \citep{shannon1949,vernam1919}. Secara mekanis, OTP
+tidak lain adalah cipher abjad-majemuk: secara struktural ia merupakan
+Vigen\`ere cipher dengan kunci yang panjangnya menyamai panjang pesan dan tidak
+pernah diulang. Perubahan itu tampak sepele, tetapi akibatnya bersifat
+kualitatif --- dan justru dari cipher paling sederhana inilah lahir konsep
+keamanan yang paling kuat.
 
 \subsection{Prinsip Kerja}
-Pada OTP, kunci dibangkitkan secara acak sejati dan panjangnya sama dengan panjang plainteks:
-\[ |K| = |P| \]
-Kunci tidak diulang: setiap bit (atau huruf) plainteks dienkripsi dengan bit kunci yang berbeda. Karena itu aturan enkripsi sama seperti Vigen\`ere, tetapi tanpa periode kunci:
-\[ C_i = P_i \oplus K_i \quad\text{(biner)}\qquad\text{atau}\qquad C_i = (P_i + K_i)\bmod 26 \]
-\[ P_i = C_i \oplus K_i \qquad\qquad\qquad\qquad P_i = (C_i - K_i)\bmod 26 \]
-Enkripsi dan dekripsi identik karena XOR bersifat invers terhadap dirinya sendiri. Selama panjang kunci mengikuti panjang pesan, tidak ada pengulangan pola yang dapat dimanfaatkan kriptanalis. Contoh terhitung singkat diberikan pada bagian Contoh Terhitung.
+\label{sec:otp-prinsip}
+
+Pada OTP, kunci dibangkitkan secara acak sejati dan panjangnya sama dengan
+panjang plainteks:
+\[
+|K| = |P|.
+\]
+Karena tidak ada satu pun huruf kunci yang dipakai dua kali, cipherteks tidak
+pernah memperlihatkan pola pengulangan yang dapat dimanfaatkan metode Kasiski
+(Bagian~\ref{sec:kasiski}). Aturan enkripsi dan dekripsinya identik dengan
+Vigen\`ere cipher, kecuali bahwa kuncinya tidak pernah berulang:
+\begin{equation}
+    C_i = P_i \oplus K_i \quad\text{(biner)},
+    \qquad
+    C_i = (P_i + K_i) \bmod 26 \quad\text{(huruf)},
+    \label{eq:otp-enkripsi}
+\end{equation}
+\begin{equation}
+    P_i = C_i \oplus K_i \quad\text{(biner)},
+    \qquad
+    P_i = (C_i - K_i) \bmod 26 \quad\text{(huruf)}.
+    \label{eq:otp-dekripsi}
+\end{equation}
+Pada bentuk biner, enkripsi dan dekripsi sama persis, karena operasi XOR
+bersifat invers terhadap dirinya sendiri: $x \oplus y \oplus y = x$. Sebagai
+contoh, huruf \code{K} yang berkode ASCII $01001011_2$ di-XOR dengan kunci
+$00111001_2$ menghasilkan $01110010_2$, yaitu huruf \code{r}; menerapkan XOR
+sekali lagi dengan kunci yang sama mengembalikan \code{K}. Ringkasnya,
+Persamaan~\ref{eq:otp-enkripsi} dan~\ref{eq:otp-dekripsi} memperlihatkan bahwa
+operasi yang sama dipakai untuk kedua arah. Contoh terhitung singkat
+diperlihatkan pada Gambar~\ref{fig:contoh-one-time-pad}.
 
 \begin{figure}[htbp]
     \centering
@@ -21,20 +56,264 @@ Enkripsi dan dekripsi identik karena XOR bersifat invers terhadap dirinya sendir
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
 
-Sebagaimana ditunjukkan Gambar~\ref{fig:contoh-one-time-pad}, cipherteks OTP tampak acak karena penjumlahan modulo 26 dengan kunci acak menyembunyikan seluruh struktur statistik plainteks.
+\textbf{Contoh terhitung.} Misalkan plainteksnya adalah \code{onetimepad} dan
+kuncinya \code{tbfrgfarhm}. Keduanya berpanjang sepuluh huruf, sehingga syarat
+$|K| = |P|$ terpenuhi. Dengan pemetaan $A = 0$ sampai $Z = 25$, huruf pertama
+dienkripsi sebagai
+\[
+(\code{o} + \code{t}) = (14 + 19) \bmod 26 = 33 \bmod 26 = 7 = \code{H},
+\]
+sedangkan huruf kedua sebagai $(\code{n} + \code{b}) = (13 + 1) \bmod 26 = 14 =
+\code{O}$. Meneruskan cara yang sama untuk seluruh huruf menghasilkan
+\begin{center}
+\small\ttfamily
+\begin{tabular}{@{}l l@{}}
+Plainteks:  & onetimepad\\
+Kunci:      & tbfrgfarhm\\
+Cipherteks: & HOJKOREGHP\\
+\end{tabular}
+\end{center}
+Dekripsi mengembalikan plainteks semula dengan pengurangan:
+$(\code{H} - \code{t}) = (7 - 19) \bmod 26 = -12 \bmod 26 = 14 = \code{o}$,
+sesuai dengan huruf pertama plainteks. Perhatikan bahwa cipherteks
+\code{HOJKOREGHP} tidak lagi memperlihatkan jejak struktur statistik bahasa
+Indonesia: rangkaian itu tampak acak sepenuhnya, dan memang demikianlah
+tujuannya.
+
+\subsection{Tiga Syarat Kerahasiaan Sempurna}
+\label{sec:otp-syarat}
+
+Kerahasiaan sempurna OTP bergantung pada tiga syarat yang \emph{semuanya}
+harus dipenuhi. Melanggar salah satu saja sudah cukup untuk menjatuhkan
+sifat itu, dan ketiga pelanggaran itu berguna untuk dipelajari satu per satu.
+
+\textbf{Syarat 1: kunci harus acak sejati.} Kunci tidak boleh diambil dari
+teks yang panjang, misalnya kutipan novel, berita, atau naskah Pembukaan UUD
+1945. Teks semacam itu tidak acak: distribusi hurufnya tidak seragam,
+bigramnya mengikuti pola bahasa, dan isinya dapat diduga. Bila kunci diambil
+dari teks bermakna, cipher yang dihasilkan bukan lagi OTP, melainkan
+Running-Key Vigen\`ere (Bagian~\ref{sec:abjad-majemuk}) --- yaitu cipher yang,
+seperti telah dibahas, dapat dipecahkan begitu teks sumbernya dikenali.
+Kunci OTP yang sah harus berasal dari sumber acak sejati, misalnya derau
+perangkat fisik, bukan dari deret bilangan yang dibangkitkan komputer secara
+deterministik.
+
+\textbf{Syarat 2: panjang kunci harus sama dengan panjang plainteks.} Bila
+kunci lebih pendek dan diulang, cipher yang dihasilkan kembali menjadi
+Vigen\`ere cipher yang periodik, dan metode Kasiski beserta analisis frekuensi
+per kelompok kembali berlaku. Perlu ditekankan bahwa syarat ini bukan
+sekadar aturan praktis: Shannon membuktikan bahwa kerahasiaan sempurna hanya
+mungkin dicapai bila $|K| \ge |P|$ \citep{shannon1949}. Tidak ada kunci yang
+lebih pendek daripada pesannya yang dapat memberi kerahasiaan sempurna, dan
+itulah harga yang harus dibayar.
+
+\textbf{Syarat 3: kunci hanya boleh dipakai sekali.} Pemakaian ulang kunci ---
+yang lazim disebut \textit{two-time pad} --- berakibat fatal dan merupakan
+kesalahan yang paling sering terjadi dalam praktik. Bila dua pesan $P_1$ dan
+$P_2$ dienkripsi dengan kunci $K$ yang sama, maka $C_1 = P_1 \oplus K$ dan
+$C_2 = P_2 \oplus K$, sehingga
+\begin{equation}
+    C_1 \oplus C_2 = (P_1 \oplus K) \oplus (P_2 \oplus K) = P_1 \oplus P_2.
+    \label{eq:two-time-pad}
+\end{equation}
+Perhatikan apa yang terjadi pada Persamaan~\ref{eq:two-time-pad}: kunci $K$
+hilang sama sekali. Penyerang yang memperoleh kedua cipherteks cukup
+meng-XOR-kannya untuk mendapatkan XOR kedua plainteks, tanpa perlu mengetahui
+kunci. Dari situ, struktur bahasa, posisi spasi, dan potongan kata dapat
+ditebak, sehingga kedua pesan terbuka secara bertahap.
+
+\textbf{Mengapa kriptanalis tidak dapat menentukan kunci yang benar.} Untuk
+sembarang plainteks dan cipherteks hanya ada \emph{tepat satu} kunci yang
+memetakan keduanya, karena $C = (P + K) \bmod 26$ adalah pemetaan
+satu-ke-satu. Akibatnya, setiap cipherteks dapat didekripsi menjadi
+\emph{beberapa} plainteks bermakna dengan memakai kunci yang berbeda-beda,
+dan penyerang tidak mempunyai cara untuk memilih di antaranya. Sebagai
+gambaran, perhatikan cipherteks \code{HOJKOREGHP} yang sama seperti pada
+contoh sebelumnya. Dua kunci yang berbeda menghasilkan dua plainteks yang
+keduanya sepenuhnya bermakna, sebagaimana diperlihatkan pada
+Tabel~\ref{tab:otp-ambigu}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}l l >{\raggedright\arraybackslash}X@{}}
+\hline
+\textbf{Cipherteks} & \textbf{Kunci} & \textbf{Plainteks yang dihasilkan} \\
+\hline
+\code{HOJKOREGHP} & \code{POYYAEAABX} & \code{SALMONEGGS}
+(\textit{telur ikan salmon}) \\[4pt]
+\code{HOJKOREGHP} & \code{BXFGBMWCWM} & \code{GREENFIELD}
+(\textit{lapangan hijau}) \\
+\hline
+\end{tabularx}
+\caption{Satu cipherteks, dua kunci, dua plainteks bermakna. Karena setiap
+pasangan plainteks--cipherteks hanya ditentukan oleh satu kunci, penyerang
+tidak dapat memutuskan plainteks mana yang sebenarnya dikirim}
+\label{tab:otp-ambigu}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; tabel disusun dari contoh tersebut.}
+\end{table}
+
+Dengan kalimat lain: cipherteks OTP tidak memberi tahu apa pun tentang isi
+pesan, sebab semua kemungkinan isi pesan tetap sama masuk akalnya. Sifat
+inilah yang kemudian dirumuskan secara formal oleh Shannon.
 
 \subsection{Kerahasiaan Sempurna}
-Shannon (1949) merumuskan \textit{perfect secrecy}: pengamatan cipherteks tidak menambah informasi apa pun tentang plainteks, sehingga probabilitas posterior sama dengan probabilitas prior.
-\[ P(P=p \mid C=c) = P(P=p) \]
-Untuk sembarang pasangan plainteks dan cipherteks hanya ada tepat satu kunci yang memetakannya ($C=(P+K)\bmod 26$ adalah pemetaan satu-ke-satu). Akibatnya setiap plainteks yang mungkin tetap sama masuk akal di mata penyerang. \important{Kerahasiaan sempurna hanya berlaku jika tiga syarat dipenuhi: kunci benar-benar acak sejati, panjang kunci sama dengan panjang plainteks, dan kunci tidak pernah dipakai ulang.}
+\label{sec:otp-kerahasiaan}
+
+Konsep \textit{perfect secrecy} diperkenalkan Claude Shannon di dalam
+makalahnya \textit{Communication Theory of Secrecy Systems} pada 1949 ---
+makalah yang meletakkan dasar teori informasi bagi kriptografi
+\citep{shannon1949}. Menurut Shannon, sebuah sistem memiliki kerahasiaan
+sempurna apabila pengamatan atas cipherteks tidak menambah informasi apa pun
+mengenai plainteks. Secara matematis, keadaan itu dinyatakan sebagai
+\begin{equation}
+    P(P = p \mid C = c) = P(P = p),
+    \label{eq:perfect-secrecy}
+\end{equation}
+yaitu probabilitas suatu plainteks $p$ setelah cipherteks $c$ diamati sama
+saja dengan probabilitas sebelum cipherteks itu diamati. Penyerang yang
+melihat cipherteks berada pada posisi yang persis sama dengan penyerang yang
+tidak melihat apa pun.
+
+Untuk melihat mengapa OTP memenuhi Persamaan~\ref{eq:perfect-secrecy},
+misalkan kunci $K$ dipilih secara uniform sehingga $P(K = k) = 1/26$ untuk
+setiap $k = 0, 1, \dots, 25$. Untuk suatu nilai plainteks $p$ yang tetap,
+pemetaan $k \mapsto (p + k) \bmod 26$ adalah pemetaan satu-ke-satu dari
+seluruh kemungkinan kunci ke seluruh kemungkinan cipherteks. Karena itu, untuk
+setiap huruf cipherteks $c$ berlaku
+\[
+P(C = c \mid P = p) = \frac{1}{26},
+\]
+artinya setiap huruf cipherteks sama mungkinnya, tidak bergantung pada
+plainteks $p$ yang mana. Dengan aturan Bayes, akibatnya
+\[
+P(P = p \mid C = c) = \frac{P(C = c \mid P = p)\,P(P = p)}{P(C = c)}
+= \frac{\tfrac{1}{26} \cdot P(P = p)}{\tfrac{1}{26}} = P(P = p),
+\]
+yaitu Persamaan~\ref{eq:perfect-secrecy} yang hendak dibuktikan. Jadi
+kombinasi "kunci acak + plainteks apa pun" selalu menghasilkan cipherteks
+yang tampak acak sempurna.
+
+Perlu ditegaskan batas berlakunya konsep ini. Kerahasiaan sempurna
+didefinisikan untuk serangan atas cipherteks saja terhadap \emph{satu} pesan
+\citep{katz2020}. Konsep itu tidak menyatakan bahwa OTP aman dalam segala
+keadaan. Bila penyerang mengetahui sebagian plainteks --- misalnya karena
+cuplikan pesan itu sudah bocor melalui saluran lain --- maka ia langsung
+memperoleh potongan kunci yang bersesuaian, sebab $K_i = (C_i - P_i) \bmod
+26$. Karena kunci tidak boleh dipakai ulang, potongan kunci itu tidak
+membocorkan pesan lain; tetapi bila kunci ternyata dipakai ulang, seluruh
+pesan lain pada posisi yang sama terbuka seketika. Inilah sebabnya syarat
+"sekali pakai" begitu kritis.
 
 \subsection{Kelemahan Praktis}
-Meskipun aman secara teoretis, OTP jarang dipakai karena:
-\begin{itemize}
-    \item Panjang kunci sama dengan panjang pesan, sehingga pesan panjang atau komunikasi berkelanjutan menuntut pembangkitan dan penyimpanan kunci acak dalam jumlah sangat besar.
-    \item Pengirim dan penerima harus berbagi kunci acak yang sama; kunci acak sejati tidak dapat dibangkitkan serentak oleh keduanya tanpa saluran distribusi yang aman.
-    \item Pemakaian ulang kunci (\textit{two-time pad}) berakibat fatal: untuk dua pesan berlaku $C_1\oplus C_2=P_1\oplus P_2$, sehingga XOR dua plainteks terbuka tanpa perlu mengetahui kunci.
-\end{itemize}
-Contoh historisnya adalah \textit{hotline} Moskow--Washington (1963) pasca Krisis Rudal Kuba, yang menggunakan perangkat OTP \textit{ITT Intelex Teletype L015}; pita kunci acaknya diterbangkan bolak-balik antara Washington DC dan Moskow.
+\label{sec:otp-kelemahan}
+
+Meskipun aman secara teoretis, OTP hampir tidak pernah dipakai pada
+komunikasi modern. Kelemahannya bukan terletak pada algoritmanya, melainkan
+pada \emph{manajemen kuncinya}.
+
+\textbf{Masalah distribusi kunci.} Panjang kunci OTP sama dengan panjang
+pesannya, sehingga untuk mengirim satu megabita pesan dibutuhkan satu megabita
+kunci acak sejati yang telah disepakati sebelumnya. Pengirim dan penerima
+tidak dapat membangkitkan kunci acak sejati yang sama secara serentak: kunci
+itu harus dibangkitkan di satu tempat, disalin, lalu dikirimkan melalui
+saluran kedua yang benar-benar aman dan terpisah dari saluran pesan.
+Saluran kedua itu biasanya lambat dan mahal --- misalnya kurir yang
+dipercaya --- sehingga OTP hanya praktis untuk volume data yang kecil dan
+laju yang rendah. Pada kenyataannya masalah distribusi kunci tidaklah
+\emph{diselesaikan} oleh OTP, melainkan hanya \emph{dipindahkan} ke saluran
+lain. Persoalan inilah yang kemudian mendorong lahirnya kriptografi
+kunci-publik \citep{diffie1976}, yang dibahas pada Bab~\ref{chap:diffie-hellman}.
+
+\textbf{Tidak cocok untuk komunikasi dinamis.} Pada layanan modern seperti
+WhatsApp, HTTPS, VPN, penyimpanan awan (\textit{cloud storage}), surel
+terenkripsi, dan komunikasi perangkat IoT, data mengalir terus-menerus, ukuran
+pesannya bermacam-macam, perangkatnya dapat berganti, dan pengguna dapat
+berpindah jaringan atau keadaan luring. Setiap tambahan data menuntut
+tambahan kunci acak baru yang belum pernah dipakai, sehingga manajemen
+kuncinya menjadi sangat berat dan tidak mungkin ditangani. Layanan semacam itu
+memakai jalan yang berlawanan: kunci sesi dibangkitkan secara
+\textit{semu acak} (\textit{pseudorandom}) dari sebuah rahasia bersama hasil
+pertukaran kunci, lalu dipakai pada cipher simetri modern seperti AES atau
+ChaCha20. Kunci semacam itu tidak memberi kerahasiaan sempurna, tetapi cukup
+kuat secara praktis, jauh lebih hemat, dan dapat diganti pada setiap sesi.
+
+\textbf{Tidak memberi jaminan keutuhan.} Kelemahan yang paling sering
+terlupakan: OTP hanya melindungi \emph{kerahasiaan}, tidak melindungi
+\emph{keutuhan}. Karena enkripsinya berupa penjumlahan atau XOR yang bersifat
+linier, penyerang yang mengubah satu bit cipherteks akan mengubah bit
+plainteks yang bersesuaian secara pasti, tanpa perlu mengetahui kunci.
+Penerima tidak mempunyai cara untuk menyadari bahwa pesan telah diubah.
+Akibatnya, OTP sendirian rentan terhadap serangan pengubahan pesan
+(\textit{malleability}), dan pada praktiknya ia harus selalu dipasangkan
+dengan kode autentikasi pesan. Persoalan keutuhan dan autentikasi inilah
+yang dibahas pada Bab~\ref{chap:hash-mac} dan Bab~\ref{chap:tanda-tangan-pki}.
+
+\textbf{Kepekaan terhadap sinkronisasi.} Karena setiap huruf plainteks
+bergantung pada huruf kunci pada posisi yang sama, satu huruf yang hilang
+atau bertambah dalam pengiriman akan menggeser seluruh sisa pesan dan
+membuatnya tidak terbaca. Pada komunikasi nyata, gangguan semacam itu lazim
+terjadi.
+
+\textbf{Contoh pemakaian nyata.} OTP memang pernah dipakai secara luas, tepat
+pada keadaan yang menuntut kerahasiaan mutlak dan berlangsung dalam volume
+kecil. Selama Perang Dunia II, dinas rahasia Inggris membekali agennya dengan
+kunci OTP yang dicetak pada syal sutra tipis, sehingga mudah disembunyikan
+dan mudah dimusnahkan bila terancam tertangkap
+(Gambar~\ref{fig:otp-syal}). Pada Perang Dingin, saluran langsung
+(\textit{hotline}) antara Washington dan Moskow yang dibangun setelah Krisis
+Rudal Kuba pada 1963 memakai perangkat OTP bernama ITT Intelex Teletype L015
+(Gambar~\ref{fig:otp-hotline}); pita kunci acaknya diterbangkan bolak-balik
+antara Washington DC dan Moskow. Penemu OTP sendiri, Gilbert Vernam,
+diperlihatkan pada Gambar~\ref{fig:gilbert-vernam}, sedangkan Claude Shannon
+yang membuktikan kerahasiaan sempurnanya diperlihatkan pada
+Gambar~\ref{fig:claude-shannon}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth, height=0.42\textheight, keepaspectratio]{figures/otp-syal.png}
+    \caption{Syal sutra berisi kunci One-Time Pad yang dipakai agen dinas rahasia Inggris pada Perang Dunia II; kunci dicetak pada kain agar mudah disembunyikan dan dimusnahkan}
+    \label{fig:otp-syal}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; foto dari John H. Reif, \textit{History of Computing}, Duke University.}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.42\linewidth, height=0.4\textheight, keepaspectratio]{figures/otp-hotline.png}
+    \caption{Perangkat ITT Intelex Teletype L015 yang dipakai pada saluran langsung Moskow--Washington (1963); pita kunci One-Time Pad-nya diterbangkan antara Washington DC dan Moskow}
+    \label{fig:otp-hotline}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; foto dari John H. Reif, \textit{History of Computing}, Duke University.}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.24\linewidth, height=0.35\textheight, keepaspectratio]{figures/gilbert-vernam.png}
+    \caption{Gilbert Sandford Vernam (1890--1960), insinyur AT\&T Bell Labs yang menemukan cipher aditif dan one-time pad pada 1917}
+    \label{fig:gilbert-vernam}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.2\linewidth, height=0.3\textheight, keepaspectratio]{figures/claude-shannon.png}
+    \caption{Claude E. Shannon (1916--2001), yang pada 1949 membuktikan bahwa One-Time Pad memiliki kerahasiaan sempurna dan meletakkan dasar teori informasi bagi kriptografi}
+    \label{fig:claude-shannon}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+Sebagai penutup, perhatikan pertimbangan yang diajukan Steve Bellovin,
+kriptografer dari AT\&T Labs:
+\begin{quote}
+\itshape
+``As a practical person, I've observed that one-time pads are theoretically
+unbreakable, but practically very weak. By contrast, conventional ciphers are
+theoretically breakable, but practically strong.''
+\end{quote}
+Pernyataan itu merangkum seluruh bagian ini. Keamanan sempurna OTP bersifat
+matematis dan tidak dapat dibantah, tetapi keamanan itu hanya bertahan bila
+kunci dikelola dengan disiplin yang nyaris mustahil dipertahankan pada skala
+komunikasi modern. Cipher modern justru mengambil jalan sebaliknya: keamanan
+mereka bersandar pada kesukaran komputasi yang diyakini --- bukan dibuktikan
+--- tetapi cukup kuat untuk praktik, dan kuncinya dapat dikelola secara wajar.
 
 \end{document}
