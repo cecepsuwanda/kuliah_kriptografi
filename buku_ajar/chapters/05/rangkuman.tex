@@ -1,10 +1,15 @@
 \section{Rangkuman}
 \begin{itemize}
     \item Kriptografi modern beroperasi pada bit/byte, bukan karakter; XOR menjadi operasi dasar karena $a\oplus a=0$ membuat enkripsi dan dekripsi memakai fungsi yang sama.
+    \item Satu byte terdiri atas 8 bit dan satu digit heksadesimal mewakili 4 bit, sehingga satu byte dituliskan sebagai dua digit heksadesimal. Penulisan heksadesimal dipakai setiap kali nilai bit perlu disebutkan tanpa menuliskan seluruh rangkaiannya.
     \item \textit{Stream cipher} mengenkripsi satu bit/byte sekaligus dengan $c_i=p_i\oplus k_i$, sehingga cepat dan cocok untuk data \textit{real-time}.
     \item Keamanannya bergantung pada \textit{keystream generator} (PRNG) yang membangkitkan keystream sepanjang pesan dari kunci dan IV sebagai \textit{seed}; penerima harus dapat membangkitkan keystream yang identik.
     \item Keystream tidak boleh dipakai ulang: dua cipherteks berkeystream sama dapat di-XOR sehingga XOR kedua plainteksnya terbuka tanpa mengetahui kunci.
-    \item Galat 1 bit pada cipherteks hanya merusak 1 bit plainteks (tidak menyebar), berbeda dengan \textit{block cipher} yang menyebarkan galat antar blok.
-    \item RC4 (KSA dan PRGA) tidak lagi aman karena byte awal keystream berkorelasi dengan kunci; A5/1 memakai tiga LFSR dengan kaidah mayoritas, sedangkan Trivium memakai NLFSR.
-    \item LFSR $n$-bit berperiode maksimum $2^n-1$ bila polinomial umpan baliknya primitif; Salsa20/ChaCha20 memakai operasi ARX pada matriks $4\times4$ dan ChaCha20 dipakai pada TLS 1.3.
+    \item Galat 1 bit pada cipherteks hanya merusak 1 bit plainteks (tidak menyebar), berbeda dengan \textit{block cipher} yang menyebarkan galat antar blok. Karena itu cipher alir tidak menjamin keutuhan data.
+    \item LFSR adalah \textit{keystream generator} paling sederhana: tiap detak menggeser isi register satu posisi dan bit umpan balik mengisi posisi yang kosong. LFSR $n$-bit berperiode maksimum $2^n-1$ bila polinomial umpan baliknya primitif, tetapi LFSR tunggal tidak aman karena keluarannya linier dan dapat dipulihkan dengan algoritma Berlekamp--Massey.
+    \item RC4 memakai larik $S$ 256 byte yang diacak oleh KSA dan ditarik oleh PRGA. RC4 tidak lagi aman karena byte awal keystream berkorelasi dengan kunci; implementasi yang berhati-hati membuang 256--512 byte awal, dan RFC 7465 melarang pemakaiannya di TLS sejak 2015.
+    \item A5/1 memakai tiga LFSR berukuran 19, 22, dan 23 bit dengan kaidah mayoritas pada bit kendalinya; satu frame GSM berukuran 228 bit dan dikirim setiap 4,6 milidetik. A5/1 sudah dipecahkan sejak serangan \textit{known-plaintext} Ross Anderson pada 1994.
+    \item Trivium memakai tiga NLFSR berukuran 93, 84, dan 111 bit. Gerbang AND membuat hubungannya non-linier, dan pemanasan $4 \times 288 = 1152$ detak mencampur kunci serta IV sebelum satu bit pun keluar.
+    \item Salsa20 dan ChaCha20 memakai operasi ARX pada matriks keadaan $4\times4$ berisi 16 kata 32 bit, sehingga satu pemanggilan menghasilkan blok keystream 512 bit. Karena tiap blok bergantung pada kunci, \textit{nonce}, dan \textit{counter}, blok-blok keystream dapat dihitung secara paralel dan diakses langsung; ChaCha20 bersama Poly1305 menjadi cipher standar TLS 1.3.
+    \item Pelajaran dari keempat cipher itu: panjang kunci bukan penentu utama keamanan cipher alir. Yang menentukan adalah ada tidaknya hubungan statistik antara kunci dan keystream yang dapat dilacak penyerang.
 \end{itemize}

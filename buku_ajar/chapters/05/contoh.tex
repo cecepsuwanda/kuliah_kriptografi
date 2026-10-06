@@ -18,20 +18,156 @@ Karena tiap bit diproses sendiri-sendiri, galat satu bit pada cipherteks hanya m
 \end{example}
 
 \begin{example}
-\textbf{LFSR 4 bit.} Register diinisialisasi $1111$. Setiap langkah register bergeser ke kanan, bit keluaran adalah $b_0$, dan bit umpan balik $f=b_3\oplus b_0$ disisipkan pada posisi $b_3$:
+\textbf{Membangkitkan keystream dengan LFSR.} Pakailah LFSR 4 bit pada
+Bagian~\ref{sec:konsep-stream-cipher}, yaitu umpan balik $f=b_3\oplus b_0$
+dengan muatan awal $1111$. Tabel~\ref{tab:lfsr-4bit} menunjukkan bahwa barisan
+keluarannya berperiode 15 bit:
 \[
-\begin{array}{c|cccc|c}
-i & b_3 & b_2 & b_1 & b_0 & \text{keluaran}\\
+\code{1111\,0101\,1001\,000}\ .
+\]
+Karena pesannya lebih panjang daripada periode itu, keystream diulang dari awal.
+Untuk pesan \code{Aku} yang panjangnya 24 bit, keystream yang dipakai adalah
+15 bit pertama ditambah 9 bit awalnya lagi:
+\[
+K=\code{1111\,0101\,1001\,0001\,1110\,1011}=\code{F591EB}.
+\]
+Enkripsi dilakukan dengan XOR per bit:
+\[
+\begin{array}{rcl}
+P &=& 0100\,0001\,0110\,1011\,0111\,0101 \quad(\code{Aku})\\
+K &=& 1111\,0101\,1001\,0001\,1110\,1011\\
 \hline
-0 & 1 & 1 & 1 & 1 & 1\\
-1 & 0 & 1 & 1 & 1 & 1\\
-2 & 1 & 0 & 1 & 1 & 1\\
-3 & 0 & 1 & 0 & 1 & 1\\
-4 & 1 & 0 & 1 & 0 & 0\\
-5 & 1 & 1 & 0 & 1 & 1\\
-6 & 0 & 1 & 1 & 0 & 0\\
-7 & 1 & 0 & 1 & 1 & 1
+C &=& 1011\,0100\,1111\,1010\,1001\,1110
 \end{array}
 \]
-Sebagai ilustrasi langkah $i=0\to1$: $f=1\oplus1=0$ sehingga register menjadi $0111$ dan keluarannya $b_0=1$. Barisan keluaran yang terbentuk adalah $1111\,0101\,1001\,000\ldots$ dengan periode $2^4-1=15$.
+sehingga cipherteksnya adalah $\code{B4FA9E}$. Dekripsi memakai keystream yang
+sama: $\code{B4FA9E}\oplus\code{F591EB}=\code{416B75}$, yaitu \code{Aku} kembali.
+
+Perhatikan pengulangan yang tampak pada baris $K$: sembilan bit pertama
+keystream muncul kembali pada sembilan bit terakhir, karena periode keystream
+hanya 15 bit sedangkan pesannya 24 bit. Pengulangan inilah yang harus dihindari
+oleh keystream generator yang baik, dan inilah alasan pembahasan pada
+Bagian~\ref{sec:konsep-stream-cipher} menekankan pentingnya periode yang jauh
+lebih panjang daripada pesan.
+\end{example}
+
+\begin{example}
+\textbf{RC4 versi mainan ($N=8$) untuk kunci \code{AB}.} Agar seluruh langkah
+dapat diperiksa dengan tangan, larik $S$ diperkecil dari 256 menjadi 8 elemen,
+sehingga semua operasi modulo 256 menjadi modulo 8. Kunci \code{AB} memberi
+byte $\code{41}_{16}=65$ dan $\code{42}_{16}=66$, yang setelah direduksi modulo
+8 menjadi $K=[\,1,\ 2\,]$; kunci diulang periodik: $K_0=1$, $K_1=2$, $K_2=1$,
+dan seterusnya.
+
+\textbf{KSA.} Larik $S$ mula-mula berisi $[\,0,1,2,3,4,5,6,7\,]$. Penunjuk $j$
+bergerak menurut $j \leftarrow (j + S_i + K_{i \bmod 2}) \bmod 8$, lalu $S_i$
+dan $S_j$ dipertukarkan. Hasil setiap langkah adalah
+\[
+\begin{array}{cll}
+i=0: & j = (0+0+1) \bmod 8 = 1 & \text{swap } S_0 \leftrightarrow S_1
+      \rightarrow [\,1,0,2,3,4,5,6,7\,]\\
+i=1: & j = (1+0+2) \bmod 8 = 3 & \text{swap } S_1 \leftrightarrow S_3
+      \rightarrow [\,1,3,2,0,4,5,6,7\,]\\
+i=2: & j = (3+2+1) \bmod 8 = 6 & \text{swap } S_2 \leftrightarrow S_6
+      \rightarrow [\,1,3,6,0,4,5,2,7\,]\\
+i=3: & j = (6+0+2) \bmod 8 = 0 & \text{swap } S_3 \leftrightarrow S_0
+      \rightarrow [\,0,3,6,1,4,5,2,7\,]\\
+i=4: & j = (0+4+1) \bmod 8 = 5 & \text{swap } S_4 \leftrightarrow S_5
+      \rightarrow [\,0,3,6,1,5,4,2,7\,]\\
+i=5: & j = (5+4+2) \bmod 8 = 3 & \text{swap } S_5 \leftrightarrow S_3
+      \rightarrow [\,0,3,6,4,5,1,2,7\,]\\
+i=6: & j = (3+2+1) \bmod 8 = 6 & \text{swap } S_6 \leftrightarrow S_6
+      \rightarrow [\,0,3,6,4,5,1,2,7\,]\\
+i=7: & j = (6+7+2) \bmod 8 = 7 & \text{swap } S_7 \leftrightarrow S_7
+      \rightarrow [\,0,3,6,4,5,1,2,7\,]
+\end{array}
+\]
+Dua langkah terakhir tidak mengubah apa pun karena indeks yang dipertukarkan
+sama. Setelah KSA, larik $S$ menjadi $[\,0,3,6,4,5,1,2,7\,]$ --- inilah
+permutasi yang dipakai PRGA.
+
+\textbf{PRGA.} Penunjuk $i$ dan $j$ direset ke nol, lalu untuk setiap byte
+keystream dihitung $i \leftarrow (i+1) \bmod 8$, $j \leftarrow (j+S_i) \bmod 8$,
+pertukaran $S_i \leftrightarrow S_j$, dan $t \leftarrow (S_i+S_j) \bmod 8$.
+Byte keystream adalah $S_t$. Untuk larik $S$ di atas hasilnya adalah
+\[
+\begin{array}{c|c|c|c|c}
+\text{langkah} & i & j & \text{swap} & t \ \rightarrow\ u\\
+\hline
+1 & 1 & 3 & S_1 \leftrightarrow S_3 & (4+3) \bmod 8 = 7 \rightarrow S_7 = 7\\
+2 & 2 & 1 & S_2 \leftrightarrow S_1 & (4+6) \bmod 8 = 2 \rightarrow S_2 = 4\\
+3 & 3 & 5 & S_3 \leftrightarrow S_5 & (5+3) \bmod 8 = 0 \rightarrow S_0 = 0\\
+4 & 4 & 7 & S_4 \leftrightarrow S_7 & (7+3) \bmod 8 = 2 \rightarrow S_2 = 4\\
+5 & 5 & 0 & S_5 \leftrightarrow S_0 & (0+1) \bmod 8 = 1 \rightarrow S_1 = 6
+\end{array}
+\]
+Jadi tiga byte keystream pertama adalah $7$, $4$, dan $0$. Bila plainteksnya
+\code{Halo}, yaitu byte $\code{48}$, $\code{61}$, dan $\code{6C}$, maka
+\[
+\begin{array}{c|ccc}
+\text{plainteks} & \code{48} & \code{61} & \code{6C} \quad(\text{\code{Halo}})\\
+\text{keystream} & \code{07} & \code{04} & \code{00}\\
+\hline
+\text{cipherteks} & \code{4F} & \code{65} & \code{6C}
+\end{array}
+\]
+Cipherteks \code{4F656C} tampak seperti data acak, dan dekripsi mengulang
+prosedur PRGA yang sama persis untuk mengembalikan \code{Halo}.
+
+Contoh ini sekaligus memperlihatkan mengapa ukuran larik $S$ yang sebenarnya
+dipilih 256 dan bukan 8. Dengan $N=8$ hanya ada $8! = 40.320$ permutasi larik
+yang mungkin, dan setelah KSA larik $S$ hasilnya dapat dicari dengan menelusuri
+seluruh kemungkinan itu. Pada RC4 yang sesungguhnya, $N = 256$ sehingga jumlah
+permutasi mencapai $256!$ --- bilangan dengan lebih dari 500 digit --- dan
+penelusuran menyeluruh menjadi mustahil. Yang menjatuhkan RC4 bukanlah
+kekurangan ukuran lariknya, melainkan korelasi antara byte awal keystream dan
+kunci.
+\end{example}
+
+\begin{example}
+\textbf{Satu \textit{quarter round} ChaCha20.} Kerjakan QR ChaCha20 atas
+empat kata $a=1$, $b=2$, $c=3$, dan $d=4$ (semuanya dalam heksadesimal; tiap
+kata adalah bilangan 32 bit, sehingga batas penjumlahannya adalah
+$2^{32}=\code{FFFFFFFF}$). Urutan operasinya adalah penjumlahan, XOR, dan
+rotasi seperti yang tertulis pada Bagian~\ref{sec:algoritma-stream-cipher}.
+Delapan langkah yang harus dikerjakan adalah sebagai berikut:
+\[
+\begin{array}{lr}
+a \leftarrow a+b                          & \code{00000003}\\
+d \leftarrow \mathrm{rotl}(d \oplus a,16) & \code{00070000}\\
+c \leftarrow c+d                          & \code{00070003}\\
+b \leftarrow \mathrm{rotl}(b \oplus c,12) & \code{70001000}\\
+a \leftarrow a+b                          & \code{70001003}\\
+d \leftarrow \mathrm{rotl}(d \oplus a,8)  & \code{07100370}\\
+c \leftarrow c+d                          & \code{07170373}\\
+b \leftarrow \mathrm{rotl}(b \oplus c,7)  & \code{8B89B9BB}
+\end{array}
+\]
+Sebagai pemeriksaan, kerjakan langkah ketiga dan keempat secara rinci. Pada
+saat itu $a=\code{00000003}$ dan $d=\code{00070000}$, sehingga
+\[
+c = \code{00000003} + \code{00070000} = \code{00070003},
+\]
+lalu
+\[
+b = \mathrm{rotl}(\code{00000002} \oplus \code{00070003},\ 12)
+  = \mathrm{rotl}(\code{00070001},\ 12)
+  = \code{70001000}.
+\]
+Hasil akhir seluruh QR adalah $a=\code{70001003}$, $b=\code{8B89B9BB}$,
+$c=\code{07170373}$, dan $d=\code{07100370}$.
+
+Perhatikan dua hal. Pertama, masukan yang sangat sederhana ($1, 2, 3, 4$)
+berubah menjadi empat kata yang tampak acak hanya dalam satu QR. Kedua,
+$\mathrm{rotl}(x,n)$ berarti memutar bit $x$ ke kiri sejauh $n$ posisi: bit yang
+keluar dari ujung kiri masuk kembali dari ujung kanan, berbeda dari pergeseran
+biasa yang membuang bit tersebut. Pada rotasi 16 bit misalnya,
+$\code{00000007}$ menjadi $\code{00070000}$ karena tiga bit terendah yang
+bernilai $1$ berpindah tempat, bukan hilang.
+
+Contoh ini menunjukkan mengapa ChaCha20 disebut memakai operasi AXR: seluruh
+langkah di atas hanya memakai penjumlahan modulo $2^{32}$, XOR, dan rotasi ---
+tidak ada perkalian, tidak ada tabel substitusi, dan tidak ada pembagian.
+Konsekuensinya, satu QR dapat dikerjakan prosesor dengan beberapa instruksi
+saja, dan itulah sumber kecepatan ChaCha20 pada perangkat lunak.
 \end{example}

@@ -6,8 +6,8 @@ Sasaran: ±4.000–6.000 kata/bab (prosa naratif), tabel, contoh terhitung, gamb
 
 Legenda status: `[ ]` belum · `[~]` sedang dikerjakan · `[x]` selesai.
 
-**Kemajuan:** Tahap 1–4 (Bab 01–04) selesai. Buku 220 halaman, gerbang kebersihan
-`output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 5 (Bab 05).
+**Kemajuan:** Tahap 1–5 (Bab 01–05) selesai. Buku 220 halaman, gerbang kebersihan
+`output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 6 (Bab 06).
 
 ---
 
@@ -121,16 +121,73 @@ buku penuh 178 → 220 hlm.**
 - **Ruang kunci Affine**: kepala tulisan memakai **300** ($12 \times 25$) mengikuti dek dan
   rencana; secara ketat $b \in 0..25$ memberi 312, dan hal itu dijelaskan dalam teks.
 
-## Bab 05 — Stream Cipher
-Sumber: `referensi/07-*` (9.039 kata, 35 topik, 94 gambar). Target: ±4.500 kata.
-**Belum punya sitasi.**
+## Bab 05 — Stream Cipher  `[x]` SELESAI
+Sumber: `referensi/07-Kripto-modern-dan-stream-cipher-2026` (9.039 kata, 35 topik, 94 gambar).
+Target: ±4.500 kata. **Hasil: 9.625 kata berkas (dari 1.628), 29 hlm jadi bab mandiri,
+12 gambar (9 baru), 7 tabel baru (total 12), 4 contoh (3 baru), 10 sitasi baru
+(sebelumnya 0).**
 
-- [ ] Tabel konversi bit/byte/heksadesimal + tabel kebenaran XOR
-- [ ] Tabel daftar cipher alir beserta tahun + tabel perbandingan
-- [ ] A5/1: frame 228 bit/4,6 ms, tiga LFSR, clocking mayoritas, kriptanalisis Anderson
-- [ ] Trivium: NLFSR 93/84/111, tabel tap, inisialisasi, 1152 warm-up
-- [ ] Salsa20/ChaCha20: blok 512 bit, AXR, quarter-round, TLS 1.3
-- [ ] RC4: RFC 7465, buang byte awal, varian RC4A/VMPC
+- [x] Tabel konversi bit/byte/heksadesimal (`tab:konversi-biner-hex`) + tabel kebenaran XOR (`tab:kebenaran-xor`)
+- [x] Subbagian baru *Bit, Byte, dan Kode Heksadesimal* (1 byte = 8 bit, 1 digit hex = 4 bit,
+      `9D6A`, `Halo`, `Indonesia emas 2045`) + `fig:kriptografi-modern-blok`
+- [x] Subbagian baru *Operasi XOR dan Bitwise* (4 sifat, `eq:xor-enkripsi`, `eq:xor-dekripsi`,
+      `10011⊕11001=01010`, `fig:xor-bitwise`, `65₁₆⊕35₁₆=50₁₆='P'`)
+- [x] Subbagian baru *Cipher XOR Sederhana dan Kelemahannya* (contoh 29 bit, pelacakan periode
+      ala Kasiski, `c₁⊕c₂ = p₁⊕p₂`)
+- [x] `tab:klasik-vs-modern` diperluas (2 baris baru) + `tab:stream-vs-block`
+- [x] Subbagian baru *Keystream Generator dan Umpan* (acak semu vs acak sejati, periode,
+      ketidakterulangan umpan, nonce) + `eq:stream-enkripsi`/`eq:stream-dekripsi`
+- [x] Subbagian baru *Umpan Balik dan LFSR* (`fig:fsr-blok`, `fig:lfsr` dipindah dari
+      section-03, `tab:lfsr-4bit` 15 baris terverifikasi, periode $2^n-1$, kelemahan linier
+      + Berlekamp--Massey)
+- [x] Subbagian baru *Penyebaran Galat dan Aplikasi Cipher Alir* (`tab:galat-cipher-alir`,
+      serangan *flip-bit*, akses acak berbasis pencacah)
+- [x] Subbagian baru *Peta Cipher Alir* (`tab:daftar-cipher-alir` 17 cipher + tahun,
+      `tab:estream` portofolio 2008)
+- [x] **RC4**: pseudokode KSA + PRGA (`lst:rc4-pseudocode`), `fig:ron-rivest`, `fig:alur-rc4`,
+      `fig:rc4-prga`, keamanan (korelasi byte awal, buang 256--512 byte, FMS/WEP, *flip-bit*,
+      RFC 7465, varian Spritz/RC4A/VMPC/RC4+)
+- [x] **A5/1**: frame 228 bit/4,6 ms, kunci sesi 64 bit, tiga LFSR 19/22/23,
+      `tab:a51-register` (memisahkan bit kendali dan titik sadap umpan balik),
+      `fig:a51-lfsr`, `eq:a51-luaran`, kaidah mayoritas (peluang 3/4), pola inisialisasi
+      64 + 22 + 100 + 228, A5/2, A5 di Indonesia *disabled*, serangan Anderson 1994
+- [x] **Trivium**: De Cannière--Preneel, eSTREAM, NLFSR 93/84/111, `tab:trivium-tap`,
+      `fig:trivium-sirkuit`, `eq:trivium-luaran`, inisialisasi 80-bit IV + 80-bit kunci +
+      $4\times288=1152$ detak pemanasan, keunggulan *lightweight* (288 sel, 3 AND, 7 XOR)
+- [x] **Salsa20/ChaCha20**: `fig:daniel-bernstein`, blok 512 bit, `fig:salsa20-state`,
+      konstanta `expand 32-byte k`, AXR, QR Salsa20 (rotasi 7/9/13/18), `eq:salsa-final`,
+      ChaCha20 (rotasi 16/12/8/7), `tab:chacha-round` (indeks kolom/diagonal), nonce 96 bit
+      versi IETF, TLS 1.3/RFC 8439, keunggulan ARX + keystream paralel
+- [x] Subbagian *Perbandingan Cipher Alir* (`tab:perbandingan-cipher-alir`) + penutup
+      analitis: panjang kunci bukan penentu utama keamanan cipher alir
+- [x] Contoh baru: keystream LFSR 4 bit untuk pesan `Aku` (periode terlihat), RC4 mainan
+      $N=8$ kunci `AB` (jejak KSA lengkap + byte keystream 7,4,0 + `Halo`→`4F656C`),
+      satu QR ChaCha20 atas $(1,2,3,4)$
+- [x] Aktivitas baru: 5.2 (membangkitkan keystream LFSR & mengukur periode) dan
+      5.3 (demonstrasi bahaya pemakaian ulang keystream)
+- [x] Latihan 5.1 diperluas 3 → 8 butir + Latihan 5.2 baru (7 butir hitungan/analisis);
+      rangkuman 7 → 12 butir; kuis 3 → 7 butir; checklist 5 → 14 baris
+- [x] Sitasi: `estream2008`, `canniere2006trivium`, `bernstein2005salsa20`,
+      `bernstein2008chacha`, `anderson1994`, `briceno1999`, `fluhrer2001`, `rfc7465`,
+      `rfc8439`, `massey1969` (10 entri baru di `references.bib`, 13 → 23)
+
+### Koreksi terhadap sumber (wajib dicatat)
+- **Keystream pada contoh P/K/C**: dek menulis keystream `111101011001001000111101011`
+  yang panjangnya **27 bit**, bukan 24 bit, dan hasil XOR-nya tidak konsisten dengan
+  $C$ yang dicetak dek sendiri. Keystream 24 bit yang benar adalah `111101011001000111101011`
+  $=\code{F591EB}$, yaitu 15 bit keluaran LFSR diulang 9 bit awalnya; dengan itu
+  $P=\code{571964}$ menghasilkan $C=\code{A2888F}$, persis seperti yang ditulis dek.
+- **LFSR 4 bit**: tabel pada `contoh.tex` lama salah pada baris ke-7 (mencetak `1 0 1 1`;
+  keadaan yang benar adalah `0011`). Seluruh 15 baris dihitung ulang dengan Python dan
+  sekarang disajikan di `tab:lfsr-4bit`.
+- **Titik sadap A5/1**: dek mencampur istilah *bit kendali* (*clocking*) dengan *titik sadap
+  umpan balik* ("Bit ke-8 pada register 1. Bit-bit detak pada bit 13, 16, 17, dan 18").
+  Buku memisahkan keduanya ke dalam dua kolom `tab:a51-register` agar dapat diikuti.
+- **Aplikasi cipher alir**: dek menampilkan aplikasi sebelum daftar cipher; bab ini
+  memindahkan urutannya (daftar cipher lebih dulu) dan menambahkan portofolio eSTREAM yang
+  tidak ada di dek.
+- **Bahan di luar lingkup**: dek 07 memuat makalah *BPCS-Steganography* (halaman 18--20)
+  yang tidak berhubungan dengan stream cipher dan **tidak dipakai**, sesuai batas silabus.
 
 ## Bab 06 — Block Cipher: Konsep dan Mode Operasi
 Sumber: `referensi/08-*` (6.812 kata, 21 topik, 92 gambar). Target: ±4.000 kata.
@@ -260,13 +317,16 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   `eq:entropi`); Bab 04 menambah 8 persamaan bernomor (`eq:caesar`,
   `eq:indeks-kebetulan`, `eq:hill`, `eq:affine-enkripsi`, `eq:affine-dekripsi`,
   `eq:affine-simultan-1/2`, `eq:otp-enkripsi`, `eq:otp-dekripsi`, `eq:two-time-pad`,
-  `eq:perfect-secrecy`). Lanjutkan untuk penurunan RSA, ElGamal, ECDLP, hash.
+  `eq:perfect-secrecy`); Bab 05 menambah 7 (`eq:xor-enkripsi`, `eq:xor-dekripsi`,
+  `eq:stream-enkripsi`, `eq:stream-dekripsi`, `eq:a51-luaran`, `eq:trivium-luaran`,
+  `eq:salsa-final`). Lanjutkan untuk penurunan RSA, ElGamal, ECDLP, hash.
 - [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
 - [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 dan 04 sudah punya.)
   Skrip pembuat gambar raster: `scripts/refactor/figures/entropi_ternate.py`.
-- [ ] **Bab tanpa sitasi: 05, 06, 07, 14.** (02, 03, dan 04 sudah selesai; Bab 04 kini
-  menyitasi `stinson2018`, `menezes1996`, `stallings2017`, `katz2020`, `shannon1949`,
-  `vernam1919`, `kasiski1863`.)
+- [ ] **Bab tanpa sitasi: 06, 07, 14.** (02, 03, 04, dan 05 sudah selesai; Bab 05 kini
+  menyitasi `estream2008`, `canniere2006trivium`, `bernstein2005salsa20`,
+  `bernstein2008chacha`, `anderson1994`, `briceno1999`, `fluhrer2001`, `rfc7465`,
+  `rfc8439`, `massey1969`.)
 
 ## Catatan lintas bab: tabel lebar & panjang baris
 
@@ -285,3 +345,14 @@ diperbaiki; polanya akan terulang di bab-bab berikut, jadi perhatikan sejak awal
   jarak antar kelompok kolom.
 - **Blok `quote` berisi satu string `\texttt` panjang** → tambahkan `\raggedright`
   agar baris terakhir tidak dipaksa rata kanan.
+- **Baris kepala tabel sempit** (`tabular` dengan kolom `l`/`c` saja) dapat melebihi
+  `\linewidth` walau isinya pendek, karena TeX tidak bisa memenggal sel. Bab 05 sempat
+  `Overfull 4,75pt` pada `tab:trivium-tap` → perpendek judul kolomnya ("Masukan gerbang
+  AND" → "Masukan AND").
+- **Tanda pisah `---` diikuti kata panjang pada akhir baris** memindahkan titik potong ke
+  tempat yang salah dan menghasilkan `Overfull` beberapa pt (Bab 05, paragraf penutup
+  section-03) → ganti dengan titik dua atau ubah susunan kalimatnya.
+- **Rangkaian `\texttt` berisi biner/heksadesimal di dalam `array`** aman selama tiap baris
+  di bawah ~68 karakter; bila lebih, pecah menjadi dua tampilan atau pindahkan ke `tabular`.
+- **Label persamaan bersifat global** — sebelum menambah `eq:...` baru, periksa dulu
+  dengan `grep -rho "label{eq:nama}" chapters/ | wc -l` agar tidak menimpa label bab lain.

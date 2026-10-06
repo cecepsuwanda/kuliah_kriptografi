@@ -4,6 +4,10 @@
 1. Apa perbedaan utama antara \textit{true random} dan \textit{pseudo-random} dalam konteks \textit{keystream generator}?
 2. Mengapa operasi XOR dipilih sebagai operasi utama dalam \textit{stream cipher}?
 3. Jelaskan prinsip kerja \textit{majority clocking} pada algoritma A5/1.
+4. Hitunglah cipherteks dari plainteks \texttt{11010110} yang di-XOR dengan kunci \texttt{01101100}.
+5. Sebutkan tiga syarat yang harus dipenuhi agar keystream generator dapat dipakai berulang kali dengan kunci yang sama untuk pesan berbeda.
+6. Jelaskan mengapa RC4 yang menerima kunci sampai 2048 bit tetap dapat dipecahkan, sedangkan panjang kunci justru dianggap sebagai ukuran keamanan pada cipher lain.
+7. Apa fungsi pemanasan 1152 detak pada Trivium, dan apa yang terjadi bila tahap itu dihilangkan?
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -12,13 +16,31 @@ Indikator Kompetensi & Tercapai \\
 \hline
 Saya dapat menjelaskan perbedaan kriptografi klasik dan modern & [ ] \\
 \hline
+Saya dapat mengonversi data antara biner, byte, dan heksadesimal & [ ] \\
+\hline
 Saya dapat melakukan operasi bitwise XOR & [ ] \\
 \hline
 Saya dapat menjelaskan mekanisme kerja \textit{stream cipher} & [ ] \\
 \hline
+Saya dapat menjelaskan peran \textit{key}, \textit{nonce}, dan \textit{counter} pada keystream generator & [ ] \\
+\hline
+Saya dapat menghitung keystream LFSR beserta periodenya & [ ] \\
+\hline
+Saya dapat menjelaskan mengapa LFSR tunggal tidak aman & [ ] \\
+\hline
+Saya dapat menjelaskan tahap KSA dan PRGA pada RC4 serta kelemahannya & [ ] \\
+\hline
+Saya dapat menjelaskan kaidah mayoritas dan pola inisialisasi A5/1 & [ ] \\
+\hline
+Saya dapat menjelaskan struktur NLFSR dan pemanasan pada Trivium & [ ] \\
+\hline
+Saya dapat menjelaskan operasi AXR dan \textit{quarter round} ChaCha20 & [ ] \\
+\hline
 Saya dapat membedakan karakteristik RC4, A5/1, dan ChaCha20 & [ ] \\
 \hline
 Saya dapat menganalisis keuntungan \textit{stream cipher} untuk data \textit{real-time} & [ ] \\
+\hline
+Saya dapat menunjukkan bahaya pemakaian ulang keystream melalui perhitungan XOR & [ ] \\
 \hline
 \end{tabularx}
 \end{competencychecklist}

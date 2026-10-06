@@ -21,3 +21,22 @@ menunjukkan akibatnya pada hasil dekripsi.
 
 Program yang sama tersedia dalam C++ (\texttt{code/cpp/stream\_cipher.cpp}) dan
 MATLAB (\texttt{code/matlab/stream\_cipher.m}).
+
+\begin{obeactivity}
+\textbf{Aktivitas 5.2: Membangkitkan Keystream LFSR dan Mengukur Periodenya}
+1. Pilih panjang register $n$ antara 4 dan 8 dan tentukan muatan awal yang tidak seluruhnya nol.
+2. Tetapkan dua posisi \textit{tap} dan susun fungsi umpan balik $f$ sebagai XOR bit-bit pada posisi itu.
+3. Bangkitkan bit keluaran satu per satu sampai register kembali ke muatan awal.
+4. Catat banyak detak yang dibutuhkan; bandingkan dengan $2^n-1$.
+5. Ulangi percobaan dengan pasangan \textit{tap} yang berbeda, lalu simpulkan posisi \textit{tap} mana yang memberi periode maksimum.
+6. Diskusikan mengapa muatan awal \texttt{0000} selalu menjadi pengecualian.
+\end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 5.3: Demonstrasi Bahaya Pemakaian Ulang Keystream}
+1. Ambil dua pesan berbeda $P_1$ dan $P_2$ yang panjangnya sama, lalu enkripsi keduanya dengan keystream $K$ yang sama sehingga diperoleh $C_1$ dan $C_2$.
+2. Hitung $C_1 \oplus C_2$ dan perlihatkan bahwa hasilnya sama dengan $P_1 \oplus P_2$, tanpa perlu mengetahui $K$.
+3. Tebak satu kata yang Anda yakini ada pada posisi tertentu di $P_1$ (misalnya \texttt{LAPORAN}), lalu XOR-kan tebakan itu pada $C_1 \oplus C_2$ di posisi yang bersesuaian.
+4. Periksa apakah potongan yang muncul pada $P_2$ masuk akal; bila tidak, ulangi langkah 3 dengan tebakan lain.
+5. Setelah beberapa potongan berhasil dipulihkan, diskusikan berapa lama waktu yang dibutuhkan untuk memulihkan seluruh pesan dan apa yang membuat serangan itu berhasil.
+\end{obeactivity}

@@ -4,4 +4,20 @@
 1. Jika plainteks adalah \texttt{10110010} dan kunci adalah \texttt{11001010}, hitunglah cipherteksnya.
 2. Mengapa \textit{stream cipher} lebih cocok digunakan untuk komunikasi suara (VoIP) dibandingkan \textit{block cipher}?
 3. Jelaskan mengapa penggunaan kunci yang sama untuk dua pesan berbeda dalam \textit{stream cipher} (disebut \textit{key reuse}) sangat berbahaya.
+4. Nyatakan kalimat \texttt{Kripto} dalam bentuk biner ASCII, lalu tuliskan pula bentuk heksadesimalnya.
+5. Sebuah LFSR 4 bit bermuatan awal \texttt{1010} memakai umpan balik $f=b_3\oplus b_0$. Tentukan isi register pada empat detak pertama beserta bit keluarannya.
+6. Mengapa LFSR tunggal tidak aman dipakai sebagai \textit{keystream generator}, padahal periode keluarannya dapat mencapai $2^n-1$ bit?
+7. Jelaskan perbedaan peran \textit{key}, \textit{nonce}, dan \textit{counter} pada Salsa20. Manakah yang harus dirahasiakan, dan mengapa?
+8. Bandingkan Salsa20 dan ChaCha20 dari segi bentuk \textit{quarter round} serta akibatnya pada penyebaran bit.
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 5.2: Hitungan dan Analisis}
+1. Sebuah pesan 12 bit \texttt{011011010110} dienkripsi dengan LFSR 4 bit bermuatan awal \texttt{1111} dan umpan balik $f=b_3\oplus b_0$. Tuliskan keystream 12 bit yang dipakai, lalu tentukan cipherteksnya.
+2. Pada RC4 versi mainan dengan $N=8$ dan kunci \texttt{B}, tentukan larik $S$ setelah KSA, lalu hitung byte keystream pertama.
+3. Frame GSM berukuran 228 bit dikirim setiap 4,6 milidetik. Hitunglah laju bit yang harus dihasilkan A5/1 untuk mengikuti aliran itu. Mengapa \textit{warm-up} 100 putaran tidak mengganggu laju tersebut?
+4. Trivium memakai tiga NLFSR berukuran 93, 84, dan 111 bit dengan total keadaan 288 bit. Jelaskan mengapa penambahan gerbang AND membuat serangan berbasis persamaan linier tidak lagi bekerja.
+5. Bandingkan jumlah \textit{warm-up clock} A5/1 dan Trivium relatif terhadap jumlah bit yang dihasilkan per siklus. Apa alasan perbedaan itu?
+6. Seorang penyerang menangkap tiga cipherteks TLS yang seluruhnya memakai \textit{nonce} ChaCha20 yang sama tetapi kunci berbeda. Apakah penyerang memperoleh keuntungan? Jelaskan.
+7. Seorang penyerang menangkap dua cipherteks $c_1$ dan $c_2$ yang dibangkitkan dengan keystream yang sama, serta berhasil menebak bahwa plainteks pertama $p_1$ dimulai dengan kata \texttt{LAPORAN}. Tunjukkan bagaimana $p_2$ dapat dipulihkan tanpa mengetahui kuncinya.
 \end{obereflection}
