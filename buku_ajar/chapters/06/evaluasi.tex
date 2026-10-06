@@ -4,6 +4,11 @@
 1. Berikan contoh skenario di mana mode CTR lebih menguntungkan dibandingkan mode CBC.
 2. Apa yang dimaksud dengan \textit{error propagation} pada mode CBC dan bagaimana mode OFB mengatasinya?
 3. Mengapa penggunaan IV (\textit{Initialization Vector}) sangat penting pada mode CBC?
+4. Jelaskan mengapa mode ECB dapat dimanipulasi oleh pihak lawan untuk mengubah makna pesan meskipun kuncinya tidak diketahui.
+5. Sebuah cipher blok berukuran 4 bit memakai $E_K(P)=(P\oplus K)\ll 1$ dengan $K=\code{1011}$. Hitung cipherteks dari plainteks $\code{0110}$ pada mode ECB.
+6. Pada mode OFB, mengapa aliran kunci dapat dihitung lebih dahulu sebelum plainteks diketahui? Sebutkan satu keuntungan praktis dari sifat itu.
+7. Jelaskan hubungan antara jumlah putaran sebuah \textit{iterated cipher} dengan tingkat keamanan dan dengan biaya komputasi. Mengapa jumlah putaran tidak dibuat sebesar mungkin?
+8. Apa perbedaan utama antara jaringan Feistel dan jaringan SPN dari sudut pandang perancang algoritma?
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -12,11 +17,29 @@ Indikator Kompetensi & Tercapai \\
 \hline
 Saya dapat menjelaskan perbedaan \textit{block cipher} dan \textit{stream cipher} & [ ] \\
 \hline
+Saya dapat menjelaskan mengapa $E_K$ harus merupakan permutasi bijektif & [ ] \\
+\hline
+Saya dapat menangani blok terakhir yang tidak lengkap dengan \textit{padding} & [ ] \\
+\hline
 Saya dapat membedakan mode operasi ECB, CBC, CFB, OFB, dan CTR & [ ] \\
+\hline
+Saya dapat menuliskan persamaan enkripsi dan dekripsi tiap mode operasi & [ ] \\
+\hline
+Saya dapat menganalisis penjalaran galat pada mode CBC, CFB, dan OFB & [ ] \\
+\hline
+Saya dapat menjelaskan peran IV pada CBC dan peran counter pada CTR & [ ] \\
 \hline
 Saya dapat menjelaskan prinsip \textit{confusion} dan \textit{diffusion} & [ ] \\
 \hline
+Saya dapat menghitung substitusi satu masukan pada S-box DES & [ ] \\
+\hline
+Saya dapat menjelaskan efek \textit{avalanche} pada cipher blok & [ ] \\
+\hline
 Saya dapat menguraikan mekanisme kerja Jaringan Feistel & [ ] \\
+\hline
+Saya dapat membuktikan sifat reversibel Jaringan Feistel & [ ] \\
+\hline
+Saya dapat menjelaskan tujuan \textit{key scheduling} & [ ] \\
 \hline
 Saya dapat menganalisis pengaruh panjang kunci terhadap keamanan sistem & [ ] \\
 \hline

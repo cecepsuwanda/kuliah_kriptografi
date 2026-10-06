@@ -1,31 +1,247 @@
 \section{Mode Operasi Block Cipher}
-Karena \textit{block cipher} hanya dapat mengenkripsi satu blok data, diperlukan \textbf{mode operasi} untuk mengenkripsi pesan yang panjangnya lebih dari satu blok.
+\label{sec:mode-operasi}
+
+Cipher blok hanya mampu mengenkripsi satu blok data pada satu waktu, sedangkan
+pesan yang hendak dikirim hampir selalu lebih panjang daripada satu blok.
+Bagaimana blok-blok itu dirangkai, apakah setiap blok berdiri sendiri atau
+bergantung pada blok sebelumnya, dan bagaimana blok terakhir yang tidak lengkap
+ditangani --- semuanya diatur oleh \textbf{mode operasi}. Mode operasi bukan
+bagian dari algoritma cipher blok itu sendiri; AES tetap AES, tetapi AES-ECB
+dan AES-CBC berperilaku sangat berbeda terhadap keamanan dan terhadap pola data.
+
+Ada lima mode operasi klasik yang dibakukan dan dibahas di sini: \textit{Electronic
+Code Book} (ECB), \textit{Cipher Block Chaining} (CBC), \textit{Cipher Feedback}
+(CFB), \textit{Output Feedback} (OFB), dan \textit{Counter Mode} (CTR). Kelimanya
+memakai fungsi enkripsi $E_K$ yang sama; yang berbeda adalah cara masukan bagi
+$E_K$ dibentuk dan cara keluarannya dipakai.
 
 \subsection{Electronic Code Book (ECB)}
-Mode paling sederhana di mana setiap blok plainteks $P_i$ dienkripsi secara independen:
-\[ C_i = E_K(P_i) \]
-\textbf{Kelemahan}: Blok plainteks yang sama akan selalu menghasilkan blok cipherteks yang sama. Hal ini menyebabkan pola data asli tetap terlihat pada cipherteks, sehingga rentan terhadap analisis statistik.
 
-\subsection{Cipher Block Chaining (CBC)}
-Untuk mengatasi kelemahan ECB, CBC memperkenalkan ketergantungan antar blok. Setiap blok plainteks di-XOR dengan blok cipherteks sebelumnya sebelum dienkripsi:
-\[ C_0 = IV \quad (\text{Initialization Vector}) \]
-\[ C_i = E_K(P_i \oplus C_{i-1}) \]
-Dekripsinya adalah:
-\[ P_i = D_K(C_i) \oplus C_{i-1} \]
-CBC memastikan bahwa blok plainteks yang sama menghasilkan cipherteks yang berbeda tergantung posisinya.
-
-\subsection{Cipher Feedback (CFB) dan Output Feedback (OFB)}
-Kedua mode ini mengubah \textit{block cipher} agar bekerja menyerupai \textit{stream cipher}:
-\begin{itemize}
-    \item \textbf{CFB}: Hasil enkripsi dari blok sebelumnya di-XOR dengan plainteks saat ini. Cocok untuk data yang belum mencapai ukuran satu blok penuh.
-    \item \textbf{OFB}: Mirip dengan CFB, tetapi yang di-XOR dengan plainteks adalah keluaran dari generator kunci internal (tidak bergantung pada cipherteks). Ini mencegah penjalaran kesalahan (\textit{error propagation}).
-\end{itemize}
-
-\subsection{Counter Mode (CTR)}
-Mode CTR mengenkripsi sebuah nilai \textit{counter} yang terus bertambah, kemudian hasil enkripsinya di-XOR dengan plainteks:
-\[ C_i = P_i \oplus E_K(\text{counter}_i) \]
-\textbf{Kelebihan}: Mendukung pemrosesan paralel karena setiap blok tidak bergantung pada blok sebelumnya.
+Mode ECB adalah mode yang paling langsung. Setiap blok plainteks $P_i$
+dienkripsi secara individual dan independen dari blok lainnya:
+\begin{equation}
+C_i = E_K(P_i) \qquad \text{dan} \qquad P_i = D_K(C_i).
+\label{eq:ecb}
+\end{equation}
+Tidak ada keadaan yang dibawa dari satu blok ke blok berikutnya. Gambar~\ref{fig:mode-ecb-cbc}
+membandingkan susunan ECB dengan CBC yang dibahas setelah ini.
 
 \input{figures/mode-ecb-cbc}
+
+Nama \textit{code book} berasal dari sifatnya yang menyerupai buku kode:
+untuk setiap kunci $K$ yang tetap, pemetaan $P \mapsto E_K(P)$ adalah tabel
+yang pasti. Bila ukuran blok $n$ bit, maka tabel itu berisi $2^n$ entri, dan
+untuk setiap kunci yang berbeda terdapat tabel yang berbeda pula, sehingga
+seluruhnya ada $2^m$ tabel untuk kunci $m$ bit. Menyimpan tabel semacam itu
+jelas tidak mungkin: untuk blok 64 bit saja, satu tabel berisi $2^{64}$ entri.
+Karena itu ECB tidak pernah diimplementasikan sebagai tabel, melainkan sebagai
+pemanggilan fungsi $E_K$ --- tetapi sifat matematisnya tetap sama.
+
+Kelebihan ECB bersumber dari sifat independennya. Karena setiap blok berdiri
+sendiri, blok-blok tidak perlu diproses berurutan: blok pertama, blok terakhir,
+lalu blok di tengah dapat dienkripsi dalam urutan apa pun, dan setiap blok dapat
+diakses secara acak tanpa harus mendekripsi blok-blok sebelumnya. Sifat ini
+berguna untuk mengenkripsi arsip atau rekaman basis data yang dibaca secara
+acak. Kelebihan kedua adalah pelokalan galat: kesalahan satu bit atau lebih pada
+sebuah blok cipherteks hanya merusak blok plainteks yang bersangkutan, dan
+blok-blok lain tidak terpengaruh.
+
+Kelemahan ECB justru merupakan cerminan dari kelebihannya, dan kelemahan itu
+serius. Karena blok plainteks yang sama selalu menghasilkan blok cipherteks yang
+sama, pola yang berulang pada plainteks tetap tampak pada cipherteks. Pada teks,
+bagian yang berulang --- misalnya deretan spasi yang panjang --- akan muncul
+sebagai deretan blok cipherteks yang identik pula, sehingga cipherteks dapat
+diserang dengan analisis frekuensi tanpa perlu mengetahui kuncinya.
+
+Kelemahan kedua lebih halus tetapi sama berbahayanya: pihak lawan dapat
+memanipulasi cipherteks untuk menipu penerima. Andaikan seseorang mengirim pesan
+\begin{center}
+``Uang ditransfer \textbf{lima} satu juta rupiah''
+\end{center}
+dan kriptanalis mengetahui bahwa ukuran blok adalah 2 karakter serta mengetahui
+posisi blok yang memuat kata ``lima''. Tanpa mengetahui kuncinya sama sekali,
+kriptanalis dapat membuang kedua blok cipherteks yang bersesuaian dengan kata itu,
+sehingga cipherteks yang diterima penerima tinggal berbunyi
+``Uang ditransfer satu juta rupiah''. Penerima mendekripsinya dengan kunci yang
+benar dan memperoleh pesan yang bermakna, lalu menyimpulkan bahwa uang yang
+dikirim kepadanya hanya satu juta rupiah. Perhatikan bahwa tidak ada kunci yang
+dipecahkan di sini: yang dieksploitasi adalah sifat ECB bahwa tiap blok dapat
+dibuang atau disusun ulang tanpa merusak blok lainnya.
+
+Jalan keluar dari kelemahan itu adalah membuat enkripsi setiap blok bergantung
+pada seluruh blok sebelumnya, sehingga memindahkan atau membuang satu blok
+merusak keseluruhan pesan. Prinsip itulah yang mendasari mode CBC.
+
+\subsection{Cipher Block Chaining (CBC)}
+
+Mode CBC mengikat blok-blok plainteks menjadi satu rantai. Sebelum dienkripsi,
+setiap blok plainteks di-XOR terlebih dahulu dengan blok cipherteks sebelumnya:
+\begin{equation}
+C_0 = IV, \qquad C_i = E_K(P_i \oplus C_{i-1}),
+\label{eq:cbc-enkripsi}
+\end{equation}
+dan dekripsinya membalik urutan itu,
+\begin{equation}
+P_i = D_K(C_i) \oplus C_{i-1}.
+\label{eq:cbc-dekripsi}
+\end{equation}
+Blok pertama tidak punya cipherteks sebelumnya, sehingga diperlukan sebuah blok
+semu $C_0$ yang disebut \textbf{\textit{Initialization Vector}} (IV). IV dapat
+diberikan pengguna atau dibangkitkan secara acak oleh program, dan tidak perlu
+dirahasiakan, tetapi tidak boleh dipakai ulang dengan kunci yang sama.
+
+Sifat rantai inilah yang menghapus kelemahan ECB. Dua blok plainteks yang
+identik akan di-XOR dengan blok cipherteks pendahulu yang berbeda, sehingga
+masukannya bagi $E_K$ berbeda dan hasilnya pun berbeda. Blok $A$ yang muncul di
+posisi ke-1 dan ke-4 pada contoh ECB menghasilkan dua blok cipherteks yang
+berlainan pada CBC, sehingga pola tetap tersembunyi. Kelemahan manipulasi pun
+tertutup: membuang satu blok cipherteks membuat blok berikutnya di-XOR dengan
+blok yang salah, sehingga plainteks hasil dekripsi menjadi kacau dan penerima
+mengetahui ada yang tidak beres.
+
+Harganya adalah penjalaran galat dan hilangnya sebagian paralelisme. Kesalahan
+satu bit pada sebuah blok plainteks saat enkripsi menjalar ke blok cipherteks
+yang bersangkutan dan ke seluruh blok cipherteks berikutnya, karena setiap blok
+memakai hasil blok sebelumnya. Namun sifat itu berkebalikan pada dekripsi:
+kesalahan satu bit pada sebuah blok cipherteks hanya mempengaruhi blok plainteks
+yang bersangkutan dan satu bit pada blok plainteks berikutnya, sedangkan blok-blok
+sesudahnya kembali benar. Karena itu CBC tetap dapat didekripsi secara paralel
+meskipun enkripsinya harus berurutan.
+
+\subsection{Cipher Feedback (CFB)}
+
+Mode CBC menuntut data terkumpul penuh satu blok sebelum dapat dienkripsi,
+sehingga kurang cocok untuk saluran yang mengirim satuan kecil, misalnya
+per-karakter. Mode \textbf{CFB} mengatasi hal itu dengan memperlakukan cipher
+blok seperti cipher alir: data dienkripsi dalam unit $s$ bit, dengan $s \le b$
+dan $b$ adalah ukuran blok. Bila unit yang dienkripsi adalah satu karakter
+8 bit pada blok 64 bit, modenya disebut \textbf{CFB 8-bit}.
+
+Mode CFB memelihara sebuah antrian (\textit{shift register}) sepanjang $b$ bit.
+Antrian itu dienkripsi dengan $E_K$, dan $s$ bit paling kiri dari hasilnya
+di-XOR dengan plainteks untuk membentuk cipherteks. Selanjutnya antrian digeser
+ke kiri sejauh $s$ bit dan $s$ bit cipherteks yang baru saja terbentuk
+disisipkan di sisi kanannya:
+\begin{equation}
+C_j = P_j \oplus \mathrm{MSB}_s(E_K(X_j)), \qquad X_{j+1} = \mathrm{LSB}_{b-s}(X_j) \parallel C_j,
+\label{eq:cfb-enkripsi}
+\end{equation}
+dengan $X_1 = IV$ dan $\parallel$ menyatakan penyambungan (\textit{concatenation}).
+Dekripsinya memakai antrian yang sama,
+\begin{equation}
+P_j = C_j \oplus \mathrm{MSB}_s(E_K(X_j)), \qquad X_{j+1} = \mathrm{LSB}_{b-s}(X_j) \parallel C_j.
+\label{eq:cfb-dekripsi}
+\end{equation}
+Perhatikan bahwa dekripsi hanya memerlukan fungsi enkripsi $E_K$, bukan $D_K$.
+
+Karena umpan baliknya diambil dari cipherteks, CFB mewarisi sifat penjalaran
+galat dari CBC: kesalahan satu bit pada satu blok cipherteks merusak blok
+plainteks yang bersangkutan dan menggeser isi antrian sehingga satu blok
+berikutnya ikut salah. Dalam kasus khusus $s = b$, seluruh antrian digantikan
+oleh cipherteks sebelumnya, sehingga rumusnya menyederhana menjadi
+$C_i = P_i \oplus E_K(C_{i-1})$ dengan $C_0 = IV$, yaitu padanan cipher alir
+yang persis dari CBC.
+
+\subsection{Output Feedback (OFB)}
+
+Mode \textbf{OFB} hampir sama dengan CFB, dengan satu perbedaan penting pada
+arah umpan baliknya. Pada CFB, isi antrian baru diambil dari cipherteks; pada
+OFB, isi antrian baru diambil dari keluaran $E_K$ itu sendiri, bukan dari
+cipherteks:
+\begin{equation}
+C_j = P_j \oplus E_K(X_j), \qquad X_{j+1} = E_K(X_j).
+\label{eq:ofb}
+\end{equation}
+Konsekuensinya besar. Karena antrian tidak pernah bergantung pada plainteks
+maupun cipherteks, aliran kunci yang dibangkitkan $E_K(X_j)$ dapat dihitung
+lebih dahulu, sebelum pesan diketahui. Aliran itu berperilaku persis seperti
+keystream pada cipher alir: enkripsi menjadi operasi XOR belaka.
+
+Karena umpan baliknya tidak melewati cipherteks, kesalahan satu bit pada blok
+plainteks hanya mempengaruhi blok cipherteks yang bersangkutan, dan kesalahan
+satu bit pada blok cipherteks hanya merusak satu bit pada plainteks hasil
+dekripsi. Galat tidak menjalar sama sekali. Karakter galat semacam ini cocok
+untuk transmisi analog yang didigitisasi, seperti suara atau video, yang dapat
+menoleransi sesekali bit yang salah tetapi tidak dapat menoleransi penjalaran
+galat ke seluruh pesan. Gambar~\ref{fig:mode-cfb-ofb} memperlihatkan perbedaan
+arah umpan balik kedua mode itu.
+
+\input{figures/mode-cfb-ofb}
+
+\subsection{Counter Mode (CTR)}
+
+Mode \textbf{Counter} tidak merantai blok sama sekali. Sebagai gantinya, sebuah
+nilai \textit{counter} berukuran sama dengan blok plainteks dienkripsi, dan
+hasilnya di-XOR dengan plainteks:
+\begin{equation}
+C_j = P_j \oplus E_K(T_j), \qquad T_j = T_0 + j,
+\label{eq:ctr-enkripsi}
+\end{equation}
+dengan $T_j$ adalah nilai counter untuk blok ke-$j$ dan $T_0$ nilai awalnya.
+Nilai counter harus berbeda untuk setiap blok yang dienkripsi; pada praktiknya
+counter dinaikkan satu langkah setiap blok. Karena $E_K(T_j)$ tidak bergantung
+pada plainteks maupun cipherteks, aliran kunci dapat dihitung lebih dahulu,
+seperti pada OFB.
+
+Mode CTR mengumpulkan hampir semua kelebihan mode-mode lain. Hanya fungsi
+enkripsi $E_K$ yang dibutuhkan, baik untuk enkripsi maupun dekripsi. Karena
+tidak ada ketergantungan antar blok, seluruh blok dapat dienkripsi atau
+didekripsi secara paralel, dan blok ke-$j$ dapat langsung diproses tanpa
+menghitung blok-blok sebelumnya --- kemampuan akses acak yang pada cipher alir
+biasa tidak dimiliki. Kesalahan satu bit hanya merusak satu bit, sama seperti
+cipher alir. Gambar~\ref{fig:mode-ctr} memperlihatkan susunan blok yang
+mandiri tersebut.
+
 \input{figures/mode-ctr}
 
+Satu syarat mutlak berlaku pada CTR: nilai counter tidak boleh berulang. Bila
+counter yang sama dipakai dua kali, dua blok memakai aliran kunci yang identik,
+dan XOR kedua cipherteksnya akan menghapus kunci sehingga menyisakan XOR kedua
+plainteks --- persis serangan \textit{two-time pad} yang dibahas pada
+Bab~\ref{chap:stream-cipher}. Karena itu nilai awal counter harus tidak dapat
+diprediksi dan harus berubah untuk setiap pesan.
+
+\subsection{Perbandingan Kelima Mode}
+
+Perbedaan kelima mode operasi itu diringkas pada Tabel~\ref{tab:perbandingan-mode}.
+Satu hal yang perlu digarisbawahi: mode operasi bukan soal mana yang paling
+kuat, melainkan soal mana yang sesuai dengan pola akses data. ECB cocok untuk
+data acak yang diakses per blok asalkan tidak ada blok berulang; CBC cocok untuk
+berkas yang dienkripsi utuh; CFB dan OFB menangani data yang lebih kecil daripada
+satu blok; dan CTR menawarkan paralelisme serta akses acak seluas ECB tanpa
+kelemahan polanya. Dalam praktik modern, mode terautentikasi seperti GCM
+dibangun di atas prinsip CTR dengan penambahan penanda keutuhan, sebagaimana
+dibahas pada Bab~\ref{chap:hash-mac}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.4cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{3.7cm} >{\raggedright\arraybackslash}X@{}}
+\hline
+\textbf{Mode} & \textbf{Ketergantungan} & \textbf{Propagasi galat} & \textbf{Kegunaan khas} \\
+\hline
+ECB & Tidak ada; tiap blok mandiri &
+Galat terbatas pada satu blok &
+Data acak yang diakses per blok; pola berulang bocor \\
+\hline
+CBC & Berantai melalui cipherteks sebelumnya &
+Enkripsi menjalar ke semua blok berikutnya; dekripsi hanya 2 blok &
+Enkripsi berkas utuh; memerlukan IV \\
+\hline
+CFB & Berantai melalui cipherteks sebelumnya &
+Menjalar sekitar satu blok berikutnya &
+Data yang lebih kecil daripada satu blok \\
+\hline
+OFB & Tidak bergantung cipherteks &
+Tidak menjalar; hanya bit yang bersangkutan &
+Transmisi suara atau video terdigitalisasi \\
+\hline
+CTR & Tidak ada; tiap blok mandiri &
+Galat terbatas pada bit yang bersangkutan &
+Paralel penuh dan akses acak; counter wajib unik \\
+\hline
+\end{tabularx}
+\caption{Perbandingan lima mode operasi cipher blok}
+\label{tab:perbandingan-mode}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; dilengkapi dari \citet{stallings2017} dan \citet{menezes1996}.}
+\end{table}

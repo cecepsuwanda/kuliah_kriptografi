@@ -6,8 +6,10 @@ Sasaran: ±4.000–6.000 kata/bab (prosa naratif), tabel, contoh terhitung, gamb
 
 Legenda status: `[ ]` belum · `[~]` sedang dikerjakan · `[x]` selesai.
 
-**Kemajuan:** Tahap 1–5 (Bab 01–05) selesai. Buku 220 halaman, gerbang kebersihan
-`output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 6 (Bab 06).
+**Kemajuan:** Tahap 1–6 (Bab 01–06) selesai. Buku 302 halaman, gerbang kebersihan
+`output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 7 (Bab 07).
+Panjang bab saat ini di buku penuh: Bab 01 = 23 hal., Bab 02 = 20, Bab 03 = 19,
+Bab 04 = 56, Bab 05 = 30, Bab 06 = 23 (149–171).
 
 ---
 
@@ -189,16 +191,44 @@ Target: ±4.500 kata. **Hasil: 9.625 kata berkas (dari 1.628), 29 hlm jadi bab m
 - **Bahan di luar lingkup**: dek 07 memuat makalah *BPCS-Steganography* (halaman 18--20)
   yang tidak berhubungan dengan stream cipher dan **tidak dipakai**, sesuai batas silabus.
 
-## Bab 06 — Block Cipher: Konsep dan Mode Operasi
+## Bab 06 — Block Cipher: Konsep dan Mode Operasi  `[x]` SELESAI
 Sumber: `referensi/08-*` (6.812 kata, 21 topik, 92 gambar). Target: ±4.000 kata.
-**Belum punya sitasi.**
 
-- [ ] Tabel perbandingan lima mode operasi (ECB/CBC/CFB/OFB/CTR)
-- [ ] Contoh padding ECB
-- [ ] CFB s-bit (CFB-8): shift register, IV
-- [ ] OFB: tanpa propagasi galat, kasus $s=b$
-- [ ] Contoh konkret confusion/diffusion (S-box DES & AES)
-- [ ] Contoh cipher mainan 8 bit
+Hasil: 4.872 kata pada empat section (6.709 kata berkas mentah), 23 halaman
+mandiri, 1 tabel + 1 gambar baru (`mode-cfb-ofb`), 2 contoh terhitung baru,
+sitasi baru (`shannon1949`, `stallings2017`, `menezes1996`).
+
+- [x] Tabel perbandingan lima mode operasi (ECB/CBC/CFB/OFB/CTR) — `tab:perbandingan-mode`
+- [x] Contoh padding ECB (`10001101 00101001 10110[000]`) di section-01
+- [x] CFB s-bit (CFB-8): shift register, IV, rumus $\mathrm{MSB}_s$/$\mathrm{LSB}_{b-s}$, kasus $s=b$
+- [x] OFB: tanpa propagasi galat, umpan balik dari keluaran $E_K$
+- [x] Contoh konkret confusion/diffusion (S-box $S_1$ DES dan S-box AES)
+- [x] Contoh cipher mainan 4 bit ($E_K(P)=(P\oplus K)\ll 1$) — sudah ada, diperdalam
+- [x] Cipher blok sebagai permutasi bijektif ($2^n!$ permutasi vs $2^m$ kunci)
+- [x] Tabel ukuran blok/kunci/putaran tujuh cipher (`tab:ukuran-blok-kunci`)
+- [x] Tabel Feistel vs SPN (`tab:feistel-vs-spn`) dan tabel confusion vs diffusion
+- [x] Manipulasi blok ECB (kasus "Uang ditransfer lima satu juta rupiah")
+- [x] Contoh Feistel dua putaran dan bahaya pengulangan counter CTR (contoh.tex)
+- [x] Aktivitas 6.2 (penjalaran galat) dan 6.3 (pengulangan counter) di `praktikum.tex`
+- [x] Latihan 6.1 diperluas 3→8 butir, ditambah Latihan 6.2 (7 butir)
+- [x] `rangkuman.tex` 7→14 butir; `evaluasi.tex` kuis 3→8, checklist 5→13 baris
+
+### Koreksi terhadap sumber (wajib dicatat)
+
+1. **Hasil CBC pada dek `08-*` salah.** Dek menyatakan cipherteks CBC
+   `\text{A23A9}` adalah **27FBF**; perhitungan ulang memberi **27FDF**
+   ($C = 0010\ 0111\ 1111\ 1101\ 1111$). Buku sudah memakai nilai yang benar.
+2. **Contoh S-box DES pada dek tidak konsisten.** Dek memberi masukan
+   $\code{110100}$ dan menyebut entrinya bernilai 4. Menurut aturan baku
+   (baris = bit ke-1 dan ke-6 $=10_2=2$; kolom = bit ke-2…5 $=1010_2=10$),
+   $S_1$ baris 2 kolom 10 bernilai **9** ($\code{1001}$). Nilai 4 adalah entri
+   $S_6$ pada posisi yang sama. Buku memakai $S_1 \to \code{1001}$ dan
+   menampilkan baris $S_1$ yang dipakai agar pembaca dapat memverifikasi.
+3. **Contoh diffusion pada dek berukuran tidak konsisten.** Plainteks 16 bit
+   dipetakan ke cipherteks 17 bit (`01101100000101001`). Buku memakai panjang
+   16 bit agar sesuai dengan syarat panjang keluaran = panjang masukan.
+4. **Rumus CFB pada dek memakai indeks campur** ($C_i$ di dalam pembaruan
+   register yang seharusnya $C_j$). Buku memakai $C_j$ secara konsisten.
 
 ## Bab 07 — Analisis Algoritma Block Cipher: DES
 Sumber: `referensi/09-*` (5.218 kata, 16 topik, 74 gambar). Target: ±5.000 kata.
@@ -319,14 +349,17 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   `eq:affine-simultan-1/2`, `eq:otp-enkripsi`, `eq:otp-dekripsi`, `eq:two-time-pad`,
   `eq:perfect-secrecy`); Bab 05 menambah 7 (`eq:xor-enkripsi`, `eq:xor-dekripsi`,
   `eq:stream-enkripsi`, `eq:stream-dekripsi`, `eq:a51-luaran`, `eq:trivium-luaran`,
-  `eq:salsa-final`). Lanjutkan untuk penurunan RSA, ElGamal, ECDLP, hash.
+  `eq:salsa-final`); Bab 06 menambah 17 (`eq:blok-plainteks`, `eq:blok-cipherteks`,
+  `eq:block-encrypt-decrypt`, `eq:mainan-enkripsi`, `eq:mainan-dekripsi`, `eq:ecb`,
+  `eq:cbc-enkripsi`, `eq:cbc-dekripsi`, `eq:cfb-enkripsi`, `eq:cfb-dekripsi`, `eq:ofb`,
+  `eq:ctr-enkripsi`, `eq:iterated-cipher`, `eq:whitening`, `eq:feistel-enkripsi`,
+  `eq:feistel-dekripsi`, `eq:feistel-reversible`).
+  Lanjutkan untuk penurunan RSA, ElGamal, ECDLP, hash.
 - [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
 - [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 dan 04 sudah punya.)
   Skrip pembuat gambar raster: `scripts/refactor/figures/entropi_ternate.py`.
-- [ ] **Bab tanpa sitasi: 06, 07, 14.** (02, 03, 04, dan 05 sudah selesai; Bab 05 kini
-  menyitasi `estream2008`, `canniere2006trivium`, `bernstein2005salsa20`,
-  `bernstein2008chacha`, `anderson1994`, `briceno1999`, `fluhrer2001`, `rfc7465`,
-  `rfc8439`, `massey1969`.)
+- [ ] **Bab tanpa sitasi: 07, 14.** (02, 03, 04, 05, dan 06 sudah selesai; Bab 06 kini
+  menyitasi `shannon1949`, `stallings2017`, dan `menezes1996`.)
 
 ## Catatan lintas bab: tabel lebar & panjang baris
 
@@ -348,7 +381,12 @@ diperbaiki; polanya akan terulang di bab-bab berikut, jadi perhatikan sejak awal
 - **Baris kepala tabel sempit** (`tabular` dengan kolom `l`/`c` saja) dapat melebihi
   `\linewidth` walau isinya pendek, karena TeX tidak bisa memenggal sel. Bab 05 sempat
   `Overfull 4,75pt` pada `tab:trivium-tap` → perpendek judul kolomnya ("Masukan gerbang
-  AND" → "Masukan AND").
+  AND" → "Masukan AND"). Bab 06 mengulang pola yang sama pada `tab:perbandingan-mode`
+  (kepala kolom "Ketergantungan") → lebarkan `p{2.9cm}` menjadi `p{3.1cm}` dan rampingkan
+  kolom tetangganya. **Periksa kepala kolom `p{}` sejak awal**, jangan hanya isinya.
+- **Persamaan tampilan panjang yang memuat banyak tanda `\oplus`** mudah melewati
+  `\linewidth` (Bab 06 `contoh.tex`: 50,8pt pada contoh pengulangan counter, dan 0,1pt pada
+  contoh Feistel) → pecah ke dua `\[ ... \]` atau ganti `\qquad` menjadi `\quad`.
 - **Tanda pisah `---` diikuti kata panjang pada akhir baris** memindahkan titik potong ke
   tempat yang salah dan menghasilkan `Overfull` beberapa pt (Bab 05, paragraf penutup
   section-03) → ganti dengan titik dua atau ubah susunan kalimatnya.

@@ -1,9 +1,132 @@
 \section{Prinsip Confusion dan Diffusion}
-Claude Shannon memperkenalkan dua prinsip utama dalam desain cipher untuk menangkal kriptanalisis statistik:
+
+Claude Shannon, di dalam makalahnya tahun 1949 \textit{Communication Theory of
+Secrecy Systems}, merumuskan dua prinsip yang sampai hari ini menjadi panduan
+perancangan hampir semua cipher: \textbf{\textit{confusion}} dan
+\textbf{\textit{diffusion}} \citep{shannon1949}. Kedua prinsip itu lahir dari
+kesadaran bahwa serangan terhadap cipher biasanya bersandar pada pola statistik
+--- frekuensi huruf, korelasi antara plainteks dan cipherteks, atau hubungan
+antara kunci dan cipherteks. Tujuan confusion dan diffusion adalah merusak
+pola-pola itu sehingga kriptanalis tidak punya pegangan.
 
 \subsection{Confusion (Konfusi)}
-\textit{Confusion} bertujuan untuk membuat hubungan antara kunci dan cipherteks menjadi serumit mungkin. Hal ini biasanya direalisasikan melalui teknik \textbf{substitusi} non-linear, seperti penggunaan \textbf{S-Box} (Substitution Box) yang memetakan input ke output berdasarkan tabel pencarian.
+
+\textit{Confusion} menyembunyikan hubungan statistik antara \textbf{kunci} dan
+\textbf{cipherteks}. Bahkan bila penyerang berhasil mengetahui pasangan
+plainteks dan cipherteks, ia tidak boleh dapat menyimpulkan apa pun tentang
+kuncinya. Confusion juga menyembunyikan hubungan statistik antara plainteks dan
+cipherteks, sehingga perubahan kecil pada kunci menghasilkan perubahan yang sama
+sekali tidak dapat diprediksi pada cipherteks.
+
+Sarana utama untuk mencapai confusion adalah \textbf{substitusi nirlanjar}
+(\textit{non-linear}). Substitusi linier, misalnya XOR dengan kunci, mudah
+dibalik begitu persamaan liniernya terbentuk; substitusi nirlanjar memutus
+hubungan semacam itu. Bentuk praktisnya adalah \textbf{\textit{S-box}}
+(\textit{substitution box}), sebuah tabel pencarian (\textit{look-up table})
+yang memetakan masukan ke keluaran menurut aturan yang dirancang khusus agar
+memiliki sifat nirlanjar yang kuat.
+
+Sebagai contoh, pada DES sebuah S-box menerima 6 bit masukan dan menghasilkan
+4 bit keluaran. Nomor baris tabel ditentukan oleh bit ke-1 dan bit ke-6 masukan,
+sedangkan nomor kolomnya ditentukan oleh bit ke-2 sampai bit ke-5. Tinjau
+masukan $\code{110100}$ pada S-box $S_1$. Bit ke-1 dan bit ke-6 adalah $1$ dan
+$0$, sehingga nomor barisnya adalah $10$ biner $= 2$. Bit ke-2 sampai bit ke-5
+adalah $1010$ biner $= 10$, sehingga nomor kolomnya adalah $10$. Baris ke-2
+($S_1$ dihitung dari baris 0) adalah
+\begin{center}
+\small
+\begin{tabular}{@{}c c c c c c c c c c c c c c c c@{}}
+4 & 1 & 14 & 8 & 13 & 6 & 2 & 11 & 15 & 12 & 9 & 7 & 3 & 10 & 5 & 0
+\end{tabular}
+\end{center}
+dan entri pada kolom ke-10 bernilai $9$. Jadi substitusi untuk masukan
+$\code{110100}$ adalah keluaran $\code{1001}$ (yaitu $9$). Perhatikan bahwa
+keluaran itu tidak dapat diperoleh dengan operasi linier sederhana apa pun atas
+masukan dan kuncinya --- itulah inti confusion.
+
+Cipher blok modern lain memakai bentuk S-box yang berbeda tetapi berperan sama.
+AES memakai S-box 8 bit ke 8 bit yang dibentuk dari inversi di medan berhingga
+$GF(2^8)$ kemudian diikuti transformasi affine; sebagai contoh, masukan
+$\code{23}$ heksadesimal menghasilkan keluaran $\code{26}$ heksadesimal, yaitu
+entri pada perpotongan baris $2$ dan kolom $3$. Konstruksi lengkap S-box AES
+beserta inversinya dibahas pada Bab~\ref{chap:aes}.
+
+Karena S-box adalah tabel tetap yang tidak bergantung pada kunci, keamanan tidak
+diletakkan pada kerahasiaan tabel itu --- sesuai Prinsip Kerckhoffs yang telah
+dibahas pada Bab~\ref{chap:pengantar} --- melainkan pada kenyataan bahwa
+menemukan masukan yang tepat, atau menebak kunci yang tepat, tetap sulit
+meskipun tabelnya diketahui.
 
 \subsection{Diffusion (Difusi)}
-\textit{Diffusion} bertujuan untuk menyebarkan pengaruh satu bit plainteks ke banyak bit cipherteks. Artinya, perubahan satu bit pada plainteks harus menyebabkan perubahan signifikan (sekitar setengah) pada bit-bit cipherteks. Hal ini direalisasikan melalui teknik \textbf{permutasi} atau transposisi (misal: $P$-box atau \textit{ShiftRows} pada AES).
 
+\textit{Diffusion} menyebarkan pengaruh satu bit plainteks --- atau satu bit
+kunci --- ke sebanyak mungkin bit cipherteks. Bila diffusion bekerja dengan
+baik, mengubah satu bit plainteks harus mengubah sekitar setengah bit
+cipherteksnya, dan perubahan itu harus tampak acak. Sebagai ilustrasi, andaikan
+plainteks
+\begin{center}
+\texttt{1111111111111111}
+\end{center}
+menghasilkan cipherteks \texttt{0110110000010100}. Bila satu bit pertama
+plainteks diubah sehingga menjadi \texttt{0111111111111111} --- perbedaan hanya
+satu bit --- cipherteks yang dihasilkan berubah menjadi
+\texttt{1011001011101111}, yang berbeda jauh. Sifat inilah yang disebut efek
+\textbf{\textit{avalanche}} (\textit{avalanche effect}): satu bit masukan
+menggulingkan banyak bit keluaran seperti longsoran salju.
+
+Sarana untuk mencapai diffusion adalah \textbf{permutasi} atau \textbf{transposisi},
+yaitu mengacak susunan bit di dalam blok tanpa mengubah nilainya. Pada banyak
+cipher blok, permutasi dinyatakan sebagai sebuah \textbf{\textit{P-box}}
+(\textit{permutation box}), yaitu tabel yang menyatakan dari posisi mana setiap
+bit keluaran diambil. Pada P-box milik DES, bit ke-58 masukan dipindahkan ke
+posisi pertama, bit ke-50 ke posisi kedua, dan seterusnya, sehingga bit-bit yang
+semula berdekatan menjadi tersebar jauh.
+
+Beberapa skema permutasi sekaligus melakukan \textbf{kompresi} (mengurangi
+jumlah bit) atau \textbf{ekspansi} (menambah jumlah bit). Ekspansi diperlukan
+agar satu bit masukan dapat mempengaruhi lebih dari satu posisi keluaran,
+sehingga penyebaran pengaruhnya berlipat. Cipher blok lain tidak memakai P-box
+berbentuk tabel, melainkan pergeseran siklik ke kiri atau ke kanan sejauh
+beberapa bit; AES, misalnya, memakai operasi \textit{ShiftRows} yang menggeser
+baris-baris matriks keadaan, dan bit atau byte yang keluar di satu ujung muncul
+kembali di ujung yang lain.
+
+\subsection{Kaitan dengan Cipher Berulang}
+
+Confusion dan diffusion tidak dicapai sekali jadi. Satu putaran substitusi hanya
+mengacak nilai-nilai bit secara lokal, dan satu putaran permutasi hanya
+memindahkan bit ke posisi baru tanpa mengubah kaitannya dengan bit lain. Baru
+setelah keduanya diulang berkali-kali, pengaruh satu bit dapat menyebar ke
+seluruh blok. Karena itu cipher blok modern disusun sebagai \textit{iterated
+cipher}: pada setiap putaran dilakukan substitusi yang memberi efek confusion,
+diikuti permutasi yang memberi efek diffusion, dengan kunci putaran yang
+berbeda-beda. Perbedaan kedua prinsip itu diringkas pada
+Tabel~\ref{tab:confusion-diffusion}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\hline
+\textbf{Aspek} & \textbf{Confusion} & \textbf{Diffusion} \\
+\hline
+Yang disembunyikan & Hubungan kunci--cipherteks dan plainteks--cipherteks &
+Kaitan antara bit-bit di dalam blok \\
+\hline
+Sarana & Substitusi nirlanjar melalui S-box &
+Permutasi, transposisi, dan pergeseran siklik \\
+\hline
+Contoh pada DES & Delapan S-box $S_1$--$S_8$ &
+P-box dan permutasi awal \\
+\hline
+Contoh pada AES & S-box hasil inversi di $GF(2^8)$ &
+\textit{ShiftRows} dan \textit{MixColumns} \\
+\hline
+Akibat bila gagal & Kunci dapat disimpulkan dari pasangan plainteks--cipherteks &
+Satu bit plainteks hanya mengubah sedikit bit cipherteks \\
+\hline
+\end{tabularx}
+\caption{Perbandingan prinsip confusion dan diffusion}
+\label{tab:confusion-diffusion}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; disusun dari uraian \citet{shannon1949} dan \citet{stallings2017}.}
+\end{table}

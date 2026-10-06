@@ -1,20 +1,175 @@
 \section{Konsep Dasar Block Cipher}
-Berbeda dengan \textit{stream cipher} yang memproses data bit-per-bit, \textit{block cipher} membagi plainteks menjadi blok-blok bit dengan panjang yang sama.
+
+\textit{Block cipher} atau \textbf{cipher blok} adalah primitif simetris yang
+bekerja dengan membagi plainteks menjadi blok-blok bit yang panjangnya sama,
+lalu mengenkripsi setiap blok sebagai satu kesatuan. Bila pada
+Bab~\ref{chap:stream-cipher} cipher alir memproses satu bit atau satu byte
+setiap kali, cipher blok justru menunggu terkumpulnya satu blok penuh
+--- umumnya 64 bit atau 128 bit --- sebelum operasi enkripsi dijalankan.
+Perbedaan satuan kerja inilah yang membedakan kedua keluarga cipher simetris
+dan yang menentukan di mana masing-masing dipakai.
+
+Kedua pendekatan itu menyelesaikan persoalan yang berbeda. Cipher alir
+unggul ketika data tiba terus-menerus dan harus dienkripsi tanpa penundaan,
+misalnya pada percakapan suara. Cipher blok unggul ketika data tersedia
+utuh dan harus dilindungi dalam satuan yang dapat diakses sendiri-sendiri,
+misalnya berkas, rekaman basis data, atau blok data di dalam protokol
+jaringan. Karena sifatnya yang dapat diproses per blok, cipher blok juga
+menjadi bahan dasar bagi konstruksi lain --- fungsi \textit{hash},
+kode otentikasi pesan, dan mode operasi terautentikasi --- sebagaimana akan
+terlihat pada Bab~\ref{chap:hash-mac}.
 
 \subsection{Karakteristik Utama}
-\begin{itemize}
-    \item \textbf{Ukuran Blok}: Plainteks dibagi menjadi blok berukuran $n$ bit. Ukuran blok yang umum digunakan adalah 64 bit, 128 bit, atau 256 bit.
-    \item \textbf{Panjang Output}: Panjang blok cipherteks selalu sama dengan panjang blok plainteks.
-    \item \textbf{Operasi}: Enkripsi dilakukan pada setiap blok plainteks menggunakan kunci $K$.
-\end{itemize}
 
-Secara matematis, jika $P$ adalah blok plainteks dan $C$ adalah blok cipherteks, maka:
-\[ C = E_K(P) \quad \text{dan} \quad P = D_K(C) \]
-di mana $E$ adalah fungsi enkripsi dan $D$ adalah fungsi dekripsi.
+Tiga ciri berikut membedakan cipher blok dari cipher alir.
+
+\begin{enumerate}
+    \item \textbf{Ukuran blok tetap.} Plainteks dibagi menjadi blok berukuran
+          $n$ bit, dengan $n$ yang lazim dipakai adalah 64 bit, 128 bit, atau
+          256 bit. Ukuran blok tidak berubah selama enkripsi maupun dekripsi
+          berlangsung.
+    \item \textbf{Panjang keluaran sama dengan panjang masukan.} Panjang blok
+          cipherteks selalu sama persis dengan panjang blok plainteksnya,
+          yaitu $n$ bit. Tidak ada penambahan bit di dalam blok, hanya
+          penambahan \textit{padding} pada blok terakhir bila pesan tidak
+          habis dibagi ukuran blok.
+    \item \textbf{Kunci eksternal bebas panjangnya.} Panjang kunci yang
+          diberikan pengguna tidak harus sama dengan panjang blok. Pada DES
+          panjang blok 64 bit tetapi kunci efektifnya 56 bit; pada AES-256
+          panjang blok 128 bit sedangkan kuncinya 256 bit.
+\end{enumerate}
+
+Secara matematis, bila $P$ adalah sebuah blok plainteks berukuran $n$ bit
+dan $C$ adalah blok cipherteks hasilnya, maka
+\begin{equation}
+P = (p_1, p_2, \dots, p_n), \quad p_i \in \{0,1\},
+\label{eq:blok-plainteks}
+\end{equation}
+\begin{equation}
+C = (c_1, c_2, \dots, c_n), \quad c_i \in \{0,1\},
+\label{eq:blok-cipherteks}
+\end{equation}
+dan proses enkripsi serta dekripsinya dituliskan sebagai
+\begin{equation}
+C = E_K(P) \qquad \text{dan} \qquad P = D_K(C),
+\label{eq:block-encrypt-decrypt}
+\end{equation}
+dengan $E$ fungsi enkripsi, $D$ fungsi dekripsi, dan $K$ kunci. Karena
+keduanya bekerja pada blok dengan panjang yang sama, $E_K$ dan $D_K$ sama-sama
+memetakan himpunan $n$ bit ke himpunan $n$ bit.
+
+\subsection{Block Cipher sebagai Permutasi}
+
+Ada satu syarat yang tidak boleh dilanggar oleh setiap cipher blok, dan
+syarat itu membatasi seperti apa algoritmanya boleh dibentuk. Untuk setiap
+kunci $K$, fungsi $E_K$ harus \textbf{bijektif}: setiap blok cipherteks
+$C$ harus berasal dari tepat satu blok plainteks $P$, yaitu $P = D_K(C)$.
+Bila dua plainteks berbeda $P_1 \neq P_2$ dapat menghasilkan cipherteks
+yang sama, yaitu $E_K(P_1) = E_K(P_2)$, maka penerima tidak punya cara
+untuk memutuskan plainteks mana yang sebenarnya dikirim --- dekripsi menjadi
+tidak mungkin dilakukan.
+
+Akibatnya, untuk setiap kunci tetap, $E_K$ merupakan sebuah \textbf{permutasi}
+dari himpunan $2^n$ blok yang mungkin. Pemetaan inilah yang disebut
+\textbf{permutasi semu} (\textit{pseudo-random permutation}) karena sifatnya
+yang harus tampak acak bagi penyerang, meskipun sesungguhnya ditentukan
+sepenuhnya oleh kunci. Himpunan semua permutasi atas $n$ bit berjumlah
+$2^n!$ buah, jauh lebih besar daripada jumlah kunci yang mungkin, yaitu
+$2^m$ untuk kunci sepanjang $m$ bit. Jadi sebuah cipher blok hanya memilih
+$2^m$ permutasi dari $2^n!$ permutasi yang tersedia, dan pilihan itu
+dikendalikan oleh kunci.
+
+Pandangan ini menjelaskan dua hal sekaligus. Pertama, ia menunjukkan mengapa
+cipher blok dapat dibalik tanpa menyimpan tabel apa pun: yang perlu diketahui
+penerima hanyalah kunci yang memilih permutasi tersebut. Kedua, ia menjelaskan
+mengapa kunci harus panjang: dengan $m$ bit kunci, penyerang yang menebak
+kunci secara menyeluruh hanya perlu mencoba $2^m$ kemungkinan, berapa pun
+besar $n$. Untuk blok 128 bit dengan kunci 128 bit, ruang kunci berukuran
+$2^{128} \approx 3{,}4 \times 10^{38}$, dan jumlah itu jauh melampaui
+kemampuan komputasi yang ada saat ini.
+
+\subsection{Ukuran Blok, Kunci, dan Padding}
+
+Ukuran blok dan ukuran kunci berperan berbeda terhadap keamanan. Ukuran blok
+yang besar memperluas ruang yang harus dipetakan oleh permutasi, sehingga
+\textit{diffusion} --- penyebaran pengaruh satu bit ke banyak bit lain ---
+menjadi lebih efektif dan pola statistik lebih sulit muncul. Ukuran kunci
+yang besar menambah jumlah permutasi yang dapat dipilih, sehingga pencarian
+kunci menyeluruh menjadi lebih mahal. Tabel~\ref{tab:ukuran-blok-kunci}
+meringkas parameter beberapa cipher blok yang dibahas di dalam buku ini.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}lcc c@{}}
+\hline
+\textbf{Algoritma} & \textbf{Ukuran blok} & \textbf{Ukuran kunci} & \textbf{Putaran} \\
+\hline
+DES            & 64 bit  & 56 bit            & 16 \\
+DES tiga kunci & 64 bit  & 112 atau 168 bit  & 48 \\
+AES-128        & 128 bit & 128 bit           & 10 \\
+AES-192        & 128 bit & 192 bit           & 12 \\
+AES-256        & 128 bit & 256 bit           & 14 \\
+GOST           & 64 bit  & 256 bit           & 32 \\
+Blowfish       & 64 bit  & 32--448 bit       & 16 \\
+\hline
+\end{tabular}
+\caption{Ukuran blok, ukuran kunci, dan jumlah putaran beberapa cipher blok}
+\label{tab:ukuran-blok-kunci}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; dilengkapi dari \citet{stallings2017}.}
+\end{table}
+
+Bila panjang pesan tidak habis dibagi oleh ukuran blok, blok terakhir menjadi
+lebih pendek daripada blok-blok lainnya. Blok yang tidak lengkap itu harus
+ditambahi bit \textbf{\textit{padding}} agar panjangnya kembali sama dengan
+$n$ bit. Bit padding dapat berupa bit nol semua, bit satu semua, atau bit nol
+dan satu yang berselang-seling. Sebagai contoh, dengan ukuran blok 8 bit,
+pesan berikut
+\begin{center}
+\texttt{10001101\ 00101001\ 10110}
+\end{center}
+memiliki blok terakhir yang hanya 5 bit, sehingga perlu ditambahi tiga bit
+padding, misalnya:
+\begin{center}
+\texttt{10001101\ 00101001\ 10110}\textbf{\texttt{000}}.
+\end{center}
+Cara penerima membedakan bit padding dari bit pesan yang sebenarnya ---
+dan karena itu cara membuang padding ketika dekripsi --- dibahas bersama
+mode operasi pada Bagian~\ref{sec:mode-operasi}.
 
 \subsection{Contoh Sederhana Block Cipher}
-Sebagai ilustrasi, misalkan sebuah fungsi enkripsi sederhana yang melakukan XOR antara plainteks $P$ dengan kunci $K$, kemudian menggeser bit-bitnya satu posisi ke kiri secara \textit{wrapping}:
-\[ E_K(P) = (P \oplus K) \ll 1 \]
-Maka fungsi dekripsinya adalah kebalikan dari proses tersebut:
-\[ D_K(C) = (C \gg 1) \oplus K \]
 
+Untuk memperlihatkan bagaimana enkripsi dan dekripsi bekerja pada satuan blok,
+tinjau sebuah cipher blok mainan berukuran 4 bit. Fungsi enkripsinya melakukan
+XOR antara plainteks $P$ dengan kunci $K$, lalu menggeser bit-bit hasilnya satu
+posisi ke kiri secara siklik (\textit{wrapping}):
+\begin{equation}
+E_K(P) = (P \oplus K) \ll 1.
+\label{eq:mainan-enkripsi}
+\end{equation}
+Karena dekripsi harus membalik urutan operasi itu, dekripsinya adalah menggeser
+siklik cipherteks satu posisi ke kanan terlebih dahulu, baru di-XOR dengan kunci:
+\begin{equation}
+D_K(C) = (C \gg 1) \oplus K.
+\label{eq:mainan-dekripsi}
+\end{equation}
+Kedua rumus itu memang saling membalik. Menggeser $C = (P \oplus K) \ll 1$
+satu posisi ke kanan mengembalikan $P \oplus K$ dengan utuh, dan meng-XOR hasil
+itu dengan $K$ memakai sifat $a \oplus a = 0$ pada
+Bab~\ref{chap:stream-cipher} sehingga menyisakan $P$.
+
+Sebagai contoh, ambil $P = \code{1010}$ dan $K = \code{1011}$. Maka
+$P \oplus K = \code{0001}$, dan geser siklik ke kiri menghasilkan
+$C = \code{0010}$. Sisi penerima menggeser $\code{0010}$ ke kanan menjadi
+$\code{0001}$, lalu meng-XOR-nya dengan $K = \code{1011}$; hasilnya kembali
+$\code{1010}$, yaitu plainteks semula. Contoh mainan ini sengaja dipilih sesederhana
+mungkin, tetapi ia sudah memperlihatkan dua hal yang berlaku umum: enkripsi dan
+dekripsi adalah proses yang saling membalik, dan penambahan satu blok data dapat
+mengubah satu blok penuh cipherteks.
+
+Contoh ini juga sudah cukup untuk menunjukkan mengapa cipher blok tidak boleh
+dipakai apa adanya. Karena $E_K$ bekerja pada blok yang sama secara
+independen, dua blok plainteks yang identik akan selalu menghasilkan dua blok
+cipherteks yang identik pula. Kelemahan itu tidak berasal dari fungsi $E_K$
+yang lemah, melainkan dari cara blok-blok dirangkai, dan cara
+mengatasinya adalah pokok bahasan bagian berikutnya.

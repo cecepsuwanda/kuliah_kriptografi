@@ -1,27 +1,131 @@
 \section{Iterated Cipher dan Jaringan Feistel}
-Untuk mencapai keamanan yang tinggi, \textit{block cipher} modern menggunakan struktur \textbf{Iterated Cipher}, di mana fungsi transformasi (fungsi putaran) diterapkan berulang kali selama $r$ putaran.
+
+Satu putaran substitusi dan permutasi belum cukup membuat cipher menjadi kuat.
+Untuk memperoleh confusion dan diffusion yang menyeluruh, cipher blok modern
+menerapkan sebuah fungsi transformasi berulang kali dalam sejumlah putaran.
+Struktur semacam itu disebut \textbf{\textit{iterated cipher}}. Pada setiap
+putaran, fungsi transformasi $f$ --- yang disebut \textbf{fungsi putaran}
+(\textit{round function}) dan di dalamnya terdapat operasi substitusi,
+permutasi, ekspansi, atau kompresi --- mengubah blok menjadi blok baru dengan
+bantuan sebuah kunci putaran $K_i$:
+\begin{equation}
+C_i = f(C_{i-1}, K_i), \qquad i = 1, 2, \dots, r,
+\label{eq:iterated-cipher}
+\end{equation}
+dengan $r$ jumlah putaran, plainteks dinyatakan sebagai $C_0$, dan cipherteks
+sebagai $C_r$. DES memakai $r = 16$ putaran, sedangkan AES-128, AES-192, dan
+AES-256 berturut-turut memakai $r = 10$, $12$, dan $14$ putaran.
+
+Sebelum putaran pertama dan sesudah putaran terakhir, kunci seringkali juga
+dicampurkan secara langsung dengan blok data dalam operasi yang disebut
+\textit{whitening}:
+\begin{align}
+C_0 &= P \oplus K_0, \notag \\
+C_i &= f(C_{i-1}, K_i), \qquad i = 1, 2, \dots, r-1, \label{eq:whitening} \\
+C &= C_r = C_{r-1} \oplus K_r. \notag
+\end{align}
+Lapisan whitening di awal dan di akhir menyulitkan penyerang mempelajari
+hubungan antara bit masukan dan bit keluaran tanpa mengetahui bagian kunci
+yang dipakai di situ.
+
+Jumlah putaran adalah kompromi antara keamanan dan efisiensi. Semakin banyak
+putaran, semakin besar efek diffusion, tetapi komputasi menjadi semakin mahal
+dan laju enkripsi turun. Perancang cipher menetapkan jumlah putaran pada titik
+yang menempatkan serangan analitis terbaik --- bukan pencarian menyeluruh ---
+jauh di luar kemampuan praktis. Pada setiap putaran, operasi substitusi
+menghasilkan efek confusion sedangkan operasi permutasi menghasilkan efek
+diffusion, dan kunci putaran yang berbeda dipakai pada setiap putaran.
+Gambar~\ref{fig:jaringan-feistel} memperlihatkan susunan putaran itu.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\linewidth, height=0.8\textheight, keepaspectratio]{figures/jaringan-feistel.png}
+    \caption{Jaringan Feistel multi-putaran yang memperlihatkan pertukaran peran blok kiri dan kanan serta penerapan fungsi putaran pada setiap putaran}
+    \label{fig:jaringan-feistel}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
 
 \subsection{Jaringan Feistel}
-Struktur yang sangat populer (digunakan pada DES) adalah \textbf{Jaringan Feistel}. Dalam struktur ini, blok data dibagi menjadi dua bagian, Kiri ($L$) dan Kanan ($R$):
-\begin{align*}
-L_i &= R_{i-1} \\
-R_i &= L_{i-1} \oplus f(R_{i-1}, K_i)
-\end{align*}
-Sifat utama Jaringan Feistel adalah \textbf{reversible}. Proses dekripsi dilakukan dengan urutan putaran yang terbalik menggunakan kunci yang sama, tanpa perlu membuat fungsi dekripsi $f^{-1}$ yang terpisah.
+
+Beberapa cipher blok terpenting --- DES, GOST, FEAL, Lucifer, RC5, dan RC6 ---
+memakai struktur putaran yang sama, yaitu \textbf{jaringan Feistel}
+(\textit{Feistel network}). Di dalamnya, blok data dibagi menjadi dua bagian
+yang sama panjang, kiri ($L$) dan kanan ($R$), dan pada setiap putaran kedua
+bagian itu bertukar peran:
+\begin{equation}
+L_i = R_{i-1}, \qquad R_i = L_{i-1} \oplus f(R_{i-1}, K_i).
+\label{eq:feistel-enkripsi}
+\end{equation}
+Perhatikan bahwa fungsi putaran $f$ hanya dikenakan pada separuh blok, yaitu
+$R_{i-1}$, dan hasilnya di-XOR dengan separuh yang lain.
+
+Sifat istimewa jaringan Feistel adalah \textbf{reversibilitas}. Dekripsi
+dijalankan dengan urutan putaran yang terbalik dan kunci yang sama, tanpa perlu
+membuat fungsi invers $f^{-1}$ yang terpisah:
+\begin{equation}
+R_{i-1} = L_i, \qquad L_{i-1} = R_i \oplus f(R_{i-1}, K_i) = R_i \oplus f(L_i, K_i).
+\label{eq:feistel-dekripsi}
+\end{equation}
+Kebenarannya dapat diperiksa langsung. Jika $R_i = L_{i-1} \oplus f(R_{i-1}, K_i)$,
+maka meng-XOR kedua ruas dengan $f(R_{i-1}, K_i)$ menghasilkan
+\begin{equation}
+L_{i-1} \oplus f(R_{i-1}, K_i) \oplus f(R_{i-1}, K_i) = L_{i-1},
+\label{eq:feistel-reversible}
+\end{equation}
+karena $a \oplus a = 0$. Jadi $L_{i-1} = R_i \oplus f(R_{i-1}, K_i)$, tepat
+seperti yang disyaratkan dekripsi.
+
+Yang membuat sifat ini penting bukan sekadar kenyamanan. Karena reversibilitas
+jaringan Feistel \emph{tidak bergantung pada fungsi} $f$, fungsi itu dapat dibuat
+serumit apa pun --- penuh substitusi nirlanjar, ekspansi, dan permutasi ---
+tanpa memerlukan pembuktian bahwa ia dapat dibalik. Yang perlu dibalik hanya
+operasi XOR, dan XOR selalu membalik dirinya sendiri. Sebaliknya, pada struktur
+yang tidak memecah blok menjadi dua bagian --- disebut jaringan substitusi--permutasi
+(\textit{substitution-permutation network}, SPN), seperti pada AES --- setiap
+komponen putaran harus benar-benar dapat dibalik, sehingga inversi S-box dan
+inversi matriks pencampur harus dirancang dan diimplementasikan secara khusus.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\hline
+\textbf{Aspek} & \textbf{Jaringan Feistel} & \textbf{Jaringan SPN} \\
+\hline
+Pembagian blok & Dibagi dua bagian yang bertukar peran &
+Seluruh blok diubah bersama-sama \\
+\hline
+Fungsi putaran & Tidak perlu dapat dibalik &
+Setiap komponen putaran harus dapat dibalik \\
+\hline
+Dekripsi & Urutan putaran terbalik, fungsi $f$ sama &
+Inversi setiap komponen dengan urutan terbalik \\
+\hline
+Biaya perangkat & Lebih ringan; hanya separuh blok diproses per putaran &
+Lebih berat; seluruh blok diproses per putaran \\
+\hline
+Contoh & DES, GOST, Blowfish, RC5, RC6 &
+AES, Serpent \\
+\hline
+\end{tabularx}
+\caption{Perbandingan arsitektur jaringan Feistel dan jaringan substitusi--permutasi}
+\label{tab:feistel-vs-spn}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; dilengkapi dari \citet{stallings2017}.}
+\end{table}
 
 \subsection{Pembangkitan Kunci Putaran (Key Scheduling)}
-Setiap putaran dalam \textit{iterated cipher} menggunakan kunci internal yang berbeda, disebut \textbf{subkey} atau \textit{round key}. Kunci-kunci ini dibangkitkan dari kunci eksternal yang diberikan pengguna melalui proses \textit{key expansion}.
 
-\subsection{Ukuran Blok dan Kunci}
-\begin{itemize}
-    \item \textbf{Ukuran Blok}: Semakin besar blok, semakin kuat efek difusinya (misal: AES menggunakan 128 bit).
-    \item \textbf{Ukuran Kunci}: Semakin panjang kunci, semakin tahan cipher terhadap serangan \textit{brute force} (misal: AES-256 lebih kuat dari AES-128).
-\end{itemize}
-
-
-
-
-
+Setiap putaran di dalam \textit{iterated cipher} memakai kunci internal yang
+disebut \textbf{kunci putaran} (\textit{round key}) atau \textit{subkey}.
+Kunci-kunci itu tidak diberikan langsung oleh pengguna, melainkan dibangkitkan
+dari kunci eksternal melalui proses yang disebut \textbf{\textit{key expansion}}
+atau \textbf{\textit{key scheduling}}. Prosedurnya berbeda untuk setiap cipher,
+tetapi tujuannya sama: menurunkan kunci eksternal menjadi $r$ kunci putaran
+yang berbeda-beda, masing-masing sepanjang ukuran yang dibutuhkan fungsi putaran.
+Panjang kunci putaran tidak selalu sama dengan panjang kunci eksternal; pada DES,
+kunci eksternal 64 bit diproses menjadi 16 kunci putaran yang masing-masing 48 bit.
+Skema pembangkitan kunci putaran diperlihatkan pada
+Gambar~\ref{fig:pembangkitan-subkunci}.
 
 \begin{figure}[htbp]
     \centering
@@ -31,10 +135,35 @@ Setiap putaran dalam \textit{iterated cipher} menggunakan kunci internal yang be
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.8\linewidth, height=0.8\textheight, keepaspectratio]{figures/jaringan-feistel.png}
-    \caption{Jaringan Feistel multi-putaran yang memperlihatkan pertukaran peran blok kiri dan kanan serta penerapan fungsi putaran pada setiap putaran}
-    \label{fig:jaringan-feistel}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
-\end{figure}
+Alasan kunci putaran harus berbeda-beda terletak pada sifat iterasi itu sendiri.
+Bila kunci yang sama dipakai berulang, putaran-putaran itu menjadi transformasi
+yang identik dan struktur berulangnya dapat dieksploitasi; cipher bahkan dapat
+berhenti sebagai permutasi sederhana yang mudah dibalik tanpa kunci. \textit{Key
+scheduling} yang baik menyebarkan setiap bit kunci eksternal ke banyak kunci
+putaran, sehingga setiap bit kunci mempengaruhi hampir seluruh proses enkripsi.
+Rincian \textit{key scheduling} DES dan AES dibahas pada
+Bab~\ref{chap:des} dan Bab~\ref{chap:aes}.
+
+\subsection{Ukuran Blok dan Kunci}
+
+Dua parameter terakhir yang menentukan kekuatan sebuah cipher blok adalah
+ukuran blok dan ukuran kunci. Ukuran blok pesan $n$ tetap selama enkripsi dan
+dekripsi berlangsung; DES memakai $n = 64$, sedangkan AES memakai $n = 128$.
+Semakin besar ukuran blok, semakin luas jangkauan diffusion yang dapat dicapai
+dalam satu putaran dan semakin banyak data yang dapat diolah sebelum pola
+statistik muncul kembali. Ukuran kunci $m$ tidak harus sama dengan ukuran blok;
+DES memakai $m = 56$ sedangkan AES memakai $m = 128$, $192$, atau $256$.
+Semakin panjang kunci, semakin besar efek confusion dan semakin tahan cipher
+terhadap serangan pencarian menyeluruh.
+
+Kedua ukuran itu bekerja pada sisi yang berbeda dan tidak dapat saling
+menggantikan. Memperbesar blok tanpa memperpanjang kunci hanya memperluas ruang
+permutasi tanpa mempersulit penebakan kunci; memperpanjang kunci tanpa
+memperbesar blok meninggalkan kelemahan pada tingkat pola data. Ukuran blok
+64 bit, misalnya, sudah terlalu kecil untuk dipakai tanpa perantingan karena
+batas paradoks ulang tahun membuat pola mulai muncul setelah sekitar $2^{32}$
+blok diproses dengan kunci yang sama --- salah satu alasan DES kini hanya
+dipakai dalam bentuk tiga-kunci. Dengan memahami kedua parameter ini bersama
+struktur putarannya, pembaca sudah memiliki kerangka untuk menilai cipher blok
+apa pun, dan kerangka itu dipakai pada bab-bab berikutnya untuk membedah DES,
+AES, serta sejumlah cipher blok lain.

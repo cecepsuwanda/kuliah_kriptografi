@@ -4,4 +4,20 @@
 1. Jika sebuah blok cipher memiliki ukuran 64 bit dan kita menggunakan mode ECB, apa yang terjadi jika dua blok plainteks identik dikirimkan?
 2. Jelaskan perbedaan mendasar antara peran S-Box dan P-Box dalam mencapai \textit{confusion} dan \textit{diffusion}.
 3. Mengapa Jaringan Feistel memudahkan implementasi dekripsi?
+4. Sebuah pesan berukuran 100 bit dienkripsi dengan cipher blok berukuran 8 bit. Berapa blok yang terbentuk, dan berapa bit \textit{padding} yang diperlukan pada blok terakhir?
+5. Jelaskan mengapa cipher blok harus merupakan permutasi bijektif untuk setiap kunci. Apa yang terjadi bila dua plainteks berbeda menghasilkan cipherteks yang sama?
+6. Pada mode CBC, sebuah bit pada blok cipherteks ke-3 rusak dalam perjalanan. Blok plainteks mana saja yang akan ikut rusak setelah dekripsi? Jelaskan jawaban Anda.
+7. Bandingkan mode ECB dan mode CTR: keduanya sama-sama tidak merantai blok. Mengapa CTR tidak mewarisi kelemahan pola berulang yang dimiliki ECB?
+8. Mengapa mode CFB dan OFB hanya memerlukan fungsi enkripsi $E_K$ saja, baik untuk enkripsi maupun dekripsi?
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 6.2}
+1. Dengan cipher blok mainan $E_K(P)=(P\oplus K)\ll 1$ berukuran 4 bit dan $K=\code{1011}$, enkripsilah plainteks $1100\,1100$ (dua blok) dalam mode ECB, lalu jelaskan mengapa hasilnya memperlihatkan pengulangan.
+2. Dengan cipher blok mainan yang sama dan $IV=\code{0000}$, hitung cipherteks dari plainteks pada soal nomor 1 memakai mode CBC.
+3. Turunkan kembali sifat reversibel jaringan Feistel, yaitu bahwa $L_{i-1}=R_i\oplus f(R_{i-1},K_i)$ selalu mengembalikan separuh blok yang benar, tanpa mengasumsikan bentuk tertentu untuk $f$.
+4. Sebuah sistem memakai cipher blok 64 bit dengan kunci yang sama untuk mengenkripsi sejumlah besar data. Mengapa jumlah data yang dienkripsi dengan satu kunci perlu dibatasi sekitar $2^{32}$ blok meskipun kuncinya masih kuat?
+5. Jelaskan mengapa \textit{key scheduling} yang menyebarkan setiap bit kunci eksternal ke banyak kunci putaran lebih baik daripada \textit{key scheduling} yang memakai kunci eksternal secara berulang.
+6. Diberikan masukan 6 bit $\code{111010}$ pada S-box $S_1$ DES. Tentukan nomor baris dan nomor kolomnya, lalu cari keluarannya pada baris $S_1$ yang diberikan di dalam bab ini.
+7. Bandingkan arsitektur jaringan Feistel dan jaringan SPN dari sisi kebutuhan perangkat keras dan dari sisi kemudahan perancangan fungsi putaran.
 \end{obereflection}

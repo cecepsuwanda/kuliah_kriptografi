@@ -1,0 +1,48 @@
+% Perbandingan arah umpan balik mode CFB dan OFB.
+% Dirujuk dari section-02.tex dengan \input{figures/mode-cfb-ofb}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center, font=\small, inner sep=3pt,
+                      minimum height=0.6cm},
+        blok/.style={kotak, fill=blue!6},
+        enc/.style={kotak, fill=orange!12, minimum width=1.1cm},
+        cip/.style={kotak, fill=green!10},
+        xor/.style={draw, circle, inner sep=1pt, font=\small, fill=yellow!18,
+                    minimum size=0.5cm},
+        panah/.style={-{Latex[length=2mm]}, thick},
+        balik/.style={-{Latex[length=2mm]}, thick, dashed},
+    ]
+        % ================= CFB =================
+        \node[font=\small\bfseries] at (2.6,1.5) {Cipher Feedback (CFB)};
+        \node[blok, minimum width=2.4cm] (r1) at (0,0.5) {Register $X_j$};
+        \node[enc] (e1) at (3.2,0.5) {$E_K$};
+        \node[xor] (x1) at (5.4,0.5) {$\oplus$};
+        \node[blok] (p1) at (5.4,1.6) {$P_j$};
+        \node[cip, minimum width=1.0cm] (c1) at (5.4,-0.6) {$C_j$};
+        \draw[panah] (r1) -- node[above, font=\scriptsize] {$b$ bit} (e1);
+        \draw[panah] (e1) -- node[above, font=\scriptsize] {$\mathrm{MSB}_s$} (x1);
+        \draw[panah] (p1) -- (x1);
+        \draw[panah] (x1) -- (c1);
+        \draw[balik] (c1.south) -- (5.4,-1.3) -- (-1.5,-1.3) -- (-1.5,0.5) -- (r1.west);
+        \node[font=\scriptsize, anchor=west] at (-1.4,-1.65)
+            {umpan balik diambil dari cipherteks $C_j$};
+
+        % ================= OFB =================
+        \node[font=\small\bfseries] at (2.6,-3.0) {Output Feedback (OFB)};
+        \node[blok, minimum width=2.4cm] (r2) at (0,-4.0) {Register $X_j$};
+        \node[enc] (e2) at (3.2,-4.0) {$E_K$};
+        \node[xor] (x2) at (5.4,-4.0) {$\oplus$};
+        \node[blok] (p2) at (5.4,-2.9) {$P_j$};
+        \node[cip, minimum width=1.0cm] (c2) at (5.4,-5.1) {$C_j$};
+        \draw[panah] (r2) -- (e2);
+        \draw[panah] (e2) -- (x2);
+        \draw[panah] (p2) -- (x2);
+        \draw[panah] (x2) -- (c2);
+        \draw[balik] (e2.south) -- (3.2,-5.8) -- (-1.5,-5.8) -- (-1.5,-4.0) -- (r2.west);
+        \node[font=\scriptsize, anchor=west] at (-1.4,-6.15)
+            {umpan balik diambil dari keluaran $E_K$, bukan dari cipherteks};
+    \end{tikzpicture}
+    \caption{Arah umpan balik mode CFB dan OFB: CFB mengembalikan cipherteks ke register, sedangkan OFB mengembalikan keluaran fungsi enkripsi sehingga aliran kuncinya tidak bergantung pada data}
+    \label{fig:mode-cfb-ofb}
+\end{figure}

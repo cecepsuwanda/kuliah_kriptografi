@@ -20,3 +20,34 @@ gambar.
 
 Program yang sama tersedia dalam C++ (\texttt{code/cpp/mode\_operasi.cpp}) dan
 MATLAB (\texttt{code/matlab/mode\_operasi.m}).
+
+\begin{obeactivity}
+\textbf{Aktivitas 6.2: Menelusuri Penjalaran Galat pada CBC dan OFB}
+1. Dengan kunci dan mode yang sama, enkripsi sebuah pesan yang terdiri atas
+   paling sedikit lima blok.
+2. Balik satu bit pada blok cipherteks ke-2 (bukan blok pertama dan bukan blok
+   terakhir), lalu dekripsi cipherteks yang sudah diubah itu.
+3. Bandingkan plainteks hasil dekripsi dengan plainteks semula. Pada mode CBC,
+   blok plainteks mana saja yang rusak? Pada mode OFB, blok mana saja yang rusak?
+4. Ulangi percobaan dengan mengubah bit pada dua posisi berbeda di dalam blok
+   cipherteks ke-2, lalu simpulkan bagaimana posisi bit yang dirusak menentukan
+   posisi bit plainteks yang rusak pada mode CBC.
+5. Kaitkan hasil pengamatan dengan Tabel~\ref{tab:perbandingan-mode} dan
+   jelaskan mengapa mode OFB lebih cocok untuk transmisi suara terdigitalisasi.
+\end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 6.3: Menunjukkan Bahaya Pengulangan Counter (CTR)}
+1. Siapkan dua pesan pendek berbeda yang panjangnya sama, misalnya
+   \code{SERANG PAGI} dan \code{SERANG MALAM}.
+2. Enkripsi kedua pesan dengan kunci dan nilai awal counter yang sama memakai
+   mode CTR. Untuk keperluan ini, nilai counter dapat dibuat manual dan sama
+   untuk kedua pesan.
+3. XOR-kan kedua cipherteks yang diperoleh, lalu XOR-kan kedua plainteks aslinya.
+   Bandingkan kedua hasil itu; apakah keduanya sama?
+4. Jelaskan mengapa hasil tersebut membuat kunci tidak lagi diperlukan untuk
+   memperoleh hubungan antara kedua plainteks.
+5. Usulkan dua cara agar nilai counter tidak pernah berulang untuk kunci yang
+   sama, dan jelaskan bagaimana cara itu dihubungkan dengan konsep
+   \textit{nonce} pada Bab~\ref{chap:stream-cipher}.
+\end{obeactivity}
