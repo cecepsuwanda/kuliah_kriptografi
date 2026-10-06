@@ -1,10 +1,70 @@
 \section{Tujuan Serangan (Hasil yang Ingin Dicapai)}
-Selain berdasarkan informasi, serangan juga dapat dibedakan berdasarkan target akhirnya:
+\label{sec:tujuan-serangan}
+
+Selain berdasarkan informasi yang tersedia, serangan juga dapat dibedakan
+berdasarkan target akhirnya. Pengelompokan ini menjawab pertanyaan yang berbeda:
+bukan ``apa yang dimiliki penyerang?'' melainkan ``apa yang ingin ia peroleh?''
+Perbedaan ini penting karena sebuah sistem dapat gagal memenuhi tujuannya meskipun
+kuncinya tidak pernah bocor.
+
 \begin{itemize}
-    \item \textbf{Key-Recovery Attack}: Tujuan utamanya adalah memperoleh kunci kriptografi.
-    \item \textbf{Plaintext-Recovery Attack}: Tujuan utamanya adalah memperoleh plainteks, meskipun kunci tidak ditemukan.
-    \item \textbf{Distinguishing Attack}: Menentukan apakah suatu data adalah keluaran algoritma kriptografi atau data acak (\textit{random}).
-    \item \textbf{Forgery Attack}: Membuat pesan palsu yang terlihat sah bagi sistem (sangat krusial pada MAC dan tanda tangan digital).
-    \item \textbf{Replay Attack}: Mengirim kembali pesan sah yang pernah dicegat sebelumnya untuk memicu tindakan berulang tanpa perlu memecahkan enkripsi.
+    \item \textbf{\textit{Key-Recovery Attack}}: tujuan utamanya adalah memperoleh
+          kunci kriptografi yang dipakai untuk enkripsi maupun dekripsi, sehingga
+          seluruh pesan --- yang sekarang maupun yang akan datang --- dapat dibaca.
+    \item \textbf{\textit{Plaintext-Recovery Attack}}: tujuan utamanya adalah
+          memperoleh plainteks, meskipun kuncinya tidak ditemukan.
+    \item \textbf{\textit{Distinguishing Attack}}: menentukan apakah suatu data
+          merupakan keluaran algoritma kriptografi atau data yang benar-benar acak.
+    \item \textbf{\textit{Forgery Attack}}: membuat pesan palsu yang terlihat sah
+          bagi sistem; sangat krusial pada MAC dan tanda tangan digital.
+    \item \textbf{\textit{Replay Attack}}: mengirim kembali pesan sah yang pernah
+          dicegat sebelumnya untuk memicu tindakan berulang tanpa perlu memecahkan
+          enkripsi.
 \end{itemize}
 
+Ukuran keberhasilan kelima serangan ini berbeda-beda, dan perbedaan itulah yang
+membuat kelimanya perlu dipisahkan. Pada \textit{key-recovery}, penyerang berhasil
+sepenuhnya --- ia memperoleh kunci yang berlaku umum. Pada
+\textit{plaintext-recovery}, keberhasilannya terbatas pada pesan yang sedang
+diserang, tetapi bagi banyak keperluan itu sudah cukup: mempelajari isi satu
+dokumen rahasia sering lebih berharga daripada memiliki kunci yang tidak diketahui
+isi pesannya. Pada \textit{distinguishing}, penyerang bahkan tidak perlu memperoleh
+isi apa pun; cukup bila ia dapat membedakan dua situasi dengan peluang lebih baik
+daripada menebak. Keberhasilan pada tingkat ini memang belum langsung merugikan,
+tetapi ia menunjukkan bahwa cipher tersebut menyimpang dari perilaku idealnya, dan
+penyimpangan semacam itu kerap menjadi titik masuk bagi serangan yang lebih serius
+\citep{stallings2017}.
+
+Pada \textit{forgery}, perhatikan bahwa yang dipalsukan bukan isi pesan melainkan
+bukti keasliannya. Misalkan Alice mengirim pesan beserta MAC kepada Bob, dan Bob
+memeriksa MAC untuk memastikan pesan itu benar-benar berasal dari pihak yang
+memegang kunci. Penyerang Eve ingin membuat pesan palsu yang disertai MAC yang sah,
+sehingga Bob menganggapnya autentik. Perhatikan bahwa Eve sama sekali tidak perlu
+membaca pesan aslinya. Inilah sebabnya mekanisme integritas harus dirancang dengan
+kriteria keamanan tersendiri, sebagaimana dibahas pada Bab~\ref{chap:hash-mac}
+\citep{menezes1996}.
+
+Pada \textit{replay}, yang menarik adalah penyerang tidak perlu memecahkan enkripsi
+sama sekali. Ia cukup menangkap sebuah pesan yang sah dan mengirimkannya ulang.
+Analogi paling gamblang adalah seseorang yang merekam perintah transfer bank lalu
+memutarnya kembali berkali-kali: setiap pemutaran menghasilkan perintah yang sah
+menurut sistem. Untuk mencegahnya, dipakai mekanisme yang membuat setiap pesan unik
+atau berurutan, misalnya \textit{nonce}, cap waktu (\textit{timestamp}), atau nomor
+urut (\textit{sequence number}). Bila pesan diberi nomor urut 101, 102, dan 103,
+maka ketika penyerang mengirim kembali pesan 101 setelah sistem menerima pesan 103,
+sistem dapat menolaknya karena nomor tersebut sudah kedaluwarsa.
+Gambar~\ref{fig:serangan-replay} menggambarkan skenario ini.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\linewidth, height=0.55\textheight, keepaspectratio]{figures/serangan-replay.png}
+    \caption{Serangan \textit{replay}: pesan sah yang pernah dikirim dicegat lalu dikirim ulang untuk memicu tindakan yang sama sekali lagi}
+    \label{fig:serangan-replay}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; diadaptasi dari Stallings.}
+\end{figure}
+
+Kelima tujuan serangan di atas menuntun pada satu kesimpulan praktis: menilai
+keamanan sebuah sistem tidak cukup dengan bertanya ``apakah kuncinya dapat
+ditemukan?''. Pertanyaan yang lebih tepat adalah ``apa yang dapat dicapai penyerang
+dengan sumber daya yang realistis?''. Sebuah sistem yang kuncinya tetap rahasia
+tetapi membiarkan pesan dipalsukan atau diulang tetap gagal menjalankan tugasnya.

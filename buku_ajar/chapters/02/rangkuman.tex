@@ -1,10 +1,16 @@
 \section{Rangkuman}
 \begin{itemize}
     \item Serangan adalah setiap usaha pihak lawan untuk menemukan kunci atau plainteks; Prinsip Kerckhoffs menegaskan algoritma publik dan hanya kunci yang rahasia.
-    \item Berdasarkan informasi yang dimiliki penyerang, serangan dibedakan menjadi ciphertext-only, known-plaintext, chosen-plaintext, adaptive chosen-plaintext, dan chosen-ciphertext.
+    \item Berdasarkan informasi yang dimiliki penyerang, serangan dibedakan menjadi ciphertext-only, known-plaintext, chosen-plaintext, adaptive chosen-plaintext, dan chosen-ciphertext. Urutannya menunjukkan kekuatan penyerang yang meningkat.
     \item Ciphertext-only adalah yang tersulit karena penyerang hanya berbekal cipherteks, misalnya cipherteks Caesar \code{KHOORZRUOG} yang dipecahkan dengan mencoba 25 pergeseran.
-    \item Berdasarkan tujuan akhirnya, serangan meliputi key-recovery, plaintext-recovery, distinguishing, forgery, dan replay.
-    \item Serangan pasif hanya menyadap tanpa mengubah data (interception, traffic analysis), sedangkan serangan aktif mengintervensi komunikasi (interruption, fabrication, modification, replay, MITM).
-    \item Sistem disebut aman secara komputasi bila biaya atau waktu pemecahannya melampaui nilai dan masa berlaku informasi, bukan karena mustahil secara matematis.
-    \item Side-channel attack mengeksploitasi kebocoran fisik perangkat seperti timing, konsumsi daya, radiasi elektromagnetik, dan fault injection.
+    \item Pada chosen-plaintext, penyerang memilih sendiri plainteksnya; pada Vigen\`ere, mengirim \code{AAAAA} membuat cipherteks yang keluar sama dengan kuncinya sendiri. Pada chosen-ciphertext, penyerang memakai sistem dekripsi sebagai \textit{oracle}.
+    \item Berdasarkan tujuan akhirnya, serangan meliputi key-recovery, plaintext-recovery, distinguishing, forgery, dan replay. Keberhasilan pada satu tujuan belum tentu berarti keberhasilan pada tujuan lain.
+    \item Serangan pasif hanya menyadap tanpa mengubah data (intersepsi, analisis lalu lintas), sedangkan serangan aktif mengintervensi komunikasi (interupsi, fabrikasi, modifikasi, pemutaran ulang, MITM).
+    \item Serangan pasif sulit dideteksi karena tidak meninggalkan jejak perubahan apa pun; serangan aktif dapat dideteksi justru karena mengubah keadaan sistem.
+    \item Alat seperti Wireshark memperlihatkan bahwa pada lalu lintas yang tidak terenkripsi, nama pengguna dan kata sandi terbaca langsung tanpa perlu dipecahkan.
+    \item Selain penyadapan perangkat lunak, dikenal penyadapan kabel, penyadapan elektromagnetik (radiasi perangkat, jarak kurang dari dua meter), dan penyadapan akustik melalui vibrometri.
+    \item Serangan MITM berbahaya karena kedua pihak sama-sama merasa berkomunikasi langsung dengan pihak yang benar; penangkalnya adalah otentikasi, bukan sekadar enkripsi.
+    \item Sistem disebut aman secara komputasi bila biaya atau waktu pemecahannya melampaui nilai dan masa berlaku informasi. Keamanan komputasi berbeda dari keamanan tanpa syarat, yang hanya dipenuhi oleh one-time pad.
+    \item Serangan saluran samping mengeksploitasi kebocoran fisik perangkat, bukan kelemahan matematis algoritmanya: waktu eksekusi, konsumsi daya (SPA/DPA), radiasi elektromagnetik, dan penyuntikan kesalahan (DFA).
+    \item Penangkalan serangan saluran samping pada dasarnya adalah membuat perilaku fisik perangkat tidak lagi bergantung pada nilai rahasia yang sedang diolahnya.
 \end{itemize}

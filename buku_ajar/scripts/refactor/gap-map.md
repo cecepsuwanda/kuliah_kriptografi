@@ -24,15 +24,27 @@ Target: ±4.500 kata. **Hasil: 6.605 kata berkas (dari 1.305), 22 hlm jadi, +5 g
 - [x] Tabel baru: `tab:empat-masalah`, `tab:miskonsepsi`
 - [x] Contoh baru: *encoding* ≠ enkripsi (Base64); jumlah kunci simetri vs nir-simetri
 
-## Bab 02 — Layanan Keamanan dan Serangan
+## Bab 02 — Layanan Keamanan dan Serangan  `[x]` SELESAI
 Sumber: `referensi/06-Serangan-pada-kriptografi-(2026)` (4.241 kata, 21 topik, 63 gambar).
-Target: ±4.000 kata. **Belum punya sitasi.**
+Target: ±4.000 kata. **Hasil: 5.529 kata berkas (dari 1.415), 20 hlm jadi bab mandiri,
++5 gambar, +3 tabel, +3 contoh, 7 sitasi (sebelumnya 0).**
 
-- [ ] Definisi formal tiap tipe serangan + contoh kerja per tipe (Caesar, Vigenère, adaptive, chosen-ciphertext)
-- [ ] Tujuan serangan: key-recovery, plaintext-recovery, distinguishing, forgery, replay
-- [ ] Tabel 7 kategori serangan Stallings + contoh
-- [ ] *Side-channel* konkret: elektromagnetik, akustik, penyadapan kabel, Wireshark
-- [ ] Kasus ATM, pemalsuan dan pengulangan pesan
+- [x] Definisi formal tiap tipe serangan (Diberikan/Dideduksi) + contoh kerja per tipe
+      (Caesar `KHOORZRUOG`, Vigenère `AAAAA`→`SCRAM`, adaptive A→F lalu B→G, chosen-ciphertext `A`→`X`)
+- [x] Tujuan serangan: key-recovery, plaintext-recovery, distinguishing, forgery, replay
+      beserta ukuran keberhasilan masing-masing + `fig:serangan-replay`
+- [x] Tabel 7 kategori serangan Stallings + contoh nyata (`tab:kategori-serangan`)
+- [x] Serangan pasif vs aktif: intersepsi, analisis lalu lintas, interupsi, fabrikasi,
+      modifikasi, pemutaran ulang, MITM
+- [x] *Side-channel* konkret: penyadapan kabel, elektromagnetik ($r<2$ m, SDR), akustik
+      (vibrometri), Wireshark; `tab:side-channel` (jenis / kebocoran / penangkal)
+- [x] Keamanan komputasi (3 syarat) vs keamanan tanpa syarat ($H(P\mid C)=H(P)$, OTP)
+- [x] Kasus ATM (chosen-plaintext), pemalsuan MAC, dan pengulangan pesan dengan nomor urut
+- [x] Gambar baru: `serangan-analisis-lalu-lintas.png`, `wireshark-plaintext.png`,
+      `penyadapan-elektromagnetik.png`, `penyadapan-akustik.png`, `serangan-replay.png`
+- [x] Contoh baru: CPA pada Vigenère (`C = K`), *timing attack* ($26^n$ → $26n$),
+      *replay* + nomor urut
+- [x] Sitasi: `stallings2017`, `menezes1996`, `katz2020`, `schneier1996`
 
 ## Bab 03 — Landasan Matematika untuk Kriptografi
 Sumber: `referensi/02-*` (**hanya 1.071 kata, 2 topik — paling tipis**); lengkapi dari
@@ -198,4 +210,4 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   penurunan RSA, ElGamal, ECDLP, hash.
 - [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
 - [ ] **Bab 03, 15, 16 tanpa gambar raster.**
-- [ ] **Bab tanpa sitasi: 02, 03, 05, 06, 07, 14.**
+- [ ] **Bab tanpa sitasi: 03, 05, 06, 07, 14.** (02 sudah selesai.)

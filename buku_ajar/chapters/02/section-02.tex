@@ -1,39 +1,152 @@
 \section{Jenis-Jenis Serangan Berdasarkan Informasi}
-Berdasarkan informasi yang dimiliki oleh penyerang, serangan dapat dikategorikan menjadi beberapa jenis:
+\label{sec:jenis-serangan-informasi}
+
+Berdasarkan informasi yang dimiliki oleh penyerang, serangan dapat dikategorikan
+menjadi beberapa jenis. Urutan penyajian berikut disusun dari yang paling lemah
+sampai yang paling kuat bagi penyerang: semakin banyak informasi yang dimilikinya,
+semakin besar peluangnya berhasil. Perlu ditekankan bahwa yang membedakan kelima
+jenis ini bukanlah kecerdasan penyerangnya, melainkan apa yang berada di tangannya
+sebelum ia mulai bekerja.
 
 \subsection{Ciphertext-Only Attack}
-Ini adalah serangan yang paling sulit karena kriptanalis hanya memiliki akses ke cipherteks saja. Teknik yang digunakan biasanya meliputi:
-\begin{itemize}
-    \item \textit{Exhaustive key search} (Brute force).
-    \item Analisis frekuensi karakter.
-\end{itemize}
-Contoh: Pada Caesar Cipher, jika penyerang hanya memiliki cipherteks \texttt{KHOORZRUOG}, ia dapat mencoba semua 25 kemungkinan pergeseran huruf hingga menemukan plainteks yang masuk akal (\texttt{HELLOWORLD}).
+
+Ini adalah serangan yang paling sulit karena kriptanalis hanya memiliki akses ke
+cipherteks saja. Secara formal, penyerang memperoleh
+\[
+    C_1 = E_k(P_1),\quad C_2 = E_k(P_2),\quad \dots,\quad C_i = E_k(P_i)
+\]
+dan harus mendeduksi $P_1, P_2, \dots, P_i$ atau kunci $k$ sehingga ia dapat
+memperoleh $P_{i+1}$ dari $C_{i+1} = E_k(P_{i+1})$. Teknik yang digunakan biasanya
+meliputi \textit{exhaustive key search} (brute force), terkaan, dan analisis
+frekuensi. Gambar~\ref{fig:serangan-ciphertext-only} menampilkan situasinya.
+
+Pada Caesar cipher, penyerang yang hanya memiliki cipherteks \code{KHOORZRUOG}
+tidak mengetahui besar pergeserannya. Namun karena Caesar cipher hanya mempunyai
+25 kemungkinan pergeseran huruf, ia dapat mencoba semuanya. Saat dicoba pergeseran
+tiga huruf ke kiri, diperoleh plainteks \code{HELLOWORLD} yang bermakna, sehingga
+serangan berhasil menemukan kunci sekaligus memecahkan cipherteks.
+
+Contoh di atas juga memperlihatkan mengapa ukuran ruang kunci menjadi ukuran
+keamanan yang mendasar. Serangan \textit{ciphertext-only} hanya berbahaya bila
+ruang kuncinya cukup kecil untuk disusuri seluruhnya.
 
 \subsection{Known-Plaintext Attack}
-Penyerang memiliki sejumlah pasangan plainteks dan cipherteks yang berkoresponden ($P_i$ dan $C_i = E_k(P_i)$). Serangan ini sering terjadi jika sebagian isi pesan dapat ditebak, seperti \textit{header} file, protokol standar, atau salam pembuka email (misalnya "Dengan hormat").
+
+Pada serangan ini penyerang memiliki sejumlah pasangan plainteks dan cipherteks yang
+berkoresponden:
+\[
+    P_1 \text{ dan } C_1 = E_k(P_1),\quad \dots,\quad P_i \text{ dan } C_i = E_k(P_i).
+\]
+Yang harus didekripsinya adalah kunci $k$, agar ia dapat memperoleh $P_{i+1}$ dari
+$C_{i+1} = E_k(P_{i+1})$.
+
+Serangan ini jauh lebih sering terjadi daripada yang mungkin diduga, karena
+sebagian isi pesan hampir selalu dapat ditebak. Berkas dengan format tertentu selalu
+diawali deretan bit yang sama; protocol jaringan memuat ruas yang baku; surel resmi
+selalu dibuka dengan ``Dengan hormat'' atau diakhiri dengan ``wassalam''; dan berkas
+sumber program selalu memuat \code{\#include} atau kata \code{program}. Begitu satu
+potong plainteks diketahui, pasangan plainteks--cipherteks itu dapat dipakai untuk
+menurunkan kunci. Cara ini justru menjadi senjata utama dalam memecahkan cipher
+klasik seperti \textit{affine cipher} dan \textit{Hill cipher}, sebagaimana akan
+ditunjukkan pada Bab~\ref{chap:kriptografi-klasik}.
+
+Sebagai contoh pada Caesar cipher, misalkan penyerang mengetahui cipherteks
+\code{KHOOR ZRUOG} dan menduga plainteksnya memuat kata \code{HELLO}. Dari pasangan
+$\text{H} \rightarrow \text{K}$ ia langsung menyimpulkan pergeseran $k = 3$. Dengan
+kunci itu, seluruh cipherteks lain dapat didekripsi. Perhatikan betapa ringkasnya
+penalaran ini: satu huruf yang berhasil ditebak sudah cukup untuk membuka seluruh
+pesan.
 
 \subsection{Chosen-Plaintext Attack}
-Penyerang dapat memilih plainteks tertentu untuk dienkripsi oleh sistem dan mendapatkan cipherteksnya. Dengan memilih plainteks yang strategis (misalnya rangkaian huruf 'AAAAA'), penyerang dapat lebih mudah mendeduksi kunci. Kasus nyatanya adalah penyerang yang memiliki akses ke mesin ATM: ia memasukkan PIN pilihannya sendiri berkali-kali, lalu mempelajari cipherteks yang dikirim mesin itu ke bank (lihat Gambar~\ref{fig:serangan-chosen-plaintext}).
 
-\subsection{Adaptive Chosen-Plaintext Attack}
-Variasi dari chosen-plaintext attack di mana penyerang dapat menyesuaikan plainteks berikutnya berdasarkan hasil cipherteks dari query sebelumnya. Penyerang belajar secara bertahap untuk menggali informasi kunci.
+Pada serangan \textit{chosen-plaintext}, kriptanalis dapat memilih plainteks sesuka
+hati untuk dienkripsikan --- khususnya plainteks-plainteks yang lebih mengarahkan
+penemuan kunci --- lalu mengirimkannya ke sistem enkripsi. Asumsinya, penyerang
+memiliki akses ke sistem enkripsi. Secara formal ia memperoleh
+\[
+    P_1, C_1 = E_k(P_1),\quad P_2, C_2 = E_k(P_2),\quad \dots,\quad P_i, C_i = E_k(P_i)
+\]
+dengan $P_1, \dots, P_i$ dipilih sendiri olehnya, dan harus mendeduksi $k$.
 
-\subsection{Chosen-Ciphertext Attack}
-Penyerang dapat memilih cipherteks tertentu dan mendapatkan hasil dekripsinya melalui sebuah \textit{oracle} (sistem yang bisa mendekripsi). Informasi ini kemudian digunakan untuk memecahkan cipher atau menemukan kunci.
+Contohnya pada Caesar cipher, penyerang memilih plainteks sederhana \code{AAAAA}
+lalu mengirimkannya ke sistem enkripsi. Sistem mengembalikan cipherteks
+\code{FFFFF}. Dari sini terlihat bahwa huruf A berubah menjadi F, berarti
+pergeserannya 5. Dengan kunci itu seluruh cipherteks lain dapat didekripsi.
 
+Contoh yang lebih tajam terjadi pada Vigen\`ere cipher, yang enkripsinya dihitung
+dengan $C = (P + K) \bmod 26$. Bila penyerang memilih plainteks
+$P = \text{AAAAAAA}\dots$ yang setara dengan $0000000\dots$, maka cipherteks yang
+keluar pasti sama dengan kuncinya sendiri, $C = K$. Dengan mengetahui $K$, seluruh
+cipherteks lain dapat langsung dicoba didekripsi.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.78\linewidth, height=0.7\textheight, keepaspectratio]{figures/serangan-ciphertext-only.png}
-    \caption{Serangan \textit{ciphertext-only}: penyerang hanya berbekal cipherteks dan berupaya menurunkan plainteks aslinya}
-    \label{fig:serangan-ciphertext-only}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
-\end{figure}
+Kasus nyatanya adalah penyerang yang memiliki akses ke mesin ATM, seperti
+diperlihatkan pada Gambar~\ref{fig:serangan-chosen-plaintext}. Mesin ATM
+mengenkripsi PIN dengan kunci $k$ lalu mengirim cipherteks ke komputer di bank.
+Kriptanalis pertama mengubah PIN lalu memasukkan PIN tersebut ke ATM, sehingga ia
+mengetahui tepat pasangan plainteks--cipherteks yang terbentuk. Kriptanalis kedua
+menyadap cipherteks yang dikirim dan mempelajarinya untuk mendeduksi kunci $k$.
+Perhatikan bahwa kedua penyerang tidak perlu berkomunikasi satu sama lain; cukup
+masing-masing menjalankan perannya. Inilah yang membuat serangan jenis ini
+berbahaya pada sistem yang memberi penyerang akses ke fungsi enkripsi.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\linewidth, height=0.5\textheight, keepaspectratio]{figures/serangan-chosen-plaintext.png}
     \caption{Serangan \textit{chosen-plaintext} pada mesin ATM: kriptanalis pertama mengubah PIN yang dimasukkan agar memperoleh pasangan plainteks--cipherteks, sementara kriptanalis kedua menyadap cipherteks itu untuk mendeduksi kunci $k$}
     \label{fig:serangan-chosen-plaintext}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsection{Adaptive Chosen-Plaintext Attack}
+
+\textit{Adaptive chosen-plaintext attack} adalah variasi dari
+\textit{chosen-plaintext attack} yang lebih kuat lagi: penyerang tidak hanya
+memilih plainteks, tetapi dapat \textbf{menyesuaikan plainteks berikutnya}
+berdasarkan hasil cipherteks dari query sebelumnya. Artinya, penyerang belajar
+secara bertahap: setelah melihat hasil enkripsi pertama, ia memilih plainteks baru
+yang lebih ``cerdas'' untuk menggali informasi lebih dalam tentang algoritma atau
+kuncinya.
+
+Pada Caesar cipher, penyerang memilih plainteks A dan memperoleh cipherteks F,
+sehingga pergeseran mungkin 5. Untuk memastikan, ia memilih plainteks lain, yaitu B,
+dan memperoleh cipherteks G. Polanya konsisten, maka kunci pergeseran dipastikan 5.
+Pada level ini contoh tersebut tampak sepele, tetapi perhatikan bahwa yang
+sebenarnya terjadi adalah suatu \textit{loop}: hasil query menentukan query
+berikutnya. Pada cipher modern, sifat inilah yang dipakai dalam serangan
+diferensial dan linear --- penyerang mengubah-ubah satu bit masukan dan mengamati
+bagaimana perubahan itu merambat pada keluaran.
+
+\subsection{Chosen-Ciphertext Attack}
+
+Penyerang dapat memilih cipherteks tertentu dan mendekripsinya melalui sebuah
+\textit{oracle}, yaitu sistem yang bisa mendekripsi, lalu menggunakan hasil
+dekripsi itu untuk memecahkan cipher atau menemukan kunci. Kelima model serangan
+pada bagian ini --- beserta perumusan bakunya dalam bentuk permainan antara penyerang
+dan penantang --- diuraikan secara formal oleh \citet{katz2020}. Secara formal ia
+memperoleh
+\[
+    C_1, P_1 = D_k(C_1),\quad C_2, P_2 = D_k(C_2),\quad \dots,\quad C_i, P_i = D_k(C_i)
+\]
+dengan $C_1, \dots, C_i$ dipilih sendiri olehnya, dan harus mendeduksi $k$ --- yang
+mungkin diperlukan untuk mendekripsi pesan pada waktu yang akan datang.
+
+Contoh pada Caesar cipher: penyerang memilih cipherteks $C = \text{`A'}$, lalu
+sistem dekripsi menghasilkan plainteks $P = \text{`X'}$. Dari kenyataan bahwa A
+adalah X digeser, ia mengetahui pergeseran huruf $k = 3$.
+
+Serangan jenis ini terdengar mengada-ada, tetapi justru sangat praktis pada sistem
+nyata. Peladen yang membalas dengan pesan kesalahan yang berbeda-beda --- misalnya
+``padding salah'' dan ``MAC salah'' --- berperan persis seperti sebuah oracle
+dekripsi. Sebagaimana akan dibahas pada Bab~\ref{chap:tanda-tangan-pki}, serangan
+Bleichenbacher terhadap RSA PKCS\#1 v1.5 dan ragam serangan padding pada TLS
+bekerja dengan pola seperti ini, dan menjadi salah satu alasan mengapa perancang
+protokol harus sangat berhati-hati dalam memilih pesan kesalahan apa yang boleh
+dikembalikan kepada klien.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.78\linewidth, height=0.7\textheight, keepaspectratio]{figures/serangan-ciphertext-only.png}
+    \caption{Serangan \textit{ciphertext-only}: penyerang hanya berbekal cipherteks dan berupaya menurunkan plainteks aslinya}
+    \label{fig:serangan-ciphertext-only}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}

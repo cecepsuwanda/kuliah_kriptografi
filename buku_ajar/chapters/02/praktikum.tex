@@ -3,3 +3,31 @@
 \textbf{Aktivitas 2.1: Simulasi Analisis Paket dengan Wireshark}
 Gunakan aplikasi Wireshark untuk menangkap paket data dari protokol yang tidak terenkripsi (misalnya HTTP biasa). Cobalah cari paket \textit{POST} dan lihat apakah Anda dapat menemukan \textit{username} atau \textit{password} dalam bentuk plainteks. Diskusikan mengapa penggunaan HTTPS sangat krusial untuk mencegah serangan pasif.
 \end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 2.2: Mengukur Kebocoran Waktu pada Pembanding Kata Sandi}
+Tulis dua fungsi pemeriksaan kata sandi: satu yang berhenti pada huruf pertama yang
+berbeda, satu lagi yang memeriksa seluruh huruf sebelum memutuskan. Ukur lama
+eksekusinya untuk kata sandi dengan tingkat kecocokan awal yang berbeda-beda.
+\begin{enumerate}
+    \item Bandingkan lama eksekusi untuk kata sandi yang huruf pertamanya sudah salah
+          dengan yang salah pada huruf terakhir. Berapa besar selisihnya?
+    \item Ulangi pengukuran beberapa ratus kali, lalu hitung rata-ratanya. Apakah
+          kebisingan pengukuran menghilangkan sinyalnya?
+    \item Simpulkan mengapa selisih waktu sekecil beberapa mikrodetik pun masih
+          berbahaya, dan bagaimana bentuk penangkalannya.
+\end{enumerate}
+\end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 2.3: Memutar Ulang sebuah Permintaan}
+Buat layanan sederhana (misalnya di Python) yang menerima permintaan berisi perintah
+dan jumlahnya, lalu mencatat saldo. Kirim satu permintaan dan simpan isinya.
+\begin{enumerate}
+    \item Kirim ulang permintaan yang sama persis. Apakah layanan menerimanya kembali?
+    \item Tambahkan nomor urut atau cap waktu pada permintaan, lalu ubah layanan agar
+          menolak nomor yang sudah pernah dipakai. Ulangi pengiriman ulang tadi.
+    \item Diskusikan mengapa penanggalan itu tidak cukup bila jam kedua pihak tidak
+          pernah dicocokkan, dan apa penggantinya.
+\end{enumerate}
+\end{obeactivity}

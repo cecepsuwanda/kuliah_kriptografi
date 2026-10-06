@@ -21,15 +21,75 @@ lalu memeriksa mana hasil yang bermakna. Hasil uji lengkapnya:
 \end{itemize}
 Hanya $k=3$ yang menghasilkan teks bermakna, yaitu \code{HELLOWORLD}. Seluruh proses selesai dalam
 \[ t = \frac{26}{10^9} \approx 2{,}6 \times 10^{-8}\ \text{detik}, \]
-jadi ciphertext-only berhasil karena ruang kuncinya terlalu kecil: penyerang memperoleh kunci sekaligus plainteks.
+jadi cipherteks-only berhasil karena ruang kuncinya terlalu kecil: penyerang memperoleh kunci sekaligus plainteks.
+\end{example}
+
+\begin{example}[Serangan \textit{chosen-plaintext} pada Vigen\`ere cipher]
+Pada Vigen\`ere cipher berlaku $C_i = (P_i + K_i) \bmod 26$. Misalkan kunci yang sedang
+dipakai adalah \code{SCRAM}, yang dalam bilangan menjadi
+\[ K = (18,\ 2,\ 17,\ 0,\ 12). \]
+Penyerang memilih plainteks $P = \code{AAAAA}$, yaitu $P = (0,0,0,0,0)$, dan mengirimkannya
+ke mesin enkripsi. Karena penjumlahan dengan nol tidak mengubah apa pun,
+\[ C_i = (0 + K_i) \bmod 26 = K_i, \]
+sehingga sistem mengembalikan
+\[ C = (18,\ 2,\ 17,\ 0,\ 12) = \code{SCRAM}. \]
+Cipherteks yang keluar \emph{sama persis dengan kuncinya}. Satu kali query sudah cukup
+untuk memulihkan seluruh kunci, sehingga seluruh pesan lain yang memakai kunci itu dapat
+dibaca. Inilah yang membuat \textit{chosen-plaintext attack} jauh lebih berbahaya daripada
+\textit{ciphertext-only attack}: penyerang tidak lagi menebak-nebak, ia menyusun pertanyaan
+yang jawabannya adalah kunci itu sendiri \citep{katz2020}.
+\end{example}
+
+\begin{example}[Serangan \textit{timing} pada pemeriksaan kata sandi]
+Sebuah fungsi pemeriksaan kata sandi membandingkan huruf demi huruf dan berhenti
+segera setelah menemukan huruf yang berbeda. Untuk kata sandi sepanjang $n$ huruf dari
+alfabet 26 huruf, pemeriksaan biasa menuntut sampai
+\[ 26^n \]
+percobaan. Untuk $n = 4$ diperoleh $26^4 = 456.976$ percobaan, dan untuk $n = 8$
+angkanya melompat menjadi $26^8 = 208.827.064.576$ percobaan --- mustahil dilakukan.
+
+Dengan mengukur waktu tanggap, penyerang dapat menyusuri huruf demi huruf. Huruf
+pertama ditemukan setelah paling banyak 26 percobaan, lalu huruf kedua setelah paling
+banyak 26 percobaan lagi, dan seterusnya, sehingga totalnya menjadi
+\[ 26 \times n. \]
+Untuk $n = 4$ hanya dibutuhkan $26 \times 4 = 104$ percobaan, dan untuk $n = 8$ hanya
+$26 \times 8 = 208$ percobaan --- turun sekitar empat ribu kali lipat pada kasus
+pertama. Perhatikan bahwa penyerang tidak memecahkan algoritma apa pun; ia hanya
+memanfaatkan kenyataan bahwa lama eksekusi bergantung pada nilai rahasianya. Inilah
+alasan mengapa fungsi pembanding kata sandi modern selalu ditulis dalam bentuk
+\textbf{waktu tetap}, misalnya dengan meng-XOR seluruh huruf lalu memeriksa hasilnya
+sekali saja di akhir \citep{stallings2017}.
 \end{example}
 
 \begin{example}[Kapan \textit{brute-force} menjadi tidak praktis]
 Sebagai pembanding, cipher dengan kunci 56 bit memiliki $|\mathcal{K}| = 2^{56} \approx 7{,}21 \times 10^{16}$ kunci. Dengan kecepatan $10^9$ kunci/detik,
 \[ t = \frac{2^{56}}{10^9} \approx 2{,}28\ \text{tahun}. \]
+Bila kecepatan dinaikkan menjadi $10^{12}$ kunci/detik, waktu turun menjadi
+\[ t = \frac{2^{56}}{10^{12}} \approx 7{,}21 \times 10^{4}\ \text{detik} \approx 20\ \text{jam}, \]
+sehingga ruang kunci 56 bit tidak lagi memadai. Contoh ini sekaligus memperlihatkan
+bahwa penilaian \textit{computationally secure} tidak dapat dilepaskan dari teknologi
+yang tersedia pada zamannya: kunci yang dianggap mustahil dipecahkan pada tahun 1977
+menjadi dapat disusuri dalam hitungan jam dua puluh tahun kemudian.
+\end{example}
+
+\begin{example}[Serangan \textit{replay} dan penangkalan dengan nomor urut]
+Misalkan sebuah sistem perbankan menerima perintah transfer tanpa nomor urut. Nasabah
+mengirim perintah ``transfer Rp1.000.000 ke rekening X'', dan penyerang menangkap
+cipherteksnya. Karena sistem tidak menyimpan riwayat perintah, cipherteks itu dapat
+dikirim ulang berkali-kali; setiap pengiriman ulang menghasilkan perintah yang sah
+menurut sistem.
+
+Bila perintah diberi nomor urut, penangkalannya menjadi sederhana. Sistem menyimpan
+nomor urut terakhir yang diterima, misalkan 103, dan menolak setiap nomor yang tidak
+lebih besar darinya. Serangan itu kini menjadi:
 \begin{itemize}
-    \item Bila kecepatan dinaikkan menjadi $10^{12}$ kunci/detik, waktu turun ke
-    \[ t = \frac{2^{56}}{10^{12}} \approx 7{,}21 \times 10^{4}\ \text{detik} \approx 20\ \text{jam}, \]
-    sehingga ruang kunci 56 bit tidak lagi memadai; inilah dasar konsep \textit{computationally secure}.
+    \item Perintah 101 diputar ulang setelah 103 diterima $\Rightarrow$ \textbf{ditolak},
+          karena $101 \not> 103$.
+    \item Perintah 104 dikirim secara sah $\Rightarrow$ \textbf{diterima}, nomor terakhir
+          menjadi 104.
 \end{itemize}
+Perhatikan bahwa enkripsi tidak diubah sama sekali dan kuncinya tetap rahasia; yang
+ditambahkan hanyalah sebuah mekanisme yang membuat tiap pesan tidak dapat diulang.
+Inilah sebabnya integritas dan kesegaran pesan (\textit{freshness}) harus dirancang
+sebagai bagian dari protokol, bukan diserahkan kepada cipher \citep{menezes1996}.
 \end{example}

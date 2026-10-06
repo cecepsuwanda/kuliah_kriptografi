@@ -1,9 +1,44 @@
 \section{Konsep Dasar Serangan}
-Tujuan utama dari kriptografi adalah menjaga kerahasiaan pesan atau kunci dari pihak ketiga, yang dalam konteks ini disebut sebagai musuh, lawan, penyadap, atau kriptanalis.
+\label{sec:konsep-serangan}
 
-Sebuah \textbf{serangan (\textit{attack})} diartikan sebagai setiap usaha atau percobaan yang dilakukan oleh pihak lawan untuk menemukan kunci atau menemukan plainteks dari cipherteksnya. Dalam menganalisis serangan, kita menggunakan \textbf{Prinsip Kerckhoffs}:
+Tujuan utama kriptografi adalah menjaga kerahasiaan pesan atau kunci dari pihak
+ketiga, yang dalam konteks ini disebut sebagai musuh, lawan, penyadap, atau
+kriptanalis. Bab sebelumnya memperkenalkan keempat layanan keamanan dan tiga
+keluarga algoritma; bab ini membahas sisi seberangnya, yaitu bagaimana usaha-usaha
+tersebut dapat digagalkan. Sebagaimana disinggung pada Bagian~\ref{sec:kriptanalisis},
+kriptografi dan kriptanalisis tumbuh bersama-sama, sehingga pemahaman yang utuh
+menuntut keduanya dipelajari berdampingan.
+
+Sebuah \textbf{serangan} (\textit{attack}) diartikan sebagai setiap usaha
+(\textit{attempt}) atau percobaan yang dilakukan pihak lawan untuk menemukan kunci
+atau menemukan plainteks dari cipherteksnya. Definisi ini sengaja luas, mencakup
+percobaan yang berhasil maupun yang gagal. Yang dinilai pada akhirnya bukan apakah
+sebuah serangan pernah dicoba, melainkan berapa besar sumber daya --- waktu,
+komputasi, memori, atau biaya --- yang dibutuhkan untuk membuatnya berhasil
+\citep{katz2020}.
+
+Dalam menganalisis serangan, kita menggunakan \textbf{Prinsip Kerckhoffs} yang
+sudah diperkenalkan pada Bagian~\ref{sec:terminologi}:
 \begin{quote}
     \textit{Semua algoritma kriptografi harus publik; hanya kunci yang rahasia.}
 \end{quote}
-Oleh karena itu, keamanan sistem kriptografi tidak terletak pada kerahasiaan algoritma, melainkan sepenuhnya terletak pada kerahasiaan \textbf{kunci}.
+Oleh karena itu, keamanan sistem kriptografi tidak terletak pada kerahasiaan
+algoritma, melainkan sepenuhnya terletak pada kerahasiaan \textbf{kunci}. Asumsi
+yang menyertainya tegas: penyerang mengetahui sepenuhnya algoritma kriptografi yang
+digunakan, termasuk seluruh detail rancangannya.
 
+Konsekuensi metodologis dari asumsi ini penting untuk disadari. Seorang perancang
+tidak boleh mengandalkan kerumitan yang tidak terdokumentasi, nama variabel yang
+membingungkan, atau trik yang hanya diketahui penulisnya sendiri. Yang harus
+diandalkan adalah ketidakmampuan penyerang menyelesaikan persoalan matematis yang
+mendasarinya. Inilah sebabnya keamanan kriptografi modern dirumuskan sebagai
+pernyataan tentang kesulitan komputasi, bukan tentang ketidaktahuan penyerang.
+
+Ada tiga cara lazim untuk mengelompokkan serangan, dan ketiganya akan dibahas pada
+bab ini secara berurutan. Pengelompokan pertama mendasarkan diri pada
+\textbf{informasi yang tersedia} bagi penyerang (Bagian~\ref{sec:jenis-serangan-informasi}),
+kedua pada \textbf{tujuan atau hasil yang ingin dicapai} (Bagian~\ref{sec:tujuan-serangan}),
+dan ketiga pada \textbf{keterlibatan penyerang} dalam komunikasi
+(Bagian~\ref{sec:pasif-aktif}). Ketiga sudut pandang tersebut tidak saling
+menggantikan; sebuah serangan nyata biasanya dapat dijelaskan secara bersamaan pada
+ketiganya.

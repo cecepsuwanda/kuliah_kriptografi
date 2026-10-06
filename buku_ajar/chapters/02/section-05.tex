@@ -1,19 +1,148 @@
-\section{Keamanan Komputasi dan Side-Channel Attack}
-Sebuah algoritma dikatakan \textbf{aman secara komputasi (\textit{computationally secure})} jika:
-1. Persamaan matematikanya terlalu kompleks untuk dipecahkan secara analitik.
-2. Biaya untuk memecahkan cipherteks melebihi nilai informasi di dalamnya.
-3. Waktu yang dibutuhkan untuk memecahkan cipherteks melebihi masa berlaku kerahasiaan informasi tersebut.
+\section{Keamanan Komputasi dan Serangan Saluran Samping}
+\label{sec:side-channel}
 
-\subsection{Side-Channel Attack}
-Serangan ini tidak menyerang algoritma matematika, melainkan memanfaatkan kebocoran fisik saat algoritma dijalankan pada perangkat:
+Seluruh pembahasan pada bagian-bagian sebelumnya bertumpu pada satu asumsi yang jarang
+dinyatakan secara terbuka: penyerang hanya melihat masukan dan keluaran sistem.
+Kenyataannya, sebuah algoritma tidak pernah berjalan di ruang hampa. Ia berjalan pada
+perangkat nyata, memakan waktu, menghabiskan daya, memancarkan gelombang
+elektromagnetik, dan menggetarkan komponen di sekitarnya. Semua jejak fisik itu dapat
+diamati, dan itulah pintu masuk serangan saluran samping.
+
+\subsection{Keamanan Komputasi (\textit{Computational Security})}
+
+Sebuah algoritma dikatakan \textbf{aman secara komputasi} bila memenuhi tiga syarat
+berikut.
+\begin{enumerate}
+    \item \textbf{Biaya memecahkan cipherteks melebihi nilai informasi} yang
+          dikandungnya. Memecahkan sebuah pesan dengan biaya satu miliar rupiah tidak
+          masuk akal bila isi pesan itu hanya bernilai beberapa juta rupiah.
+    \item \textbf{Waktu yang dibutuhkan melebihi masa berlaku informasi}. Rahasia
+          jadwal rapat besok pagi tidak lagi bernilai apa pun bila baru terbongkar
+          tahun depan. Sebaliknya, kunci yang dipakai untuk melindungi data pribadi
+          seseorang harus tetap aman selama puluhan tahun.
+    \item \textbf{Volume data yang dilindungi tidak mencukupi} bagi penyerang untuk
+          mengumpulkan bahan analisis. Ini syarat yang paling sering terlupakan; ia
+          menjadi alasan mengapa sebuah kunci yang kuat tetap harus diganti secara
+          berkala.
+\end{enumerate}
+
+Perhatikan bahwa ketiga syarat tersebut bersifat \emph{bergantung konteks}, bukan
+sifat matematis murni dari algoritma. Panjang kunci 56 bit pernah dianggap memadai pada
+tahun 1977; dua puluh tahun kemudian kunci sepanjang itu dapat disusuri seluruhnya
+dalam hitungan hari. Algoritma yang sama, tingkat keamanan yang berbeda, semata karena
+daya komputasi yang tersedia berubah.
+
+Di ujung lain spektrum terdapat \textbf{keamanan tanpa syarat} (\textit{unconditional
+security}), yaitu keadaan ketika cipherteks tidak memberikan informasi apa pun tentang
+plainteks, berapa pun besar daya komputasi yang dimiliki penyerang. Shannon merumuskan
+syaratnya sebagai $H(P \mid C) = H(P)$: ketidakpastian mengenai plainteks tidak
+berkurang sedikit pun setelah cipherteks diketahui. Hanya \textit{one-time pad} yang
+terbukti memenuhinya, dengan syarat kuncinya benar-benar acak, sepanjang pesan, dan
+tidak pernah dipakai ulang \citep{menezes1996}. Karena syarat-syarat itu tidak praktis
+untuk sebagian besar keperluan, hampir semua sistem kriptografi nyata bekerja pada
+tingkat keamanan komputasi, bukan keamanan tanpa syarat.
+
+Konsekuensinya penting bagi cara kita menilai keamanan. Pertanyaan yang harus diajukan
+bukanlah ``apakah cipher ini dapat dipecahkan?'' --- semua cipher dapat dipecahkan bila
+diberi cukup waktu --- melainkan ``berapa besar sumber daya yang dibutuhkan untuk
+memecahkannya, dan apakah sumber daya itu realistis tersedia bagi lawan yang kita
+hadapi?'' \citet{katz2020} menyebut cara berpikir ini sebagai pergeseran dari keamanan
+sebagai sifat mutlak menjadi keamanan sebagai pernyataan tentang kesulitan komputasi.
+
+\subsection{Serangan Saluran Samping (\textit{Side-Channel Attack})}
+
+Serangan saluran samping tidak menyentuh matematika algoritmanya sama sekali.
+Sebuah cipher dapat saja terbukti aman secara formal, tetapi implementasinya tetap
+dapat dibongkar bila ia membocorkan informasi lewat perilaku fisiknya. Yang dieksploitasi
+bukan kelemahan rancangan, melainkan kelemahan pelaksanaan.
+
+\subsubsection{Waktu Eksekusi}
+
+\textbf{Serangan pewaktuan} (\textit{timing attack}) memanfaatkan kenyataan bahwa
+lama eksekusi sebuah operasi bergantung pada nilai data yang diolahnya. Pada
+\code{if} yang membandingkan kata sandi huruf demi huruf dan berhenti pada huruf
+pertama yang berbeda, kata sandi \code{aaaa} akan ditolak lebih cepat daripada
+\code{zebra} yang kebetulan huruf pertamanya cocok. Dengan mengukur waktu tanggap
+berulang kali, penyerang dapat menebak kata sandi satu huruf demi satu huruf ---
+ruang pencariannya menyusut dari $26^n$ menjadi $26n$. Kocher dkk.\ menunjukkan pada
+tahun 1996 bahwa serangan serupa juga berhasil terhadap implementasi RSA dan
+Diffie--Hellman yang naif \citep{stallings2017}. Penangkalnya adalah penulisan kode
+\textbf{waktu tetap} (\textit{constant-time}): semua cabang dijalankan, hasilnya
+dipilih tanpa percabangan, dan lama eksekusi dibuat tidak bergantung pada nilai rahasia.
+
+\subsubsection{Konsumsi Daya}
+
+\textbf{Analisis daya} memanfaatkan korelasi antara konsumsi daya listrik perangkat
+dengan operasi yang sedang dijalankannya. Terdapat dua ragamnya.
 \begin{itemize}
-    \item \textbf{Timing Attack}: Menganalisis perbedaan waktu eksekusi.
-    \item \textbf{Power Analysis}: Menganalisis konsumsi daya (SPA/DPA).
-    \item \textbf{Electromagnetic Attack}: Menganalisis radiasi elektromagnetik.
-    \item \textbf{Fault Injection}: Sengaja membuat kesalahan pada perangkat untuk menganalisis output yang salah (DFA).
+    \item \textbf{Analisis daya sederhana} (\textit{Simple Power Analysis}, SPA):
+          memperhatikan pola konsumsi daya secara langsung, misalnya perbedaan
+          mencolok antara operasi perkalian dan penkuadratan pada eksponensiasi
+          modular. Karena keduanya biasanya dibedakan oleh bit kunci, jejak daya dapat
+          langsung menunjukkan nilai kunci.
+    \item \textbf{Analisis daya diferensial} (\textit{Differential Power Analysis},
+          DPA): mengumpulkan banyak jejak daya lalu mencari korelasi statistik dengan
+          nilai antara yang diduga. Karena bekerja secara statistik, DPA mampu
+          menembus kebisingan pengukuran yang membuat SPA gagal.
 \end{itemize}
 
+\subsubsection{Radiasi Elektromagnetik dan Kesalahan yang Disuntikkan}
 
+\textbf{Analisis elektromagnetik} pada dasarnya adalah DPA tanpa kontak fisik: yang
+diukur bukan arus pada catu daya, melainkan medan elektromagnetik di sekitar chip.
+Keunggulannya, sinyal dapat ditangkap dari jarak tertentu dan bahkan dipisahkan per
+wilayah chip, sehingga bagian algoritma yang sedang bekerja dapat dilokalisasi.
+Sebagaimana dibahas pada Bagian~\ref{sec:pasif-aktif}, teknik penyadapan
+elektromagnetik memang sudah lama dikenal.
 
+\textbf{Penyuntikan kesalahan} (\textit{fault injection}) bekerja dari arah
+sebaliknya: alih-alih mengukur, penyerang sengaja membuat perangkat melakukan
+kesalahan --- dengan mengubah tegangan catu daya, memanaskan chip, menyinari dengan
+laser, atau mengganggu jam kerja --- lalu membandingkan keluaran yang salah dengan
+keluaran yang benar. Metode ini dikenal sebagai \textit{Differential Fault Analysis}
+(DFA). Nilai praktisnya besar: pada AES, satu kesalahan bit pada putaran kedua dari
+belakang sudah cukup untuk memulihkan seluruh kunci dengan perhitungan yang sangat
+ringan \citep{schneier1996}. Karena itu, perangkat keras yang menyimpan kunci rahasia
+--- kartu pintar, modul keamanan, mesin pembaca sidik jari --- harus dirancang untuk
+mendeteksi gangguan semacam ini dan menghapus kuncinya begitu mencurigai adanya
+manipulasi.
 
+\subsubsection{Ringkasan dan Penangkalan}
 
+Tabel~\ref{tab:side-channel} merangkum keempat jenis serangan saluran samping beserta
+informasi yang dibocorkan dan penangkalannya. Perhatikan bahwa penangkal pada kolom
+terakhir hampir selalu berupa usaha untuk membuat perilaku fisik perangkat tidak lagi
+bergantung pada data rahasia yang diolahnya.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Jenis serangan saluran samping, informasi yang bocor, dan penangkalnya}
+    \label{tab:side-channel}
+    \small
+    \begin{tabularx}{\linewidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+        \hline
+        \textbf{Jenis} & \textbf{Informasi yang dibocorkan} & \textbf{Penangkalan utama} \\
+        \hline
+        Pewaktuan & Lama eksekusi, percabangan, jumlah iterasi &
+        Kode waktu tetap, operasi tanpa percabangan \\
+        \hline
+        Daya (SPA/DPA) & Pola konsumsi daya tiap operasi &
+        Penyamaan daya (\textit{masking}), penyisipan operasi palsu \\
+        \hline
+        Elektromagnetik & Medan elektromagnetik di sekitar chip &
+        Penyaringan fisik, selubung pelindung, \textit{masking} \\
+        \hline
+        Penyuntikan kesalahan & Hasil komputasi yang menyimpang dari seharusnya &
+        Deteksi tegangan dan jam, penghapusan kunci otomatis, penghitungan ulang \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+Serangan saluran samping juga dapat dijalankan tanpa alat ukur fisik sama sekali.
+Pada sistem yang berbagi sumber daya antarproses, waktu akses ke memori cache
+bergantung pada data yang sedang diolah proses lain. Dengan mengamati pola
+\emph{cache hit} dan \emph{cache miss}, penyerang dapat memulihkan kunci AES murni
+melalui perangkat lunak \citep{stallings2017}. Bab ini menutup dengan catatan itu
+sebab akibatnya besar: menilai keamanan sebuah sistem tidak cukup dengan memeriksa
+algoritma dan kuncinya, tetapi menuntut pemeriksaan atas \emph{seluruh cara} algoritma
+itu dijalankan.
