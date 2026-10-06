@@ -1,8 +1,44 @@
 \section{Kriptanalisis dan Kriptologi}
-\textbf{Kriptanalisis} adalah ilmu dan seni untuk memecahkan cipherteks menjadi plainteks tanpa mengetahui kunci yang digunakan. Pelakunya disebut kriptanalis. Teknik tertua yang terkenal adalah \textit{analisis frekuensi} yang dikembangkan oleh Al-Kindi pada abad ke-9.
+\label{sec:kriptanalisis}
 
-\textbf{Kriptologi} adalah studi menyeluruh yang mencakup kriptografi (pembuatan kode) dan kriptanalisis (pemecahan kode).
+\textbf{Kriptanalisis} (\textit{cryptanalysis}) adalah ilmu dan seni untuk
+memecahkan cipherteks menjadi plainteks tanpa mengetahui kunci yang digunakan.
+Pelakunya disebut kriptanalis, dan bidang ini merupakan ``lawan'' dari kriptografi.
+Teknik kriptanalisis sudah ada sejak abad ke-9, jauh lebih tua daripada istilah
+kriptografi itu sendiri.
 
+Kriptanalisis dikemukakan pertama kali oleh seorang ilmuwan Arab pada abad IX
+bernama \textit{Abu Yusuf Yaqub Ibnu Ishaq Ibnu As-Sabbah Ibnu 'Omran Ibnu Ismail
+Al-Kindi}, atau yang lebih dikenal sebagai \textbf{Al-Kindi}. Ia menulis buku
+tentang seni memecahkan kode berjudul \textit{Risalah fi Istikhraj al-Mu'amma}
+(\textit{Manuscript for the Deciphering Cryptographic Messages}). Al-Kindi
+menemukan adanya keteraturan frekuensi perulangan huruf di dalam Al-Quran, dan
+teknik yang digunakannya kelak dinamakan \textbf{analisis frekuensi}, yaitu teknik
+untuk memecahkan cipherteks berdasarkan frekuensi kemunculan karakter di dalam
+pesan. Gagasan intinya sederhana namun ampuh: pada bahasa alami, huruf tidak muncul
+sama sering, dan pola ketidaksamaan itu tetap terbawa meskipun identitas setiap
+huruf telah disamarkan.
+
+Sejarah kriptanalisis mencatat hasil-hasil gemilang, misalnya pemecahan Telegram
+Zimmermann yang membawa Amerika Serikat masuk ke kancah Perang Dunia I. Pesan
+rahasia Menteri Luar Negeri Jerman itu berisi tawaran aliansi kepada Meksiko dan
+berhasil dibaca pihak Sekutu; begitu isinya dipublikasikan, tekanan politik yang
+timbul tidak terbendung lagi. Kejadian ini menegaskan bahwa nilai kriptanalisis
+tidak terletak pada rahasia yang dibongkar semata, melainkan pada akibat yang
+ditimbulkannya.
+
+Yang perlu disadari, kriptanalisis bukanlah kegiatan yang berada di luar kriptografi
+melainkan justru mesin penggeraknya. Setiap algoritma pada bab-bab berikutnya
+dirancang dengan memperhitungkan serangan yang sudah diketahui; AES, misalnya,
+memakai struktur yang khusus dipilih untuk menahan serangan diferensial dan linear
+yang sebelumnya berhasil mengguncang DES. Karena itu, mempelajari cara menyerang
+adalah bagian tak terpisahkan dari mempelajari cara membangun.
+
+\textbf{Kriptologi} (\textit{cryptology}) adalah studi menyeluruh yang mencakup
+kriptografi (pembuatan kode) dan kriptanalisis (pemecahan kode). Hubungan keduanya
+tampak pada Gambar~\ref{fig:kriptologi-cabang}: keduanya berdiri sejajar di bawah
+kriptologi, dan panah dua arah di antara keduanya menandakan bahwa kemajuan di satu
+sisi selalu menuntut kemajuan di sisi lain.
 
 \begin{figure}[htbp]
     \centering

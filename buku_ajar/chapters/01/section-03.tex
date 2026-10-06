@@ -1,28 +1,191 @@
 \section{Apa itu Kriptografi?}
-\textbf{Kriptografi} berasal dari bahasa Yunani: \textit{cryptos} (secret/hidden) dan \textit{graphein} (writing), yang secara harfiah berarti "tulisan rahasia".
+\label{sec:apa-itu-kriptografi}
 
-Menurut \citet{schneier1996}, kriptografi adalah ilmu dan seni untuk menjaga keamanan pesan. Secara lebih teknis, kriptografi adalah ilmu yang mempelajari teknik-teknik matematika yang berhubungan dengan aspek keamanan informasi seperti kerahasiaan, integritas data, serta otentikasi (\citealp{menezes1996}). Perlakuan yang lebih formal terhadap definisi keamanan, beserta model ancaman dan pembuktiannya, dibahas oleh \citet{katz2020}.
+\textbf{Kriptografi} berasal dari bahasa Yunani: \textit{crypt\'os}
+(rahasia atau tersembunyi) dan \textit{gr\'aphein} (menulis), sehingga secara
+harfiah berarti ``tulisan rahasia''. Kedua kata itu masih hidup dalam bahasa
+Inggris modern melalui \textit{cryptic} dan \textit{graph}, dan rangkaian maknanya
+tidak pernah bergeser jauh dari asalnya.
+
+Menurut \citet{schneier1996}, kriptografi adalah ilmu dan seni untuk menjaga
+keamanan pesan. Secara lebih teknis, kriptografi adalah ilmu yang mempelajari
+teknik-teknik matematika yang berhubungan dengan aspek keamanan informasi seperti
+kerahasiaan, integritas data, serta otentikasi (\citealp{menezes1996}). Perlakuan
+yang lebih formal terhadap definisi keamanan, beserta model ancaman dan
+pembuktiannya, dibahas oleh \citet{katz2020}.
+
+Ketiga definisi di atas berbicara pada tingkat keabstrakan yang berbeda, dan
+perbedaan itu penting untuk disadari. Schneier menekankan sisi praktik ---
+kriptografi adalah ``seni'' sebanyak ia adalah ``ilmu''. Menezes dkk.\ menekankan
+instrumennya, yaitu matematika, sekaligus memperluas sasarannya dari sekadar
+kerahasiaan ke integritas dan otentikasi. Katz dan Lindell menekankan kerangka
+pembuktian: sebuah skema dikatakan aman bukan karena tidak ada yang berhasil
+memecahkannya, melainkan karena keamanannya dapat direduksi pada persoalan
+matematis yang diyakini sulit.
+
+Betapa sentralnya bidang ini diungkapkan oleh Keith M. Martin: \textit{``Cryptography
+lies at the heart of all cybersecurity technologies, and understanding the role it
+plays is vital to understanding how to secure cyberspace''} --- kriptografi
+merupakan inti dari semua teknologi keamanan siber, dan memahami perannya sangat
+penting untuk memahami cara mengamankan ruang siber. Di Indonesia, kriptografer
+masih menjadi sosok yang langka, padahal bidang ini sangat penting untuk segera
+ditumbuhkan.
 
 \subsection{Layanan Kriptografi}
-Untuk mengatasi masalah keamanan di atas, kriptografi menyediakan empat layanan utama:
+
+Untuk mengatasi masalah keamanan pada Bagian~\ref{sec:masalah-keamanan}, kriptografi
+menyediakan empat layanan utama:
 \begin{enumerate}
-    \item \textbf{Kerahasiaan pesan} (\textit{Confidentiality/privacy/secrecy})
-    \item \textbf{Keaslian pesan} (\textit{Data integrity})
-    \item \textbf{Keaslian pengirim dan penerima} (\textit{Authentication})
-    \item \textbf{Anti penyangkalan} (\textit{Non-repudiation})
+    \item \textbf{Kerahasiaan pesan} (\textit{confidentiality/privacy/secrecy}),
+          yaitu jaminan bahwa isi pesan hanya dapat dipahami pihak yang berhak.
+    \item \textbf{Keaslian pesan} (\textit{data integrity}), yaitu jaminan bahwa
+          pesan tidak berubah selama perjalanan.
+    \item \textbf{Keaslian pengirim dan penerima} (\textit{authentication}), yaitu
+          jaminan mengenai identitas pihak-pihak yang terlibat.
+    \item \textbf{Anti penyangkalan} (\textit{non-repudiation}), yaitu jaminan
+          bahwa pengirim tidak dapat menyangkal pesannya.
 \end{enumerate}
 
+Perlu dicatat bahwa keempat layanan ini tidak selalu disediakan oleh satu
+mekanisme. Enkripsi, misalnya, secara alami menyediakan kerahasiaan, tetapi tidak
+dengan sendirinya menjamin integritas --- sebab penyerang yang mengubah cipherteks
+dapat membuat dekripsi menghasilkan plainteks lain yang tetap ``sah'' secara
+sintaksis. Sebaliknya, fungsi hash menjamin integritas tanpa menyembunyikan apa
+pun. Karena itu, sistem keamanan yang utuh biasanya merangkai beberapa mekanisme
+sekaligus.
 
-\subsection{Sejarah Singkat Kriptografi}
-Praktik merahasiakan pesan sudah ada jauh sebelum istilah \textit{kriptografi} dipakai:
+\subsection{Tiga Jenis Algoritma Kriptografi}
+
+Berdasarkan hubungan antara kunci enkripsi dan kunci dekripsi, algoritma kriptografi
+dibagi menjadi tiga keluarga besar. Pembagian ini adalah salah satu kerangka
+konseptual terpenting dalam seluruh buku ini, dan setiap bab algoritma setelah ini
+akan menempati salah satu di antara ketiganya.
+
+\subsubsection{Algoritma kriptografi simetri}
+
+Pada kriptografi simetri (\textit{symmetric-key cryptography}), kunci enkripsi sama
+dengan kunci dekripsi. Kunci tunggal itu harus dijaga tetap privat atau rahasia.
+Sifat ini sudah ada sejak ribuan tahun yang lalu dan bertahan hingga tahun 1976,
+yakni hingga ditemukannya kriptografi kunci-publik. Algoritma yang termasuk keluarga
+ini antara lain DES, AES, Serpent, Blowfish, MARS, RC6, Twofish, 3DES, IDEA, FEAL,
+RC4, dan SEAL.
+
+Sebuah sistem simetri dapat dituliskan secara ringkas sebagai
+$E_K(P) = C$ dan $D_K(C) = P$ dengan kunci $K$ yang sama pada kedua arah.
+Kesederhanaan inilah yang membuat algoritma simetri jauh lebih cepat daripada
+algoritma nir-simetri, namun sekaligus memunculkan persoalan baru: bagaimana kedua
+pihak memperoleh kunci bersama itu tanpa penyadap ikut mengetahuinya? Persoalan
+inilah yang nantinya dijawab oleh protokol pertukaran kunci pada Bab~\ref{chap:diffie-hellman}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.82\linewidth, height=0.42\textheight, keepaspectratio]{figures/kriptografi-simetri.png}
+    \caption{Pada kriptografi simetri, plainteks $P$ dienkripsi dengan kunci privat $K$ menjadi cipherteks $C$, lalu didekripsi kembali dengan kunci privat $K$ yang sama menjadi plainteks $P$}
+    \label{fig:kriptografi-simetri}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsubsection{Algoritma kriptografi nir-simetri}
+
+Pada kriptografi nir-simetri (\textit{asymmetric-key cryptography}), kunci enkripsi
+berbeda dari kunci dekripsi ($K_1 \neq K_2$). Kunci enkripsi bersifat tidak rahasia
+(\textit{public key}), sedangkan kunci dekripsi bersifat rahasia
+(\textit{private key}). Nama lainnya adalah kriptografi kunci-publik
+(\textit{public-key cryptography}). Keluarga ini baru mulai ditemukan sejak tahun
+1976, dimulai oleh gagasan pertukaran kunci \citet{diffie1976} dan disusul oleh
+algoritma \citet{rsa1978}.
+
+Algoritma yang termasuk keluarga ini antara lain RSA, ElGamal, DSA, Diffie--Hellman,
+algoritma knapsack Merkle--Hellman, Rabin, EPOC, McEliece, XTR, dan ECC
+(\textit{Elliptic Curve Cryptography}). Sebagian besar di antaranya dibahas pada
+Bab~\ref{chap:rsa} sampai Bab~\ref{chap:ecc}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\linewidth, height=0.42\textheight, keepaspectratio]{figures/kriptografi-nirsimetri.png}
+    \caption{Pada kriptografi nir-simetri, plainteks $P$ dienkripsi dengan kunci publik $K_1$ menjadi cipherteks $C$, lalu didekripsi kembali dengan kunci privat $K_2$ yang berbeda}
+    \label{fig:kriptografi-nirsimetri}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsubsection{Fungsi hash}
+
+Fungsi hash mengompresi pesan berukuran sembarang menjadi \textit{message-digest}
+berukuran tetap. Sifatnya \textit{irreversible}: nilai hash tidak dapat
+dikembalikan menjadi pesan semula. Algoritma yang termasuk keluarga ini antara lain
+MD5, SHA-1, SHA-2, Keccak (SHA-3), RIPEMD, dan WHIRLPOOL. Kegunaan utamanya adalah
+memeriksa integritas pesan; fungsi ini dibahas tuntas pada Bab~\ref{chap:hash-mac}.
+
+Yang membedakan fungsi hash dari dua keluarga sebelumnya bukanlah panjang keluarannya
+--- enkripsi juga menghasilkan keluaran berukuran tetap --- melainkan tidak adanya
+kunci dan tidak dapat dibalikkannya proses. Karena itu fungsi hash tidak dipakai
+untuk merahasiakan pesan, melainkan untuk memberi sidik jari pada pesan.
+
+\subsection{Dua Aplikasi Utama Enkripsi}
+
+Meskipun algoritma kriptografi bermacam-macam, dalam praktik sehari-hari enkripsi
+dipakai untuk dua keperluan besar.
 \begin{itemize}
-    \item \textbf{Mesir Kuno}---penggunaan hieroglif yang tidak lazim pada makam untuk menyembunyikan maknanya dari pembaca umum.
-    \item \textbf{Yunani dan Romawi}---\textit{scytale} dari Sparta dan \textit{Caesar cipher}, yaitu pergeseran huruf dengan jumlah tetap.
-    \item \textbf{Bangsa Arab abad ke-9}---Al-Kindi memperkenalkan analisis frekuensi, tonggak pertama kriptanalisis.
-    \item \textbf{Perang Dunia II}---mesin Enigma dan upaya pemecahannya menandai era kriptografi elektromekanik.
-    \item \textbf{Era modern}---DES (1977) dan AES (2001) menjadi standar block cipher, sedangkan RSA (1977) membuka era kriptografi kunci-publik.
+    \item \textbf{Enkripsi dokumen di dalam penyimpanan} (\textit{encryption at
+          rest}), misalnya ketika sebuah dokumen di komputer diberi kata sandi.
+          Di sini pesan tidak sedang dalam perjalanan, melainkan diam di tempat, dan
+          ancamannya adalah pihak yang memperoleh akses fisik ke berkasnya.
+    \item \textbf{Enkripsi pesan yang dikirim} (\textit{encryption in motion}),
+          misalnya ketika aplikasi perpesanan mengabarkan bahwa percakapan diamankan
+          dengan enkripsi ujung-ke-ujung. Di sini pesan melintasi saluran publik, dan
+          ancamannya adalah penyadapan.
 \end{itemize}
 
+Kedua situasi menuntut pertimbangan yang berbeda. Pada \textit{encryption at rest},
+jika kata sandi hilang maka datanya hilang selamanya --- tidak ada pihak lain yang
+dapat memulihkannya, dan memang begitulah seharusnya. Pada
+\textit{encryption in motion}, kunci harus tersedia bagi kedua ujung komunikasi
+tetapi tidak bagi pihak ketiga, sehingga muncul persoalan pertukaran kunci yang
+tidak dimiliki oleh situasi pertama.
+
+\subsection{Sejarah Singkat Kriptografi}
+
+Sejarah kriptografi sudah setua peradaban manusia. Secara historis, kriptografi
+diasosiasikan dengan kegiatan mata-mata, pemerintahan, dan militer, serta telah
+digunakan di dalam peperangan selama ribuan tahun. Tiga pihak memiliki kontribusi
+penting pada perkembangan kriptografi zaman dahulu: kalangan militer, diplomat, dan
+\textit{diarist} (penulis catatan harian). Baru sejak lebih dari lima puluh tahun
+yang lalu kriptografi memperoleh landasan matematika yang kokoh dan bergeser dari
+aplikasi militer ke aplikasi komersial. Secara garis besar, kriptografi dibagi
+menjadi dua era: \textbf{kriptografi klasik} dan \textbf{kriptografi modern}.
+Kriptografi klasik (\textit{ancient} atau \textit{classical cryptography}) hanya
+mengenkripsi huruf dan angka dengan kertas dan pena, dan seluruh ciphernya sudah
+kedaluwarsa karena telah berhasil dikriptanalisis. Kriptografi modern sebaliknya
+bekerja atas pesan berbentuk digital --- teks, audio, gambar, dan video --- dengan
+bantuan komputer.
+
+\subsubsection{Mesir Kuno}
+
+Bangsa Mesir sekitar 4000 tahun yang lalu menggunakan \textit{hieroglyph} yang
+tidak standar untuk menulis pesan pada dinding piramida. Yang membuatnya pantas
+disebut leluhur kriptografi bukanlah kerumitan tulisannya, melainkan niat
+menyembunyikan makna dari pembaca umum. Perlu dicatat bahwa ini lebih tepat disebut
+penyembunyian tulisan ketimbang penyandian pesan: kuncinya terletak pada pengetahuan
+tentang lambang yang tidak lazim, bukan pada suatu rahasia yang dapat dipindahkan.
+
+\subsubsection{Yunani dan Romawi Kuno}
+
+Di Yunani, kriptografi sudah digunakan sekitar 400 SM. Alat yang dipakai adalah
+\textit{scytale}, sebuah tongkat yang dililiti pita kulit. Pengirim melilitkan
+pita pada tongkat berdiameter tertentu lalu menulis pesan sepanjang tongkat;
+ketika pita dilepas, huruf-hurufnya terbaca acak. Penerima yang memiliki tongkat
+berdiameter sama dapat memulihkan pesannya. Contohnya, plainteks
+\code{KILLKINGTOMORROWMIDNIGHT} dapat berubah menjadi kriptogram
+\code{KIMWIINOMGLGRIHLTRDTKOON}. Perhatikan bahwa di sini tidak ada huruf yang
+diganti; yang diubah hanyalah urutannya. Gagasan inilah yang kini disebut
+transposisi, dan tongkat scytale adalah contoh pertama yang terdokumentasi dari
+kunci berbentuk parameter --- diameter tongkat berperan persis seperti kunci.
+Gambar~\ref{fig:ilustrasi-scytale} menampilkan alat tersebut.
+
+Bangsa Romawi kemudian memakai cara yang lebih sederhana, yaitu \textit{Caesar
+cipher}, yakni pergeseran huruf sejumlah tetap. Menariknya, Caesar cipher jauh
+lebih lemah daripada scytale, tetapi jauh lebih mudah dipakai; ketegangan antara
+keamanan dan kepraktisan ini akan berulang sepanjang sejarah kriptografi.
 
 \begin{figure}[htbp]
     \centering
@@ -32,6 +195,67 @@ Praktik merahasiakan pesan sudah ada jauh sebelum istilah \textit{kriptografi} d
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
 
+\subsubsection{Bangsa Arab: Lahirnya Kriptanalisis}
+
+Sejarah kriptologi pada bangsa Arab dapat dibaca pada seri buku \textit{Arabic
+Origins of Cryptology} yang diterbitkan oleh \textit{King Faisal Center for Research
+and Islamic Studies}, Arab Saudi. Salah satu tokohnya adalah Ibn ad-Durayhim, yang
+bernama lengkap Ali ibn Muhammad ibn Abd al Aziz, Taj ad-Din. Ia lahir di Mosul,
+Irak, pada bulan Sya'ban tahun 712 H atau 1312 M, sering berdagang antara Kairo dan
+Damaskus, dan ditunjuk sebagai guru di Masjid Umayah Damaskus. Ia kemudian pindah
+ke Mesir pada tahun 760 H/1359 M dan diutus Sultan sebagai duta kepada raja
+Abyssinia (sekarang Etiopia).
+
+Menurut ad-Durayhim, jenis-jenis cipher dapat dikelompokkan ke dalam delapan tipe:
+transposisi; substitusi; penambahan atau reduksi jumlah huruf; penggunaan piranti
+sandi; penggantian huruf dengan angka yang diboboti secara desimal; penyandian huruf
+dengan menggunakan kata-kata; penggantian huruf dengan nama generik; serta
+penggunaan simbol atau tanda untuk menyatakan huruf. Pengelompokan ini menakjubkan
+karena dibuat berabad-abad sebelum taksonomi serupa muncul di Eropa. David Kahn,
+penulis \textit{The Codebreakers}, menyimpulkan: \textit{``Cryptology was born
+among Arabs. They were the first to discover and write down the methods of
+cryptanalysis.''}
+
+\subsubsection{Eropa: Renaisans sampai Abad ke-19}
+
+Cipher terkenal pada abad pertengahan hingga abad ke-19 antara lain \textit{Vigen\`ere
+cipher}, yang dipublikasikan oleh diplomat Perancis Blaise de Vigen\`ere pada tahun
+1586, dan \textit{Playfair cipher}, yang dipromosikan oleh diplomat Inggris Lord
+Playfair meskipun penemu aslinya adalah Charles Wheatstone pada tahun 1854.
+
+Pada abad ke-17, sejarah kriptografi mencatat korban di Inggris. Queen Mary of
+Scotland dipancung setelah pesan rahasianya dari balik penjara --- sebuah cipherteks
+yang berisi rencana membunuh Ratu Elizabeth I --- berhasil dipecahkan oleh Thomas
+Phelippes, seorang \textit{codebreaker}. Kasus ini memperlihatkan bahwa kelemahan
+kriptografi bukan sekadar persoalan akademis; akibatnya dapat berupa nyawa.
+
+\subsubsection{Perang Dunia II: Mesin Enigma}
+
+Pada Perang Dunia II, pemerintah Nazi Jerman membuat mesin enkripsi yang dinamakan
+\textit{Enigma}, seperti tampak pada Gambar~\ref{fig:enigma-pd2}. Enigma cipher
+berhasil dipecahkan oleh pihak Sekutu, dan keberhasilan itu sering dikatakan
+sebagai salah satu faktor yang memperpendek Perang Dunia II. Yang menarik dari
+kisah Enigma bukanlah mesinnya, melainkan bahwa pemecahannya dicapai melalui
+paduan antara matematika, intelijen, dan prosedur operasional lawan yang tidak
+disiplin --- sebuah pelajaran yang masih berlaku sampai kini.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.72\linewidth, height=0.55\textheight, keepaspectratio]{figures/enigma-pd2.png}
+    \caption{Mesin Enigma beserta bagian-bagiannya: \textit{plugboard}, rotor, \textit{keyboard}, dan papan lampu alfabetis}
+    \label{fig:enigma-pd2}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsubsection{Era Modern}
+
+Perang Dunia II menjadi titik balik. Pekerjaan pemecahan kode di Bletchley Park
+memperlihatkan bahwa persoalan kriptografi dapat dirumuskan secara matematis dan
+diselesaikan secara sistematis, bukan lagi melalui kejelian perorangan. Tonggak
+berikutnya adalah karya Claude Shannon pada tahun 1949 yang meletakkan dasar teori
+informasi bagi kerahasiaan, disusul oleh diterbitkannya DES sebagai standar pada
+tahun 1977 dan AES pada tahun 2001 sebagai penggantinya. Pada tahun yang sama
+dengan DES, RSA membuka era kriptografi kunci-publik.
 
 \begin{figure}[htbp]
     \centering

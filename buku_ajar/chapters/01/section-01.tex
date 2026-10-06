@@ -1,10 +1,75 @@
 \section{Konsep Dasar Komunikasi}
-Dalam dunia nyata, komunikasi terjadi antara dua pihak, misalnya Alice (pengirim) dan Bob (penerima). Mereka dapat berkomunikasi melalui berbagai saluran publik seperti:
-\begin{itemize}
-    \item Surat menyurat (pos)
-    \item Telepon
-    \item Email
-    \item SMS/Chatting
-\end{itemize}
-Pihak yang terlibat tidak selalu berupa manusia; bisa juga berupa interaksi antara manusia dengan mesin (misalnya mesin penjawab), atau mesin dengan mesin (misalnya \textit{client} dan \textit{server} dalam jaringan komputer).
+\label{sec:konsep-komunikasi}
 
+Komunikasi pada hakikatnya adalah pemindahan pesan dari satu pihak ke pihak lain
+melalui suatu saluran. Dalam kajian kriptografi, komunikasi sengaja dimodelkan
+secara sederhana: dua pihak yang berkepentingan, satu saluran, dan satu pihak lain
+yang tidak diundang. Kesederhanaan model ini bukan kelemahan, melainkan justru yang
+membuat persoalan keamanan informasi dapat dirumuskan secara tajam. Sebelum
+membicarakan enkripsi, dekripsi, atau algoritma apa pun, kita perlu lebih dahulu
+menyepakati siapa saja yang terlibat di dalamnya dan apa yang mungkin mereka
+lakukan.
+
+\subsection{Pihak yang Berkomunikasi dan Salurannya}
+
+Dalam dunia nyata, komunikasi terjadi antara dua pihak, misalnya Alice (pengirim)
+dan Bob (penerima). Mereka dapat berkomunikasi melalui berbagai saluran publik
+seperti surat menyurat (pos), telepon, surel, serta pesan singkat dan aplikasi
+perpesanan. Kata ``publik'' di sini penting dan perlu ditekankan sejak awal: saluran
+tersebut tidak dirancang untuk menjaga kerahasiaan, sehingga apa pun yang melewatinya
+harus dianggap dapat terlihat oleh pihak lain. Justru karena itulah kriptografi
+diperlukan.
+
+Pihak yang terlibat tidak selalu berupa manusia; bisa juga berupa interaksi antara
+manusia dengan mesin (misalnya mesin penjawab atau layanan perbankan otomatis), atau
+mesin dengan mesin (misalnya \textit{client} dan \textit{server} dalam jaringan
+komputer). Pola terakhir ini kini mendominasi: sebagian besar komunikasi terenkripsi
+di dunia modern terjadi tanpa manusia di salah satu ujungnya, misalnya ketika
+peramban web mengambil halaman dari peladen, ketika aplikasi ponsel menyinkronkan
+data, atau ketika dua perangkat Internet of Things bertukar pembacaan sensor.
+
+Dalam pembahasan selanjutnya, demi kemudahan, pengirim pesan ditokohkan sebagai
+Alice dan penerima pesan ditokohkan sebagai Bob. Konvensi penamaan tokoh ini lazim
+dipakai dalam literatur kriptografi agar pembahasan terasa lebih manusiawi
+ketimbang menggunakan simbol $A$, $B$, dan $C$.
+
+\subsection{Penyusup dan Kemampuannya}
+
+Tokoh ketiga dalam model ini adalah penyusup (\textit{intruder}), yaitu pihak yang
+menyadap, mengintersepsi, menghapus, menambah, atau mengubah pesan. Sebutan lain
+untuknya antara lain \textit{eavesdropper}, \textit{enemy}, \textit{adversary},
+\textit{interceptor}, dan \textit{bad guy}; nama tokohnya bermacam-macam pula, seperti
+Eve, Carol, Trudy, atau Mallory.
+
+Salah satu perumusan paling ringkas mengenai mengapa keamanan komunikasi menjadi
+persoalan sulit datang dari Ronald Rivest, salah satu pencipta algoritma RSA:
+\textit{``cryptography is about communication in the presence of adversaries''}
+--- kriptografi adalah tentang berkomunikasi ketika ada pihak yang berniat jahat.
+Rumusan ini menegaskan bahwa asumsi adanya lawan bukan tambahan belaka, melainkan
+bagian tak terpisahkan dari definisi masalahnya.
+
+Pertanyaan yang wajar muncul kemudian: apa saja yang dapat dilakukan pihak ketiga?
+Jawabannya: banyak. Menurut pembahasan pada \citet{stallings2017}, setidaknya ada
+lima tindakan berikut.
+
+\begin{enumerate}
+    \item \textbf{Penyadapan (\textit{eavesdrop})}, yaitu mengintersepsi pesan yang
+          melintas tanpa mengubahnya. Penyerang pasif seperti ini sulit dideteksi
+          karena tidak meninggalkan jejak pada lalu lintas data.
+    \item \textbf{Penyisipan pesan (\textit{insert})} ke dalam koneksi yang sedang
+          berlangsung, sehingga pesan palsu tampak berasal dari pihak yang sah.
+    \item \textbf{Penyamaran (\textit{impersonation})}, yaitu memalsukan alamat
+          sumber pada paket data, atau bahkan sembarang ruas pada paket tersebut.
+    \item \textbf{Pembajakan sesi (\textit{hijacking})}, yaitu mengambil alih koneksi
+          yang sedang berjalan dengan menyingkirkan salah satu pihak lalu menempatkan
+          diri di posisinya.
+    \item \textbf{Serangan penolakan layanan (\textit{denial of service})}, yaitu
+          mencegah layanan dipakai pihak lain, misalnya dengan membebani sumber daya
+          sampai jenuh.
+\end{enumerate}
+
+Daftar ini memperlihatkan bahwa ancaman tidak berhenti pada pembacaan pesan.
+Penyusup dapat pula mengubah, memalsukan, menambah, menghapus, bahkan melumpuhkan
+komunikasi. Karena itu, satu mekanisme tunggal tidak akan pernah cukup; kriptografi
+menyediakan sekumpulan layanan yang masing-masing menanggulangi sebagian ancaman.
+Layanan-layanan itulah yang dibahas pada bagian berikutnya.

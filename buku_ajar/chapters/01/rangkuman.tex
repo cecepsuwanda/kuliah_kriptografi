@@ -1,10 +1,16 @@
 \section{Rangkuman}
 \begin{itemize}
-    \item Kriptografi adalah ilmu dan seni menjaga keamanan pesan melalui teknik matematika; istilahnya berasal dari \textit{cryptos} (rahasia) dan \textit{graphein} (tulisan).
+    \item Kriptografi adalah ilmu dan seni menjaga keamanan pesan melalui teknik matematika; istilahnya berasal dari \textit{crypt\'os} (rahasia) dan \textit{gr\'aphein} (tulisan).
+    \item Dalam model komunikasi kriptografi, pengirim ditokohkan sebagai Alice dan penerima sebagai Bob, sedangkan pihak ketiga yang mengancam disebut penyusup dengan kemampuan menyadap, menyisipkan, menyamar, membajak sesi, dan menolak layanan.
     \item Empat masalah keamanan komunikasi pada saluran publik adalah kerahasiaan, otentikasi, integritas data, dan nir-penyangkalan.
-    \item Sistem kriptografi dimodelkan sebagai quintuple $(\mathcal{E},\mathcal{D},\mathcal{M},\mathcal{K},\mathcal{C})$ yang memetakan plainteks, kunci, dan cipherteks.
-    \item Enkripsi mengubah plainteks menjadi cipherteks dengan kunci, sedangkan dekripsi mengembalikannya; keamanan bergantung pada kerahasiaan kunci.
-    \item Kriptanalisis adalah upaya memecahkan cipherteks tanpa kunci, dan kriptologi mencakup kriptografi sekaligus kriptanalisis.
+    \item Sistem kriptografi dimodelkan sebagai quintuple $(\mathcal{E},\mathcal{D},\mathcal{M},\mathcal{K},\mathcal{C})$ yang memetakan plainteks, kunci, dan cipherteks, dengan syarat $D_k(E_k(m)) = m$ untuk setiap kunci yang sah.
+    \item Menurut Prinsip Kerckhoffs, algoritma boleh dan harus publik; satu-satunya rahasia adalah kunci.
+    \item Terdapat tiga keluarga algoritma kriptografi: simetri (kunci enkripsi sama dengan kunci dekripsi), nir-simetri (kunci enkripsi berbeda dari kunci dekripsi), dan fungsi hash (tanpa kunci, tidak dapat dibalik).
+    \item Enkripsi dipakai untuk dua keperluan besar, yaitu \textit{encryption at rest} (dokumen di dalam penyimpanan) dan \textit{encryption in motion} (pesan yang sedang dikirim).
+    \item Kriptanalisis adalah upaya memecahkan cipherteks tanpa kunci, dirintis oleh Al-Kindi pada abad ke-9 melalui analisis frekuensi; kriptologi mencakup kriptografi sekaligus kriptanalisis.
+    \item \textit{Encoding}, \textit{hashing}, enkripsi, tokenisasi, dan tanda tangan digital adalah lima hal yang berbeda; menyamakannya menimbulkan rasa aman yang semu.
     \item Ukuran ruang kunci menentukan ketahanan terhadap \textit{brute-force}: 26 kunci Caesar seketika dipecahkan, sedangkan $26!$ atau $2^{56}$ kunci menuntut waktu yang jauh lebih besar.
-    \item Urgensi kriptografi nyata tercermin pada kasus kebocoran data, penyadapan komunikasi, dan pengamanan transaksi elektronik (HTTPS/TLS).
+    \item Urgensi kriptografi nyata tercermin pada kasus kebocoran data (BPJS Kesehatan, Tokopedia, KPU, Kemenhan, BSI), penyadapan komunikasi diplomatik, dan pengamanan transaksi elektronik (HTTPS/TLS).
+    \item Di Indonesia, kriptografi ditangani antara lain oleh BSSN dan PSSN, dengan Museum Sandi di Yogyakarta sebagai sarana pelestarian.
+    \item Tantangan masa depan bidang ini meliputi kriptografi ringan untuk IoT, kriptografi pasca-kuantum, kriptografi berbasis kecerdasan buatan, dan \textit{selective encryption} untuk data multimedia.
 \end{itemize}

@@ -1,4 +1,5 @@
 \section{Contoh Terhitung}
+\label{sec:contoh-bab1}
 
 \begin{example}[Ruang kunci dan estimasi waktu \textit{brute-force}]
 Misalkan penyerang mampu menguji $v = 10^9$ kunci per detik. Bandingkan dua cipher substitusi berikut.
@@ -23,4 +24,63 @@ Cipher dengan panjang kunci 56 bit memiliki
 Dengan kecepatan uji $10^9$ kunci/detik,
 \[ t = \frac{2^{56}}{10^9} \approx 7{,}21 \times 10^{7}\ \text{detik} \approx 2{,}28\ \text{tahun}. \]
 Waktu sekitar dua tahun terlalu singkat untuk kerahasiaan jangka panjang, sehingga panjang kunci 56 bit (misalnya DES) kini dianggap tidak aman.
+\end{example}
+
+\begin{example}[Mengapa \textit{encoding} bukan enkripsi]
+Perhatikan kata \code{Halo}. Bila kata itu di-\textit{encode} dengan Base64, hasilnya
+adalah \code{SGFsbw==}. Sepintas keluarannya sudah tidak terbaca, sehingga sering
+disangka telah terenkripsi. Namun perhatikan dua hal berikut.
+
+\textit{Pertama}, tidak ada kunci yang terlibat. Siapa pun yang mengenal aturan
+Base64 --- dan aturan itu publik, tertulis dalam standar --- dapat membalikkannya
+dalam hitungan detik tanpa perlu menebak apa pun. Prosesnya hanya bergantung pada
+data masukan, bukan pada rahasia apa pun.
+
+\textit{Kedua}, panjang keluarannya ikut menentukan panjang masukan. Kata empat
+huruf menghasilkan delapan karakter; kata dua puluh huruf akan menghasilkan
+keluaran yang kira-kira dua setengah kali lipat panjang masukan. Pola semacam ini
+membocorkan informasi tentang plainteksnya, sesuatu yang tidak terjadi pada cipher
+yang benar.
+
+Bandingkan dengan Caesar cipher berkunci $k=3$ atas kata yang sama:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}l l >{\raggedright\arraybackslash}X@{}}
+\hline
+Plainteks & \code{Halo} & dapat dibaca siapa saja \\
+Cipherteks (Base64) & \code{SGFsbw==} & dapat dibalik siapa saja \\
+Cipherteks (Caesar, $k=3$) & \code{Kdor} & hanya dapat dibalik pemegang kunci \\
+\hline
+\end{tabularx}
+\end{center}
+
+Kesimpulannya, Base64 adalah alat pengubahan representasi, bukan alat perlindungan.
+Data yang hanya di-\textit{encode} sama saja dengan data terbuka.
+\end{example}
+
+\begin{example}[Jumlah kunci pada sistem simetri dan nir-simetri]
+Perbedaan kedua keluarga algoritma terasa paling jelas ketika jumlah pihaknya
+bertambah. Misalkan ada $n$ pihak yang semuanya perlu berkomunikasi secara rahasia
+dengan pihak lain.
+
+Pada kriptografi \textbf{simetri}, setiap pasangan pihak memerlukan satu kunci
+bersama, sehingga jumlah kunci yang harus dikelola adalah
+\[
+    \frac{n(n-1)}{2}.
+\]
+Pada kriptografi \textbf{nir-simetri}, setiap pihak cukup memiliki satu pasang kunci
+--- satu kunci publik dan satu kunci privat --- sehingga jumlah pasangan kunci
+adalah $n$.
+
+Selisihnya sangat besar. Untuk $n = 1000$ pihak:
+\[
+    \frac{1000 \cdot 999}{2} = 499\,500\ \text{kunci simetri},
+    \qquad
+    1000\ \text{pasangan kunci nir-simetri}.
+\]
+Dari 499.500 menjadi 1.000 --- sekitar lima ratus kali lebih sedikit. Inilah daya
+tarik utama kriptografi kunci-publik. Namun perlu dicatat bahwa keuntungan ini
+diperoleh dengan biaya: algoritma nir-simetri jauh lebih lambat daripada algoritma
+simetri. Karena itu, dalam praktik keduanya dipakai bersama-sama melalui
+\textit{kriptografi hibrida}, sebagaimana dibahas pada Bab~\ref{chap:diffie-hellman}.
 \end{example}
