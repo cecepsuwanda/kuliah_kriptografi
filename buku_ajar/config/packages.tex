@@ -49,6 +49,10 @@
 % --- Tautan & PDF --------------------------------------------------------
 \usepackage[hidelinks,breaklinks]{hyperref}
 \usepackage{url}
+% xurl memperbolehkan pemenggalan URL di sembarang karakter, sehingga URL
+% panjang pada Lampiran C tidak menghasilkan underfull hbox. Dimuat setelah
+% hyperref dan url.
+\usepackage{xurl}
 
 % --- Mikro-tipografi -----------------------------------------------------
 % Dimuat setelah paket font. Character protrusion + font expansion sangat
