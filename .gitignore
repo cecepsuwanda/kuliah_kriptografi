@@ -35,6 +35,10 @@
 # Output folder dari compile_main.bat dan compile_bab.bat
 output/
 
+# Build directory kompilasi mandiri bab (Arsitektur_Buku_Ajar.md Bagian 31-32)
+build/
+buku_ajar/build/
+
 # Temporary / Backup
 *.tmp
 *~
