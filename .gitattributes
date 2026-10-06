@@ -1,0 +1,11 @@
+# Berkas kode program di code/ dibaca oleh \lstinputlisting (lihat
+# buku_ajar/config/commands.tex). Paket listings tidak menormalkan akhir baris
+# seperti halnya pembacaan berkas .tex biasa, sehingga berkas ber-CRLF membuat
+# seluruh listing menyatu menjadi satu baris panjang di dalam PDF.
+# Paksa LF agar hasil build sama pada setiap checkout (core.autocrlf=true di
+# mesin pengembang akan mengubah berkas ini menjadi CRLF tanpa aturan di bawah).
+buku_ajar/code/** text eol=lf
+
+# Berkas ini sendiri harus tetap LF: pola yang berakhir CRLF berisiko tidak
+# cocok dengan nama berkas yang dimaksud.
+.gitattributes text eol=lf

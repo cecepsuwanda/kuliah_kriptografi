@@ -6,3 +6,17 @@
 3. Analisis distribusi frekuensi hurufnya dan coba petakan huruf yang paling sering muncul ke huruf 'E' atau 'A'.
 4. Lakukan iterasi \textit{trial-and-error} hingga pesan dapat terbaca sepenuhnya.
 \end{obeactivity}
+
+Langkah-langkah pada Aktivitas 4.1 dapat dijalankan langsung melalui program
+pada Listing~\ref{lst:caesar-frekuensi}. Program itu mengenkripsi sebuah pesan,
+menghitung frekuensi huruf cipherteksnya, lalu menebak kunci dengan
+menyelaraskan huruf tersering ke urutan huruf bahasa Indonesia.
+
+\lstinputlisting[
+    language=Python,
+    caption={Cipher Caesar: enkripsi, dekripsi, dan pemecahan dengan analisis frekuensi},
+    label={lst:caesar-frekuensi}
+]{\codefile{python/caesar.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/caesar.cpp}) dan MATLAB
+(\texttt{code/matlab/caesar.m}).

@@ -5,3 +5,17 @@
 2. Bandingkan hasil tersebut dengan waktu yang dibutuhkan untuk menyerang AES-128 ($2^{128}$ kemungkinan).
 3. Diskusikan mengapa peningkatan panjang kunci secara eksponensial jauh lebih efektif daripada sekadar mengulang algoritma yang sama (seperti pada Double DES).
 \end{obeactivity}
+
+Langkah-langkah pada Aktivitas 7.1 dapat dijalankan langsung melalui program
+pada Listing~\ref{lst:kompleksitas-kunci}. Program itu menghitung waktu
+pencarian menyeluruh untuk DES, Double DES, Triple DES, dan AES, dengan
+memakai panjang kunci efektif sesuai pembahasan Bab 7 \S3.
+
+\lstinputlisting[
+    language=Python,
+    caption={Kompleksitas ruang kunci: waktu brute force dari DES sampai AES-256},
+    label={lst:kompleksitas-kunci}
+]{\codefile{python/kompleksitas_kunci.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/kompleksitas\_kunci.cpp})
+dan MATLAB (\texttt{code/matlab/kompleksitas\_kunci.m}).

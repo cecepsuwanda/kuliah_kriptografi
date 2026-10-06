@@ -7,3 +7,17 @@
 4. Hitunglah kunci rahasia bersama $K$ yang dihasilkan oleh Alice dan Bob.
 5. Diskusikan bagaimana jika $p$ yang digunakan adalah bilangan kecil; apakah keamanan tetap terjamin?
 \end{obeactivity}
+
+Langkah-langkah pada Aktivitas 11.1 dapat dijalankan langsung melalui program
+pada Listing~\ref{lst:diffie-hellman}. Program itu menghitung kunci publik dan
+kunci bersama dari kedua pihak, sekaligus memeriksa apakah $g$ benar-benar akar
+primitif dari $p$.
+
+\lstinputlisting[
+    language=Python,
+    caption={Pertukaran kunci Diffie-Hellman dan pemeriksaan akar primitif},
+    label={lst:diffie-hellman}
+]{\codefile{python/diffie_hellman.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/diffie\_hellman.cpp})
+dan MATLAB (\texttt{code/matlab/diffie\_hellman.m}).

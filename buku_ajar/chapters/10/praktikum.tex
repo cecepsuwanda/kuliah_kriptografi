@@ -8,3 +8,17 @@
 5. Cobalah mengenkripsi pesan $m=5$ dan dekripsi kembali hasilnya.
 6. Diskusikan apa yang terjadi jika $e$ tidak relatif prima terhadap $\phi(n)$.
 \end{obeactivity}
+
+Langkah-langkah pada Aktivitas 10.1 dapat dijalankan langsung melalui program
+pada Listing~\ref{lst:rsa}. Program itu membangkitkan kunci, mengenkripsi, dan
+mendekripsi pesan untuk parameter Aktivitas 10.1 maupun parameter pada contoh
+terhitung Bab 10, sehingga setiap angka dapat diperiksa satu per satu.
+
+\lstinputlisting[
+    language=Python,
+    caption={RSA: pembangkitan kunci, enkripsi, dan dekripsi},
+    label={lst:rsa}
+]{\codefile{python/rsa.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/rsa.cpp}) dan MATLAB
+(\texttt{code/matlab/rsa.m}).

@@ -18,3 +18,15 @@
 % Dipakai di bawah gambar yang diambil dari bahan kuliah, agar atribusinya
 % seragam dan tidak perlu ditulis ulang di setiap bab.
 \newcommand{\sumber}[1]{\par\vspace{2pt}{\footnotesize\itshape Sumber: #1\par}}
+
+% --- Path berkas kode program -------------------------------------------
+% Berkas kode disimpan di code/<bahasa>/ (Arsitektur_Buku_Ajar.md Bagian 19)
+% dan ditarik dengan \lstinputlisting. Berbeda dari \input dan
+% \includegraphics, \lstinputlisting tidak diperbaiki path-nya oleh paket
+% subfiles, sehingga path relatifnya pecah pada salah satu mode kompilasi:
+% kompilasi penuh berjalan dari buku_ajar/ (butuh "code/..."), sedangkan
+% kompilasi mandiri bab berjalan dari chapters/NN/ (butuh "../../code/...").
+% Perintah ini memilih bentuk yang benar pada kedua mode.
+\newcommand{\codefile}[1]{%
+    \ifSubfilesClassLoaded{../../code/#1}{code/#1}%
+}

@@ -6,3 +6,17 @@
 3. Alice ingin mengirim pesan $m = 2035$ dengan memilih $k = 1520$. Hitunglah pasangan cipherteks $(a, b)$.
 4. Bob melakukan dekripsi menggunakan kunci privatnya. Verifikasi apakah hasilnya kembali menjadi $m = 2035$.
 \end{obeactivity}
+
+Langkah-langkah pada Aktivitas 12.1 dapat dijalankan langsung melalui program
+pada Listing~\ref{lst:elgamal}. Program itu membangkitkan kunci publik dari
+kunci privat, mengenkripsi pesan menjadi pasangan $(a, b)$, lalu memulihkan
+pesan semula.
+
+\lstinputlisting[
+    language=Python,
+    caption={ElGamal: pembangkitan kunci, enkripsi, dan dekripsi},
+    label={lst:elgamal}
+]{\codefile{python/elgamal.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/elgamal.cpp}) dan MATLAB
+(\texttt{code/matlab/elgamal.m}).

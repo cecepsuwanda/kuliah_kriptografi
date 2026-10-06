@@ -6,3 +6,17 @@
 3. Lakukan penggandaan titik untuk menghitung $2P$ pada kurva yang sama.
 4. Bandingkan hasil perhitungan manual Anda dengan kalkulator ECC online.
 \end{obeactivity}
+
+Langkah-langkah pada Aktivitas 14.1 dapat dijalankan langsung melalui program
+pada Listing~\ref{lst:ecc}. Program itu menghitung penjumlahan dan penggandaan
+titik, baik pada kurva atas bilangan real (termasuk kurva aktivitas ini) maupun
+pada kurva modulo prima, lalu memakainya untuk pertukaran kunci ECDH.
+
+\lstinputlisting[
+    language=Python,
+    caption={Aritmetika kurva eliptik: penjumlahan, penggandaan, dan ECDH},
+    label={lst:ecc}
+]{\codefile{python/ecc.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/ecc.cpp}) dan MATLAB
+(\texttt{code/matlab/ecc.m}).

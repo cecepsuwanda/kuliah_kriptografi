@@ -6,3 +6,18 @@
 3. Identifikasi siapa penerbit sertifikatnya (CA), kapan masa berlakunya, dan apa kunci publik yang digunakan.
 4. Diskusikan apa yang terjadi jika sertifikat tersebut kedaluwarsa atau tidak diterbitkan oleh CA terpercaya.
 \end{obeactivity}
+
+Aktivitas 16.1 diperkuat oleh program pada Listing~\ref{lst:tanda-tangan} yang
+menjalankan sisi lain dari sertifikat digital, yaitu tanda tangan itu sendiri:
+pesan ditandatangani dengan kunci privat, diverifikasi dengan kunci publik, lalu
+verifikasi diulang setelah pesan diubah untuk menunjukkan bahwa tanda tangan
+tidak lagi sah.
+
+\lstinputlisting[
+    language=Python,
+    caption={Tanda tangan digital RSA: penandatanganan, verifikasi, dan uji pemalsuan},
+    label={lst:tanda-tangan}
+]{\codefile{python/tanda_tangan.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/tanda\_tangan.cpp}) dan
+MATLAB (\texttt{code/matlab/tanda\_tangan.m}).

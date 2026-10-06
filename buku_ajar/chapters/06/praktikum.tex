@@ -5,3 +5,18 @@
 2. Amati hasil cipherteks yang dihasilkan. Apakah gambar asli masih terlihat pada mode ECB?
 3. Diskusikan mengapa mode CBC lebih aman untuk data yang memiliki pola berulang.
 \end{obeactivity}
+
+Langkah-langkah pada Aktivitas 6.1 dapat dijalankan langsung melalui program
+pada Listing~\ref{lst:mode-operasi}. Program itu memakai block cipher mainan
+berukuran 4 byte untuk membandingkan ECB dan CBC pada plainteks berpola
+berulang, sehingga kebocoran pola pada ECB terlihat jelas tanpa perlu mengolah
+gambar.
+
+\lstinputlisting[
+    language=Python,
+    caption={Mode operasi ECB dan CBC: kebocoran pola pada blok yang berulang},
+    label={lst:mode-operasi}
+]{\codefile{python/mode_operasi.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/mode\_operasi.cpp}) dan
+MATLAB (\texttt{code/matlab/mode\_operasi.m}).

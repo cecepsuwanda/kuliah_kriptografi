@@ -6,3 +6,17 @@
 3. Lakukan simulasi tahap \textit{ShiftRows} secara manual pada matriks tersebut.
 4. Amati bagaimana posisi byte berubah dan diskusikan pengaruhnya terhadap difusi data.
 \end{obeactivity}
+
+Langkah-langkah pada Aktivitas 8.1 dapat dijalankan langsung melalui program
+pada Listing~\ref{lst:aes-shiftrows}. Program itu memetakan 16 byte ke matriks
+\texttt{state}, menerapkan \texttt{ShiftRows} beserta kebalikannya, lalu
+menunjukkan perpindahan posisi setiap byte pada matriks.
+
+\lstinputlisting[
+    language=Python,
+    caption={Transformasi ShiftRows: representasi state dan difusi antar kolom},
+    label={lst:aes-shiftrows}
+]{\codefile{python/aes_shiftrows.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/aes\_shiftrows.cpp}) dan
+MATLAB (\texttt{code/matlab/aes\_shiftrows.m}).

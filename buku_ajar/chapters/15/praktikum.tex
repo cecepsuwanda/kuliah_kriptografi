@@ -6,3 +6,18 @@
 3. Bandingkan kedua hasil hash tersebut.
 4. Amati berapa banyak bit yang berubah dan diskusikan mengapa properti ini sangat penting bagi keamanan fungsi hash.
 \end{obeactivity}
+
+Langkah-langkah pada Aktivitas 15.1 dapat dijalankan langsung melalui program
+pada Listing~\ref{lst:hash-avalanche}. Program itu menghitung SHA-256 dari
+kedua kalimat, membandingkan digestnya, dan menghitung berapa bit yang berbeda.
+
+\lstinputlisting[
+    language=Python,
+    caption={Efek longsoran SHA-256: perbandingan bit dua digest},
+    label={lst:hash-avalanche}
+]{\codefile{python/hash_avalanche.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/hash\_avalanche.cpp})
+dan MATLAB (\texttt{code/matlab/hash\_avalanche.m}); keduanya memuat
+implementasi SHA-256 sendiri karena bahasanya tidak menyediakannya secara
+bawaan.

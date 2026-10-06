@@ -7,3 +7,17 @@
 4. Berikan cipherteks tersebut kepada rekan Anda dan minta mereka mendekripsinya menggunakan kunci yang sama.
 5. Diskusikan apa yang terjadi jika satu bit pada cipherteks diubah (bit-flip).
 \end{obeactivity}
+
+Langkah-langkah pada Aktivitas 5.1 dapat dijalankan langsung melalui program
+pada Listing~\ref{lst:xor-stream}. Program itu menyusun bentuk biner pesan dan
+kunci, melakukan operasi XOR, lalu membalik satu bit cipherteks untuk
+menunjukkan akibatnya pada hasil dekripsi.
+
+\lstinputlisting[
+    language=Python,
+    caption={Stream cipher XOR: enkripsi, dekripsi, dan demonstrasi bit-flip},
+    label={lst:xor-stream}
+]{\codefile{python/stream_cipher.py}}
+
+Program yang sama tersedia dalam C++ (\texttt{code/cpp/stream\_cipher.cpp}) dan
+MATLAB (\texttt{code/matlab/stream\_cipher.m}).
