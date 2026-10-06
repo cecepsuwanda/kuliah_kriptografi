@@ -1,20 +1,317 @@
 \section{Keamanan dan Kriptanalisis DES}
-Keamanan DES sangat bergantung pada panjang kuncinya. Dengan hanya 56 bit, ruang kunci DES adalah $2^{56}$, yang saat ini dianggap terlalu kecil.
+\label{sec:keamanan-des}
+
+Kekuatan DES seluruhnya bergantung pada panjang kunci efektifnya, yaitu 56 bit.
+Struktur internalnya --- 16 putaran Feistel dengan S-box yang dirancang hati-hati
+--- membuat serangan analitis jauh lebih sulit daripada pencarian menyeluruh,
+tetapi struktur itu tidak dapat mengimbangi ruang kunci yang terlalu kecil.
+Bagian ini menilai DES dari dua sisi: serangan yang memanfaatkan kelemahan
+kunci, dan serangan yang memanfaatkan sifat statistik algoritmanya.
 
 \subsection{Serangan Brute Force}
-Serangan \textit{exhaustive key search} mencoba semua kemungkinan kunci hingga ditemukan yang benar. Dengan kemajuan komputasi, serangan ini dapat dilakukan dalam waktu yang sangat singkat (hitungan jam atau hari menggunakan perangkat keras khusus).
 
-\subsection{Efek Longsoran (\textit{Avalanche Effect})}
-DES memiliki efek longsoran yang kuat: perubahan satu bit pada plainteks atau kunci akan mengakibatkan perubahan signifikan pada banyak bit di cipherteks. Hal ini mencegah penyerang melakukan prediksi terhadap kunci berdasarkan pola cipherteks.
+Serangan \textit{exhaustive key search} atau \textit{brute force} mencoba setiap
+kemungkinan kunci sampai ditemukan kunci yang menghasilkan cipherteks yang
+benar. Karena DES tidak memakai \textit{salt} atau parameter acak apa pun,
+seorang penyerang dengan satu pasangan plainteks--cipherteks yang diketahui
+cukup mendekripsi cipherteks itu dengan setiap kandidat kunci dan memeriksa
+apakah hasilnya sama dengan plainteks yang diketahui. Ruang kuncinya berisi
+\begin{equation}
+2^{56} = 72.057.594.037.927.936 \approx 7{,}2 \times 10^{16}
+\label{eq:des-ruang-kunci}
+\end{equation}
+kunci. Angka itu pada zamannya dianggap cukup besar, tetapi kemajuan perangkat
+keras mengubah penilaian itu dengan cepat.
 
-\subsection{Kunci Lemah DES}
-Terdapat beberapa kunci yang disebut \textit{weak keys} di mana enkripsi dan dekripsi menjadi operasi yang sama ($E_K(E_K(x)) = x$). Penggunaan kunci ini harus dihindari karena menurunkan tingkat keamanan.
+Waktu yang dibutuhkan bergantung pada kecepatan perangkat yang dipakai. Bila
+laju percobaan adalah $v$ kunci per detik, waktu terburuk adalah $2^{56}/v$ detik
+dan waktu rata-ratanya adalah $2^{55}/v$ detik, karena kunci yang dicari berada
+di tengah rentang secara rata-rata. Dengan satu juta kunci per detik --- laju
+komputer mikro pada akhir 1990-an --- waktu rata-ratanya lebih dari seribu tahun;
+namun dengan perangkat keras khusus berkecepatan miliaran kunci per detik,
+waktunya turun ke hitungan hari. Tabel~\ref{tab:brute-force-des} membandingkan
+beberapa laju.
 
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\hline
+\textbf{Laju percobaan} & \textbf{Waktu terburuk ($2^{56}$)} & \textbf{Waktu rata-rata ($2^{55}$)} \\
+\hline
+$10^{6}$ kunci/detik (PC tunggal era 1990-an) & $\approx 2.284$ tahun & $\approx 1.142$ tahun \\
+\hline
+$10^{9}$ kunci/detik (prosesor modern terspesialisasi) & $\approx 2{,}3$ tahun & $\approx 1{,}1$ tahun \\
+\hline
+$10^{11}$ kunci/detik (jaringan ribuan mesin) & $\approx 8$ hari & $\approx 4$ hari \\
+\hline
+$10^{12}$ kunci/detik (perangkat keras khusus berjajar) & $\approx 20$ jam & $\approx 10$ jam \\
+\hline
+\end{tabularx}
+\caption{Pengaruh laju percobaan terhadap waktu pemecahan DES secara menyeluruh}
+\label{tab:brute-force-des}
+\sumber{Dihitung dari $2^{56}/v$ dan $2^{55}/v$ dengan satu tahun $= 3{,}156 \times 10^7$ detik; dilengkapi dari \citet{eff1998}.}
+\end{table}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.9\linewidth, height=0.82\textheight, keepaspectratio]{figures/fungsi-f-des.png}
-    \caption{Komputasi fungsi $f$ pada DES: ekspansi blok kanan 32 bit menjadi 48 bit, XOR dengan subkunci, substitusi melalui delapan S-box, dan permutasi $P$}
-    \label{fig:fungsi-f-des}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
-\end{figure}
+Perlu dicatat bahwa angka-angka pada tabel itu adalah hasil perhitungan
+aritmetika langsung, bukan perkiraan optimistis dari pihak yang berkepentingan.
+Yang membuat tabel itu menakutkan adalah kenyataan
+bahwa percobaan kunci di DES sangat mudah diparalelkan: setiap mesin dapat
+mengambil sebagian rentang kunci tanpa perlu berkomunikasi dengan mesin lain,
+kecuali untuk mengabarkan bila kuncinya sudah ditemukan. Karena itu penambahan
+mesin menambah laju secara linier, tanpa batas skala yang berarti.
+
+Kenyataan itu menjadi nyata pada akhir 1990-an melalui rangkaian kontes publik
+yang diselenggarakan RSA Laboratories. Kontes itu bukan sekadar demonstrasi
+akademik; tujuannya membuktikan secara terbuka bahwa 56 bit memang terlalu
+kecil. Kronologinya diringkas pada Tabel~\ref{tab:kronologi-des}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.0cm} >{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}X@{}}
+\hline
+\textbf{Waktu} & \textbf{Sumber daya} & \textbf{Hasil} \\
+\hline
+1997 & Proyek DESCHALL: sekitar 78.000 komputer di Internet, tanpa biaya khusus & Kunci ditemukan dalam 96 hari \\
+\hline
+1998 & \textit{distributed.net}: jaringan komputer sukarela yang lebih besar & Kunci ditemukan dalam 39 hari \\
+\hline
+Juli 1998 & EFF DES Cracker (\textit{Deep Crack}): mesin khusus senilai \$250.000 berisi 1.856 chip \textit{application-specific integrated circuit} (ASIC) & Kunci ditemukan dalam 56 jam \\
+\hline
+Januari 1999 & Penggabungan \textit{distributed.net} dengan \textit{Deep Crack} & Kunci ditemukan dalam 22 jam 15 menit \\
+\hline
+\end{tabularx}
+\caption{Kronologi pemecahan DES secara menyeluruh oleh upaya terbuka}
+\label{tab:kronologi-des}
+\sumber{Diringkas dari \citet{eff1998} dan dokumentasi RSA DES Challenge.}
+\end{table}
+
+Pelajaran dari kronologi itu bukan sekadar bahwa DES dapat dipecahkan. Yang lebih
+penting adalah dua hal berikut. Pertama, pemecahan tahun 1997 tidak memerlukan
+perangkat keras khusus sama sekali; ia memanfaatkan komputer biasa yang tersebar
+di Internet, meminjam waktu menganggur. Artinya batas keamanan sebuah cipher
+tidak ditentukan oleh kemampuan satu mesin, melainkan oleh kemampuan seluruh
+jaringan mesin yang dapat dikerahkan penyerang. Kedua, lompatan dari 96 hari ke
+22 jam dalam dua tahun menunjukkan betapa cepat laju itu dapat berubah. Sebuah
+sistem yang dirancang pada 1977 dengan asumsi 56 bit aman untuk dua puluh tahun
+ternyata hanya bertahan sekitar dua puluh tahun memang, tetapi dengan margin yang
+tipis dan setelah biaya pemecahannya turun drastis. Inilah sebabnya panjang kunci
+modern dinyatakan dalam ratusan bit, bukan puluhan.
+
+Perbandingan dengan AES memperjelas skalanya. Bila DES dengan $2^{56}$ kunci
+memerlukan waktu rata-rata 1.142 tahun pada laju satu juta kunci per detik,
+maka AES-128 dengan $2^{128}$ kunci memerlukan waktu rata-rata sekitar
+$5{,}4 \times 10^{24}$ tahun pada laju yang sama, yaitu jauh melampaui usia alam
+semesta yang diperkirakan sekitar $1{,}4 \times 10^{10}$ tahun. Menambah panjang
+kunci sebesar 72 bit mengubah waktu dari skala peradaban menjadi skala yang tidak
+memiliki arti fisik.
+
+\subsection{Efek Longsoran}
+
+Sebuah cipher blok dapat saja memiliki kunci panjang yang tidak dapat
+dipecahkan, tetapi tetap lemah bila ciri-cirinya dapat diprediksi dari
+cipherteks. Karena itu DES dinilai juga dari \textbf{efek longsoran}
+(\textit{avalanche effect}), yaitu seberapa cepat perubahan satu bit masukan
+menyebar ke bit-bit keluaran.
+
+DES memiliki efek longsoran yang baik karena dua rancangan yang saling menunjang.
+Pertama, ekspansi $E$ membuat tumpang tindih bit, sehingga satu bit blok kanan
+masuk ke dua kelompok S-box sekaligus. Kedua, permutasi $P$ memindahkan bit
+keluaran S-box ke posisi yang berjauhan, sehingga pengaruh yang sudah menyebar di
+dalam satu kelompok S-box tidak berkumpul kembali pada kelompok yang sama.
+Keduanya diulang 16 kali, dengan subkunci berbeda di setiap putaran. Hasilnya,
+setelah sekitar delapan putaran, setiap bit cipherteks sudah bergantung pada
+setiap bit plainteks dan setiap bit kunci.
+
+Sifat ini mudah diuji. Bila suatu blok dienkripsi, lalu satu bit plainteksnya
+dibalik dan dienkripsi ulang dengan kunci yang sama, kedua cipherteks akan
+berbeda pada sekitar separuh dari 64 bitnya, yaitu sekitar 32 bit. Angka itu
+disebut \textbf{kriteria longsoran ketat} (\textit{strict avalanche criterion}).
+Pada vektor uji resmi
+$\text{DES}(\code{0123456789ABCDEF}, \code{133457799BBCDFF1}) =
+\code{85E813540F0AB405}$, pembalikan bit pertama plainteks mengubah cipherteks
+menjadi $\code{AD9DFD6C35DE8DEC}$, dan kedua cipherteks itu berbeda pada
+\textbf{33 dari 64 bit} --- hampir persis separuh, seperti yang dikehendaki
+teori. Lebih jauh, bila yang diubah bukan plainteks melainkan satu bit kunci,
+hasilnya juga harus berbeda pada sekitar separuh bit cipherteks. Pada DES efek
+longsoran yang menyangkut kunci ini tercapai dengan baik setelah beberapa
+putaran, karena pembangkitan subkunci menyebarkan bit kunci ke seluruh $C_i$ dan
+$D_i$, dan PC-2 memilih bit dari kedua register itu.
+
+Efek longsoran bukan sekadar keindahan statistik. Ia menutup dua jalan serangan
+sekaligus. Pertama, ia mencegah penyerang memakai perbedaan keluaran sebagai
+petunjuk arah perbaikan dugaan kunci, karena setiap perubahan sekecil apa pun
+pada kunci menghasilkan perubahan yang tampak acak. Kedua, ia mencegah
+pengenalan plainteks dari cipherteks melalui frekuensi atau pola, karena
+hubungan statistik antara keduanya sudah dirusak. Namun, seperti akan terlihat,
+efek longsoran yang kuat pada 16 putaran tidak muncul pada jumlah putaran yang
+lebih sedikit --- dan di situlah celah yang dieksploitasi kriptanalisis
+diferensial dan linier.
+
+\subsection{Kunci Lemah dan Kunci Semi-Lemah}
+
+Struktur Feistel DES memiliki satu cacat kecil pada pembangkitan subkuncinya.
+Karena $C_i$ dan $D_i$ hanya digeser siklik, ada pola bit tertentu yang membuat
+$C_i$ dan $D_i$ kembali ke posisi semula setelah sejumlah pergeseran. Bila
+pola itu terjadi, seluruh 16 subkunci yang dihasilkan bisa menjadi sama, atau
+bisa tersusun secara simetris. Kunci yang menimbulkan keadaan itu disebut
+\textbf{kunci lemah} dan \textbf{kunci semi-lemah}.
+
+Empat \textbf{kunci lemah} DES --- yaitu kunci dengan $K_1 = K_2 = \dots = K_{16}$
+--- adalah
+\begin{center}
+\code{0101010101010101}, \quad \code{1F1F1F1F0E0E0E0E}, \quad
+\code{E0E0E0E0F1F1F1F1}, \quad \code{FEFEFEFEFEFEFEFE}.
+\end{center}
+Pada kunci semacam ini enkripsi dua kali sama dengan identitas, yaitu
+$E_K(E_K(x)) = x$ untuk setiap $x$, sehingga mengulang enkripsi tidak menambah
+keamanan sama sekali. Kunci \code{0101010101010101} bahkan menghasilkan seluruh
+subkunci bernilai nol. Empat kunci tersebut harus dibuang dari setiap kumpulan
+kunci yang dibangkitkan program, dan hampir semua pustaka kriptografi modern
+melakukannya secara otomatis.
+
+Selain empat kunci lemah, terdapat dua belas \textbf{kunci semi-lemah} yang
+membentuk enam pasangan terurut. Pada pasangan $(K, K')$ semacam itu berlaku
+$E_{K'}(E_K(x)) = x$, yaitu enkripsi dengan $K$ dapat dibatalkan oleh enkripsi
+dengan $K'$, bukan oleh $K$ sendiri. Keenam pasangannya tercantum pada
+Tabel~\ref{tab:kunci-semi-lemah-des}.
+
+\begin{table}[htbp]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}ll@{}}
+\hline
+\textbf{Kunci} & \textbf{Pasangan semi-lemahnya} \\
+\hline
+\code{01FE01FE01FE01FE} & \code{FE01FE01FE01FE01} \\
+\hline
+\code{1FE01FE00EF10EF1} & \code{E01FE01FF10EF10E} \\
+\hline
+\code{01E001E001F101F1} & \code{E001E001F101F101} \\
+\hline
+\code{1FFE1FFE0EFE0EFE} & \code{FE1FFE1FFE0EFE0E} \\
+\hline
+\code{011F011F010E010E} & \code{1F011F010E010E01} \\
+\hline
+\code{E0FEE0FEF1FEF1FE} & \code{FEE0FEE0FEF1FEF1} \\
+\hline
+\end{tabular}
+\caption{Enam pasangan kunci semi-lemah DES}
+\label{tab:kunci-semi-lemah-des}
+\sumber{Diverifikasi terhadap FIPS PUB 46-3; daftar pada Munir, \textit{IF4020 Kriptografi}, ITB, memuat dua nilai yang salah cetak.}
+\end{table}
+
+Perlu ditegaskan besarnya risiko dari kunci-kunci itu. Karena jumlahnya hanya
+enam belas dari $2^{56}$ kunci yang mungkin, peluang sebuah kunci acak tergolong
+lemah praktis nol. Bahayanya bukan pada penyerang yang menebak, melainkan pada
+pengguna yang memilih kunci secara naif: deretan \code{01010101...} atau
+\code{FEFEFEFE...} justru termasuk kunci yang paling mungkin dipilih manusia
+karena tampak "mudah diingat". Karena itu kunci DES tidak boleh dipilih sendiri
+oleh pengguna, melainkan harus dibangkitkan dari sumber acak yang baik ---
+prinsip yang berlaku untuk semua cipher, tetapi pada DES diperkuat oleh
+kenyataan bahwa sepuluh dari nilai-nilai terlarang itu justru tampak rapi.
+
+\subsection{Kriptanalisis Diferensial dan Linier}
+
+Serangan yang paling serius terhadap DES tidak menyerang kuncinya, melainkan
+sifat statistik dari putaran-putarannya. Ada dua teknik utama, dan keduanya
+ditemukan publik setelah DES dibakukan.
+
+\textbf{Kriptanalisis diferensial} (\textit{differential cryptanalysis})
+diperkenalkan Eli Biham dan Adi Shamir pada 1990 \citep{biham1991}. Gagasannya
+adalah mengamati bagaimana perbedaan tertentu pada sepasang plainteks merambat
+melalui putaran-putaran cipher, dan mencari perbedaan keluaran yang muncul dengan
+peluang jauh lebih besar daripada peluang acak. Semakin panjang lintasan
+perbedaan yang dapat dipertahankan dengan peluang tinggi, semakin sedikit
+pasangan plainteks yang dibutuhkan penyerang untuk menyimpulkan bit-bit kunci
+terakhir.
+
+Terhadap DES, serangan ini ternyata mengecewakan bagi penyerangnya. Untuk DES
+15 putaran, kriptanalisis diferensial memerlukan sekitar $2^{47{,}2}$ plainteks
+terpilih --- jumlah yang besar tetapi masih di bawah $2^{56}$. Untuk DES 16
+putaran penuh, kebutuhannya melonjak menjadi sekitar $2^{58}$, yaitu lebih besar
+daripada pencarian menyeluruh atas kunci. Dengan kata lain, menambah satu putaran
+terakhir saja sudah cukup untuk menutup serangan itu secara praktis. Kenyataan
+bahwa S-box DES dirancang untuk menghasilkan tepat hasil seperti itu baru
+terungkap publik pada 1994, ketika IBM mengungkapkan bahwa kriterianya memang
+bersandar pada pengetahuan tentang kriptanalisis diferensial --- teknik yang
+pada saat perancangan masih dirahasiakan (lihat Bagian~\ref{sec:des-sejarah}).
+
+\textbf{Kriptanalisis linier} (\textit{linear cryptanalysis}) dikembangkan
+Mitsuru Matsui dan dipublikasikan pada 1993 \citep{matsui1994}. Alih-alih
+memakai perbedaan, teknik ini mencari hampiran linier atas operasi nirlanjar
+cipher, yaitu persamaan berbentuk kombinasi XOR dari bit plainteks, cipherteks,
+dan kunci yang berlaku dengan peluang menyimpang dari $1/2$. Penyimpangan sekecil
+apa pun, bila dikumpulkan atas banyak data, cukup untuk menaksir bit kunci.
+Matsui menunjukkan bahwa DES 16 putaran dapat diserang dengan sekitar $2^{43}$
+plainteks dikenal, yaitu jauh di bawah $2^{56}$, sehingga secara teori DES 16
+putaran memang dapat dipecahkan lebih cepat daripada pencarian menyeluruh.
+
+Namun serangan itu tidak pernah menyingkirkan DES. Alasannya praktis, bukan
+teoretis: $2^{43}$ plainteks berarti sekitar $7 \times 10^{12}$ blok data, atau
+sekitar 64 terabita pasangan plainteks--cipherteks yang harus dikumpulkan
+sebelum serangan dimulai. Data sebanyak itu tidak tersedia pada hampir semua
+penggunaan nyata, dan bila tersedia pun, biaya mengumpulkannya melebihi biaya
+sekadar memecahkan kunci dengan pencarian menyeluruh. Jadi nilai sesungguhnya
+dari kriptanalisis linier dan diferensial bukanlah pemecahan DES, melainkan
+penemuan bahwa 16 putaran adalah pilihan yang tepat: kurang dari itu, DES
+runtuh secara analitis, dan lebih dari itu tidak diperlukan.
+
+\subsubsection*{Catatan nama: DEA versus DES}
+
+Nama \textit{Data Encryption Algorithm} (DEA) merujuk pada algoritma itu sendiri,
+sedangkan \textit{Data Encryption Standard} (DES) merujuk pada dokumen standarnya,
+yaitu FIPS PUB 46. Dalam praktik sehari-hari kedua nama itu dipakai bergantian dan
+keduanya dipahami, tetapi pada tulisan resmi perbedaan itu dijaga. Sejak 1999,
+FIPS PUB 46-3 memasukkan Triple DES ke dalam standar, dan standar itu akhirnya
+ditarik pada 2005 setelah AES menggantikannya.
+
+\subsection{Mode Operasi DES}
+
+DES dapat dipakai dengan kelima mode operasi yang dibahas pada
+Bab~\ref{chap:block-cipher}: ECB, CBC, CFB, OFB, dan CTR. Pemilihan mode
+menentukan keamanan praktis lebih banyak daripada yang sering disadari.
+
+Mode \textbf{ECB} pada DES sangat berbahaya karena dua alasan yang saling
+memperkuat. Pertama, blok plainteks yang identik menghasilkan blok cipherteks
+yang identik, sehingga struktur data tetap tampak. Pada DES, dengan blok hanya 64
+bit, blok yang berulang justru lebih sering terjadi daripada pada AES dengan blok
+128 bit, karena 64 bit hanya dapat memuat delapan karakter. Citra bitmap dengan
+daerah warna seragam, catatan basis data dengan kolom berulang, dan berkas teks
+dengan deretan spasi panjang semuanya dapat dikenali polanya. Kedua, seperti
+dibahas pada Bab~\ref{chap:block-cipher}, blok ECB dapat dibuang atau disusun
+ulang tanpa merusak blok lain, sehingga penyerang dapat memanipulasi isi pesan
+tanpa mengetahui kunci.
+
+Karena itu praktik yang lazim adalah memakai \textbf{CBC} dengan IV acak untuk
+data berukuran blok, \textbf{CFB} atau \textbf{OFB} untuk data yang lebih kecil
+daripada satu blok seperti aliran karakter pada terminal, dan \textbf{CTR} bila
+paralelisme dan akses acak diperlukan. Perlu ditekankan bahwa DES dengan mode
+CBC dan IV yang berbeda untuk setiap pesan menghasilkan cipherteks yang berbeda
+untuk plainteks yang sama; sifat ini disebut \textbf{enkripsi probabilistik} dan
+merupakan syarat agar penyerang tidak dapat menebak isi pesan dari
+ketidakcocokan pola. Namun mode apa pun tidak mengubah panjang kunci: DES-CBC
+tetap dapat dipecahkan dengan pencarian menyeluruh $2^{56}$.
+
+\subsection{Kecepatan Implementasi}
+
+Salah satu sebab DES bertahan lama adalah kecepatan implementasinya, baik pada
+perangkat keras maupun perangkat lunak. Pada perangkat keras khusus, DES dapat
+mencapai sekitar 16 juta sampai 18 juta blok per detik, yaitu sekitar satu
+gigabit per detik, karena seluruh operasinya berupa permutasi bit dan pencarian
+tabel yang cocok dipetakan langsung ke rangkaian digital. Pada perangkat lunak
+di komputer besar era 1980-an, misalnya IBM 3090, kecepatannya sekitar 32.000
+blok per detik; angka itu terasa kecil hari ini tetapi pada zamannya cukup untuk
+melayani lalu lintas data perbankan. Pada prosesor modern, implementasi perangkat
+lunak DES yang sudah ditabalkan (\textit{bitslicing}) dapat mencapai puluhan juta
+blok per detik, walaupun pada titik ini DES biasanya sudah digantikan AES yang
+jauh lebih cepat pada perangkat lunak.
+
+Kecepatan tinggi itu justru memperburuk masalah keamanannya. Perangkat keras yang
+dapat mengenkripsi satu miliar blok per detik sama saja dengan perangkat keras
+yang dapat mencoba satu miliar kunci per detik, karena operasi yang sama dipakai
+untuk keduanya. Dengan kata lain, mempercepat DES untuk pengguna yang sah juga
+mempercepat pemecahan kuncinya bagi penyerang, dan itu adalah ciri khas cipher
+dengan ruang kunci yang terlalu kecil.

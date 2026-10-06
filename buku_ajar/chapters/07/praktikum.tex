@@ -19,3 +19,43 @@ memakai panjang kunci efektif sesuai pembahasan Bab 7 \S3.
 
 Program yang sama tersedia dalam C++ (\texttt{code/cpp/kompleksitas\_kunci.cpp})
 dan MATLAB (\texttt{code/matlab/kompleksitas\_kunci.m}).
+
+\begin{obeactivity}
+\textbf{Aktivitas 7.2: Mengerjakan Satu Putaran DES di Atas Kertas}
+Kerjakan langkah-langkah berikut tanpa program, memakai tabel pada
+Tabel~\ref{tab:ip-des}, Tabel~\ref{tab:ep-des}, Tabel~\ref{tab:sbox-des}, dan
+Tabel~\ref{tab:pc-des}. Gunakan plainteks $\code{0123456789ABCDEF}$ dan kunci
+$\code{133457799BBCDFF1}$.
+
+1. Baca tabel PC-1 pada kunci untuk memperoleh $C_0$ dan $D_0$. Pastikan bahwa
+   delapan bit paritas benar-benar terbuang.
+2. Geser $C_0$ dan $D_0$ satu bit ke kiri, lalu baca PC-2 untuk memperoleh $K_1$.
+   Bandingkan hasil Anda dengan $K_1$ pada Contoh~\ref{ex:des-subkunci}.
+3. Baca tabel IP pada plainteks untuk memperoleh $L_0$ dan $R_0$.
+4. Baca tabel $E$ pada $R_0$, lalu XOR hasilnya dengan $K_1$.
+5. Potong hasilnya menjadi delapan kelompok enam bit dan substitusikan melalui
+   $S_1$ sampai $S_8$.
+6. Baca tabel $P$ pada hasil S-box, lalu XOR dengan $L_0$ untuk memperoleh $R_1$.
+7. Bandingkan seluruh hasil kerja Anda dengan tabel jejak putaran pada
+   Contoh~\ref{ex:des-putaran-pertama}.
+\end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 7.3: Memeriksa Tabel dan Kunci Lemah dengan Program}
+Berkas \texttt{code/python/des\_uji.py} berisi implementasi DES lengkap yang
+memuat seluruh tabel bit pada bab ini. Jalankan program itu
+(\texttt{python des\_uji.py}) dan perhatikan keluarannya:
+
+1. Periksa bahwa program menghasilkan vektor uji resmi
+   $\code{85E813540F0AB405}$ dan bahwa dekripsi mengembalikan plainteks semula.
+2. Bandingkan jejak putaran $(L_i, R_i)$ yang dicetak program dengan tabel pada
+   Contoh~\ref{ex:des-putaran-pertama}. Keduanya harus identik.
+3. Amati bagian kunci lemah: keempat kunci pada daftar itu menghasilkan 16
+   subkunci yang sama. Jelaskan mengapa hal itu terjadi dengan menelusuri
+   $C_0$ dan $D_0$ untuk kunci $\code{0101010101010101}$.
+4. Amati bagian kunci semi-lemah: untuk setiap pasangan, subkunci kunci kedua
+   adalah kebalikan urutan subkunci kunci pertama. Jelaskan mengapa sifat itu
+   menyebabkan $E_{K'}(E_K(x)) = x$.
+5. Amati bagian efek longsoran dan catat berapa bit cipherteks yang berubah
+   ketika satu bit plainteks dibalik.
+\end{obeactivity}

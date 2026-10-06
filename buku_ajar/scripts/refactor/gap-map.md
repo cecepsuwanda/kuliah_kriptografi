@@ -6,10 +6,10 @@ Sasaran: ±4.000–6.000 kata/bab (prosa naratif), tabel, contoh terhitung, gamb
 
 Legenda status: `[ ]` belum · `[~]` sedang dikerjakan · `[x]` selesai.
 
-**Kemajuan:** Tahap 1–6 (Bab 01–06) selesai. Buku 302 halaman, gerbang kebersihan
-`output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 7 (Bab 07).
+**Kemajuan:** Tahap 1–7 (Bab 01–07) selesai. Buku 323 halaman, gerbang kebersihan
+`output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 8 (Bab 08).
 Panjang bab saat ini di buku penuh: Bab 01 = 23 hal., Bab 02 = 20, Bab 03 = 19,
-Bab 04 = 56, Bab 05 = 30, Bab 06 = 23 (149–171).
+Bab 04 = 56, Bab 05 = 30, Bab 06 = 23 (149–171), Bab 07 = 29 (172–200).
 
 ---
 
@@ -230,17 +230,61 @@ sitasi baru (`shannon1949`, `stallings2017`, `menezes1996`).
 4. **Rumus CFB pada dek memakai indeks campur** ($C_i$ di dalam pembaruan
    register yang seharusnya $C_j$). Buku memakai $C_j$ secara konsisten.
 
-## Bab 07 — Analisis Algoritma Block Cipher: DES
+## Bab 07 — Analisis Algoritma Block Cipher: DES  `[x]` SELESAI
 Sumber: `referensi/09-*` (5.218 kata, 16 topik, 74 gambar). Target: ±5.000 kata.
-**Prioritas #1.** **Belum punya sitasi.**
+**Prioritas #1.** **Belum punya sitasi → kini menyitasi `fips46`, `biham1991`,
+`matsui1994`, `eff1998`, `stallings2017`, `menezes1996`.**
 
-- [ ] **Tabel bit resmi DES**: IP, IP⁻¹, E, S-box S1–S8, P, PC-1, PC-2
-- [ ] Nilai kunci lemah (4 nilai heksadesimal)
-- [ ] Sejarah DES: NIST 1972, Lucifer, NSA, FIPS PUB 46
-- [ ] Brute force terukur + kronologi DESCHALL / EFF DES Cracker
-- [ ] Contoh DES putaran demi putaran + tabel *avalanche*
-- [ ] Meet-in-the-middle $X=E_{K_1}(P)=D_{K_2}(C)$ + tabel varian 3DES
-- [ ] Mode DES + kecepatan implementasi + misteri S-box NSA
+Hasil: 10.473 kata berkas mentah (7.392 kata prosa pada tiga section; sisanya
+tabel dan daftar butir), 29 halaman mandiri, 8 tabel baru, 4 contoh terhitung
+baru, 1 program verifikasi baru (`code/python/des_uji.py`). Seluruh tabel bit dan
+seluruh konstanta DES **diverifikasi ulang dengan implementasi Python** yang
+mereproduksi vektor uji resmi FIPS PUB 46-3 secara persis.
+
+- [x] **Tabel bit resmi DES**: IP, IP⁻¹ (`tab:ip-des`), E dan P (`tab:ep-des`),
+  S1–S8 (`tab:sbox-des`), PC-1 dan PC-2 (`tab:pc-des`), jadwal pergeseran
+  (`tab:jadwal-geser-des`)
+- [x] Nilai kunci lemah (4 nilai heksadesimal) dan 6 pasangan kunci semi-lemah
+  (`tab:kunci-semi-lemah-des`) — semua diverifikasi program
+- [x] Sejarah DES: NBS 1972, Lucifer/Feistel (128 bit), pemangkasan NSA, NBS 1976,
+  FIPS PUB 46 (1977), FIPS 46-1/2/3, penarikan 2005; pengungkapan Coppersmith 1994
+- [x] Brute force terukur ($2^{56} = 72.057.594.037.927.936$; tabel laju vs waktu
+  `tab:brute-force-des`) + kronologi DESCHALL 1997 / distributed.net / EFF Deep
+  Crack / 22 jam 15 menit 1999 (`tab:kronologi-des`)
+- [x] Contoh DES putaran demi putaran: subkunci pertama, putaran pertama lengkap
+  (tujuh langkah), dan tabel jejak $(L_i, R_i)$ 17 baris sampai cipherteks resmi
+  `85E813540F0AB405`
+- [x] Meet-in-the-middle $X=E_{K_1}(P)=D_{K_2}(C)$ (`eq:des-mitm`) + tabel
+  varian 3DES (`tab:perbandingan-double-des`) + contoh biaya memori 576 petabita
+- [x] Mode DES (ECB/CBC/CFB/OFB/CTR), catatan kecepatan implementasi, dan
+  misteri S-box NSA
+- [x] Kriptanalisis diferensial (Biham–Shamir, $2^{47{,}2}$ pada 15 putaran →
+  $2^{58}$ pada 16) dan linier (Matsui, $2^{43}$ plainteks dikenal)
+- [x] 3DES: EDE, opsi dua kunci 112 bit dan tiga kunci 168 bit, alasan
+  kompatibilitas (`eq:des-3des-kompatibel`), batas rekeying $2^{32}$ blok
+- [x] `praktikum.tex`: Aktivitas 7.2 (satu putaran di atas kertas) dan 7.3
+  (verifikasi tabel dan kunci lemah dengan program)
+- [x] `latihan.tex` 3→16 butir (dua blok: konsep dan hitungan dengan tabel)
+- [x] `rangkuman.tex` 7→17 butir; `evaluasi.tex` kuis 3→8, checklist 5→13 baris
+
+### Koreksi terhadap sumber (wajib dicatat)
+
+1. **Daftar kunci lemah pada dek `09-*` salah.** Dek menyebut empat nilai:
+   `0000000000000000`, `0000000FFFFFFFF`, `FFFFFFF00000000`,
+   `FFFFFFFFFFFFFFFF`. Dua di antaranya bukan bilangan heksadesimal 16 digit
+   yang sah (15 digit), dan perhitungan ulang menunjukkan hanya kunci nol dan
+   kunci semua-satu dari daftar itu yang benar-benar lemah. Empat kunci lemah
+   yang benar adalah `0101010101010101`, `1F1F1F1F0E0E0E0E`,
+   `E0E0E0E0F1F1F1F1`, `FEFEFEFEFEFEFEFE`. Buku memakai daftar yang benar.
+2. **Nilai antara S-box pada literatur yang beredar sering salah kutip.** Untuk
+   vektor uji resmi, keluaran tahap S-box putaran pertama adalah `5C82B597`;
+   nilai `5C82B5A5` yang banyak dikutip (beserta `P = 2148ADBB`) tidak konsisten
+   dengan tabel $P$ resmi. Buku memakai `5C82B597` dengan `P(S) = 234AA9BB` dan
+   $R_1 = \code{EF4A6544}$, sesuai perhitungan program.
+3. **Klaim "kunci lemah membuat $E_K(E_K(x)) = x$" pada buku lama hanya
+   separuh benar.** Sifat itu berlaku untuk empat kunci lemah; untuk dua belas
+   kunci semi-lemah yang berlaku adalah $E_{K'}(E_K(x)) = x$ dengan $K'$ adalah
+   pasangannya, bukan kunci yang sama. Buku kini membedakan keduanya.
 
 ## Bab 08 — Analisis Algoritma Block Cipher: AES
 Sumber: `referensi/10-*` (5.580 kata, 21 topik, 55 gambar). Target: ±5.500 kata.
@@ -353,13 +397,17 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   `eq:block-encrypt-decrypt`, `eq:mainan-enkripsi`, `eq:mainan-dekripsi`, `eq:ecb`,
   `eq:cbc-enkripsi`, `eq:cbc-dekripsi`, `eq:cfb-enkripsi`, `eq:cfb-dekripsi`, `eq:ofb`,
   `eq:ctr-enkripsi`, `eq:iterated-cipher`, `eq:whitening`, `eq:feistel-enkripsi`,
-  `eq:feistel-dekripsi`, `eq:feistel-reversible`).
+  `eq:feistel-dekripsi`, `eq:feistel-reversible`); Bab 07 menambah 8
+  (`eq:des-putaran`, `eq:des-f`, `eq:des-subkunci`, `eq:des-ruang-kunci`,
+  `eq:des-double`, `eq:des-mitm`, `eq:des-3des-ede`, `eq:des-3des-kompatibel`).
   Lanjutkan untuk penurunan RSA, ElGamal, ECDLP, hash.
 - [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
 - [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 dan 04 sudah punya.)
   Skrip pembuat gambar raster: `scripts/refactor/figures/entropi_ternate.py`.
-- [ ] **Bab tanpa sitasi: 07, 14.** (02, 03, 04, 05, dan 06 sudah selesai; Bab 06 kini
-  menyitasi `shannon1949`, `stallings2017`, dan `menezes1996`.)
+- [ ] **Bab tanpa sitasi: 14.** (02, 03, 04, 05, 06, dan 07 sudah selesai; Bab 06
+  kini menyitasi `shannon1949`, `stallings2017`, dan `menezes1996`, sedangkan
+  Bab 07 menyitasi `fips46`, `biham1991`, `matsui1994`, `eff1998`,
+  `stallings2017`, dan `menezes1996`.)
 
 ## Catatan lintas bab: tabel lebar & panjang baris
 
@@ -394,3 +442,27 @@ diperbaiki; polanya akan terulang di bab-bab berikut, jadi perhatikan sejak awal
   di bawah ~68 karakter; bila lebih, pecah menjadi dua tampilan atau pindahkan ke `tabular`.
 - **Label persamaan bersifat global** — sebelum menambah `eq:...` baru, periksa dulu
   dengan `grep -rho "label{eq:nama}" chapters/ | wc -l` agar tidak menimpa label bab lain.
+- **Judul `\subsection` yang memuat matematika** ($f$, $S_1$, dst.) memicu
+  `Package hyperref Warning: Token not allowed in a PDF string` karena teks itu masuk ke
+  penanda PDF. Bunyi peringatan persisnya "removing `math shift'" (Bab 07,
+  `\subsection{Struktur Putaran dan Fungsi $f$}`) → bungkus dengan
+  `\texorpdfstring{$f$}{f}`.
+- **`\code{...}` (yaitu `\texttt`) di dalam `\textbf{...}` di dalam environment
+  `example`** meminta bentuk huruf `T1/lmtt/bx/it` yang tidak ada, karena badan
+  `example` dimiringkan otomatis oleh `\newtheorem` gaya *plain* (Bab 07,
+  `\textbf{Mengapa \code{0101010101010101} kunci lemah}`) → keluarkan `\code` dari
+  `\textbf`, atau tulis angkanya sebagai teks biasa.
+- **Dua tabel berdampingan dengan `\hspace{...}`** mudah melebihi `\linewidth` bila tiap
+  tabel punya banyak kolom (Bab 07, tabel IP/IP⁻¹ 8 kolom dan tabel PC-1/PC-2) →
+  tambahkan `\setlength{\tabcolsep}{4pt}` per tabel.
+- **Menghitung jumlah kolom pada preamble `*{n}{c}`** — tabel jadwal pergeseran Bab 07
+  memuat satu kolom label ditambah 16 kolom nilai, sehingga preamble harus
+  `@{}l*{16}{c}@{}`, bukan `@{}*{16}{c}@{}`; kekeliruan ini memicu
+  `! Extra alignment tab has been changed to \cr`.
+- **Tampilan biner/heksadesimal panjang di mode matematika** (`\[ ... \]` berisi 64 bit
+  atau empat nilai heksadesimal 16 digit) melewati `\linewidth` meski terlihat pendek →
+  taruh dalam `center` dengan `\texttt` (baris tidak dirata-kan sehingga tidak
+  `Underfull`), atau pecah dua baris dengan `aligned`.
+- **Paragraf yang memuat beberapa nilai heksadesimal 16 digit berurutan** sulit dipatahkan
+  TeX dan menghasilkan `Underfull` (Bab 07, butir rangkuman kunci lemah) → pindahkan
+  nilai-nilainya ke `center` tersendiri.

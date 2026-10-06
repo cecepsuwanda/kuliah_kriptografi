@@ -1,10 +1,27 @@
 \section{Rangkuman}
 \begin{itemize}
-    \item DES adalah \textit{block cipher} blok 64 bit dengan kunci eksternal 64 bit yang hanya 56 bit dipakai untuk enkripsi (8 bit sisanya paritas), memakai jaringan Feistel 16 putaran.
-    \item Alur enkripsi: permutasi awal (IP), 16 putaran \textit{enciphering}, lalu invers permutasi awal ($\text{IP}^{-1}$).
-    \item Fungsi putaran $f$ memperluas blok kanan 32 bit menjadi 48 bit, di-XOR dengan subkunci, disubstitusi melalui delapan S-box (6 bit $\to$ 4 bit), lalu dipermutasi oleh $P$.
-    \item Pembangkitan kunci: PC-1 membuang bit paritas dan membagi kunci menjadi $C_0,D_0$ (28 bit), pergeseran siklik per putaran, dan PC-2 memilih 48 bit menjadi $K_i$.
-    \item Sifat Feistel yang reversibel membuat dekripsi memakai algoritma yang sama dengan urutan kunci terbalik $K_{16},\dots,K_1$, tanpa fungsi dekripsi terpisah.
-    \item Keamanan DES terbatas pada ruang kunci $2^{56}$ yang kini terlalu kecil untuk pencarian menyeluruh dan adanya \textit{weak keys}; efek longsorannya kuat sehingga perubahan satu bit plainteks atau kunci menyebar ke sekitar setengah bit cipherteks.
-    \item Double DES ($2^{112}$) tumbang oleh \textit{meet-in-the-middle} sekitar $2^{57}$; Triple DES EDE (2 kunci 112 bit, 3 kunci 168 bit) memperpanjang umur DES.
+    \item DES adalah cipher blok 64 bit dengan kunci eksternal 64 bit yang hanya 56 bit dipakai untuk enkripsi (8 bit sisanya paritas), memakai jaringan Feistel 16 putaran.
+    \item DES berasal dari cipher Lucifer rancangan Horst Feistel (IBM) yang semula berukuran blok 128 bit dan berkunci 128 bit; NSA memangkasnya menjadi blok 64 bit dan kunci efektif 56 bit, lalu NBS membakukannya sebagai FIPS PUB 46 pada 1977.
+    \item Alur enkripsi: permutasi awal (IP), 16 putaran \textit{enciphering}, lalu invers permutasi awal ($\text{IP}^{-1}$). IP dan $\text{IP}^{-1}$ tidak menambah keamanan karena tidak bergantung pada kunci.
+    \item Fungsi putaran $f$ memperluas blok kanan 32 bit menjadi 48 bit dengan tabel $E$, di-XOR dengan subkunci 48 bit, disubstitusi melalui delapan S-box (6 bit $\to$ 4 bit), lalu dipermutasi oleh $P$.
+    \item Pada setiap S-box, bit pertama dan keenam masukan menentukan nomor baris (0--3) dan bit kedua sampai kelima menentukan nomor kolom (0--15); contohnya masukan $\code{011000}$ pada $S_1$ menghasilkan $5$.
+    \item Pembangkitan kunci: PC-1 membuang bit paritas dan membagi kunci menjadi $C_0,D_0$ (masing-masing 28 bit), lalu pergeseran siklik menurut jadwal $1,1,2,2,\dots,1$ dan PC-2 memilih 48 bit menjadi $K_i$. Setiap bit kunci tidak terpakai di setiap putaran.
+    \item Sifat Feistel yang reversibel membuat dekripsi memakai algoritma yang sama dengan urutan kunci terbalik $K_{16},\dots,K_1$, tanpa fungsi dekripsi terpisah dan tanpa inversi S-box.
+    \item Ruang kunci DES berisi $2^{56} = 72.057.594.037.927.936$ kunci. Pada laju $10^6$ kunci per detik, pemecahan menyeluruh memerlukan waktu terburuk 2.284 tahun dan rata-rata 1.142 tahun; pada laju $10^{12}$ kunci per detik keduanya turun menjadi sekitar 20 jam dan 10 jam.
+    \item DES benar-benar dipecahkan secara terbuka: DESCHALL 1997 (96 hari, $\pm$78.000 komputer di Internet), distributed.net 1998 (39 hari), EFF \textit{Deep Crack} Juli 1998 (\$250.000, 1.856 chip ASIC, 56 jam), dan gabungan keduanya pada Januari 1999 (22 jam 15 menit).
+    \item Terdapat empat kunci lemah yang membuat seluruh 16 subkunci menjadi sama, sehingga $E_K(E_K(x)) = x$, yaitu
+    \begin{center}
+    \small
+    \code{0101010101010101} \quad \code{1F1F1F1F0E0E0E0E} \quad
+    \code{E0E0E0E0F1F1F1F1} \quad \code{FEFEFEFEFEFEFEFE}
+    \end{center}
+    \item Terdapat enam pasangan kunci semi-lemah yang memenuhi $E_{K'}(E_K(x)) = x$; contohnya
+    \code{01FE01FE01FE01FE} berpasangan dengan \code{FE01FE01FE01FE01}, dan
+    \code{1FE01FE00EF10EF1} berpasangan dengan \code{E01FE01FF10EF10E}.
+    \item Efek longsoran DES kuat: pembalikan satu bit plainteks pada vektor uji resmi mengubah 33 dari 64 bit cipherteks, jadi sekitar separuh seperti yang dikehendaki kriteria longsoran ketat.
+    \item Kriptanalisis diferensial (Biham--Shamir) memerlukan $2^{47{,}2}$ plainteks terpilih pada DES 15 putaran tetapi melonjak menjadi $2^{58}$ pada 16 putaran; kriptanalisis linier (Matsui) memerlukan $2^{43}$ plainteks dikenal, tetapi data sebesar itu tidak tersedia pada praktiknya. Keduanya menunjukkan bahwa 16 putaran adalah pilihan yang tepat.
+    \item DES dengan mode ECB membocorkan pola karena blok 64 bit yang identik menghasilkan cipherteks yang identik; mode CBC, CFB, OFB, dan CTR menghindari kebocoran itu, tetapi tidak satu pun memperpanjang kunci efektif.
+    \item Double DES ($2^{112}$) tumbang oleh \textit{meet-in-the-middle} sekitar $2^{57}$ operasi dengan tabel $2^{56}$ entri --- jadi praktis tidak lebih kuat daripada DES tunggal.
+    \item Triple DES EDE (opsi dua kunci 112 bit efektif, opsi tiga kunci 168 bit) memperpanjang umur DES; urutan EDE dipilih agar tetap kompatibel dengan DES tunggal ketika $K_1=K_2=K_3$.
+    \item 3DES dibatasi oleh ukuran blok 64 bit, sehingga kuncinya wajib diganti sebelum $2^{32}$ blok; batas inilah, bukan panjang kuncinya, yang membuat 3DES ditinggalkan setelah AES dibakukan.
 \end{itemize}

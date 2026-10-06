@@ -1,21 +1,166 @@
 \section{Varian DES: Double DES dan Triple DES}
-Untuk memperpanjang umur DES tanpa mengubah algoritma dasarnya, dikembangkanlah metode enkripsi berganda.
 
-\subsection{Double DES dan Meet-in-the-Middle Attack}
-\textit{Double DES} menggunakan dua kunci berbeda ($K_1$ dan $K_2$):
-\[ C = E_{K_2}(E_{K_1}(P)) \]
-Meskipun secara teoritis memperluas ruang kunci menjadi $2^{112}$, Double DES rentan terhadap \textbf{Meet-in-the-Middle Attack}. Serangan ini memungkinkan penyerang menemukan kunci dengan kompleksitas sekitar $2^{57}$, bukan $2^{112}$, sehingga tidak memberikan peningkatan keamanan yang signifikan.
+Ketika ruang kunci 56 bit DES mulai dinilai terlalu kecil, reaksi pertama banyak
+perancang sistem adalah mengulang algoritma yang sama beberapa kali dengan kunci
+yang berbeda. Gagasan itu tampak wajar: kalau satu DES dapat dipecahkan dengan
+$2^{56}$ percobaan, dua DES dengan dua kunci berbeda seharusnya memerlukan
+$2^{56} \times 2^{56} = 2^{112}$ percobaan. Sayangnya perhitungan itu salah, dan
+kekeliruan itu merupakan salah satu pelajaran paling penting dalam kriptografi
+terapan. Bagian ini menjelaskan mengapa, lalu menunjukkan solusi yang benar-benar
+bekerja.
+
+\subsection{Double DES dan Serangan Meet-in-the-Middle}
+
+\textbf{Double DES} mengenkripsi blok dua kali dengan dua kunci berbeda $K_1$ dan
+$K_2$:
+\begin{equation}
+C = E_{K_2}\bigl(E_{K_1}(P)\bigr),
+\qquad P = D_{K_1}\bigl(D_{K_2}(C)\bigr).
+\label{eq:des-double}
+\end{equation}
+Ruang kunci yang tampak berisi $2^{112}$ pasangan kunci, sehingga secara naif
+seharusnya dibutuhkan $2^{112}$ percobaan untuk pemecahan menyeluruh. Angka itu
+jauh di luar jangkauan teknologi apa pun.
+
+Serangan \textbf{\textit{meet-in-the-middle}} menghancurkan harapan itu dengan
+memanfaatkan kenyataan bahwa hasil antara kedua enkripsi hanya berukuran 64 bit,
+bukan 112 bit. Misalkan penyerang memiliki satu pasangan plainteks--cipherteks
+$(P, C)$ yang diketahui. Nilai antara
+\begin{equation}
+X = E_{K_1}(P) = D_{K_2}(C)
+\label{eq:des-mitm}
+\end{equation}
+hanya bergantung pada kunci pertama bila dihitung dari $P$, dan hanya bergantung
+pada kunci kedua bila dihitung dari $C$. Penyerang karena itu dapat menyerang
+dari dua arah sekaligus:
+
+\begin{enumerate}
+    \item Untuk setiap kandidat $K_1$ yang mungkin ($2^{56}$ nilai), hitung
+    $X = E_{K_1}(P)$ dan simpan hasilnya dalam sebuah tabel bersama nilai $K_1$.
+    \item Untuk setiap kandidat $K_2$ yang mungkin ($2^{56}$ nilai), hitung
+    $X' = D_{K_2}(C)$ dan periksa apakah $X'$ ada di dalam tabel.
+    \item Setiap kecocokan memberi satu pasangan $(K_1, K_2)$ kandidat. Pasangan
+    itu diverifikasi dengan satu atau dua pasangan plainteks--cipherteks tambahan
+    untuk menyingkirkan kecocokan palsu.
+\end{enumerate}
+
+Biaya serangan itu adalah $2^{56}$ enkripsi ditambah $2^{56}$ dekripsi, yaitu
+seluruhnya sekitar $2^{57}$ operasi --- hanya dua kali lipat biaya menyerang DES
+tunggal. Memori yang diperlukan juga $2^{56}$ blok, yang memang besar tetapi
+sebanding dengan biaya komputasinya. Karena $2^{57}$ masih jauh di bawah
+$2^{56}$ kali $2^{56}$, Double DES praktis \textbf{tidak lebih kuat daripada DES
+tunggal}. Tabel~\ref{tab:perbandingan-double-des} memperbandingkannya.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\hline
+\textbf{Algoritma} & \textbf{Kompleksitas yang tampak} & \textbf{Kompleksitas nyata} \\
+\hline
+DES tunggal & $2^{56}$ & $2^{56}$ pencarian menyeluruh \\
+\hline
+Double DES & $2^{112}$ & $2^{57}$ dengan \textit{meet-in-the-middle} \\
+\hline
+Triple DES dua kunci & $2^{112}$ efektif (dua kunci berbeda) & $\approx 2^{112}$; tidak ada serangan ruang-pertemuan langsung \\
+\hline
+Triple DES tiga kunci & $2^{168}$ efektif & $\approx 2^{168}$ \\
+\hline
+\end{tabularx}
+\caption{Perbandingan kekuatan DES tunggal, Double DES, dan Triple DES}
+\label{tab:perbandingan-double-des}
+\sumber{Data dari Munir, \textit{IF4020 Kriptografi}, ITB; dilengkapi dari \citet{stallings2017} dan \citet{menezes1996}.}
+\end{table}
+
+Pelajaran umumnya melampaui DES. Menggabungkan dua cipher dengan kunci berbeda
+tidak selalu menambah keamanan sebanyak yang diharapkan, karena hasil antara yang
+berukuran terbatas dapat diserang dari dua arah. Prinsip itu berlaku untuk setiap
+rangkaian cipher, dan kelak muncul kembali pada pembahasan panjang kunci efektif
+3DES di bawah.
 
 \subsection{Triple DES (3DES)}
-Triple DES mengatasi kelemahan Double DES dengan melakukan tiga tahap proses (Enkripsi-Dekripsi-Enkripsi atau EDE):
-\[ C = E_{K_3}(D_{K_2}(E_{K_1}(P))) \]
+
+Jalan keluar dari serangan \textit{meet-in-the-middle} adalah menambahkan putaran
+ketiga, sehingga penyerang tidak lagi memiliki satu titik tengah tunggal untuk
+diserang. \textbf{Triple DES} (3DES) memakai tiga operasi berurutan dengan urutan
+\textbf{Enkripsi--Dekripsi--Enkripsi} (EDE):
+\begin{equation}
+C = E_{K_3}\bigl(D_{K_2}(E_{K_1}(P))\bigr),
+\qquad P = D_{K_1}\bigl(E_{K_2}(D_{K_3}(C))\bigr).
+\label{eq:des-3des-ede}
+\end{equation}
+Perhatikan bahwa operasi kedua adalah dekripsi, bukan enkripsi. Urutan itu
+bukan kekeliruan penulisan. Ada dua pilihan penguncian:
+
 \begin{itemize}
-    \item \textbf{Opsi 2 Kunci}: $K_1 = K_3$ (Kunci efektif: 112 bit).
-    \item \textbf{Opsi 3 Kunci}: $K_1, K_2, K_3$ berbeda (Kunci efektif: 168 bit).
+    \item \textbf{Opsi dua kunci}: $K_1 = K_3$, sedangkan $K_2$ berbeda.
+    Kunci efektifnya adalah 112 bit, dan panjang kunci total yang harus
+    disimpan pengguna adalah $2 \times 56$ bit.
+    \item \textbf{Opsi tiga kunci}: $K_1$, $K_2$, dan $K_3$ semuanya berbeda.
+    Kunci efektifnya 168 bit, dan panjang total yang disimpan $3 \times 56$ bit.
 \end{itemize}
-Mode EDE digunakan agar 3DES tetap kompatibel dengan DES tunggal (jika $K_1=K_2=K_3$).
 
+Alasan pemakaian urutan EDE --- dan bukan EEE yang tampak lebih sederhana ---
+adalah \textbf{kompatibilitas ke belakang}. Bila pengguna menetapkan
+$K_1 = K_2 = K_3 = K$, maka
+\begin{equation}
+E_{K}\bigl(D_{K}(E_{K}(P))\bigr) = E_{K}\bigl(P\bigr),
+\label{eq:des-3des-kompatibel}
+\end{equation}
+karena $D_K$ membatalkan $E_K$ di tengah. Artinya sistem 3DES dapat dipakai untuk
+berkomunikasi dengan sistem DES tunggal hanya dengan mengatur ketiga kuncinya
+sama, tanpa mengubah perangkat lunak atau perangkat kerasnya. Bila urutannya EEE,
+sifat itu tidak berlaku.
 
+Perlu ditekankan satu kehati-hatian dalam membaca panjang kunci. Opsi tiga kunci
+sering disebut "3DES dengan kunci 168 bit", dan itu benar sebagai panjang kunci
+yang disimpan, tetapi keamanan efektifnya tidak selalu 168 bit. Serangan
+\textit{meet-in-the-middle} dua arah yang dipakai pada Double DES tidak dapat
+diterapkan langsung pada 3DES tiga kunci karena adanya tiga tahap, tetapi
+terdapat serangan yang memanfaatkan struktur bertahap itu dan menurunkan
+kompleksitas menjadi sekitar $2^{112}$ dengan memori yang besar. Karena alasan
+itulah opsi dua kunci dengan 112 bit efektif dianggap sama kuatnya dengan opsi
+tiga kunci dalam banyak penerapan, dan opsi dua kunci yang lebih murah itulah
+yang paling luas dipakai --- misalnya pada standar perbankan dan pada
+\textit{key wrapping} di beberapa sistem.
 
+Perlu juga dicatat batas praktis 3DES yang muncul dari ukuran bloknya, bukan dari
+panjang kuncinya. Karena blok DES hanya 64 bit, setelah sekitar $2^{32}$ blok
+dienkripsi dengan satu kunci, peluang munculnya dua blok cipherteks yang identik
+sudah cukup besar menurut paradoks ulang tahun. Bila itu terjadi pada mode dengan
+rantai seperti CBC, penyerang dapat mempelajari kebocoran informasi tentang
+kesamaan blok plainteks. Karena itu 3DES wajib mengganti kunci sebelum $2^{32}$
+blok --- sekitar 32 gigabita data --- dan batas itu jauh lebih kecil daripada
+batas yang dimiliki AES-128, yang baru mencapai titik yang sama setelah
+$2^{64}$ blok. Batas ini, bukan kekuatan kuncinya, yang menjadi alasan utama
+3DES mulai ditinggalkan.
 
+\subsection{Kedudukan 3DES pada Masa Kini}
 
+Sejarah 3DES adalah sejarah masa peralihan. Ia memberi jalan agar sistem yang
+sudah dibangun di atas DES dapat bertahan tanpa harus dirombak total: perangkat
+keras DES lama masih dapat dipakai sebagai blok bangunan, dan panjang kunci yang
+lebih besar diperoleh dengan mengulang operasi yang sama. Namun efisiensinya
+buruk: 3DES tiga kali lebih lambat daripada DES tunggal dan, pada perangkat lunak
+modern, jauh lebih lambat daripada AES yang dirancang untuk prosesor berukuran
+kata 32 bit dan 64 bit.
+
+Karena itu NIST bertahap membatasi penggunaannya. Setelah AES dibakukan pada
+2001, 3DES masih diizinkan untuk data lama, tetapi sejak 2015 standar NIST
+(SP 800-131A) melarang 3DES dua kunci untuk enkripsi baru dan hanya mengizinkan
+3DES tiga kunci secara terbatas sampai sekitar 2023. Setelah itu 3DES
+dinyatakan tidak lagi disetujui untuk enkripsi data baru, walaupun masih
+diizinkan untuk dekripsi data lama dan untuk keperluan khusus seperti
+penurunan kunci. Dengan demikian 3DES berbagi nasib dengan DES: keduanya
+bertahan jauh lebih lama daripada yang diperkirakan perancangnya, dan keduanya
+akhirnya digantikan bukan karena kelemahan yang tiba-tiba ditemukan, melainkan
+karena ukuran blok dan ruang kuncinya tidak lagi sepadan dengan kemampuan
+perangkat penyerang.
+
+Pelajaran akhir dari seluruh bab ini adalah sebuah pola yang akan muncul lagi
+pada Bab~\ref{chap:aes}. Cipher blok yang baik bukan cipher yang tidak dapat
+diserang secara matematis --- DES 16 putaran justru tahan terhadap serangan
+analitis terbaik yang diketahui --- melainkan cipher yang memiliki ukuran blok
+dan ruang kunci yang cukup besar sehingga serangan menyeluruh dan serangan
+statistik sama-sama tidak terjangkau. Itulah yang membuat AES memakai blok 128
+bit dan kunci minimum 128 bit.

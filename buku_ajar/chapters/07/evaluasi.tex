@@ -1,9 +1,14 @@
 
 \begin{obeassessment}
 \textbf{Kuis Bab 7}
-1. Jelaskan perbedaan antara kunci eksternal dan kunci putaran (\textit{round key}) pada DES.
+1. Jelaskan perbedaan antara kunci eksternal dan kunci putaran (\textit{round key}) pada DES, serta sebutkan panjang masing-masing.
 2. Mengapa DES dianggap tidak aman untuk standar keamanan modern, meskipun memiliki struktur Jaringan Feistel yang kompleks?
 3. Bagaimana Triple DES meningkatkan keamanan dibandingkan dengan Single DES?
+4. Pada pembangkitan subkunci DES, mengapa PC-2 hanya memilih 48 dari 56 bit yang tersedia, dan apa akibatnya bagi pemakaian bit kunci?
+5. Diberikan masukan $S_3$ sebesar $\code{011110}$. Tentukan nomor baris, nomor kolom, dan keluaran 4 bitnya dengan membaca Tabel~\ref{tab:sbox-des}.
+6. Sebuah sistem memakai DES-CBC. Jelaskan mengapa memakai ulang IV yang sama untuk dua pesan berbeda melemahkan keamanan, dan bagaimana hubungannya dengan mode ECB.
+7. Buktikan bahwa pada kunci $\code{FEFEFEFEFEFEFEFE}$, seluruh 16 subkunci DES bernilai sama.
+8. Seorang insinyur mengusulkan mengganti 3DES tiga kunci dengan Double DES karena keduanya sama-sama "dua kali DES". Bantah usulan itu dengan membandingkan kompleksitas serangan nyata pada keduanya.
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -12,13 +17,29 @@ Indikator Kompetensi & Tercapai \\
 \hline
 Saya dapat menjelaskan struktur global algoritma DES & [ ] \\
 \hline
+Saya dapat menjelaskan sejarah DES dari Lucifer sampai FIPS PUB 46 & [ ] \\
+\hline
 Saya dapat menguraikan proses pembangkitan kunci internal DES & [ ] \\
+\hline
+Saya dapat membaca tabel IP, $\text{IP}^{-1}$, $E$, dan $P$ pada blok 64 bit & [ ] \\
+\hline
+Saya dapat mensubstitusi satu kelompok 6 bit melalui S-box DES & [ ] \\
+\hline
+Saya dapat mengerjakan satu putaran DES lengkap di atas kertas & [ ] \\
 \hline
 Saya dapat menganalisis kelemahan Double DES terhadap Meet-in-the-Middle attack & [ ] \\
 \hline
 Saya dapat membedakan varian Triple DES (2 kunci vs 3 kunci) & [ ] \\
 \hline
+Saya dapat menyebutkan nilai kunci lemah dan menjelaskan mengapa ia lemah & [ ] \\
+\hline
 Saya dapat menjelaskan konsep efek longsoran (\textit{avalanche effect}) & [ ] \\
+\hline
+Saya dapat menjelaskan mengapa kriptanalisis linier tidak dipakai dalam praktik & [ ] \\
+\hline
+Saya dapat menghitung waktu pemecahan DES pada laju pencarian tertentu & [ ] \\
+\hline
+Saya dapat menjelaskan alasan 3DES ditinggalkan setelah AES dibakukan & [ ] \\
 \hline
 \end{tabularx}
 \end{competencychecklist}
