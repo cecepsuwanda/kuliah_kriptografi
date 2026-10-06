@@ -39,3 +39,87 @@ H(X) &= -\sum_{i} p(x_i) \log_2 p(x_i)\\
 \]
 Karena entropi maksimum untuk 4 simbol adalah $\log_2 4 = 2$ bit/simbol, distribusi yang tidak seragam ini menghasilkan entropi yang lebih rendah dan karena itu lebih mudah dianalisis secara statistik.
 \end{example}
+
+\begin{example}[Fungsi totient Euler dan Teorema Euler]
+Hitung $\varphi(20)$, yaitu banyaknya bilangan pada rentang $1 \le k \le 20$ yang
+relatif prima terhadap 20. Bilangan-bilangan itu adalah
+\[ 1,\ 3,\ 7,\ 9,\ 11,\ 13,\ 17,\ 19, \]
+seluruhnya delapan buah, jadi $\varphi(20) = 8$. Pemeriksaan melalui sifat
+multiplikatif memberi hasil yang sama: karena $20 = 4 \cdot 5$ dan
+$\text{PBB}(4,5)=1$,
+\[ \varphi(20) = \varphi(4) \cdot \varphi(5) = 2 \cdot 4 = 8. \]
+
+Selanjutnya periksa Teorema Euler untuk $a = 3$ dan $n = 10$. Karena
+$\text{PBB}(3,10) = 1$ dan $\varphi(10) = \varphi(2)\cdot\varphi(5) = 1 \cdot 4 = 4$,
+teorema menyatakan $3^4 \equiv 1 \pmod{10}$. Pemeriksaannya:
+\[ 3^4 = 81 = 8 \cdot 10 + 1, \]
+sehingga benar bahwa $3^4 \equiv 1 \pmod{10}$. Perhatikan bahwa yang diperiksa bukan
+nilai $3^4$ itu sendiri, melainkan sisanya ketika dibagi 10.
+\end{example}
+
+\begin{example}[Akar primitif dan logaritma diskrit]
+Tinjau modulo $p = 7$. Untuk $g = 3$, hitung pangkat-pangkatnya secara berurutan:
+\[
+\begin{aligned}
+3^1 &= 3 \equiv 3, &\qquad 3^2 &= 9 \equiv 2,\\
+3^3 &= 27 \equiv 6, &\qquad 3^4 &= 81 \equiv 4,\\
+3^5 &= 243 \equiv 5, &\qquad 3^6 &= 729 \equiv 1.
+\end{aligned}
+\]
+Siklusnya menghasilkan $3, 2, 6, 4, 5, 1$ --- keenam anggota $\{1,2,3,4,5,6\}$ muncul
+tepat satu kali, sehingga $g = 3$ adalah akar primitif modulo 7.
+
+Sebagai pembanding, untuk $g = 2$:
+\[ 2^1 \equiv 2, \qquad 2^2 \equiv 4, \qquad 2^3 = 8 \equiv 1, \]
+sehingga siklusnya hanya berpanjang tiga dan hanya menghasilkan $\{1,2,4\}$. Karena
+tidak seluruh anggota $\{1,\dots,6\}$ tercakup, $g = 2$ bukan akar primitif modulo 7.
+
+Selanjutnya tinjau logaritma diskrit $7^x \equiv 15 \pmod{41}$. Hitung pangkat 7
+secara berurutan sambil mengurangi modulo 41:
+\[
+\begin{aligned}
+7^1 &= 7 \equiv 7, &\qquad 7^2 &= 49 = 41 + 8 \equiv 8,\\
+7^3 &= 7 \cdot 8 = 56 = 41 + 15 \equiv 15.
+\end{aligned}
+\]
+Jadi $x = 3$. Perhatikan bahwa menghitung $7^3 \bmod 41$ hanya menuntut dua perkalian,
+sedangkan menemukan $x = 3$ dari $7^x \equiv 15$ pada modulus yang berukuran realistis
+--- misalnya 2048 bit --- tidak memiliki cara penyelesaian yang praktis.
+\end{example}
+
+\begin{example}[Entropi plainteks berita Kota Ternate]
+Plainteks berita Kota Ternate pada Bagian~\ref{sec:teori-informasi} memuat 296 huruf
+setelah spasi dan tanda baca dibuang, dengan 21 huruf berbeda. Enam huruf yang paling
+sering muncul adalah:
+
+\begin{center}
+\begin{tabular}{@{}lcccccc@{}}
+\hline
+Huruf & A & N & E & I & K & T \\
+Cacah & 59 & 34 & 29 & 22 & 17 & 17 \\
+Peluang & $0{,}19932$ & $0{,}11486$ & $0{,}09797$ & $0{,}07432$ & $0{,}05743$ & $0{,}05743$ \\
+\hline
+\end{tabular}
+\end{center}
+
+Kontribusi keenam huruf ini terhadap entropi dihitung dengan suku $-p \log_2 p$:
+\[
+\begin{aligned}
+-p(A)\log_2 p(A) &= 0{,}19932 \times 2{,}327 &= 0{,}4638\\
+-p(N)\log_2 p(N) &= 0{,}11486 \times 3{,}122 &= 0{,}3586\\
+-p(E)\log_2 p(E) &= 0{,}09797 \times 3{,}352 &= 0{,}3284\\
+-p(I)\log_2 p(I) &= 0{,}07432 \times 3{,}750 &= 0{,}2787\\
+-p(K)\log_2 p(K) &= 0{,}05743 \times 4{,}122 &= 0{,}2367\\
+-p(T)\log_2 p(T) &= 0{,}05743 \times 4{,}122 &= 0{,}2367
+\end{aligned}
+\]
+Jumlah keenamnya adalah $1{,}9029$ bit. Lima belas huruf sisanya --- yang masing-masing
+muncul jauh lebih jarang --- menyumbang $1{,}9959$ bit lagi, sehingga totalnya
+\[ H(P) = 1{,}9029 + 1{,}9959 = 3{,}8988\ \text{bit/karakter}. \]
+Dibandingkan dengan entropi maksimum alfabet 26 huruf, pencapaiannya
+\[ \frac{3{,}8988}{4{,}7004} \times 100\% \approx 82{,}95\%. \]
+Perhatikan bahwa lima belas huruf yang jarang muncul justru menyumbang bagian entropi
+yang lebih besar daripada enam huruf tersering: inilah wujud nyata dari tafsir entropi
+sebagai ``rata-rata kejutan''. Huruf yang jarang mengagetkan, dan kejutan itulah yang
+mengandung informasi.
+\end{example}

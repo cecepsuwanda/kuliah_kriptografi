@@ -1,0 +1,40 @@
+% Ilustrasi rentang nilai entropi Shannon: 0 <= H(X) <= log2(n).
+% Dirujuk dari section-02.tex dengan \input{figures/rentang-entropi}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[font=\small]
+        % Batang rentang entropi, diwarnai bertingkat dari terang ke gelap
+        \foreach \i in {0,...,5} {
+            \pgfmathsetmacro{\xa}{\i*10/6}
+            \pgfmathsetmacro{\xb}{(\i+1)*10/6}
+            \fill[blue!\the\numexpr 8+11*\i\relax]
+                (\xa,0.35) rectangle (\xb,1.00);
+        }
+        \draw[blue!70!black, thick] (0,0.35) rectangle (10,1.00);
+
+        % Sumbu nilai entropi
+        \draw[-{Latex[length=2.4mm]}, semithick] (0,0.05) -- (10.9,0.05);
+        \node[below, font=\scriptsize, inner sep=1.5pt] at (0.25,-0.02) {$0$};
+        \node[below, font=\scriptsize, inner sep=1.5pt] at (10.4,-0.02)
+            {$\log_2 n$};
+
+        % Anotasi kedua ujung rentang
+        \node[above, align=center, font=\scriptsize] at (0.9,1.10)
+            {$H = 0$\\ satu simbol berpeluang $1$};
+        \node[above, align=center, font=\scriptsize] at (9.2,1.10)
+            {$H = \log_2 n$\\ semua simbol berpeluang $1/n$};
+
+        % Garis penunjuk ke keterangan di bawah
+        \draw[gray!70, densely dotted] (0,0.35) -- (0,-0.32);
+        \draw[gray!70, densely dotted] (10,0.35) -- (10,-0.32);
+
+        \node[below, align=center, font=\scriptsize, text width=4.0cm]
+            at (1.9,-0.32)
+            {Pesan sudah pasti: tidak ada ketidakpastian yang tersisa};
+        \node[below, align=center, font=\scriptsize, text width=4.0cm]
+            at (8.3,-0.32)
+            {Ketidakpastian paling tinggi: tiap simbol membawa informasi maksimal};
+    \end{tikzpicture}
+    \caption{Rentang nilai entropi Shannon $0 \le H(X) \le \log_2 n$. Nilai minimum tercapai bila pesan sudah pasti, nilai maksimum bila seluruh $n$ simbol muncul dengan peluang sama}
+    \label{fig:rentang-entropi}
+\end{figure}

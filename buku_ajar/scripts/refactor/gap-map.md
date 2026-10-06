@@ -46,17 +46,29 @@ Target: ±4.000 kata. **Hasil: 5.529 kata berkas (dari 1.415), 20 hlm jadi bab m
       *replay* + nomor urut
 - [x] Sitasi: `stallings2017`, `menezes1996`, `katz2020`, `schneier1996`
 
-## Bab 03 — Landasan Matematika untuk Kriptografi
+## Bab 03 — Landasan Matematika untuk Kriptografi  `[x]` SELESAI
 Sumber: `referensi/02-*` (**hanya 1.071 kata, 2 topik — paling tipis**); lengkapi dari
 `referensi/materi_buku.tex` + `menezes1996` (HAC Bab 2). Target: ±3.500 kata.
-**Belum punya sitasi. Nol gambar raster.**
+**Hasil: 6.066 kata berkas (dari 1.109), 19 hlm jadi bab mandiri, +1 gambar TikZ,
++1 gambar raster (dibuat sendiri), +1 tabel, +3 contoh, 5 sitasi (sebelumnya 0).**
 
-- [ ] Tabel peta topik matematika untuk kriptografi + penanda prasyarat
-- [ ] Teori bilangan: sifat pembagian, Algoritma Euclidean, kombinasi lanjar, totient, Teorema Euler, akar primitif, logaritma diskret
-- [ ] Contoh entropi teks nyata (berita Kota Ternate: 3,8988 vs 4,3035 bit)
-- [ ] $H_{\max}$ 26 huruf = 4,7004 bit; 256 ASCII = 8 bit
-- [ ] Latihan modulo negatif dan invers modulo
-- [ ] 1–2 gambar baru
+- [x] Tabel peta topik matematika untuk kriptografi + tempat pembahasannya (`tab:peta-matematika`)
+- [x] Teori bilangan: sifat pembagian (Pers. `eq:pembagian`), aritmetika modulo + modulo
+      negatif, kekongruenan + sifat & batas pencoretan, PBB, Algoritma Euclidean,
+      kombinasi lanjar (Identitas Bézout), invers modulo, bilangan prima,
+      fungsi totient Euler, Teorema Euler & Fermat Kecil, akar primitif, logaritma diskrit
+- [x] Nomor persamaan: `eq:pembagian`, `eq:mod-tambah`, `eq:mod-kali`, `eq:invers`,
+      `eq:euler`, `eq:entropi` — bab pertama yang memakai `equation` bernomor
+- [x] Kuantisasi informasi (1 bit jenis kelamin, 3 bit hari, 4 bit angka), laju bahasa
+      dan redundansi (~75\% untuk bahasa Inggris)
+- [x] Contoh entropi teks nyata (berita Kota Ternate: 3,8988 vs 4,3035 bit);
+      **angka $H(P)$ diverifikasi ulang dari teksnya dan cocok persis (296 huruf, 21 huruf berbeda)**
+- [x] $H_{\max}$ 26 huruf = 4,7004 bit; 256 ASCII = 8 bit
+- [x] Latihan modulo negatif, invers modulo, totient, Teorema Euler, akar primitif
+- [x] Gambar baru: `figures/rentang-entropi.tex` (TikZ) dan
+      `figures/frekuensi-huruf-ternate.png` (raster, dibuat oleh
+      `scripts/refactor/figures/entropi_ternate.py`)
+- [x] Sitasi: `menezes1996`, `stinson2018`, `katz2020`, `stallings2017`
 
 ## Bab 04 — Kriptografi Klasik
 Sumber: `referensi/03-*` (3.455) + `04-*` (11.746) + `05-*` (2.565). Target: ±6.000 kata.
@@ -206,8 +218,10 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
 
 - [ ] **Bab 09 menyesatkan soal keamanan GOST** — buku menyiratkan GOST "lebih aman";
   referensi `11-*` menyatakan sebaliknya (2²⁵⁶ → 2¹⁷⁸). Perbaiki + imbangi di `praktikum.tex`.
-- [ ] **Nol environment `equation`/`align` ber-nomor** di seluruh buku → pakai untuk
-  penurunan RSA, ElGamal, ECDLP, hash.
+- [~] **Environment `equation`/`align` ber-nomor** mulai dipakai sejak Bab 03
+  (`eq:pembagian`, `eq:mod-tambah`, `eq:mod-kali`, `eq:invers`, `eq:euler`,
+  `eq:entropi`). Lanjutkan untuk penurunan RSA, ElGamal, ECDLP, hash.
 - [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
-- [ ] **Bab 03, 15, 16 tanpa gambar raster.**
-- [ ] **Bab tanpa sitasi: 03, 05, 06, 07, 14.** (02 sudah selesai.)
+- [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 sudah punya satu.)
+  Skrip pembuat gambar raster: `scripts/refactor/figures/entropi_ternate.py`.
+- [ ] **Bab tanpa sitasi: 05, 06, 07, 14.** (02 dan 03 sudah selesai.)

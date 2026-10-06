@@ -1,44 +1,394 @@
 \section{Teori Bilangan Dasar}
-Kriptografi modern sangat bergantung pada teori bilangan. Berikut adalah beberapa konsep fundamental yang digunakan:
+\label{sec:teori-bilangan}
+
+Kriptografi modern berdiri di atas matematika. Caesar cipher cukup dijelaskan dengan
+pergeseran huruf, tetapi RSA menuntut pemahaman tentang bilangan prima dan fungsi
+totient, ElGamal dan Diffie--Hellman menuntut pemahaman tentang akar primitif dan
+logaritma diskrit, sedangkan AES dan kriptografi kurva eliptik menuntut pemahaman
+tentang medan berhingga. Tanpa landasan ini, algoritma kriptografi hanya tampak
+sebagai rangkaian langkah yang harus dihafal, bukan sebagai konstruksi yang dapat
+dipahami dan dianalisis.
+
+Bab ini menyajikan landasan tersebut dalam dua bagian. Bagian pertama membahas teori
+bilangan, yaitu perkakas yang dipakai oleh hampir seluruh algoritma kriptografi yang
+akan dibahas pada bab-bab berikutnya. Bagian kedua membahas teori informasi, khususnya
+entropi, yang memberi kita cara mengukur seberapa besar informasi yang sebenarnya
+dibocorkan sebuah cipherteks.
+
+Sebelum masuk ke rinciannya, Tabel~\ref{tab:peta-matematika} memetakan bidang-bidang
+matematika yang menopang kriptografi beserta tempat pembahasannya di dalam buku ini.
+Peta ini penting agar pembaca mengetahui bagian mana yang sudah dikuasainya dari mata
+kuliah lain dan bagian mana yang benar-benar baru \citep{menezes1996}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Peta topik matematika untuk kriptografi dan tempat pembahasannya}
+    \label{tab:peta-matematika}
+    \small
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.1cm}
+                                  >{\raggedright\arraybackslash}X
+                                  >{\raggedright\arraybackslash}p{3.6cm}@{}}
+        \hline
+        \textbf{Bidang} & \textbf{Topik} & \textbf{Dibahas di} \\
+        \hline
+        Teori bilangan dasar & Aritmetika modulo, kekongruenan, PBB, relatif prima,
+        invers modulo & Bab ini (ringkasan Matematika Diskrit) \\
+        \hline
+        Teori bilangan lanjut & Fungsi totient, Teorema Euler, akar primitif,
+        logaritma diskrit & Bab ini \\
+        \hline
+        Probabilitas dan statistik & Sebaran frekuensi, indeks kebetulan, uji
+        keacakan & Bab~\ref{chap:kriptografi-klasik} \\
+        \hline
+        Teori informasi & Entropi, laju bahasa, redundansi & Bab ini \\
+        \hline
+        Kompleksitas algoritma & Notasi $O$, kelas P dan NP, reduksi &
+        Bab~\ref{chap:layanan-keamanan} dan bab-bab kunci publik \\
+        \hline
+        Aljabar abstrak & Grup, gelanggang, medan, medan berhingga,
+        $GF(2^8)$ & Bab~\ref{chap:aes} dan Bab~\ref{chap:ecc} \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{Sifat Pembagian pada Bilangan Bulat}
+
+Seluruh aritmetika kriptografi bertumpu pada satu fakta sederhana tentang pembagian.
+Jika $a$ adalah bilangan bulat dan $n$ adalah bilangan bulat positif, maka selalu
+terdapat tepat satu pasangan bilangan bulat $q$ (hasil bagi) dan $r$ (sisa) sehingga
+\begin{equation}
+    a = qn + r, \qquad 0 \le r < n.
+    \label{eq:pembagian}
+\end{equation}
+Kenyataan bahwa sisa $r$ selalu dapat dibuat \emph{nonnegatif} dan lebih kecil dari
+$n$ inilah yang membuat aritmetika modulo dapat didefinisikan secara tunggal. Nilai
+$r$ inilah yang disebut $a \bmod n$.
+
+Kita juga memerlukan notasi keterbagian. Ditulis $n \mid a$ (dibaca ``$n$ membagi
+$a$'') bila terdapat bilangan bulat $k$ sehingga $a = kn$; dengan kata lain, bila
+$a \bmod n = 0$. Sebagai contoh, $3 \mid 15$ karena $15 = 5 \cdot 3$, sedangkan
+$3 \nmid 16$. Notasi ini akan muncul terus-menerus, terutama pada definisi
+kekongruenan di Bagian~\ref{sec:kekongruenan}.
+
+Beberapa sifat keterbagian yang sering dipakai: bila $n \mid a$ dan $n \mid b$ maka
+$n \mid (a + b)$ dan $n \mid (a - b)$; bila $n \mid a$ maka $n \mid ab$ untuk setiap
+bilangan bulat $b$. Semua sifat ini bekerja karena keterbagian pada dasarnya adalah
+pernyataan tentang kelipatan \citep{stinson2018}.
 
 \subsection{Aritmetika Modulo}
-Aritmetika modulo adalah sistem aritmetika untuk bilangan bulat, di mana angka-angka "berputar kembali" setelah mencapai nilai tertentu yang disebut modulus.
-Jika $a$ dan $n$ adalah bilangan bulat, maka $a \pmod{n}$ adalah sisa bagi dari $a$ oleh $n$.
 
-\textbf{Contoh:}
+Aritmetika modulo adalah sistem aritmetika untuk bilangan bulat, di mana angka-angka
+``berputar kembali'' setelah mencapai nilai tertentu yang disebut modulus. Jika $a$
+dan $n$ adalah bilangan bulat dengan $n > 0$, maka $a \bmod n$ adalah sisa bagi dari
+$a$ oleh $n$ sebagaimana didefinisikan pada Persamaan~\ref{eq:pembagian}.
+
+Untuk bilangan positif, perhitungannya langsung:
 \begin{itemize}
-    \item $23 \pmod{5} = 3$ (karena $23 = 4 \times 5 + 3$)
-    \item $-41 \pmod{9} = 4$ (karena $|-41| \pmod{9} = 5$, maka $9 - 5 = 4$)
+    \item $23 \bmod 5 = 3$, karena $23 = 4 \times 5 + 3$.
+    \item $41 \bmod 9 = 5$, karena $41 = 4 \times 9 + 5$.
+    \item $17 \bmod 3 = 2$, karena $17 = 5 \times 3 + 2$.
 \end{itemize}
 
-\subsection{Kekongruenan}
-Dua bilangan bulat $a$ dan $b$ dikatakan kongruen modulo $n$ jika $a$ dan $b$ memiliki sisa bagi yang sama saat dibagi oleh $n$. Hal ini ditulis sebagai:
-\[ a \equiv b \pmod{n} \]
-Artinya, $n$ membagi habis selisih antara $a$ dan $b$ ($n \mid (a - b)$).
-
-\textbf{Contoh:}
+Untuk bilangan negatif, banyak mahasiswa tergelincir. Aturan bakunya adalah: hasil
+$a \bmod n$ harus selalu berada pada rentang $0 \le r < n$, sehingga jawaban
+\emph{tidak boleh} negatif. Untuk $a < 0$, hasilnya diperoleh dengan mengambil
+kelipatan $n$ terbesar yang tidak melebihi $a$, lalu menghitung selisihnya:
 \begin{itemize}
-    \item $17 \equiv 2 \pmod{3}$ karena $3$ membagi habis $17 - 2 = 15$.
-    \item $-7 \equiv 15 \pmod{11}$ karena $11$ membagi habis $-7 - 15 = -22$.
+    \item $-41 \bmod 9 = 4$, karena $9 \mid -41$ menghasilkan sisa $-5$ menurut
+          pembagian biasa, dan $9 + (-5) = 4$. Cara lain: $-41 = (-5)\times 9 + 4$.
+    \item $-24 \bmod 11 = 9$, karena $-24 = (-3) \times 11 + 9$.
 \end{itemize}
-
-\subsection{Relatif Prima dan PBB}
-Dua bilangan bulat $a$ dan $b$ dikatakan relatif prima (atau \textit{coprime}) jika pembagi persekutuan terbesar (PBB) atau \textit{Greatest Common Divisor} (GCD) dari keduanya adalah 1.
-\[ \text{PBB}(a, b) = 1 \]
-Konsep ini sangat penting dalam menentukan keberadaan invers modulo.
-
-\subsection{Invers Modulo}
-Invers modulo dari $a \pmod{n}$ adalah bilangan $x$ sedemikian sehingga:
-\[ a \cdot x \equiv 1 \pmod{n} \]
-Invers modulo $a \pmod{n}$ ada jika dan hanya jika $a$ dan $n$ relatif prima ($\text{PBB}(a, n) = 1$). Invers ini dapat dicari menggunakan Algoritma Euclidean yang Diperluas (\textit{Extended Euclidean Algorithm}).
-
-\textbf{Contoh:}
-\begin{itemize}
-    \item $4^{-1} \pmod{9} \equiv 7 \pmod{9}$ karena $4 \cdot 7 = 28$, dan $28 \equiv 1 \pmod{9}$.
-    \item $23^{-1} \pmod{10} = -3 \pmod{10}$ karena $23 \cdot (-3) = -69$, dan $-69 \equiv 1 \pmod{10}$.
-\end{itemize}
-
+Perhatikan pada contoh kedua bahwa $-3 \times 11 = -33$, dan $-24 - (-33) = 9$.
+Memeriksa hasil dengan cara mengalikan kembali seperti ini adalah kebiasaan yang baik.
 
 \input{figures/siklus-modulo}
 
+Aritmetika modulo juga memenuhi sifat-sifat yang memudahkan perhitungan, yaitu
+penjumlahan dan perkalian dapat dilakukan sebelum maupun sesudah pengurangan modulo:
+\begin{equation}
+    (a + b) \bmod n = \bigl((a \bmod n) + (b \bmod n)\bigr) \bmod n,
+    \label{eq:mod-tambah}
+\end{equation}
+\begin{equation}
+    (a \cdot b) \bmod n = \bigl((a \bmod n) \cdot (b \bmod n)\bigr) \bmod n.
+    \label{eq:mod-kali}
+\end{equation}
+Sifat terakhir sangat berharga dalam praktik. Untuk menghitung $3^{100} \bmod 7$,
+kita tidak perlu menghitung $3^{100}$ terlebih dahulu --- bilangan itu memiliki 48
+angka --- melainkan cukup mengalikan hasil antara secara berulang sambil sesekali
+mengurangi modulo. Teknik inilah yang membuat eksponensiasi modular pada RSA,
+Diffie--Hellman, dan ElGamal dapat dijalankan pada komputer biasa.
+
+\subsection{Kekongruenan}
+\label{sec:kekongruenan}
+
+Dua bilangan bulat $a$ dan $b$ dikatakan \textbf{kongruen modulo $n$} jika $a$ dan $b$
+memiliki sisa bagi yang sama saat dibagi oleh $n$. Hal ini ditulis sebagai
+\[ a \equiv b \pmod{n}, \]
+yang berlaku jika dan hanya jika $n$ membagi habis selisih antara $a$ dan $b$:
+\[ n \mid (a - b). \]
+Perhatikan perbedaan notasi yang halus namun penting: $a \bmod n$ adalah sebuah
+\emph{bilangan} (sisanya), sedangkan $a \equiv b \pmod{n}$ adalah sebuah
+\emph{pernyataan} yang bernilai benar atau salah. Menuliskan $17 \equiv 5$ adalah
+salah; menuliskan $17 \equiv 2 \pmod{3}$ adalah benar.
+
+\begin{itemize}
+    \item $17 \equiv 2 \pmod{3}$ karena $3$ membagi habis $17 - 2 = 15$.
+    \item $-7 \equiv 15 \pmod{11}$ karena $11$ membagi habis $-7 - 15 = -22$.
+    \item $23 \equiv 3 \pmod{5}$ karena $5$ membagi habis $23 - 3 = 20$.
+\end{itemize}
+
+Kekongruenan memiliki sifat-sifat berikut, dengan $a \equiv b \pmod{n}$ dan
+$c \equiv d \pmod{n}$:
+\begin{itemize}
+    \item $a + c \equiv b + d \pmod{n}$,
+    \item $a - c \equiv b - d \pmod{n}$,
+    \item $a \cdot c \equiv b \cdot d \pmod{n}$,
+    \item $a^k \equiv b^k \pmod{n}$ untuk setiap bilangan bulat positif $k$.
+\end{itemize}
+Sifat-sifat ini memungkinkan kita mengganti sembarang bilangan dengan bilangan lain
+yang kongruen dengannya tanpa mengubah hasil akhir modulo $n$ --- persis seperti
+$3/6$ dapat diganti dengan $1/2$ pada aritmetika biasa.
+
+Satu hal yang \emph{tidak} berlaku secara umum adalah pencoretan. Dari
+$ac \equiv bc \pmod{n}$ kita tidak boleh langsung menyimpulkan $a \equiv b \pmod{n}$.
+Contoh penyangkalnya: $2 \cdot 3 \equiv 4 \cdot 3 \pmod{6}$ bernilai benar (keduanya
+$\equiv 0$), tetapi $2 \not\equiv 4 \pmod{6}$. Pencoretan hanya sah bila faktor yang
+dicoret relatif prima terhadap modulus, yaitu bila $\text{PBB}(c, n) = 1$.
+
+\subsection{Relatif Prima dan PBB}
+
+Dua bilangan bulat $a$ dan $b$ dikatakan \textbf{relatif prima}
+(\textit{coprime}) jika pembagi persekutuan terbesar (PBB) atau \textit{Greatest
+Common Divisor} (GCD) dari keduanya adalah $1$:
+\[ \text{PBB}(a, b) = 1. \]
+PBB sendiri didefinisikan sebagai bilangan bulat positif terbesar yang membagi habis
+keduanya. Sebagai contoh, $\text{PBB}(23, 40) = 1$ sehingga 23 dan 40 relatif prima,
+sedangkan $\text{PBB}(12, 18) = 6$ sehingga keduanya tidak relatif prima.
+
+Beberapa sifat PBB yang akan kita pakai:
+\begin{itemize}
+    \item $\text{PBB}(a, 0) = |a|$ untuk setiap $a \neq 0$.
+    \item $\text{PBB}(a, b) = \text{PBB}(b, a)$.
+    \item $\text{PBB}(a, b) = \text{PBB}(b,\, a \bmod b)$ --- sifat inilah yang
+          menjadi dasar Algoritma Euclidean.
+\end{itemize}
+
+Konsep relatif prima menentukan keberadaan invers modulo, dan oleh karena itu menjadi
+syarat yang harus diperiksa sebelum sebuah kunci dapat dipakai. Sebagaimana akan
+dilihat pada Bab~\ref{chap:rsa}, pemilihan eksponen publik $e$ pada RSA pada dasarnya
+adalah pemilihan bilangan yang relatif prima terhadap $\varphi(n)$.
+
+\subsection{Algoritma Euclidean}
+
+Untuk menghitung PBB dua bilangan besar, pemfaktoran bukanlah cara yang baik: ia
+justru menjadi persoalan sulit yang mendasari keamanan RSA. Yang dipakai adalah
+\textbf{Algoritma Euclidean}, yang bekerja hanya dengan pembagian berulang
+berdasarkan sifat $\text{PBB}(a, b) = \text{PBB}(b, a \bmod b)$. Algoritmanya
+berhenti ketika sisanya nol, dan PBB-nya adalah sisa bukan nol terakhir.
+
+\begin{description}
+    \item[Masukan:] dua bilangan bulat $a$ dan $b$ dengan $a > b \ge 0$.
+    \item[Keluaran:] $\text{PBB}(a,b)$.
+    \item[Langkah:] selama $b \neq 0$, ganti pasangan $(a, b)$ dengan $(b, a \bmod b)$.
+          Ketika $b = 0$, jawabannya adalah $a$.
+\end{description}
+
+Sebagai contoh sederhana, hitung $\text{PBB}(48, 18)$:
+\[
+\begin{aligned}
+48 &= 2 \cdot 18 + 12\\
+18 &= 1 \cdot 12 + 6\\
+12 &= 2 \cdot 6 + 0
+\end{aligned}
+\]
+Sisa bukan nol terakhir adalah $6$, jadi $\text{PBB}(48, 18) = 6$. Perhatikan bahwa
+proses ini tidak pernah mencari faktor prima sama sekali; ia hanya mengurangi ukuran
+bilangan dengan cepat. Jumlah langkahnya sebanding dengan banyaknya angka pada
+bilangan yang lebih kecil, sehingga PBB dua bilangan 1024 bit dapat dihitung dalam
+sekejap \citep{menezes1996}. Contoh yang lebih panjang, dengan
+$\text{PBB}(1970, 1066) = 2$, disajikan pada bagian Contoh Terhitung bab ini.
+
+\subsection{Kombinasi Lanjar}
+
+Algoritma Euclidean dapat diperluas untuk menghasilkan sesuatu yang lebih berguna
+daripada sekadar nilai PBB. \textbf{Teorema B\'ezout} menyatakan bahwa PBB dua
+bilangan selalu dapat ditulis sebagai kombinasi lanjar (\textit{linear combination})
+keduanya dengan koefisien bilangan bulat.
+
+\begin{theorem}[Identitas B\'ezout]
+Untuk setiap bilangan bulat $a$ dan $b$ yang tidak keduanya nol, terdapat bilangan
+bulat $m$ dan $n$ sehingga
+\[ ma + nb = \text{PBB}(a, b). \]
+\end{theorem}
+
+Koefisien $m$ dan $n$ diperoleh dengan menjalankan Algoritma Euclidean lalu
+melakukan \textbf{substitusi balik} dari langkah terakhir ke langkah pertama. Untuk
+$\text{PBB}(48,18)=6$ di atas:
+\[
+\begin{aligned}
+6 &= 18 - 1 \cdot 12\\
+  &= 18 - 1 \cdot (48 - 2 \cdot 18) && \text{substitusi } 12 = 48 - 2 \cdot 18\\
+  &= 3 \cdot 18 - 1 \cdot 48.
+\end{aligned}
+\]
+Jadi $m = -1$ dan $\text{PBB}(48,18) = 3 \cdot 18 - 1 \cdot 48$, dan pemeriksaan
+kembali memberi $54 - 48 = 6$. Nilai koefisien ini tidak tunggal, tetapi algoritma
+Euclidean diperluas (\textit{extended Euclidean algorithm}) selalu menghasilkan satu
+pasangan yang sah dengan biaya komputasi yang sama dengan algoritma aslinya.
+
+\subsection{Invers Modulo}
+
+Invers modulo dari $a$ modulo $n$ adalah bilangan $x$ sedemikian sehingga
+\begin{equation}
+    a \cdot x \equiv 1 \pmod{n}.
+    \label{eq:invers}
+\end{equation}
+Notasinya adalah $x = a^{-1} \bmod n$. Jangan tertukar dengan kebalikan biasa: pada
+modulo 9, $4^{-1}$ bukan $1/4$ melainkan $7$, karena $4 \cdot 7 = 28 \equiv 1
+\pmod 9$.
+
+Invers modulo $a$ modulo $n$ ada jika dan hanya jika $a$ dan $n$ relatif prima, yaitu
+$\text{PBB}(a, n) = 1$. Alasannya dapat dilihat langsung dari Identitas B\'ezout:
+bila $\text{PBB}(a,n)=1$, maka terdapat $m$ dan $n'$ dengan $ma + n'n = 1$; dengan
+mengurangi modulo $n$ suku $n'n$ hilang dan tersisa $ma \equiv 1 \pmod n$, sehingga
+$m$ adalah invers yang dicari. Sebaliknya, bila $\text{PBB}(a,n) = d > 1$, maka
+$a \cdot x$ selalu kelipatan $d$ sehingga tidak mungkin kongruen dengan $1$ modulo
+$n$.
+
+\begin{itemize}
+    \item $4^{-1} \bmod 9 \equiv 7 \pmod 9$, karena $4 \cdot 7 = 28 = 3 \cdot 9 + 1$.
+    \item $23^{-1} \bmod 10 = -3 \equiv 7 \pmod{10}$, karena $23 \cdot (-3) = -69 =
+          (-7)\cdot 10 + 1$.
+\end{itemize}
+Perhatikan pada contoh kedua bahwa $-3$ dan $7$ sama-sama sah sebagai jawaban karena
+keduanya kongruen modulo 10; bentuk yang biasanya dilaporkan adalah bentuk
+nonnegatifnya, yaitu $7$.
+
+Kemampuan menghitung invers modulo dengan cepat adalah keterampilan yang akan dipakai
+berulang kali. Pada RSA, kunci privat $d$ adalah invers dari $e$ modulo $\varphi(n)$;
+pada ElGamal dan kriptografi kurva eliptik, dekripsi menuntut invers modulo orde
+kelompok. Pada semuanya, invers dihitung dengan Algoritma Euclidean yang diperluas,
+bukan dengan mencoba satu per satu.
+
 \input{figures/alur-euclid-diperluas}
+
+\subsection{Bilangan Prima}
+
+\textbf{Bilangan prima} adalah bilangan bulat lebih besar dari 1 yang hanya habis
+dibagi oleh 1 dan dirinya sendiri. Bilangan 2, 3, 5, 7, 11, dan 13 adalah prima,
+sedangkan 1 bukan prima (inilah konvensi yang dipakai di seluruh buku ini) dan 9
+bukan prima karena $9 = 3 \cdot 3$.
+
+Dua fakta tentang bilangan prima menopang seluruh kriptografi kunci publik.
+Pertama, \textbf{Teorema Dasar Aritmetika}: setiap bilangan bulat lebih besar dari 1
+dapat dinyatakan sebagai hasil kali bilangan-bilangan prima secara tunggal (kecuali
+urutan faktornya). Kedua, dari hasil kali dua bilangan prima besar kita tidak memiliki
+cara yang praktis untuk mengembalikannya menjadi faktor-faktornya. Inilah asimetri
+yang dimanfaatkan RSA: mengalikan dua bilangan prima 1024 bit mudah, memfaktorkan
+hasilnya sangat sulit \citep{katz2020}.
+
+Euclid membuktikan lebih dari dua ribu tahun yang lalu bahwa banyaknya bilangan prima
+tidak terbatas. Meskipun demikian, bilangan prima menjadi makin jarang seiring
+bertambahnya nilai. Sekitar satu dari setiap $\ln x$ bilangan di sekitar $x$ adalah
+prima, sehingga untuk memperoleh bilangan prima 1024 bit, pembangkit kunci hanya
+perlu menguji beberapa ratus kandidat. Pengujian keprimaannya sendiri tidak dilakukan
+dengan mencoba membagi, melainkan dengan uji probabilistik seperti Miller--Rabin yang
+dapat menyatakan sebuah bilangan komposit dengan pasti, dan menyatakan bilangan prima
+dengan peluang benar yang dapat dibuat sedekat mungkin dengan 1.
+
+\subsection{Fungsi Totient Euler}
+
+\textbf{Fungsi totient Euler}, ditulis $\varphi(n)$, menyatakan banyaknya bilangan
+bulat pada rentang $1 \le k \le n$ yang relatif prima terhadap $n$. Sebagai contoh,
+untuk $n = 20$ bilangan yang relatif prima terhadap 20 adalah
+\[ 1,\ 3,\ 7,\ 9,\ 11,\ 13,\ 17,\ 19, \]
+seluruhnya delapan buah, sehingga $\varphi(20) = 8$. Bilangan genap, kelipatan 5, dan
+kelipatan 10 tidak dihitung karena semuanya memiliki faktor persekutuan dengan 20.
+
+Untuk keperluan kriptografi, tiga sifat berikut sudah mencukupi:
+\begin{itemize}
+    \item $\varphi(1) = 1$ dan $\varphi(p) = p - 1$ untuk setiap bilangan prima $p$.
+          Untuk $p = 7$ diperoleh $\varphi(7) = 6$, sesuai dengan bilangan
+          $1,2,3,4,5,6$ yang semuanya relatif prima terhadap 7.
+    \item $\varphi(p^k) = p^k - p^{k-1}$ untuk bilangan prima $p$ dan bilangan bulat
+          positif $k$. Contohnya $\varphi(8) = 8 - 4 = 4$, yaitu bilangan $1,3,5,7$.
+    \item $\varphi(mn) = \varphi(m)\,\varphi(n)$ bila $\text{PBB}(m,n) = 1$. Karena
+          itulah, untuk $n = pq$ hasil kali dua bilangan prima berbeda berlaku
+          \[ \varphi(n) = (p-1)(q-1). \]
+\end{itemize}
+Sifat terakhir adalah inti pembangkitan kunci RSA. Perhatikan bahwa untuk menghitung
+$\varphi(n)$ bagi $n = pq$, kita hanya perlu mengetahui $p$ dan $q$ --- bukan
+memfaktorkan $n$ dari nol. Sebaliknya, siapa pun yang dapat menghitung $\varphi(n)$
+dapat memfaktorkan $n$, sehingga kerahasiaan $\varphi(n)$ setara dengan kerahasiaan
+faktor-faktornya.
+
+\subsection{Teorema Euler dan Teorema Fermat Kecil}
+
+Teorema berikut menghubungkan eksponensiasi modular dengan fungsi totient, dan
+merupakan mesin di balik kebenaran algoritma RSA.
+
+\begin{theorem}[Teorema Euler]
+Jika $a$ dan $n$ relatif prima, yaitu $\text{PBB}(a,n) = 1$, maka
+\begin{equation}
+    a^{\varphi(n)} \equiv 1 \pmod{n}.
+    \label{eq:euler}
+\end{equation}
+\end{theorem}
+
+Sebagai pemeriksaan, ambil $a = 3$ dan $n = 10$. Karena $\varphi(10) = 4$ dan
+$3^4 = 81 = 8 \cdot 10 + 1$, benar bahwa $3^4 \equiv 1 \pmod{10}$.
+
+\begin{theorem}[Teorema Fermat Kecil]
+Jika $p$ adalah bilangan prima dan $\text{PBB}(a,p) = 1$, maka
+\[ a^{p-1} \equiv 1 \pmod{p}. \]
+\end{theorem}
+
+Teorema Fermat Kecil adalah kasus khusus Teorema Euler, diperoleh dengan
+mensubstitusi $\varphi(p) = p - 1$. Contohnya, untuk $p = 11$ dan $a = 2$ berlaku
+$2^{10} = 1024 = 93 \cdot 11 + 1$, sehingga $2^{10} \equiv 1 \pmod{11}$. Teorema ini
+juga menjadi dasar uji keprimaan Fermat dan uji Miller--Rabin yang telah disinggung
+sebelumnya.
+
+Perhatikan bahwa Teorema Euler mensyaratkan $\text{PBB}(a,n)=1$. Pada RSA, syarat
+ini dipenuhi untuk hampir seluruh pesan; kasus $m$ yang tidak relatif prima terhadap
+$n$ hanya terjadi bila $m$ merupakan kelipatan $p$ atau $q$, dan untuk modulus yang
+cukup besar peluangnya dapat diabaikan. Penurunan lengkap mengapa
+$c^d \equiv m \pmod n$ akan disajikan pada Bab~\ref{chap:rsa}.
+
+\subsection{Akar Primitif dan Logaritma Diskrit}
+
+Misalkan $p$ bilangan prima. Karena setiap $a$ dengan $1 \le a \le p-1$ relatif prima
+terhadap $p$, Teorema Fermat Kecil menjamin $a^{p-1} \equiv 1 \pmod p$. Namun
+eksponen terkecil yang membuat $a$ kembali ke 1 bisa jauh lebih kecil dari $p-1$.
+Jika eksponen terkecil itu tepat $p-1$, maka $a$ disebut \textbf{akar primitif}
+(\textit{primitive root}) modulo $p$, dan pangkat-pangkatnya
+\[ a^1, a^2, a^3, \dots, a^{p-1} \pmod p \]
+menghasilkan seluruh bilangan $1, 2, \dots, p-1$ tepat satu kali masing-masing.
+
+Sebagai contoh, untuk $p = 7$:
+\begin{itemize}
+    \item $g = 3$ adalah akar primitif, karena pangkat-pangkatnya membentuk siklus
+          penuh: $3, 2, 6, 4, 5, 1$ --- keenam anggota $\{1,\dots,6\}$ muncul semua.
+    \item $g = 2$ bukan akar primitif, karena $2^1 = 2$, $2^2 = 4$, $2^3 = 8 \equiv 1$,
+          sehingga siklusnya hanya berpanjang tiga dan hanya menghasilkan
+          $\{1,2,4\}$.
+\end{itemize}
+
+Keberadaan akar primitif ini melahirkan persoalan \textbf{logaritma diskrit}: bila
+$g$ adalah akar primitif modulo $p$ dan $h$ adalah sembarang anggota $\{1,\dots,p-1\}$,
+maka terdapat tepat satu eksponen $x$ dengan
+\[ g^x \equiv h \pmod p, \]
+dan $x$ disebut logaritma diskrit dari $h$ dengan bilangan pokok $g$. Sebagai contoh,
+untuk $p = 41$ dan $g = 7$ diperoleh $7^3 = 343 = 8 \cdot 41 + 15$, sehingga
+$7^3 \equiv 15 \pmod{41}$ dan logaritma diskrit dari 15 dengan bilangan pokok 7
+adalah $x = 3$.
+
+Menghitung $g^x \bmod p$ dari nilai $x$ yang diketahui mudah dilakukan --- cukup
+dengan eksponensiasi modular berulang. Sebaliknya, menemukan $x$ dari $g$ dan $h$
+dianggap sulit: tidak ada algoritma klasik yang menyelesaikannya dalam waktu
+polinomial terhadap banyaknya digit $p$, dan algoritma terbaik yang dikenal bersifat
+subeksponensial. Asimetri inilah yang menjadi dasar protokol Diffie--Hellman pada
+Bab~\ref{chap:diffie-hellman} dan algoritma ElGamal pada Bab~\ref{chap:elgamal},
+sebagaimana kesulitan pemfaktoran menjadi dasar RSA pada Bab~\ref{chap:rsa}
+\citep{menezes1996}.

@@ -1,29 +1,183 @@
 \section{Teori Informasi dan Entropi}
-Teori informasi mempelajari kuantisasi, penyimpanan, transmisi, dan pengolahan informasi. Salah satu metrik terpenting dalam kriptografi adalah \textbf{entropi}.
+\label{sec:teori-informasi}
+
+Teori informasi mempelajari kuantisasi, penyimpanan, transmisi, dan pengolahan
+informasi. Bagi kriptografi, sumbangannya yang paling penting adalah sebuah ukuran
+yang dapat menjawab pertanyaan: \emph{berapa banyak informasi yang sebenarnya
+dibocorkan sebuah pesan?} Ukuran itu disebut entropi, dan ia menjelaskan mengapa
+sebuah cipherteks yang terlihat acak jauh lebih kuat daripada cipherteks yang
+mempertahankan pola statistik plainteksnya \citep{stallings2017}.
+
+\subsection{Kuantisasi Informasi}
+
+Informasi diukur dalam bit, dan banyaknya bit yang dibutuhkan untuk menyandikan
+sebuah pilihan ditentukan oleh banyaknya kemungkinan yang harus dibedakan:
+\begin{itemize}
+    \item 1 bit cukup untuk menyandikan jenis kelamin (dua kemungkinan), misalnya
+          $0$ untuk laki-laki dan $1$ untuk perempuan.
+    \item 3 bit diperlukan untuk menyandikan nama hari, karena $2^3 = 8 \ge 7$.
+    \item 4 bit diperlukan untuk menyandikan angka $0$ sampai $9$, karena
+          $2^4 = 16 \ge 10$.
+\end{itemize}
+Perhatikan pola yang muncul: bila terdapat $n$ kemungkinan yang sama besar, banyaknya
+bit yang dibutuhkan adalah $\log_2 n$. Inilah alasan mengapa entropi selalu diukur
+dalam bit, dan mengapa entropi maksimum sebuah pesan ditentukan oleh banyaknya simbol
+yang tersedia.
+
+Selain sebagai ukuran kuantisasi, teori informasi juga menjelaskan penyimpanan dan
+transmisi. Pemampatan data (\textit{data compression}) bertujuan mengurangi ukuran
+ruang penyimpanan dengan membuang redundansi, yaitu bagian pesan yang sudah dapat
+diduga dari bagian lainnya. Dalam kriptografi hubungannya terbalik: enkripsi yang
+baik justru berusaha \emph{menghilangkan} seluruh pola yang dapat diduga, sehingga
+cipherteks yang baik hampir tidak dapat dimampatkan.
 
 \subsection{Konsep Entropi Shannon}
-Entropi mengukur tingkat ketidakpastian atau jumlah rata-rata informasi di dalam sebuah pesan. Semakin acak suatu data, semakin tinggi entropinya. Dalam kriptografi, cipherteks yang baik harus memiliki entropi yang tinggi agar sulit dianalisis.
 
-Rumus entropi Shannon untuk variabel acak $X$:
-\[ H(X) = - \sum_{i=1}^{n} p(x_i) \log_2 p(x_i) \]
-di mana:
-\begin{itemize}
-    \item $x_i$ adalah simbol ke-$i$ di dalam pesan.
-    \item $p(x_i)$ adalah peluang kemunculan simbol $x_i$.
-\end{itemize}
+Entropi mengukur tingkat ketidakpastian, atau jumlah rata-rata informasi, di dalam
+sebuah pesan:
+\begin{equation}
+    H(X) = -\sum_{i=1}^{n} p(x_i) \log_2 p(x_i),
+    \label{eq:entropi}
+\end{equation}
+dengan $X$ variabel acak yang menyatakan pesan, $x_i$ simbol ke-$i$ di dalam pesan,
+$n$ banyaknya simbol yang berbeda, dan $p(x_i)$ peluang kemunculan simbol $x_i$.
+
+Rumus ini memiliki tafsir yang sangat harfiah: entropi adalah rata-rata
+``kejutan'' yang ditimbulkan tiap simbol. Simbol yang sering muncul membawa sedikit
+informasi karena kemunculannya mudah diduga; simbol yang jarang muncul membawa banyak
+informasi justru karena kemunculannya mengagetkan. Tanda negatif di depan rumus
+berfungsi meniadakan nilai negatif dari $\log_2 p(x_i)$, yang selalu negatif untuk
+$p < 1$.
+
+Semakin acak suatu data, semakin tinggi entropinya, karena tidak ada simbol yang
+dapat diduga. Sebaliknya, pesan yang sangat teratur memiliki entropi rendah. Inilah
+sebabnya cipherteks yang baik harus berentropi tinggi: ia harus tampak acak, tanpa
+pola yang dapat dimanfaatkan oleh kriptanalis.
 
 \subsection{Rentang Nilai Entropi}
-Nilai entropi berkisar antara:
-\[ 0 \le H(X) \le \log_2(n) \]
+
+Nilai entropi selalu berada di dalam rentang
+\[ 0 \le H(X) \le \log_2 n, \]
+sebagaimana digambarkan pada Gambar~\ref{fig:rentang-entropi}.
+
 \begin{itemize}
-    \item \textbf{Entropi Minimum (0 bit)}: Terjadi jika tidak ada ketidakpastian (hanya satu simbol yang muncul dengan peluang 1).
-    \item \textbf{Entropi Maksimum ($\log_2 n$ bit)}: Terjadi jika semua simbol muncul dengan peluang yang sama ($1/n$).
+    \item \textbf{Entropi minimum $= 0$ bit} terjadi bila tidak ada ketidakpastian
+          sama sekali, yaitu bila hanya ada satu simbol dengan peluang $p = 1$. Untuk
+          $n = 1$ dengan $p(A) = 1$ diperoleh $H(X) = -1 \cdot \log_2 1 = 0$. Pesan
+          seperti ini tidak membawa informasi baru apa pun bagi penerimanya.
+    \item \textbf{Entropi maksimum $= \log_2 n$ bit} terjadi bila seluruh simbol
+          muncul dengan peluang sama, yaitu $1/n$. Untuk empat simbol dengan peluang
+          masing-masing $0{,}25$ diperoleh
+          \[ H(X) = -\sum_{i=1}^{4} 0{,}25 \log_2 0{,}25 = 2\ \text{bit}. \]
+          Inilah keadaan dengan ketidakpastian paling tinggi, karena setiap simbol
+          membawa informasi maksimal.
 \end{itemize}
 
-\textbf{Contoh Kasus:}
-Untuk teks yang hanya terdiri dari 26 huruf alfabet (A--Z), entropi maksimumnya adalah $\log_2 26 \approx 4,7004$ bit/karakter. Jika sebuah cipherteks memiliki entropi yang mendekati nilai ini, maka ia sangat sulit dipecahkan menggunakan analisis frekuensi.
+\input{figures/rentang-entropi}
 
+Perlu ditekankan bahwa entropi maksimum \emph{bukan} sifat yang dapat dicapai oleh
+pesan bermakna. Teks berbahasa Indonesia tidak dapat memiliki entropi mendekati
+$\log_2 26$, karena huruf-hurufnya tidak berpeluang sama; inilah yang akan
+dimanfaatkan oleh analisis frekuensi pada Bab~\ref{chap:kriptografi-klasik}.
 
+\subsection{Entropi Maksimum untuk Alfabet Tertentu}
 
+Bila plainteks atau cipherteks hanya menggunakan 26 huruf alfabet A--Z, maka entropi
+maksimum terjadi ketika seluruh 26 huruf berpeluang sama, yaitu $p_i = 1/26$:
+\[
+H_{\max} = -\sum_{i=1}^{26} \frac{1}{26} \log_2 \frac{1}{26} = \log_2 26 = 4{,}7004
+\ \text{bit/karakter}.
+\]
+Jadi untuk teks yang hanya terdiri atas 26 huruf alfabet, entropi maksimumnya sekitar
+$4{,}7004$ bit per karakter. Sebagai pembanding, bila pesan menggunakan seluruh 256
+karakter ASCII, entropi maksimumnya naik menjadi $\log_2 256 = 8$ bit per karakter.
 
+Angka $4{,}7004$ ini penting karena menjadi \emph{patokan}: berapa pun panjang pesan
+alfabet, entropinya tidak mungkin melampaui nilai itu, dan semakin dekat sebuah
+cipherteks ke nilai tersebut, semakin sulit ia dipecahkan dengan analisis statistik.
 
+\subsection{Laju Bahasa dan Redundansi}
+
+Entropi teks alami jauh lebih rendah daripada entropi maksimumnya, dan selisih itu
+disebut \textbf{redundansi}. Untuk bahasa Inggris, Shannon memperkirakan entropi
+sebenarnya hanya sekitar $1{,}0$ sampai $1{,}5$ bit per karakter --- jauh di bawah
+$4{,}7004$ bit --- sehingga redundansinya mencapai sekitar 75\%
+\citep{stallings2017}. Bahasa Indonesia memiliki sifat yang serupa: pola ejaan,
+kombinasi huruf yang lazim, dan struktur kata membuat sebagian besar teks dapat
+diduga dari huruf-huruf sebelumnya.
+
+Redundansi inilah yang membuat kriptanalisis mungkin. Bila sebuah cipher
+mempertahankan sebaran frekuensi plainteksnya --- sebagaimana dilakukan oleh seluruh
+cipher substitusi sederhana --- maka pola statistik bahasa akan tampak pada cipherteks
+dan dapat dikenali. Karena itu, sebuah rancangan cipher yang baik harus menghancurkan
+redundansi plainteks, sehingga cipherteks yang dihasilkan menyebar rata mendekati
+$\log_2 n$ bit per karakter.
+
+\subsection{Studi Kasus: Entropi Pesan Nyata}
+
+Nilai entropi yang sesungguhnya dapat dilihat pada contoh berikut, yang memakai
+kutipan berita berbahasa Indonesia sebagai plainteks $P$:
+
+\begin{quote}
+\itshape
+Dinas Pendidikan Kota Ternate meminta kepada pihak sekolah dan orang tua siswa untuk
+jenjang pendidikan SD dan SMP se-Kota Ternate untuk melarang para siswa membawa
+permainan lato-lato yang sedang tren itu ke sekolah, karena akan mengganggu kegiatan
+belajar mengajar yang dinilai berbahaya sehingga mengantisipasi kecelakaan bagi anak
+di daerah itu.
+\end{quote}
+
+Setelah tanda baca dan spasi dibuang sehingga tersisa 296 huruf, pesan ini memiliki
+21 huruf berbeda dengan sebaran yang sangat tidak rata: huruf A muncul 59 kali
+(19,93\%), N muncul 34 kali (11,49\%), dan E muncul 29 kali (9,80\%). Substitusi ke
+Persamaan~\ref{eq:entropi} menghasilkan
+\[ H(P) = 3{,}8988\ \text{bit/karakter}, \]
+yaitu sekitar
+\[ \frac{3{,}8988}{4{,}7004} \times 100\% \approx 82{,}95\% \]
+dari entropi maksimum alfabet 26 huruf. Angka ini memperlihatkan bahwa teks alami
+masih menyisakan ketidakpastian yang cukup besar, namun sebarannya belum rata.
+
+Bila pesan yang sama dienkripsi sehingga menghasilkan cipherteks $C$, entropinya
+meningkat menjadi
+\[ H(C) = 4{,}3035\ \text{bit/karakter}, \]
+atau sekitar
+\[ \frac{4{,}3035}{4{,}7004} \times 100\% \approx 91{,}55\% \]
+dari entropi maksimum. Gambar~\ref{fig:frekuensi-huruf-ternate} memperlihatkan
+perubahan sebarannya secara visual.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/frekuensi-huruf-ternate.png}
+    \caption{Sebaran frekuensi huruf pada contoh berita Kota Ternate: plainteks (kiri) sangat tidak rata dengan puncak pada huruf A dan N, sedangkan cipherteks (kanan) jauh lebih merata sehingga tidak lagi memperlihatkan tanda-tanda bahasa Indonesia}
+    \label{fig:frekuensi-huruf-ternate}
+    \sumber{Teks contoh dan nilai entropi dari Munir, \textit{IF4020 Kriptografi}, ITB; diagram disusun dari teks tersebut.}
+\end{figure}
+
+Perhatikan apa yang terjadi pada gambar tersebut. Pada plainteks, batang tertinggi
+hampir menyentuh 20\% dan batang terendah nol; pada cipherteks, seluruh huruf hampir
+muncul dengan peluang yang sama dan tidak ada lagi huruf yang menonjol. Puncak
+frekuensi yang pada plainteks langsung menunjuk ke huruf A, N, dan E --- ciri khas
+bahasa Indonesia --- telah hilang. Inilah yang dimaksud dengan \emph{entropi
+cipherteks meningkat}: cipher tersebut berhasil menyebarkan frekuensi huruf plainteks
+ke seluruh alfabet.
+
+\subsection{Entropi dan Keamanan Cipherteks}
+
+Hubungan antara entropi dan keamanan dapat dirumuskan secara tegas. Sebuah cipher
+dikatakan mencapai \textbf{kerahasiaan sempurna} (\textit{perfect secrecy}) bila
+cipherteks tidak memberi informasi apa pun tentang plainteks, yaitu bila
+\[ H(P \mid C) = H(P). \]
+Syarat ini hanya dapat dipenuhi oleh \textit{one-time pad}, dan hanya bila kuncinya
+benar-benar acak, sepanjang pesan, serta tidak pernah dipakai ulang
+\citep{menezes1996}. Cipher yang lebih praktis tidak mencapai syarat sekuat itu; yang
+mereka capai adalah entropi cipherteks yang cukup tinggi sehingga pola plainteks
+tidak lagi terlihat.
+
+Karena itu, pengukuran entropi cipherteks menjadi salah satu pemeriksaan awal yang
+berguna. Cipherteks yang entropinya jauh di bawah $\log_2 26$ hampir pasti masih
+menyimpan pola plainteksnya dan rentan terhadap analisis frekuensi. Sebaliknya,
+perhatikan bahwa entropi yang tinggi tidak otomatis berarti aman: sebuah berkas yang
+dienkripsi dengan kunci yang salah dapat memiliki entropi tinggi sekaligus dapat
+dipecahkan dengan mudah karena persoalannya bukan terletak pada sebaran statistik,
+melainkan pada kelemahan mekanisme enkripsinya. Entropi adalah alat diagnosis, bukan
+bukti keamanan \citep{katz2020}.

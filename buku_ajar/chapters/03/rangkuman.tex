@@ -1,10 +1,19 @@
 \section{Rangkuman}
 \begin{itemize}
-    \item Aritmetika modulo menghasilkan sisa bagi $a \bmod n$; representasi ini menjadi dasar seluruh operasi kriptografi modern.
-    \item Dua bilangan kongruen modulo $n$ jika $n$ membagi habis selisihnya, ditulis $a \equiv b \pmod{n}$.
+    \item Aritmetika modulo menghasilkan sisa bagi $a \bmod n$ dengan $a = qn + r$ dan $0 \le r < n$; representasi ini menjadi dasar seluruh operasi kriptografi modern.
+    \item Untuk bilangan negatif, hasil $a \bmod n$ tetap harus berada pada rentang $0 \le r < n$, sehingga $-41 \bmod 9 = 4$ dan $-24 \bmod 11 = 9$, bukan bilangan negatif.
+    \item Dua bilangan kongruen modulo $n$ jika $n$ membagi habis selisihnya, ditulis $a \equiv b \pmod{n}$. Penjumlahan, pengurangan, dan perkalian dapat dilakukan pada keduanya tanpa mengubah kebenarannya.
+    \item Pencoretan pada kekongruenan tidak selalu sah: dari $ac \equiv bc \pmod n$ hanya boleh disimpulkan $a \equiv b \pmod n$ bila $\text{PBB}(c,n) = 1$.
     \item $a$ dan $b$ relatif prima bila $\text{PBB}(a,b) = 1$; syarat ini menentukan keberadaan invers modulo.
+    \item Algoritma Euclidean mencari PBB melalui pembagian berulang, dan versi diperluasnya (substitusi balik) menghasilkan koefisien B\'ezout $ma + nb = \text{PBB}(a,b)$ untuk menentukan invers modulo.
     \item Invers modulo $x = a^{-1} \bmod n$ memenuhi $a \cdot x \equiv 1 \pmod{n}$ dan hanya ada jika $\text{PBB}(a,n)=1$.
-    \item Algoritma Euclidean mencari PBB melalui pembagian berulang, dan versi diperluasnya (substitusi balik) menghasilkan koefisien B\'ezout untuk menentukan invers modulo.
-    \item Entropi Shannon $H(X) = -\sum_i p(x_i)\log_2 p(x_i)$ mengukur ketidakpastian pesan, dengan rentang $0 \le H(X) \le \log_2 n$.
-    \item Cipherteks yang baik berentropi tinggi mendekati $\log_2 26 \approx 4{,}70$ bit/karakter sehingga sulit dipecahkan dengan analisis frekuensi.
+    \item Bilangan prima adalah bilangan lebih besar dari 1 yang hanya habis dibagi 1 dan dirinya sendiri; Teorema Dasar Aritmetika menjamin pemfaktoran tunggal, sedangkan kesulitan memfaktorkan hasil kali dua prima besar menjadi dasar keamanan RSA.
+    \item Fungsi totient Euler $\varphi(n)$ menghitung banyaknya bilangan pada $1 \le k \le n$ yang relatif prima terhadap $n$; berlaku $\varphi(p) = p-1$ dan, untuk $n = pq$ hasil kali dua prima berbeda, $\varphi(n) = (p-1)(q-1)$.
+    \item Teorema Euler menyatakan $a^{\varphi(n)} \equiv 1 \pmod n$ bila $\text{PBB}(a,n)=1$, dan Teorema Fermat Kecil $a^{p-1} \equiv 1 \pmod p$ adalah kasus khususnya untuk $p$ prima.
+    \item Akar primitif modulo $p$ adalah $g$ yang pangkat-pangkatnya membangkitkan seluruh $\{1,\dots,p-1\}$; kebalikannya, menentukan $x$ dari $g^x \equiv h \pmod p$ adalah persoalan logaritma diskrit yang dianggap sulit dan menjadi dasar Diffie--Hellman serta ElGamal.
+    \item Entropi Shannon $H(X) = -\sum_i p(x_i)\log_2 p(x_i)$ mengukur ketidakpastian pesan dalam bit, dengan rentang $0 \le H(X) \le \log_2 n$.
+    \item Entropi maksimum alfabet 26 huruf adalah $\log_2 26 = 4{,}7004$ bit/karakter, sedangkan 256 karakter ASCII memberi $\log_2 256 = 8$ bit/karakter.
+    \item Teks berbahasa alami memiliki entropi jauh di bawah maksimumnya karena redundansi; selisih inilah yang membuat analisis frekuensi mungkin dilakukan.
+    \item Pada contoh berita Kota Ternate, entropi plainteks $H(P) = 3{,}8988$ bit/karakter (82,95\% dari maksimum) naik menjadi $H(C) = 4{,}3035$ bit/karakter (91,55\% dari maksimum) setelah dienkripsi, tampak dari sebaran huruf cipherteks yang jauh lebih rata.
+    \item Cipherteks yang baik berentropi tinggi mendekati $\log_2 26 \approx 4{,}70$ bit/karakter sehingga sulit dipecahkan dengan analisis frekuensi; namun entropi tinggi bukan bukti keamanan, melainkan hanya alat diagnosis.
 \end{itemize}
