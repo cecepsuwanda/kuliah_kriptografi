@@ -1,17 +1,310 @@
 \section{Dasar Matematika: Galois Field \texorpdfstring{$\text{GF}(2^8)$}{GF(2\textasciicircum8)}}
-Operasi dalam AES, terutama \textit{MixColumns} dan S-box, dilakukan di dalam \textbf{Galois Field $\text{GF}(2^8)$}, yang merupakan medan berhingga biner.
+\label{sec:gf-aes}
 
-\subsection{Representasi Polinomial}
-Setiap byte (8 bit) direpresentasikan sebagai polinomial derajat 7 dengan koefisien dalam $\text{GF}(2)$:
-\[ a = b_7x^7 + b_6x^6 + \dots + b_1x + b_0 \]
+Sampai di sini kita telah beberapa kali menyebut bahwa MixColumns mengalikan
+kolom dengan matriks $\{02, 03, 01, 01\}$ ``di dalam $\text{GF}(2^8)$'', dan bahwa
+S-box ``dibangun dari inversi di $\text{GF}(2^8)$''. Kedua pernyataan itu akan
+diuraikan sekarang. Tanpa memahami aritmetika medan berhingga, seluruh operasi AES
+tampak seperti kumpulan tabel ajaib yang harus dihafalkan; sesudah memahaminya,
+seluruh operasi itu menjadi perhitungan yang dapat dikerjakan dengan tangan dan
+diperiksa kebenarannya.
 
-\subsection{Operasi Aritmetika}
+\subsection{Medan Berhingga dan Representasi Polinomial}
+
+Sebuah \textbf{medan} (\textit{field}) adalah himpunan unsur beserta dua operasi,
+penjumlahan dan perkalian, yang memenuhi aksioma-aksioma berikut: kedua operasi
+bersifat asosiatif dan komutatif, memiliki unsur identitas ($0$ dan $1$) dan
+invers, serta perkalian menyebar (\textit{distributif}) terhadap penjumlahan.
+Himpunan bilangan real dengan penjumlahan dan perkalian biasa adalah medan;
+himpunan bilangan bulat modulo sebuah bilangan prima $p$ juga medan, dan ditulis
+$\mathbb{Z}_p$ atau $\text{GF}(p)$.
+
+$\text{GF}(2^m)$, yang disebut juga \emph{medan berhingga biner}, adalah medan
+dengan tepat $2^m$ unsur. Himpunan unsurnya dapat dipandang sebagai ruang vektor
+berdimensi $m$ di atas $\text{GF}(2)$: setiap unsurnya adalah sebuah string biner
+panjang $m$,
+\[
+b_{m-1}b_{m-2} \dots b_1 b_0, \qquad b_i \in \{0, 1\}.
+\]
+Karena itu unsur $\text{GF}(2^8)$ tidak lain daripada sebuah byte, dan unsur
+$\text{GF}(2^4)$ tidak lain daripada sebuah nibble. Ada dua cara menuliskan unsur
+yang sama, dan keduanya dipakai bergantian dalam pembahasan AES:
+
 \begin{itemize}
-    \item \textbf{Penjumlahan}: Dilakukan dengan operasi XOR bitwise.
-    \item \textbf{Perkalian}: Perkalian polinomial yang hasilnya kemudian direduksi menggunakan \textit{irreducible polynomial} $f(x) = x^8 + x^4 + x^3 + x + 1$.
+    \item sebagai \textbf{bilangan bulat heksadesimal}, misalnya $\code{57}$; dan
+    \item sebagai \textbf{polinom biner} berderajat paling tinggi $m-1$, yaitu
+    \[
+    b_{m-1}x^{m-1} + b_{m-2}x^{m-2} + \dots + b_1 x + b_0,
+    \]
+    yang koefisiennya berada di $\text{GF}(2)$.
 \end{itemize}
 
+Sebagai contoh, $\code{1101}$ di $\text{GF}(2^4)$ adalah polinom $x^3 + x^2 + 1$,
+sedangkan $\code{01010111}$ di $\text{GF}(2^8)$ --- yaitu $\code{57}$ --- adalah
+polinom $x^6 + x^4 + x^2 + x + 1$. Bit paling kiri selalu menjadi koefisien
+berderajat tertinggi. Cara pandang polinomial inilah yang membuat penjumlahan dan
+perkalian di $\text{GF}(2^m)$ dapat dikerjakan dengan aturan aljabar biasa, dengan
+satu syarat tambahan: seluruh koefisien dihitung modulo 2.
 
+\subsection{Penjumlahan: XOR Biasa}
 
+Misalkan $a = (a_{m-1} \dots a_1 a_0)$ dan $b = (b_{m-1} \dots b_1 b_0)$ adalah
+dua unsur $\text{GF}(2^m)$. Penjumlahannya dilakukan komponen demi komponen,
+\[
+a + b = c = (c_{m-1} \dots c_1 c_0), \qquad c_i = (a_i + b_i) \bmod 2,
+\]
+dan hasilnya tetap berada di $\text{GF}(2^m)$.
 
+Karena koefisien hanya bernilai 0 atau 1, aturan $c_i = (a_i + b_i) \bmod 2$ tidak
+lain daripada tabel kebenaran XOR. Jadi, dalam $\text{GF}(2^m)$,
+\[
+a + b = a \oplus b.
+\]
+Sebagai contoh, dengan $a = \code{0D} = x^3 + x^2 + 1$ dan
+$b = \code{06} = x^2 + x$:
+\[
+a + b = (x^3 + x^2 + 1) + (x^2 + x) = x^3 + 2x^2 + x + 1 \equiv x^3 + x + 1
+\pmod 2,
+\]
+sebab $2x^2 \equiv 0 \pmod 2$. Hasilnya $x^3 + x + 1 = \code{00001011} =
+\code{0B}$, sama dengan $\code{0D} \oplus \code{06}$. Dalam penjumlahan biner,
+tidak pernah ada simpanan (\textit{carry}) yang dipindahkan ke kolom berikutnya:
 
+\begin{center}
+\small
+\begin{tabular}{@{}r@{}}
+\code{0000 1101} \\
+\code{0000 0110} $\oplus$ \\
+\hline
+\code{0000 1011}
+\end{tabular}
+\end{center}
+
+Perhatikan pula dengan contoh kedua, $a = \code{57} = x^6 + x^4 + x^2 + x + 1$ dan
+$b = \code{83} = x^7 + x + 1$:
+\[
+a + b = x^7 + x^6 + x^4 + x^2 + 2x + 2 \equiv x^7 + x^6 + x^4 + x^2 = \code{1101\,0100} = \code{D4},
+\]
+yang persis sama dengan $\code{57} \oplus \code{83} = \code{D4}$. Jadi,
+penjumlahan di $\text{GF}(2^8)$ adalah operasi tercepat yang mungkin pada sebuah
+prosesor, dan itulah sebabnya seluruh AddRoundKey di AES hanya berupa XOR.
+
+\subsection{Perkalian dan Polinom Pereduksi}
+
+Perkalian dua unsur $\text{GF}(2^m)$ tidak sesederhana penjumlahannya. Mula-mula
+kedua polinom dikalikan seperti biasa, sehingga derajat hasilnya dapat mencapai
+$2m-2$. Hasil itu kemudian direduksi modulo sebuah \textbf{polinom pereduksi}
+(\textit{irreducible polynomial}) berderajat $m$, sehingga derajat sisanya kembali
+di bawah $m$ dan hasilnya menjadi unsur $\text{GF}(2^m)$ lagi.
+
+Polinom pereduksi yang dipakai AES adalah
+\begin{equation}
+m(x) = x^8 + x^4 + x^3 + x + 1,
+\label{eq:aes-polinom-pereduksi}
+\end{equation}
+yang dalam heksadesimal ditulis $\code{11B}$. Polinom itu harus \emph{tereduksi
+tidak mungkin} (\textit{irreducible}), yaitu tidak dapat difaktorkan menjadi
+polinom berderajat lebih rendah dengan koefisien di $\text{GF}(2)$. Sifat itulah
+yang menjamin himpunan sisa pembagian modulo $m(x)$ membentuk medan: setiap unsur
+bukan nol pasti memiliki invers perkalian, sehingga pembagian selalu dapat
+dilakukan. Bila polinom pereduksinya tereduksi, akan muncul pembagi nol
+(\textit{zero divisor}) --- dua unsur bukan nol yang hasilkalinya nol --- dan
+MixColumns kehilangan sifat dapat dibalik.
+
+Tinjau dua contoh perkalian yang dikerjakan penuh.
+
+\textbf{Contoh pertama:} $\code{02} \bullet \code{26}$. Karena
+$\code{02} = x$ dan $\code{26} = x^5 + x^2 + x$,
+\[
+\code{02} \bullet \code{26} = x \cdot (x^5 + x^2 + x) = x^6 + x^3 + x^2.
+\]
+Hasilnya sudah berderajat 6, jadi belum melampaui batas dan tidak perlu direduksi.
+Dalam biner, $x^6 + x^3 + x^2 = \code{0100\,1100} = \code{4C}$. Perhatikan bahwa
+mengalikan dengan $\code{02}$ tidak lain daripada menggeser satu bit ke kiri,
+lalu mereduksi hanya bila bit kesembilan muncul.
+
+\textbf{Contoh kedua:} $\code{03} \bullet \code{7B}$. Karena $\code{03} = x + 1$
+dan $\code{7B} = x^6 + x^5 + x^4 + x^3 + x + 1$,
+\[
+\begin{aligned}
+\code{03} \bullet \code{7B}
+&= (x+1)(x^6 + x^5 + x^4 + x^3 + x + 1) \\
+&= (x^7 + x^6 + x^5 + x^4 + x^2 + x) + (x^6 + x^5 + x^4 + x^3 + x + 1) \\
+&= x^7 + x^3 + x^2 + 1,
+\end{aligned}
+\]
+karena setiap pasangan koefisien yang sama saling meniadakan modulo 2. Hasilnya
+$x^7 + x^3 + x^2 + 1 = \code{1000\,1101} = \code{8D}$.
+
+Contoh kedua itu memperlihatkan sebuah cara cepat yang sangat berguna: karena
+$\code{03} = \code{02} \oplus \code{01}$ dan perkalian bersifat menyebar,
+\[
+\code{03} \bullet a = (\code{02} \bullet a) \oplus a .
+\]
+Jadi untuk mengalikan dengan $\code{03}$ kita cukup menggandakan sekali lalu
+meng-XOR dengan nilai semula --- tidak perlu perkalian polinom penuh. Dengan cara
+itu, $\code{03} \bullet \code{7B} = \code{F6} \oplus \code{7B} = \code{8D}$, sama
+dengan hasil perhitungan panjang di atas. Cara ini jugalah yang dipakai program
+pada \code{code/python/aes\_uji.py}.
+
+Sekarang contoh yang memerlukan reduksi. Ambil $a = \code{57} = x^6 + x^4 + x^2 +
+x + 1$ dan $b = \code{83} = x^7 + x + 1$. Hasil kali penuhnya adalah
+\[
+a \cdot b = x^{13} + x^{11} + x^9 + x^8 + x^6 + x^5 + x^4 + x^3 + 1,
+\]
+berderajat 13, sehingga harus direduksi modulo $m(x)$. Reduksi itu dikerjakan
+dengan pembagian panjang polinomial: selama derajat yang tersisa masih $\ge 8$,
+kurangkan (yaitu XOR-kan) kelipatan $m(x)$ yang berderajat sama. Hasil akhirnya
+\[
+x^{13} + x^{11} + x^9 + x^8 + x^6 + x^5 + x^4 + x^3 + 1 \bmod m(x)
+= x^7 + x^6 + 1 = \code{1100\,0001} = \code{C1}.
+\]
+Hasil yang sama dapat diperiksa dengan menguraikan $b$ menurut bitnya:
+$\code{83} = \code{80} \oplus \code{02} \oplus \code{01}$, sehingga
+\[
+\code{57} \bullet \code{83}
+= (\code{57} \bullet \code{80}) \oplus (\code{57} \bullet \code{02}) \oplus \code{57}
+= \code{38} \oplus \code{AE} \oplus \code{57} = \code{C1}.
+\]
+
+\subsection{Invers Perkalian}
+
+Karena $m(x)$ pada Persamaan~\eqref{eq:aes-polinom-pereduksi} irreducible,
+himpunan $255$ unsur bukan nol pada $\text{GF}(2^8)$ membentuk grup siklik
+berorde $255$ terhadap perkalian. Akibatnya, untuk setiap $a \neq 0$ berlaku
+$a^{255} = \code{01}$, sehingga
+\begin{equation}
+a^{-1} = a^{254}.
+\label{eq:aes-invers-pangkat}
+\end{equation}
+Jadi invers perkalian di $\text{GF}(2^8)$ selalu ada dan tunggal. Hubungan
+Persamaan~\eqref{eq:aes-invers-pangkat} juga memberi cara menghitungnya tanpa
+tabel: cukup mengalikan $a$ dengan dirinya sendiri 254 kali, atau --- jauh lebih
+hemat --- dengan pangkat dua berulang (\textit{square-and-multiply}) sehingga hanya
+diperlukan sekitar 14 perkalian.
+
+Sebagai gambaran, beberapa invers yang akan kita pakai nanti adalah
+\[
+\code{01}^{-1} = \code{01}, \quad
+\code{02}^{-1} = \code{8D}, \quad
+\code{03}^{-1} = \code{F6}, \quad
+\code{57}^{-1} = \code{BF}, \quad
+\code{FF}^{-1} = \code{1C}.
+\]
+Perhatikan bahwa $\code{01}$ adalah unsur identitas sehingga inversnya dirinya
+sendiri, sedangkan $\code{FF}$ bukan unsur istimewa apa pun dan inversnya bukan
+pula $\code{FF}$. Cara mudah memeriksa hasil semacam ini adalah dengan
+mengalikannya kembali: $\code{57} \bullet \code{BF}$ harus sama dengan
+$\code{01}$.
+
+\subsection{Konstruksi S-box AES}
+
+Sekarang kita dapat menjawab pertanyaan yang tertunda pada
+Sub-bab~\ref{sec:mekanisme-aes}: dari mana datangnya angka-angka pada S-box AES?
+S-box itu bukan tabel yang diisi sembarang atau diambil dari bilangan acak,
+melainkan hasil perhitungan yang dapat direproduksi oleh siapa pun; perancangnya
+memilih cara ini justru agar setiap pengguna dapat memeriksa sendiri bahwa tidak
+ada pintu belakang yang tersembunyi di dalamnya \citep{daemen2002}. Lima langkah
+pembentukannya adalah sebagai berikut.
+
+\begin{enumerate}
+    \item Inisialisasi tabel dengan nilai yang menaik baris demi baris: baris ke-0
+    diisi $\code{00}, \code{01}, \dots, \code{0F}$, baris ke-1 diisi
+    $\code{10}, \code{11}, \dots, \code{1F}$, dan seterusnya sampai baris ke-15.
+    \item Untuk setiap entri pada baris $y$ kolom $x$, tentukan invers
+    perkaliannya di $\text{GF}(2^8)$. Nilai $\code{00}$ dipetakan ke dirinya
+    sendiri, sebab $\code{00}$ tidak memiliki invers.
+    \item Nyatakan hasil langkah 2 sebagai vektor kolom bit
+    $(b_0, b_1, \dots, b_7)^\top$, dengan $b_0$ sebagai bit paling rendah.
+    \item Kalikan vektor kolom itu dengan sebuah matriks \textit{affine}
+    $8 \times 8$ yang tetap, lalu XOR-kan hasilnya dengan konstanta
+    $\code{63}$:
+    \begin{equation}
+    \begin{bmatrix} b'_0 \\ b'_1 \\ b'_2 \\ b'_3 \\ b'_4 \\ b'_5 \\ b'_6 \\ b'_7 \end{bmatrix}
+    =
+    \begin{bmatrix}
+    1 & 0 & 0 & 0 & 1 & 1 & 1 & 1 \\
+    1 & 1 & 0 & 0 & 0 & 1 & 1 & 1 \\
+    1 & 1 & 1 & 0 & 0 & 0 & 1 & 1 \\
+    1 & 1 & 1 & 1 & 0 & 0 & 0 & 1 \\
+    1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 \\
+    0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 \\
+    0 & 0 & 1 & 1 & 1 & 1 & 1 & 0 \\
+    0 & 0 & 0 & 1 & 1 & 1 & 1 & 1
+    \end{bmatrix}
+    \begin{bmatrix} b_0 \\ b_1 \\ b_2 \\ b_3 \\ b_4 \\ b_5 \\ b_6 \\ b_7 \end{bmatrix}
+    \oplus
+    \begin{bmatrix} 1 \\ 1 \\ 0 \\ 0 \\ 0 \\ 1 \\ 1 \\ 0 \end{bmatrix}.
+    \label{eq:aes-sbox-affine}
+    \end{equation}
+    Perhatikan bahwa vektor konstanta pada ruas kanan adalah bit-bit dari
+    $\code{63}$, yaitu $\code{0110\,0011}$ yang dibaca dari bit paling rendah.
+    \item Nyatakan hasil langkah 4 dalam heksadesimal; itulah nilai
+    $\text{S-box}(x,y)$.
+\end{enumerate}
+
+Matriks pada Persamaan~\eqref{eq:aes-sbox-affine} bukan matriks sembarang. Setiap
+barisnya adalah baris sebelumnya yang digeser satu posisi secara siklik, sehingga
+operasi itu sesungguhnya lebih mudah dituliskan sebagai rumus per bit:
+\begin{equation}
+b'_i = b_i \oplus b_{(i+4) \bmod 8} \oplus b_{(i+5) \bmod 8} \oplus
+b_{(i+6) \bmod 8} \oplus b_{(i+7) \bmod 8} \oplus c_i,
+\label{eq:aes-sbox-rumus}
+\end{equation}
+dengan $c_i$ bit ke-$i$ dari $\code{63}$. Rumus inilah yang dipakai oleh program
+Python pada bagian praktikum untuk membangun S-box dari nol.
+
+\input{figures/konstruksi-sbox}
+
+Mari kita kerjakan satu entri dengan tangan untuk memastikan seluruh langkah di
+atas dapat diikuti. Kita akan menghitung S-box$(\code{53})$, yaitu entri pada
+baris 5 kolom 3, yang menurut Tabel~\ref{tab:sbox-aes} bernilai $\code{ED}$.
+
+\textbf{Langkah 1--2.} Invers perkalian dari $\code{53}$ adalah
+$\code{CA}$, sebab $\code{53} \bullet \code{CA} = \code{01}$.
+
+\textbf{Langkah 3.} Dalam biner, $\code{CA} = \code{1100\,1010}$, sehingga vektor
+bitnya dari rendah ke tinggi adalah
+\[
+(b_0, \dots, b_7) = (0,\,1,\,0,\,1,\,0,\,0,\,1,\,1).
+\]
+
+\textbf{Langkah 4.} Terapkan Persamaan~\eqref{eq:aes-sbox-rumus} untuk setiap
+$i$. Ambil $i = 0$ sebagai contoh: $b'_0 = b_0 \oplus b_4 \oplus b_5 \oplus b_6
+\oplus b_7 \oplus c_0 = 0 \oplus 0 \oplus 0 \oplus 1 \oplus 1 \oplus 1 = 1$.
+Melanjutkan untuk $i = 1, \dots, 7$ dengan cara yang sama menghasilkan
+\[
+(b'_0, \dots, b'_7) = (1,\,0,\,1,\,1,\,0,\,1,\,1,\,1).
+\]
+
+\textbf{Langkah 5.} Vektor itu dibaca kembali dengan $b'_7$ sebagai bit paling
+kiri, sehingga menghasilkan $\code{1110\,1101} = \code{ED}$ --- persis nilai yang
+tercantum pada Tabel~\ref{tab:sbox-aes}.
+
+S-box yang dibangun dengan cara itu memiliki beberapa sifat yang sengaja
+dipilih oleh perancangnya dan telah diverifikasi pada standar: ia tidak memiliki
+titik tetap, yaitu $\text{S-box}(a) \neq a$ untuk setiap $a$, dan tidak memiliki
+``titik tetap berlawanan'', yaitu $\text{S-box}(a) \neq \overline{a}$ dengan
+$\overline{a}$ menyatakan komplemen bitwise $a$. Kedua sifat itu menutup
+kemungkinan bahwa state yang seluruhnya nol atau seluruhnya satu akan tetap
+seperti itu setelah SubBytes.
+
+\subsection{Kaitan dengan MixColumns}
+
+Dengan aritmetika di $\text{GF}(2^8)$ di tangan, matriks MixColumns pada
+Persamaan~\eqref{eq:aes-mixcolumns} dan matriks InvMixColumns pada
+Persamaan~\eqref{eq:aes-inv-mixcolumns} dapat dipahami sebagai pasangan polinom
+yang saling berkebalikan modulo $x^4+1$. Koefisien $\code{0E}$, $\code{0B}$,
+$\code{0D}$, dan $\code{09}$ pada matriks invers bukan angka pilihan bebas; bila
+polinom $a(x) = \code{03}x^3 + x^2 + x + \code{02}$ dikalikan dengan polinom
+kebalikannya $a^{-1}(x) = \code{0B}x^3 + \code{0D}x^2 + \code{09}x + \code{0E}$
+modulo $x^4+1$, hasilnya tepat $1$. Karena itu menerapkan MixColumns lalu
+InvMixColumns mengembalikan setiap kolom ke nilai semula, sebagaimana dapat
+diperiksa pada \code{code/python/aes\_uji.py}.
+
+Inilah alasan mengapa penggantian polinom pereduksi pada
+Persamaan~\eqref{eq:aes-polinom-pereduksi} tidak boleh dilakukan sembarangan.
+Seluruh tabel yang dihasilkan --- S-box, S-box invers, maupun matriks
+InvMixColumns --- bergantung pada polinom itu. Menggantinya dengan polinom lain
+tidak merusak keamanan secara langsung, tetapi menghasilkan varian AES yang tidak
+kompatibel dengan implementasi mana pun.

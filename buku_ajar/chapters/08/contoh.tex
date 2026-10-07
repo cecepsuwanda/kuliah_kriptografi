@@ -1,41 +1,316 @@
 \section{Contoh Terhitung}
-Nilai pada contoh berikut diverifikasi dengan perhitungan Python (S-box AES dan aritmetika $\text{GF}(2^8)$).
+
+Contoh-contoh berikut dikerjakan dengan angka yang sebenarnya dan dapat diperiksa
+ulang langkah demi langkah. Seluruh nilai di dalamnya dihasilkan oleh program pada
+\code{code/python/aes\_uji.py}, yang membangun S-box dari nol dan mencocokkan
+hasilnya dengan vektor uji resmi FIPS PUB 197 untuk ketiga varian AES sekaligus
+untuk kedua arah, enkripsi maupun dekripsi.
 
 \begin{example}
-\textbf{SubBytes dan ShiftRows.} Mulai dari state 4$\times$4 byte:
+\textbf{Konvensi state, SubBytes, dan ShiftRows.} Tinjau masukan 16 byte
+$\code{00}\,\code{01}\,\code{02}\,\dots\,\code{0F}$. Menurut
+Persamaan~\eqref{eq:aes-state}, byte-byte itu disalin ke dalam state kolom demi
+kolom, sehingga byte keempat menempati baris ke-3 kolom ke-0, bukan baris ke-0
+kolom ke-3:
 \[
-\text{state}=\begin{bmatrix}00&01&02&03\\04&05&06&07\\08&09&0A&0B\\0C&0D&0E&0F\end{bmatrix}.
+\text{state} =
+\begin{bmatrix}
+\code{00} & \code{04} & \code{08} & \code{0C} \\
+\code{01} & \code{05} & \code{09} & \code{0D} \\
+\code{02} & \code{06} & \code{0A} & \code{0E} \\
+\code{03} & \code{07} & \code{0B} & \code{0F}
+\end{bmatrix}.
 \]
-\textit{SubBytes} mengganti setiap byte $xy$ memakai S-box pada baris $x$ kolom $y$:
+\textit{SubBytes} menggantikan setiap byte memakai S-box tanpa memindahkannya,
+misalnya $\text{S-box}(\code{00}) = \code{63}$ dan
+$\text{S-box}(\code{0F}) = \code{76}$:
 \[
-\begin{bmatrix}00&01&02&03\\04&05&06&07\\08&09&0A&0B\\0C&0D&0E&0F\end{bmatrix}
+\begin{bmatrix}
+\code{00} & \code{04} & \code{08} & \code{0C} \\
+\code{01} & \code{05} & \code{09} & \code{0D} \\
+\code{02} & \code{06} & \code{0A} & \code{0E} \\
+\code{03} & \code{07} & \code{0B} & \code{0F}
+\end{bmatrix}
 \longrightarrow
-\begin{bmatrix}63&7C&77&7B\\F2&6B&6F&C5\\30&01&67&2B\\FE&D7&AB&76\end{bmatrix},
+\begin{bmatrix}
+\code{63} & \code{F2} & \code{30} & \code{FE} \\
+\code{7C} & \code{6B} & \code{01} & \code{D7} \\
+\code{77} & \code{6F} & \code{67} & \code{AB} \\
+\code{7B} & \code{C5} & \code{2B} & \code{76}
+\end{bmatrix}.
 \]
-misalnya $00\to\code{63}$ (kolom 0 baris 0) dan $53\to\code{ED}$. \textit{ShiftRows} kemudian menggeser siklik baris ke-$r$ ke kiri sejauh $r$ byte ($r=0,1,2,3$):
+Selanjutnya \textit{ShiftRows} menggeser baris ke-$r$ secara siklik ke kiri
+sejauh $r$ byte sesuai Persamaan~\eqref{eq:aes-shiftrows}:
 \[
-\begin{bmatrix}63&7C&77&7B\\F2&6B&6F&C5\\30&01&67&2B\\FE&D7&AB&76\end{bmatrix}
+\begin{bmatrix}
+\code{63} & \code{F2} & \code{30} & \code{FE} \\
+\code{7C} & \code{6B} & \code{01} & \code{D7} \\
+\code{77} & \code{6F} & \code{67} & \code{AB} \\
+\code{7B} & \code{C5} & \code{2B} & \code{76}
+\end{bmatrix}
 \longrightarrow
-\begin{bmatrix}63&7C&77&7B\\6B&6F&C5&F2\\67&2B&30&01\\76&FE&D7&AB\end{bmatrix}.
+\begin{bmatrix}
+\code{63} & \code{F2} & \code{30} & \code{FE} \\
+\code{6B} & \code{01} & \code{D7} & \code{7C} \\
+\code{67} & \code{AB} & \code{77} & \code{6F} \\
+\code{76} & \code{7B} & \code{C5} & \code{2B}
+\end{bmatrix}.
 \]
-Jadi baris 0 tetap, sedangkan baris 1, 2, dan 3 bergeser 1, 2, dan 3 byte.
+Baris 0 memang tidak berubah, baris 1 bergeser satu byte, baris 2 dua byte, dan
+baris 3 tiga byte. Perhatikan akibatnya pada kolom: kolom ke-0 yang semula memuat
+$\code{00}, \code{01}, \code{02}, \code{03}$ kini memuat
+$\code{63}, \code{6B}, \code{67}, \code{76}$ --- empat byte yang tadinya berasal
+dari empat kolom berbeda. Inilah bukti pertama bahwa ShiftRows menyebarkan
+pengaruh sebuah byte ke seluruh state.
+
+Jika pembaca memperoleh hasil yang berbeda, penyebabnya hampir selalu konvensi
+state: memetakan masukan baris demi baris akan menghasilkan state yang merupakan
+transpose dari state yang benar, dan seluruh perhitungan sesudahnya menyimpang.
 \end{example}
 
 \begin{example}
-\textbf{MixColumns di $\text{GF}(2^8)$.} Satu kolom state dikalikan matriks MixColumns:
+\textbf{MixColumns dan InvMixColumns.} Ambil satu kolom state,
+$[\,\code{26}\ \code{7B}\ \code{BD}\ \code{43}\,]^{T}$. Menurut
+Persamaan~\eqref{eq:aes-mixcolumns},
 \[
-\begin{bmatrix}02&03&01&01\\01&02&03&01\\01&01&02&03\\03&01&01&02\end{bmatrix}
-\begin{bmatrix}26\\7B\\BD\\43\end{bmatrix}
+\begin{bmatrix}
+\code{02} & \code{03} & \code{01} & \code{01} \\
+\code{01} & \code{02} & \code{03} & \code{01} \\
+\code{01} & \code{01} & \code{02} & \code{03} \\
+\code{03} & \code{01} & \code{01} & \code{02}
+\end{bmatrix}
+\begin{bmatrix}
+\code{26} \\ \code{7B} \\ \code{BD} \\ \code{43}
+\end{bmatrix}
 =
-\begin{bmatrix}3F\\4F\\F9\\2A\end{bmatrix}.
+\begin{bmatrix}
+\code{3F} \\ \code{4F} \\ \code{F9} \\ \code{2A}
+\end{bmatrix}.
 \]
-Tinjau baris pertama: $(02\bullet26)\oplus(03\bullet7B)\oplus(01\bullet BD)\oplus(01\bullet43)$. Dalam $\text{GF}(2^8)$, $02\bullet26$ adalah geser kiri 1 bit tanpa reduksi, yaitu $\code{4C}$, dan
+Baris pertama dapat diperiksa dengan tangan. Di $\text{GF}(2^8)$,
+$\code{02} \bullet \code{26}$ hanya menggeser satu bit ke kiri dan bit kesembilan
+tidak muncul, jadi hasilnya $\code{4C}$. Untuk koefisien $\code{03}$ dipakai
+kesetaraan $\code{03} = \code{02} \oplus \code{01}$, sehingga
+$\code{03} \bullet \code{7B} = \code{F6} \oplus \code{7B} = \code{8D}$. Karena itu
 \[
-03\bullet7B=(02\bullet7B)\oplus7B=\code{F6}\oplus\code{7B}=\code{8D}.
+\code{4C} \oplus \code{8D} = \code{C1}, \qquad
+\code{C1} \oplus \code{BD} = \code{7C}, \qquad
+\code{7C} \oplus \code{43} = \code{3F},
 \]
-Maka
+yang tepat sama dengan elemen pertama hasilnya. Menerapkan InvMixColumns
+(Persamaan~\eqref{eq:aes-inv-mixcolumns}) pada kolom hasil itu mengembalikan
+kolom semula, yaitu $[\,\code{26}\ \code{7B}\ \code{BD}\ \code{43}\,]^{T}$ ---
+inilah pemeriksaan bahwa koefisien $\code{0E}\,\code{0B}\,\code{0D}\,\code{09}$
+memang kebalikan dari $\code{02}\,\code{03}\,\code{01}\,\code{01}$ modulo
+$x^4+1$.
+\end{example}
+
+\begin{example}
+\textbf{AddRoundKey dan sifat involutifnya.} Ambil kunci contoh pada FIPS PUB 197
+Lampiran B, yaitu $\code{2B7E151628AED2A6ABF7158809CF4F3C}$, dan plainteks
+$\code{3243F6A8885A308D313198A2E0370734}$. State awal adalah
 \[
-\code{4C}\oplus\code{8D}=\code{C1},\qquad \code{C1}\oplus\code{BD}=\code{7C},\qquad \code{7C}\oplus\code{43}=\code{3F},
+\begin{bmatrix}
+\code{32} & \code{88} & \code{31} & \code{E0} \\
+\code{43} & \code{5A} & \code{31} & \code{37} \\
+\code{F6} & \code{30} & \code{98} & \code{07} \\
+\code{A8} & \code{8D} & \code{A2} & \code{34}
+\end{bmatrix},
 \]
-sesuai elemen pertama hasil, sehingga seluruh kolom menjadi $[\,3F\ 4F\ F9\ 2A\,]^T$.
+sedangkan kunci putaran $K_0$ tidak lain daripada kunci pengguna yang dipetakan ke
+state dengan cara pemetaan yang sama:
+\[
+K_0 =
+\begin{bmatrix}
+\code{2B} & \code{28} & \code{AB} & \code{09} \\
+\code{7E} & \code{AE} & \code{F7} & \code{CF} \\
+\code{15} & \code{D2} & \code{15} & \code{4F} \\
+\code{16} & \code{A6} & \code{88} & \code{3C}
+\end{bmatrix}.
+\]
+Menurut Persamaan~\eqref{eq:aes-addroundkey}, hasil AddRoundKey adalah XOR byte
+demi byte pada posisi yang sama:
+\[
+\begin{bmatrix}
+\code{19} & \code{A0} & \code{9A} & \code{E9} \\
+\code{3D} & \code{F4} & \code{C6} & \code{F8} \\
+\code{E3} & \code{E2} & \code{8D} & \code{48} \\
+\code{BE} & \code{2B} & \code{2A} & \code{08}
+\end{bmatrix}.
+\]
+Meng-XOR-kan $K_0$ sekali lagi pada hasil itu mengembalikan state awal dengan
+tepat, sesuai sifat involutif $x \oplus k \oplus k = x$. Karena itulah putaran
+awal pada dekripsi cukup dibalik oleh satu operasi XOR saja, tanpa transformasi
+invers apa pun.
+\end{example}
+
+\begin{example}
+\textbf{Jejak satu putaran penuh.} Melanjutkan contoh sebelumnya, putaran pertama
+dijalankan atas state hasil AddRoundKey. \textit{SubBytes} menghasilkan
+\[
+\begin{bmatrix}
+\code{D4} & \code{E0} & \code{B8} & \code{1E} \\
+\code{27} & \code{BF} & \code{B4} & \code{41} \\
+\code{11} & \code{98} & \code{5D} & \code{52} \\
+\code{AE} & \code{F1} & \code{E5} & \code{30}
+\end{bmatrix},
+\]
+lalu \textit{ShiftRows} menghasilkan
+\[
+\begin{bmatrix}
+\code{D4} & \code{E0} & \code{B8} & \code{1E} \\
+\code{BF} & \code{B4} & \code{41} & \code{27} \\
+\code{5D} & \code{52} & \code{11} & \code{98} \\
+\code{30} & \code{AE} & \code{F1} & \code{E5}
+\end{bmatrix},
+\]
+\textit{MixColumns} menghasilkan
+\[
+\begin{bmatrix}
+\code{04} & \code{E0} & \code{48} & \code{28} \\
+\code{66} & \code{CB} & \code{F8} & \code{06} \\
+\code{81} & \code{19} & \code{D3} & \code{26} \\
+\code{E5} & \code{9A} & \code{7A} & \code{4C}
+\end{bmatrix},
+\]
+dan akhirnya AddRoundKey dengan kunci $K_1$ menghasilkan
+\[
+\begin{bmatrix}
+\code{A4} & \code{68} & \code{6B} & \code{02} \\
+\code{9C} & \code{9F} & \code{5B} & \code{6A} \\
+\code{7F} & \code{35} & \code{EA} & \code{50} \\
+\code{F2} & \code{2B} & \code{43} & \code{49}
+\end{bmatrix}.
+\]
+Perhatikan pada MixColumns betapa satu byte masukan memberi sumbangan berbeda ke
+keempat byte satu kolom, sedangkan pada ShiftRows tidak ada satu nilai pun yang
+berubah --- hanya posisinya. Keempat langkah itulah yang diulang sembilan kali
+lagi, dengan putaran terakhir tanpa MixColumns. Tabel~\ref{tab:jejak-aes128}
+mencatat state pada akhir setiap putaran, dan baris terakhirnya tidak lain
+daripada cipherteks.
+\end{example}
+
+\begin{table}[htbp]
+\centering
+\caption{State pada akhir setiap putaran untuk kunci \code{2B7E1516\ldots} dan
+plainteks \code{3243F6A8\ldots} (FIPS PUB 197, Lampiran B). Setiap sel adalah satu
+kolom state}
+\label{tab:jejak-aes128}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}r *{4}{l}@{}}
+\hline
+\textbf{Putaran} & \textbf{Kolom 0} & \textbf{Kolom 1} & \textbf{Kolom 2} & \textbf{Kolom 3} \\
+\hline
+ 1 & \code{A4 9C 7F F2} & \code{68 9F 35 2B} & \code{6B 5B EA 43} & \code{02 6A 50 49} \\
+ 2 & \code{AA 8F 5F 03} & \code{61 DD E3 EF} & \code{82 D2 4A D2} & \code{68 32 46 9A} \\
+ 3 & \code{48 6C 4E EE} & \code{67 1D 9D 0D} & \code{4D E3 B1 38} & \code{D6 5F 58 E7} \\
+ 4 & \code{E0 92 7F E8} & \code{C8 63 63 C0} & \code{D9 B1 35 50} & \code{85 B8 BE 01} \\
+ 5 & \code{F1 00 6F 55} & \code{C1 92 4C EF} & \code{7C C8 8B 32} & \code{5D B5 D5 0C} \\
+ 6 & \code{26 0E 2E 17} & \code{3D 41 B7 7D} & \code{E8 64 72 A9} & \code{FD D2 8B 25} \\
+ 7 & \code{5A 41 42 B1} & \code{19 49 DC 1F} & \code{A3 E0 19 65} & \code{7A 8C 04 0C} \\
+ 8 & \code{EA 83 5C F0} & \code{04 45 33 2D} & \code{65 5D 98 AD} & \code{85 96 B0 C5} \\
+ 9 & \code{EB 40 F2 1E} & \code{59 2E 38 84} & \code{8B A1 13 E7} & \code{1B C3 42 D2} \\
+10 & \code{39 25 84 1D} & \code{02 DC 09 FB} & \code{DC 11 85 97} & \code{19 6A 0B 32} \\
+\hline
+\end{tabular}
+\sumber{NIST, FIPS PUB 197, Lampiran B; dihitung ulang dengan \code{code/python/aes\_uji.py}.}
+\end{table}
+
+\begin{example}
+\textbf{Menelusuri dua putaran dekripsi.} Sekarang cipherteks pada baris terakhir
+Tabel~\ref{tab:jejak-aes128}, yaitu
+$\code{3925841D02DC09FBDC118597196A0B32}$, kita kembalikan menjadi plainteks.
+Langkah pertama adalah membatalkan putaran terakhir: XOR dengan $K_{10}$,
+lalu InvShiftRows, lalu InvSubBytes (tanpa InvMixColumns, sebab putaran terakhir
+memang tanpa MixColumns). Hasil langkah ketiga adalah
+\[
+\code{EB40F21E592E38848BA113E71BC342D2},
+\]
+yang tepat sama dengan state pada akhir putaran ke-9 menurut
+Tabel~\ref{tab:jejak-aes128}. Jadi dua putaran terakhir enkripsi telah dibalik
+tanpa sisa.
+
+Langkah berikutnya membalik putaran ke-9, yang merupakan putaran lengkap. Sesuai
+Persamaan~\eqref{eq:aes-dekripsi}, urutannya adalah XOR dengan $K_9$, lalu
+InvMixColumns; hasilnya adalah state ``setengah jadi''
+$\text{ShiftRows}(\text{SubBytes}(T_8))$ yang masih tertutup oleh ShiftRows dan
+SubBytes. Kedua penutup itu dibuka pada langkah pertama pembalikan putaran ke-8,
+yaitu InvShiftRows lalu InvSubBytes, yang menghasilkan
+\[
+\code{EA835CF00445332D655D98AD8596B0C5},
+\]
+dan itu tepat sama dengan state pada akhir putaran ke-8. Tabel~\ref{tab:jejak-dekripsi}
+mencatat seluruh langkah kedua putaran itu secara terperinci. Bila langkah-langkah
+itu diteruskan sampai putaran ke-1 dan diakhiri oleh XOR dengan $K_0$, hasilnya
+kembali ke plainteks $\code{3243F6A8885A308D313198A2E0370734}$.
+\end{example}
+
+\begin{table}[htbp]
+\centering
+\caption{Langkah demi langkah dua putaran pertama dekripsi AES-128, mulai dari
+cipherteks pada Tabel~\ref{tab:jejak-aes128}. Setiap sel adalah satu kolom state}
+\label{tab:jejak-dekripsi}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}l *{4}{l}@{}}
+\hline
+\textbf{Langkah} & \textbf{Kolom 0} & \textbf{Kolom 1} & \textbf{Kolom 2} & \textbf{Kolom 3} \\
+\hline
+Cipherteks       & \code{39 25 84 1D} & \code{02 DC 09 FB} & \code{DC 11 85 97} & \code{19 6A 0B 32} \\
+XOR $K_{10}$     & \code{E9 31 7D B5} & \code{CB 32 2C 72} & \code{3D 2E 89 5F} & \code{AF 09 07 94} \\
+InvShiftRows     & \code{E9 09 89 72} & \code{CB 31 07 5F} & \code{3D 32 7D 94} & \code{AF 2E 2C B5} \\
+InvSubBytes      & \code{EB 40 F2 1E} & \code{59 2E 38 84} & \code{8B A1 13 E7} & \code{1B C3 42 D2} \\
+XOR $K_9$        & \code{47 37 94 ED} & \code{40 D4 E4 A5} & \code{A3 70 3A A6} & \code{4C 9F 42 BC} \\
+InvMixColumns    & \code{87 6E 46 A6} & \code{F2 4C E7 8C} & \code{4D 90 4A D8} & \code{97 EC C3 95} \\
+InvShiftRows     & \code{87 EC 4A 8C} & \code{F2 6E C3 D8} & \code{4D 4C 46 95} & \code{97 90 E7 A6} \\
+InvSubBytes      & \code{EA 83 5C F0} & \code{04 45 33 2D} & \code{65 5D 98 AD} & \code{85 96 B0 C5} \\
+\hline
+\end{tabular}
+\sumber{Dihitung dengan \code{code/python/aes\_uji.py}; baris InvSubBytes terakhir sama dengan state akhir putaran ke-8 pada Tabel~\ref{tab:jejak-aes128}.}
+\end{table}
+
+\begin{example}
+\textbf{Pembangkitan kunci putaran AES-256.} Ambil kunci contoh pada FIPS PUB 197
+Lampiran A.3, yaitu
+\[
+\code{603DEB1015CA71BE2B73AEF0857D77811F352C073B6108D72D9810A30914DFF4}.
+\]
+Karena panjangnya 32 byte, $N_k = 8$ dan $N_r = 14$, sehingga seluruh proses harus
+menghasilkan $4 \times 15 = 60$ word. Delapan word pertama diambil langsung dari
+kunci: $w[0] = \code{603DEB10}$, $w[1] = \code{15CA71BE}$, dan seterusnya sampai
+$w[7] = \code{0914DFF4}$.
+
+Word $w[8]$ dibangkitkan dengan aturan biasa, sebab $8 \bmod 8 = 0$. RotWord
+menggeser $w[7]$ satu byte ke kiri secara siklik,
+\[
+\code{0914DFF4} \longrightarrow \code{14DFF409},
+\]
+lalu SubWord menggantikan setiap byte memakai S-box:
+$\text{S-box}(\code{14}) = \code{FA}$, $\text{S-box}(\code{DF}) = \code{9E}$,
+$\text{S-box}(\code{F4}) = \code{BF}$, dan $\text{S-box}(\code{09}) = \code{01}$,
+sehingga diperoleh $\code{FA9EBF01}$. Sesudah XOR dengan
+$\text{Rcon}[1] = \code{01000000}$, diperoleh $g(w[7]) = \code{FB9EBF01}$, dan
+\[
+w[8] = w[0] \oplus g(w[7]) = \code{603DEB10} \oplus \code{FB9EBF01} = \code{9BA35411}.
+\]
+
+Sekarang perhatikan word $w[12]$. Karena $12 \bmod 8 = 4$, di sinilah berlaku
+kekhususan AES-256: \textbf{hanya SubWord} yang dijalankan, tanpa RotWord dan
+tanpa Rcon. Dengan $w[11] = \code{2067FCDE}$,
+\[
+\text{SubWord}(\code{2067FCDE}) = \code{B785B01D},
+\]
+karena $\text{S-box}(\code{20}) = \code{B7}$, $\text{S-box}(\code{67}) = \code{85}$,
+$\text{S-box}(\code{FC}) = \code{B0}$, dan $\text{S-box}(\code{DE}) = \code{1D}$.
+Karena itu
+\[
+w[12] = w[4] \oplus \text{SubWord}(w[11])
+= \code{1F352C07} \oplus \code{B785B01D} = \code{A8B09C1A}.
+\]
+Seandainya SubWord tambahan itu dihilangkan, $w[12]$ akan sama dengan
+$w[4] \oplus w[11]$, yaitu sebuah hubungan linier murni antara kunci pengguna dan
+kunci putaran. Hubungan semacam itu dapat disusun penyerang menjadi sistem
+persamaan atas bit-bit kunci, dan itulah alasan mengapa aturan khusus ini tidak
+boleh dilewatkan.
 \end{example}

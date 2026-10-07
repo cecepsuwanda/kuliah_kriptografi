@@ -1,7 +1,43 @@
-
 \begin{obereflection}
 \textbf{Latihan 8.1}
 1. Mengapa tahap \textit{MixColumns} dihilangkan pada putaran terakhir AES?
 2. Jelaskan bagaimana kombinasi \textit{SubBytes}, \textit{ShiftRows}, dan \textit{MixColumns} secara kolektif mengimplementasikan prinsip \textit{confusion} dan \textit{diffusion} Shannon.
 3. Berikan analisis singkat: mengapa AES-256 lebih tahan terhadap serangan \textit{quantum computing} (misal: algoritma Grover) dibandingkan AES-128?
+
+\textbf{Latihan 8.2}
+4. Jelaskan mengapa pemetaan 16 byte masukan ke matriks \textit{state} harus dilakukan
+   kolom demi kolom, bukan baris demi baris. Apa akibat praktisnya bagi implementasi
+   yang salah memilih konvensi?
+5. Buktikan bahwa AddRoundKey bersifat involutif, sedangkan SubBytes dan MixColumns
+   tidak. Untuk yang terakhir, tunjukkan dua byte berbeda yang dipertukarkan oleh
+   SubBytes.
+6. Hitunglah dengan tangan $\code{02} \bullet \code{57}$ dan
+   $\code{04} \bullet \code{57}$ di $\text{GF}(2^8)$, lalu tentukan
+   $\code{08} \bullet \code{57}$. Petunjuk: setiap langkah hanya menggeser satu bit
+   ke kiri dan mereduksi dengan $\code{1B}$ bila perlu.
+7. Diketahui bahwa invers perkalian dari $\code{1F}$ di $\text{GF}(2^8)$ adalah
+   $\code{B2}$. Periksa dengan Persamaan~\eqref{eq:aes-sbox-rumus} bahwa
+   $\text{S-box}(\code{1F}) = \code{C0}$, lalu periksa hasil itu pada
+   Tabel~\ref{tab:sbox-aes}.
+8. Bangkitkan $\text{RC}[11]$ seandainya AES memerlukan sebelas kunci putaran
+   untuk varian berputaran 11. Petunjuk: lanjutkan dari
+   $\text{RC}[10] = \code{36}$.
+
+\textbf{Latihan 8.3}
+9. Tuliskan urutan transformasi yang dijalankan oleh satu putaran dekripsi AES dan
+   bandingkan dengan urutan pada putaran enkripsi. Jelaskan mengapa keduanya tidak
+   sekadar kebalikan cermin.
+10. Pada \textit{equivalent inverse cipher}, kunci putaran diubah menjadi
+    $\tilde{K}_i = \text{InvMixColumns}(K_i)$. Tunjukkan dengan mempergunakan
+    sifat linier InvMixColumns bahwa perubahan itu tidak mengubah hasil dekripsi.
+11. Tunjukkan bahwa InvShiftRows dan InvSubBytes saling komutatif, tetapi
+    InvMixColumns tidak komutatif dengan keduanya. Berikan satu contoh penyangkal
+    untuk yang terakhir.
+12. Untuk AES-256, jelaskan mengapa aturan $\text{SubWord}$ tambahan diperlukan
+    hanya ketika $i \bmod 8 = 4$, dan apa yang terjadi pada jadwal kunci bila aturan
+    itu dihilangkan.
+13. Berapa banyak word yang harus dibangkitkan untuk AES-192, dan berapa nilai
+    $\text{Rcon}$ terbesar yang dipakai? Jelaskan asal angka-angka itu.
+14. AES-128 memerlukan 10 putaran, sedangkan DES 16 putaran atas blok yang justru
+    lebih kecil. Jelaskan mengapa AES tetap dapat mencapai difusi penuh lebih cepat.
 \end{obereflection}

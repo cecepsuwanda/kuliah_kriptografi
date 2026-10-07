@@ -1,0 +1,40 @@
+% Diagram rantai pembangkitan satu word kunci putaran AES.
+% Dirujuk dari section-03.tex dengan \input{figures/key-expansion-aes}.
+% Digambar sendiri karena diagram pada slide sumber berupa tangkapan layar
+% yang resolusinya rendah dan labelnya bertumpuk.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners=1pt, minimum height=0.8cm,
+                      minimum width=1.45cm, font=\small, inner sep=2pt},
+        xor/.style={draw, circle, inner sep=0.6pt, minimum size=0.62cm,
+                    font=\small},
+        panah/.style={-{Latex[length=2mm]}, thick},
+    ]
+        \node[kotak] (prev) at (0,0) {$w[i-1]$};
+        \node[kotak] (rot)  at (2.05,0) {RotWord};
+        \node[kotak] (sub)  at (3.95,0) {SubWord};
+        \node[xor]   (x1)   at (5.65,0) {$\oplus$};
+        \node[xor]   (x2)   at (7.35,0) {$\oplus$};
+        \node[kotak, minimum width=1.75cm] (wi) at (9.35,0) {$w[i]$};
+
+        \node[kotak, minimum width=1.75cm] (wkn) at (7.35,-1.95) {$w[i-N_k]$};
+        \node[font=\small] (rcon) at (5.65,1.35) {$\text{Rcon}[i/N_k]$};
+
+        \draw[panah] (prev) -- (rot);
+        \draw[panah] (rot)  -- (sub);
+        \draw[panah] (sub)  -- (x1);
+        \draw[panah] (x1)   -- (x2);
+        \draw[panah] (x2)   -- (wi);
+        \draw[panah] (rcon) -- (x1);
+        \draw[panah] (wkn)  -- (x2);
+
+        % Kurung putus-putus menandai ketiga operasi yang tergabung dalam g().
+        \draw[dashed, rounded corners=3pt]
+            (1.05,-0.72) rectangle (6.32,0.72);
+        \node[font=\small, anchor=west] at (1.05,-1.12) {$g(w[i-1])$};
+    \end{tikzpicture}
+    \caption{Rantai pembangkitan satu word kunci putaran pada AES. Bila $i$ kelipatan $N_k$, word sebelumnya dikenai fungsi $g$ lebih dahulu; bila tidak, ia di-XOR-kan langsung. Khusus AES-256, pada $i \bmod 8 = 4$ dijalankan SubWord tanpa RotWord dan tanpa Rcon}
+    \label{fig:key-expansion-aes}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; NIST, FIPS PUB 197.}
+\end{figure}

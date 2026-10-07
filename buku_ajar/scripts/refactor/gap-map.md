@@ -286,16 +286,82 @@ mereproduksi vektor uji resmi FIPS PUB 46-3 secara persis.
    kunci semi-lemah yang berlaku adalah $E_{K'}(E_K(x)) = x$ dengan $K'$ adalah
    pasangannya, bukan kunci yang sama. Buku kini membedakan keduanya.
 
-## Bab 08 — Analisis Algoritma Block Cipher: AES
+## Bab 08 — Analisis Algoritma Block Cipher: AES  `[x]` SELESAI
 Sumber: `referensi/10-*` (5.580 kata, 21 topik, 55 gambar). Target: ±5.500 kata.
+**Menyitasi `fips197`, `daemen2002`, `eff1998`** (dua entri `.bib` baru: `fips197`,
+`daemen2002`).
 
-- [ ] **Dekripsi AES** (InvSubBytes, InvShiftRows, InvMixColumns) — absen total
-- [ ] Konstruksi S-box: inversi GF(2⁸) + affine + tabel penuh
-- [ ] Key Expansion: $w[0..43]$, temp, $g$, Rcon + daftar RC[1..10]
-- [ ] Tabel lima finalis AES + tabel parameter Rijndael
-- [ ] Contoh perkalian GF(2⁸): $02\cdot26=4C$, $03\cdot7B=8D$, dst.
-- [ ] AES-256: 14 putaran, aturan SubWord/Rcon
-- [ ] Justifikasi keamanan terukur
+Hasil: 12.968 kata berkas mentah (9.500 kata prosa pada empat section: §1 1.377,
+§2 4.313, §3 1.706, §4 2.104), 36 halaman mandiri, 10 tabel, 6 contoh terhitung,
+19 persamaan bernomor, 3 diagram TikZ, 2 gambar raster baru, dan satu program
+verifikasi baru (`code/python/aes_uji.py`, ~342 baris). Bab semula hanya ±1.142
+kata tanpa satu pun tabel bernomor, persamaan bernomor, atau contoh terhitung.
+Seluruh angka pada contoh, tabel, dan latihan **dihitung ulang dengan program**
+yang membangun S-box dari nol dan mencocokkan hasilnya dengan vektor uji resmi
+FIPS PUB 197 untuk AES-128/192/256, pada enkripsi **dan** dekripsi.
+
+- [x] **Dekripsi AES lengkap**: InvSubBytes (`eq:aes-invsubbytes`), InvShiftRows
+  (`eq:aes-inv-shiftrows`), InvMixColumns dengan matriks `0E 0B 0D 09`
+  (`eq:aes-inv-mixcolumns`), tabel S-box invers (`tab:inv-sbox-aes`), dan urutan
+  dekripsi (`eq:aes-dekripsi-putaran`, `eq:aes-dekripsi`) — semula absen total
+- [x] Penjelasan mengapa urutan dekripsi **bukan** cermin naif enkripsi (state
+  "setengah jadi" yang diwarisi antariterasi) + dua susunan yang setara:
+  *straightforward* dan *equivalent inverse cipher* dengan
+  $\tilde{K}_i = \text{InvMixColumns}(K_i)$ (`eq:aes-equiv-kunci`)
+- [x] Konstruksi S-box lima langkah: inisialisasi menaik, inversi $\text{GF}(2^8)$
+  (`eq:aes-invers-pangkat`), vektor bit, affine $8\times8$ (`eq:aes-sbox-affine`,
+  `eq:aes-sbox-rumus`), konstanta `63`; diagram TikZ `figures/konstruksi-sbox`
+  + satu entri dikerjakan tangan ($\text{S-box}(\code{53}) = \code{ED}$)
+- [x] Tabel S-box penuh 16×16 (`tab:sbox-aes`) dan inversnya
+- [x] Key Expansion: larik $w[0..43]$, `temp`, fungsi $g$, `RC[1..10]`
+  (`tab:rcon-aes`), tabel per varian (`tab:key-expansion-varian`), diagram TikZ
+  `figures/key-expansion-aes`, contoh satu putaran `rk[1]` dari kunci
+  ``Two One Nine Two''
+- [x] AES-256: 14 putaran, aturan ganda ($g$ pada $i \bmod 8 = 0$, `SubWord` saja
+  pada $i \bmod 8 = 4$) dengan contoh $w[8]$ dan $w[12]$ dari kunci FIPS A.3
+- [x] Aritmetika $\text{GF}(2^8)$: penjumlahan XOR, perkalian polinomial modulo
+  $x^8+x^4+x^3+x+1$ = `11B` (`eq:aes-polinom-pereduksi`), inversi
+  $a^{-1} = a^{254}$; perkalian `02·26 = 4C`, `03·7B = 8D`
+- [x] Tabel lima finalis AES (`tab:finalis-aes`) dan tabel parameter Rijndael
+  (`tab:parameter-aes`) + perbandingan DES–AES (`tab:perbandingan-des-aes`)
+- [x] Tabel transformasi per jenis putaran (`tab:transformasi-putaran-aes`)
+- [x] Contoh terhitung `contoh.tex` ditulis ulang total: konvensi state kolom demi
+  kolom, MixColumns + InvMixColumns, AddRoundKey involutif, jejak satu putaran,
+  tabel jejak 10 putaran AES-128 (`tab:jejak-aes128`), tabel jejak dekripsi
+  (`tab:jejak-dekripsi`), dan pembangkitan kunci AES-256
+- [x] `praktikum.tex`: Aktivitas 8.1 (ShiftRows/InvShiftRows + konvensi kolom),
+  8.2 (membangkitkan kunci putaran dengan tangan), 8.3 (memeriksa implementasi
+  terhadap vektor uji resmi); dua penggalan `aes_uji.py` sebagai listing
+- [x] `latihan.tex` 3→14 butir (tiga kelompok); `rangkuman.tex` 7→15 butir;
+  `evaluasi.tex` kuis 3→7, checklist 5→10 baris
+- [x] Justifikasi keamanan terukur: $2^{128} = 3{,}4\times10^{38}$ kunci, difusi
+  penuh jauh lebih cepat daripada DES, dan alasan AES-256 lebih tahan Grover
+- [x] Gambar raster baru: `perancang-aes.png` (dua perancang Rijndael) dan
+  `invshiftrows-aes.png`; gambar lama `alur-enkripsi-aes.png`,
+  `shiftrows-aes.png`, dan `figures/subbytes-aes` tetap dipakai
+
+### Koreksi terhadap sumber (wajib dicatat)
+
+1. **Angka jadwal kunci ``Two One Nine Two'' pada dek `10-*` salah.** Dek
+   menuliskan RotWord$(w[3]) = (54, 77, \code{6E}, 20)$ dan
+   $\text{SubWord} = (20, F5, \code{9F}, B7)$, sehingga
+   $w[4] = (75, 82, \code{F0}, 97)$ dan seterusnya. Byte terakhir $w[3]$ adalah
+   `6F`, bukan `6E`, sehingga RotWord yang benar adalah $(54,77,\code{6F},20)$,
+   $\text{SubWord} = (20, F5, \code{A8}, B7)$, dan $w[4] = \code{7582C797}$.
+   Rantai dek juga tidak konsisten dengan dirinya sendiri: dari
+   $w[4] = (75,82,F0,97)$ seharusnya $w[5] = \code{3AEC95B7}$, tetapi dek
+   menuliskan `3AEC96B7`. Nilai yang benar, sesuai tabel S-box resmi FIPS PUB 197:
+   $w[4] = \code{7582C797}$, $w[5] = \code{3AECA2B7}$, $w[6] = \code{7485CCD2}$,
+   $w[7] = \code{54D1BBBD}$. Buku memakai nilai yang benar dan menambahkan kotak
+   *Catatan koreksi* pada Sub-bab KeyExpansion (§3).
+2. **Catatan yang benar tentang AES-256.** Dek menyebut aturan ganda AES-256
+   (baris $i \bmod 8 = 0$ dan $i \bmod 8 = 4$) dengan tepat; buku hanya
+   memperjelas *mengapa* `SubWord` tambahan itu perlu, yaitu mencegah sebagian
+   kunci putaran menjadi fungsi linier dari kunci pengguna.
+3. **Contoh aritmetika $\text{GF}(2^8)$ pada dek sudah benar**
+   ($\code{0D}+\code{06}=\code{0B}$, $\code{57}+\code{83}=\code{D4}$,
+   $\code{57}\cdot\code{83}=\code{C1}$, matriks InvMixColumns `0E 0B 0D 09`).
+   Tidak ada koreksi; angka itu tetap dipakai sebagai bahan §4.
 
 ## Bab 09 — Studi Algoritma Block Cipher Lainnya
 Sumber: `referensi/11-*` (3.352 kata, 11 topik, 19 gambar). Target: ±4.500 kata.
@@ -399,7 +465,14 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   `eq:ctr-enkripsi`, `eq:iterated-cipher`, `eq:whitening`, `eq:feistel-enkripsi`,
   `eq:feistel-dekripsi`, `eq:feistel-reversible`); Bab 07 menambah 8
   (`eq:des-putaran`, `eq:des-f`, `eq:des-subkunci`, `eq:des-ruang-kunci`,
-  `eq:des-double`, `eq:des-mitm`, `eq:des-3des-ede`, `eq:des-3des-kompatibel`).
+  `eq:des-double`, `eq:des-mitm`, `eq:des-3des-ede`, `eq:des-3des-kompatibel`);
+  Bab 08 menambah 19 (`eq:aes-state`, `eq:aes-subbytes`, `eq:aes-shiftrows`,
+  `eq:aes-mixcolumns`, `eq:aes-mixcolumns-komponen`, `eq:aes-mixcolumns-polinom`,
+  `eq:aes-addroundkey`, `eq:aes-invsubbytes`, `eq:aes-inv-shiftrows`,
+  `eq:aes-inv-mixcolumns`, `eq:aes-inv-mixcolumns-komponen`, `eq:aes-enkripsi`,
+  `eq:aes-dekripsi-putaran`, `eq:aes-dekripsi`, `eq:aes-equiv-kunci`,
+  `eq:aes-polinom-pereduksi`, `eq:aes-invers-pangkat`, `eq:aes-sbox-affine`,
+  `eq:aes-sbox-rumus`).
   Lanjutkan untuk penurunan RSA, ElGamal, ECDLP, hash.
 - [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
 - [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 dan 04 sudah punya.)
@@ -440,6 +513,15 @@ diperbaiki; polanya akan terulang di bab-bab berikut, jadi perhatikan sejak awal
   section-03) → ganti dengan titik dua atau ubah susunan kalimatnya.
 - **Rangkaian `\texttt` berisi biner/heksadesimal di dalam `array`** aman selama tiap baris
   di bawah ~68 karakter; bila lebih, pecah menjadi dua tampilan atau pindahkan ke `tabular`.
+- **Isi kotak OBE (`obeassessment`, `obeactivity`, dll.) lebih sempit daripada `\linewidth`**
+  karena padding tcolorbox. Rangkaian `\code{...}` 32 byte yang aman di badan teks justru
+  menghasilkan `Overfull` **dan** `Underfull badness 10000` di dalam kotak (Bab 08
+  `evaluasi.tex`). Solusi: taruh rangkaian itu pada tampilan `\[ ... \]` tersendiri, atau
+  pecah menjadi beberapa `\code{}` pendek dalam satu baris. Ingat juga bahwa **satu kotak
+  OBE yang tidak ditutup** (`\end{obeassessment}` hilang) menyeret seluruh berkas
+  berikutnya ke dalam kotak itu dan memunculkan galat
+  `\begin{tcb@savebox} ... ended by \end{document}` — periksa pasangan
+  `\begin`/`\end` tiap kotak sebelum menyalahkan tipografi.
 - **Label persamaan bersifat global** — sebelum menambah `eq:...` baru, periksa dulu
   dengan `grep -rho "label{eq:nama}" chapters/ | wc -l` agar tidak menimpa label bab lain.
 - **Judul `\subsection` yang memuat matematika** ($f$, $S_1$, dst.) memicu

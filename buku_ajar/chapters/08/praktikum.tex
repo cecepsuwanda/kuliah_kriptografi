@@ -2,9 +2,12 @@
 \begin{obeactivity}
 \textbf{Aktivitas 8.1: Simulasi Transformasi AES}
 1. Ambil sebuah blok data 16-byte (misal: "Kriptografi-AES!").
-2. Representasikan data tersebut ke dalam matriks \texttt{state} $4 \times 4$.
+2. Representasikan data tersebut ke dalam matriks \texttt{state} $4 \times 4$
+   secara \emph{kolom demi kolom}, sesuai Persamaan~\eqref{eq:aes-state}.
 3. Lakukan simulasi tahap \textit{ShiftRows} secara manual pada matriks tersebut.
 4. Amati bagaimana posisi byte berubah dan diskusikan pengaruhnya terhadap difusi data.
+5. Kerjakan juga kebalikannya, yaitu \textit{InvShiftRows}, lalu periksa bahwa
+   hasilnya mengembalikan susunan semula.
 \end{obeactivity}
 
 Langkah-langkah pada Aktivitas 8.1 dapat dijalankan langsung melalui program
@@ -20,3 +23,54 @@ menunjukkan perpindahan posisi setiap byte pada matriks.
 
 Program yang sama tersedia dalam C++ (\texttt{code/cpp/aes\_shiftrows.cpp}) dan
 MATLAB (\texttt{code/matlab/aes\_shiftrows.m}).
+
+\begin{obeactivity}
+\textbf{Aktivitas 8.2: Membangkitkan Kunci Putaran dengan Tangan}
+1. Ambil kunci 16 byte yang berbunyi ``Two One Nine Two''; tuliskan sebagai
+   heksadesimal dan tetapkan $N_k$ serta $N_r$.
+2. Isi $w[0]$ sampai $w[3]$ langsung dari kunci, lalu bangkitkan $w[4]$ dengan
+   tiga langkah $g$: RotWord, SubWord, dan XOR dengan $\text{Rcon}[1]$.
+3. Lanjutkan sampai $w[7]$, lalu susun $K_0$ dan $K_1$ sebagai matriks state.
+4. Periksa hasil Anda terhadap Sub-bab~\ref{sec:key-expansion-aes}. Bila ada
+   perbedaan, periksa kembali pembacaan S-box untuk setiap byte.
+5. Ulangi langkah 1--4 untuk kunci 24 byte (AES-192) dan 32 byte (AES-256), dan
+   tunjukkan pada titik mana aturan keduanya berbeda.
+\end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 8.3: Memeriksa Implementasi terhadap Vektor Uji Resmi}
+1. Jalankan program berikut dan catat keluarannya. Program itu mencetak hasil
+   pemeriksaan terhadap vektor uji resmi FIPS PUB 197 untuk AES-128, AES-192,
+   AES-256, membangun S-box dari nol, dan membalikkan enkripsi dengan dekripsi.
+2. Untuk setiap vektor uji, perhatikan bahwa kolom ``BENAR'' muncul pada enkripsi
+   \emph{dan} dekripsi. Jelaskan mengapa keduanya harus diuji.
+3. Ubah satu byte kunci saja pada salah satu kasus, lalu jelaskan mengapa
+   cipherteksnya berubah total padahal kuncinya hanya berbeda sedikit.
+4. Bandingkan fungsi \texttt{enkripsi} dan \texttt{dekripsi} pada
+   Listing~\ref{lst:aes-kunci} dan \ref{lst:aes-enkripsi}: tunjukkan bahwa urutan
+   transformasi pada dekripsi bukan kebalikan cermin yang naif, melainkan susunan
+   pada Persamaan~\eqref{eq:aes-dekripsi}.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    firstline=93,
+    lastline=110,
+    firstnumber=1,
+    caption={Pembangkitan kunci putaran: aturan $g$ dan kekhususan AES-256},
+    label={lst:aes-kunci}
+]{\codefile{python/aes_uji.py}}
+
+\lstinputlisting[
+    language=Python,
+    firstline=185,
+    lastline=215,
+    firstnumber=1,
+    caption={Enkripsi dan dekripsi satu blok AES: urutan transformasi putaran},
+    label={lst:aes-enkripsi}
+]{\codefile{python/aes_uji.py}}
+
+Kedua penggalan di atas diambil dari program lengkap \texttt{code/python/aes\_uji.py},
+yang seluruhnya berisi sekitar 340 baris dan memuat pula aritmetika
+$\text{GF}(2^8)$, pembangunan S-box dari nol, serta tujuh bagian pengujian mandiri
+yang dijalankan ketika berkas itu dieksekusi langsung.

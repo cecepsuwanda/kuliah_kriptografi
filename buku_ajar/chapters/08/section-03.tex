@@ -1,8 +1,281 @@
 \section{Pembangkitan Kunci Putaran (Key Expansion)}
-Fungsi \textit{KeyExpansion()} membangkitkan seluruh kunci putaran yang diperlukan dari satu kunci eksternal. Proses ini melibatkan operasi:
-\begin{itemize}
-    \item \textbf{RotWord}: Pergeseran sirkuler byte dalam sebuah \textit{word}.
-    \item \textbf{SubWord}: Substitusi byte menggunakan S-box.
-    \item \textbf{Rcon (Round Constant)}: XOR dengan konstanta putaran untuk mencegah simetri antar kunci putaran.
-\end{itemize}
+\label{sec:key-expansion-aes}
 
+Setiap putaran AES memakai kunci putaran (\textit{round key}) yang berbeda, dan
+seluruhnya harus dibangkitkan dari satu kunci eksternal yang diserahkan pengguna.
+Kunci eksternal itu disebut \textbf{\textit{cipher key}} atau ringkasnya
+\textit{key}; proses penurunannya disebut \textbf{\textit{KeyExpansion}}, dan
+fungsi yang melaksanakannya di dalam standar bernama \code{KeyExpansion()}.
+
+Satuan kerja proses ini adalah \textbf{word}, yaitu 4 byte atau 32 bit. Sebuah kunci
+putaran berukuran 128 bit sehingga terdiri atas 4 word, dan karena AES-128 memakai
+$N_r + 1 = 11$ kunci putaran, seluruh proses harus menghasilkan
+$4 \times 11 = 44$ word. Semua word itu disimpan dalam satu larik $w$, dan kunci
+putaran ke-$j$ --- disingkat $rk[j]$ --- tidak lain daripada empat word berurutan
+$w[4j], w[4j+1], w[4j+2], w[4j+3]$.
+
+\subsection{Algoritma KeyExpansion}
+
+Mula-mula $N_k$ word pertama larik $w$ diisi langsung dari kunci eksternal: $w[0]$
+memuat empat byte pertama kunci, $w[1]$ empat byte berikutnya, dan seterusnya.
+Setelah itu word-word selanjutnya dibangkitkan satu per satu menurut aturan
+berulang berikut \citep{fips197}. Untuk $i$ dari $N_k$ sampai $4(N_r+1) - 1$:
+
+\begin{enumerate}
+    \item Salin $w[i-1]$ ke dalam peubah sementara \textit{temp}.
+    \item Bila $i$ kelipatan $N_k$, terapkan fungsi $g$ terhadap \textit{temp};
+    bila AES-256 ($N_k = 8$) dan $i \bmod 8 = 4$, terapkan \textit{SubWord} saja
+    terhadap \textit{temp}.
+    \item $w[i] = w[i - N_k] \oplus \textit{temp}$.
+\end{enumerate}
+
+Fungsi $g$ adalah gabungan tiga operasi:
+\begin{enumerate}
+    \item \textbf{RotWord}: menggeser isi word satu byte ke kiri secara siklik,
+    sehingga $(a_0, a_1, a_2, a_3)$ menjadi $(a_1, a_2, a_3, a_0)$.
+    \item \textbf{SubWord}: menggantikan setiap byte dengan padanannya di S-box,
+    yaitu S-box yang sama dengan yang dipakai SubBytes.
+    \item \textbf{XOR Rcon}: meng-XOR hasilnya dengan konstanta putaran
+    $\text{Rcon}[j] = (\text{RC}[j], \code{00}, \code{00}, \code{00})$, dengan
+    $j = i / N_k$.
+\end{enumerate}
+
+Konstanta $\text{RC}[j]$ bukan daftar hafalan, melainkan deret yang dibangkitkan
+sendiri: $\text{RC}[1] = \code{01}$ dan
+$\text{RC}[j] = \code{02} \bullet \text{RC}[j-1]$, dengan $\bullet$ menyatakan
+perkalian di $\text{GF}(2^8)$. Karena itu setiap suku berikutnya adalah suku
+sebelumnya yang digandakan; perkalian dengan $\code{02}$ sama dengan menggeser satu
+bit ke kiri dan, bila ada bit yang melampaui kedelapan bit, meng-XOR-kan hasilnya
+dengan $\code{1B}$ (yaitu polinom pereduksi $x^8+x^4+x^3+x+1$ tanpa suku $x^8$).
+Itulah sebabnya deret $\text{RC}$ yang mula-mula tampak seperti deret pangkat dua
+tiba-tiba melompat pada suku kesembilan:
+
+\begin{table}[htbp]
+\centering
+\caption{Konstanta putaran $\text{RC}[1]$ sampai $\text{RC}[10]$ beserta asalnya}
+\label{tab:rcon-aes}
+\small
+\begin{tabular}{@{}l *{10}{c}@{}}
+\hline
+$j$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+\hline
+$\text{RC}[j]$ & 01 & 02 & 04 & 08 & 10 & 20 & 40 & 80 & 1B & 36 \\
+\hline
+\end{tabular}
+\sumber{NIST, FIPS PUB 197, Bagian 5.2.}
+\end{table}
+
+Baris $\text{RC}[9]$ layak diperiksa dengan tangan. Nilai sebelumnya adalah
+$\code{80}$; menggeser satu bit ke kiri menghasilkan $\code{100}$, yang melampaui
+batas 8 bit. Setelah bit kesembilan itu dibuang dan sisa $\code{00}$ di-XOR dengan
+$\code{1B}$, hasilnya $\code{1B}$. Suku berikutnya, $\text{RC}[10] = \code{02}
+\bullet \code{1B}$, tidak melampaui batas karena $\code{1B} = \code{0001\,1011}$
+hanya menempati bit ke-5 sampai ke-1, sehingga hasilnya $\code{0011\,0110} =
+\code{36}$.
+
+Peran Rcon bukan sekadar menambah variasi. Tanpa Rcon, dua word kunci putaran yang
+berjarak $N_k$ akan selalu terhubung oleh XOR sederhana, dan simetri itu dapat
+dimanfaatkan penyerang. Dengan meng-XOR-kan konstanta yang berbeda pada setiap
+kelompok, Rcon memutus keseragaman itu.
+
+\input{figures/key-expansion-aes}
+
+\subsection{Contoh Pembangkitan Kunci Putaran}
+
+Agar seluruh mekanisme di atas menjadi konkret, tinjau kunci 16 byte yang dalam
+heksadesimal berbunyi
+\[
+\textit{key} = (\code{54}\ \code{77}\ \code{6F}\ \code{20}\ \code{4F}\ \code{6E}\
+\code{65}\ \code{20}\ \code{4E}\ \code{69}\ \code{6E}\ \code{65}\ \code{20}\
+\code{54}\ \code{77}\ \code{6F}),
+\]
+yaitu teks ASCII ``Two One Nine Two''. Karena panjangnya 16 byte, $N_k = 4$ dan
+$N_r = 10$.
+
+Empat word pertama diambil langsung dari kunci:
+\[
+w[0] = (\code{54},\code{77},\code{6F},\code{20}), \quad
+w[1] = (\code{4F},\code{6E},\code{65},\code{20}),
+\]
+\[
+w[2] = (\code{4E},\code{69},\code{6E},\code{65}), \quad
+w[3] = (\code{20},\code{54},\code{77},\code{6F}).
+\]
+
+Sekarang bangkitkan $w[4]$. Karena $i = 4$ adalah kelipatan $N_k = 4$, fungsi $g$
+harus dijalankan atas $\textit{temp} = w[3]$.
+
+\textbf{Langkah 1 --- RotWord.} Menggeser $w[3]$ satu byte ke kiri secara siklik:
+\[
+w[3] = (\code{20},\code{54},\code{77},\code{6F})
+\longrightarrow
+(\code{54},\code{77},\code{6F},\code{20}).
+\]
+
+\textbf{Langkah 2 --- SubWord.} Membaca S-box pada Tabel~\ref{tab:sbox-aes} untuk
+setiap byte: S-box$(\code{54}) = \code{20}$, S-box$(\code{77}) = \code{F5}$,
+S-box$(\code{6F}) = \code{A8}$, dan S-box$(\code{20}) = \code{B7}$. Jadi
+\[
+(\code{54},\code{77},\code{6F},\code{20})
+\longrightarrow
+(\code{20},\code{F5},\code{A8},\code{B7}).
+\]
+
+\textbf{Langkah 3 --- XOR Rcon.} Untuk $i = 4$ berlaku $j = i/N_k = 1$, dan
+$\text{Rcon}[1] = (\code{01},\code{00},\code{00},\code{00})$, sehingga
+\[
+g(w[3]) = (\code{20},\code{F5},\code{A8},\code{B7}) \oplus
+(\code{01},\code{00},\code{00},\code{00}) = (\code{21},\code{F5},\code{A8},\code{B7}).
+\]
+
+\textbf{Langkah 4 --- XOR dengan $w[i-N_k]$.} Inilah langkah yang mengikat kunci
+putaran baru pada kunci semula:
+\[
+w[4] = w[0] \oplus g(w[3]) =
+(\code{54},\code{77},\code{6F},\code{20}) \oplus (\code{21},\code{F5},\code{A8},\code{B7})
+= (\code{75},\code{82},\code{C7},\code{97}).
+\]
+
+Untuk $i = 5, 6, 7$ tidak ada fungsi $g$ yang dijalankan, karena $i$ bukan kelipatan
+4; cukup XOR dengan word yang berjarak $N_k = 4$:
+\[
+w[5] = w[4] \oplus w[1] = (\code{3A},\code{EC},\code{A2},\code{B7}),
+\]
+\[
+w[6] = w[5] \oplus w[2] = (\code{74},\code{85},\code{CC},\code{D2}),
+\]
+\[
+w[7] = w[6] \oplus w[3] = (\code{54},\code{D1},\code{BB},\code{BD}).
+\]
+Keempat word inilah yang menyusun kunci putaran pertama. Dituliskan sebagai
+matriks state, dengan urutan kolom seperti pada Persamaan~\eqref{eq:aes-state}:
+\[
+K_0 =
+\begin{bmatrix}
+\code{54} & \code{4F} & \code{4E} & \code{20} \\
+\code{77} & \code{6E} & \code{69} & \code{54} \\
+\code{6F} & \code{65} & \code{6E} & \code{77} \\
+\code{20} & \code{20} & \code{65} & \code{6F}
+\end{bmatrix},
+\qquad
+K_1 =
+\begin{bmatrix}
+\code{75} & \code{3A} & \code{74} & \code{54} \\
+\code{82} & \code{EC} & \code{85} & \code{D1} \\
+\code{C7} & \code{A2} & \code{CC} & \code{BB} \\
+\code{97} & \code{B7} & \code{D2} & \code{BD}
+\end{bmatrix}.
+\]
+$K_0$ tidak lain adalah kunci pengguna yang dipetakan ke matriks state, dan $K_1$
+sama sekali tidak menyerupainya --- pertanda bahwa KeyExpansion bekerja
+sebagaimana mestinya.
+
+Melanjutkan proses sampai $i = 43$ menghasilkan kunci putaran terakhir
+\[
+K_{10} =
+\begin{bmatrix}
+\code{A1} & \code{50} & \code{BE} & \code{1D} \\
+\code{EF} & \code{C1} & \code{6E} & \code{55} \\
+\code{C4} & \code{C0} & \code{18} & \code{A3} \\
+\code{56} & \code{10} & \code{A1} & \code{DD}
+\end{bmatrix}.
+\]
+Perhatikan bahwa tidak ada satu byte pun pada $K_{10}$ yang dapat ditelusuri
+balik ke kunci pengguna secara langsung; seluruh 11 kunci putaran itu merupakan
+fungsi yang menyebar dari ke-16 byte kunci awal.
+
+\begin{quote}
+\small\textbf{Catatan koreksi.} Contoh ``Two One Nine Two'' di atas sering dikutip
+dengan beberapa angka yang keliru. Nilai yang benar --- dan konsisten dengan tabel
+S-box resmi FIPS PUB 197 --- adalah $w[4] = \code{7582C797}$,
+$w[5] = \code{3AECA2B7}$, $w[6] = \code{7485CCD2}$, dan $w[7] = \code{54D1BBBD}$.
+Kekeliruan lazim bersumber dari satu salah ketik kecil pada langkah RotWord: bila
+$w[3]$ ditulis $(\code{20},\code{54},\code{77},\code{6E})$ --- dengan
+$\code{6E}$ sebagai ganti $\code{6F}$ --- maka SubWord menghasilkan
+$(\code{20},\code{F5},\code{9F},\code{B7})$ dan seluruh angka berikutnya bergeser
+mengikutinya. Seluruh nilai pada buku ini telah diperiksa ulang dengan program
+pada \code{code/python/aes\_uji.py} yang membangun S-box dari nol dan mencocokkan
+hasilnya dengan vektor uji resmi FIPS PUB 197.
+\end{quote}
+
+\subsection{Kekhususan AES-192 dan AES-256}
+
+Dua varian AES yang lebih panjang kuncinya memerlukan penanganan tambahan, dan
+penanganan itu berbeda untuk keduanya.
+
+Untuk \textbf{AES-192} ($N_k = 6$), seluruh 52 word dibangkitkan dengan aturan
+yang sama seperti AES-128, hanya saja modulusnya enam: fungsi $g$ dijalankan
+setiap kali $i$ habis dibagi 6, yaitu pada $i = 6, 12, 18, \dots$, dan
+$\text{Rcon}$ yang dipakai adalah $\text{Rcon}[i/6]$, yaitu
+$\text{Rcon}[1]$ sampai $\text{Rcon}[8]$. Karena $N_r = 12$, diperlukan
+$4(12+1) = 52$ word.
+
+Untuk \textbf{AES-256} ($N_k = 8$), aturan itu saja tidak cukup, dan inilah
+kekhususan yang paling sering dilupakan. Selain fungsi $g$ pada setiap kelipatan
+8, dijalankan pula \textbf{SubWord tambahan} ketika $i \bmod 8 = 4$, yaitu pada
+$i = 12, 20, 28, \dots$ Jadi untuk AES-256 berlaku dua syarat sekaligus:
+\begin{itemize}
+    \item bila $i \bmod 8 = 0$: jalankan RotWord, lalu SubWord, lalu XOR Rcon;
+    \item bila $i \bmod 8 = 4$: jalankan SubWord saja, tanpa RotWord dan tanpa Rcon.
+\end{itemize}
+Alasannya mudah dilihat. Tanpa SubWord tambahan itu, delapan word berurutan
+$w[8], w[9], \dots, w[15]$ hanya akan terhubung satu sama lain oleh XOR sederhana,
+sehingga sebagian kunci putaran menjadi fungsi linier dari kunci semula. Sisipan
+SubWord pada titik tengah siklus memutus keteraturan itu. Karena $N_r = 14$,
+seluruhnya diperlukan $4(14+1) = 60$ word. Perbedaan ketiga varian itu dirangkum
+pada Tabel~\ref{tab:key-expansion-varian}.
+
+\begin{table}[htbp]
+\centering
+\caption{Perbandingan proses KeyExpansion pada ketiga varian AES}
+\label{tab:key-expansion-varian}
+\small
+\begin{tabularx}{\linewidth}{@{}l c c c c >{\raggedright\arraybackslash}X@{}}
+\hline
+\textbf{Varian} & $N_k$ & $N_r$ & \textbf{Word} & \textbf{Kunci} & \textbf{Aturan khusus} \\
+ & & & \textbf{total} & \textbf{putaran} & \\
+\hline
+AES-128 & 4 & 10 & 44 & 11 & $g$ pada $i \bmod 4 = 0$ \\
+AES-192 & 6 & 12 & 52 & 13 & $g$ pada $i \bmod 6 = 0$ \\
+AES-256 & 8 & 14 & 60 & 15 & $g$ pada $i \bmod 8 = 0$; SubWord pada $i \bmod 8 = 4$ \\
+\hline
+\end{tabularx}
+\sumber{Munir, \textit{IF4020 Kriptografi}, ITB; NIST, FIPS PUB 197.}
+\end{table}
+
+\subsection{Mengapa Jadwal Kunci Diperumit}
+
+Sekilas jadwal kunci AES tampak berlebihan: mengapa tidak cukup membangkitkan
+kunci putaran sebagai potongan-potongan sederhana dari kunci pengguna, atau
+sekadar mengulanginya? Jawabannya terletak pada apa yang harus dijamin oleh
+sebuah jadwal kunci.
+
+Pertama, jadwal kunci harus menghancurkan setiap hubungan linier yang mudah
+dikenali antara kunci eksternal dan kunci-kunci putaran. Bila $K_i$ dapat
+dinyatakan sebagai fungsi linier dari $K_0$, penyerang dapat menyusun sistem
+persamaan linier atas bit kunci dan menyelesaikannya, sehingga seluruh kesulitan
+penelusuran menyeluruh menjadi hilang. Karena alasan itulah fungsi $g$ memuat
+SubWord, satu-satunya operasi nirlanjar dalam keseluruhan jadwal kunci.
+
+Kedua, kunci-kunci putaran tidak boleh memiliki bit yang saling meniadakan. Bila
+dua byte kunci putaran berbeda hanya karena penukaran posisi, penyerang dapat
+memanfaatkannya untuk memangkas ruang kunci. RotWord dan Rcon hadir untuk
+mengacak posisi dan memutus keseragaman antarputaran.
+
+Ketiga, kunci-kunci putaran harus berbeda secara menyeluruh. Bila $K_i = K_j$ untuk
+$i \neq j$, seluruh putaran antara kedua kunci itu akan saling membatalkan
+sebagian dan cipher kehilangan sejumlah putaran efektif. Peran Rcon adalah
+menjamin hal itu tidak terjadi: karena deret $\text{RC}[j]$ tidak berulang dalam
+rentang $j$ yang dipakai, tidak ada dua kunci putaran yang dapat menjadi identik
+kecuali kunci eksternalnya memang dipilih khusus untuk itu.
+
+Perlu dicatat bahwa justru pada bagian inilah AES mendapat perhatian paling
+besar dari para kriptanalis. Serangan yang paling berhasil terhadap AES versi
+putaran-penuh bukanlah serangan terhadap transformasi putarannya, melainkan
+serangan yang memanfaatkan kelemahan jadwal kunci dalam model \textit{related-key},
+yaitu model yang mengandaikan penyerang dapat meminta enkripsi di bawah beberapa
+kunci yang berhubungan secara matematis. Dalam model serangan biasa --- penyerang
+hanya memiliki pasangan plainteks dan cipherteks di bawah satu kunci yang tidak
+diketahui --- jadwal kunci AES tetap bertahan. Perancang Rijndael sendiri
+mencurahkan bagian terpanjang dari bukunya untuk membahas kriteria perancangan dan
+analisis keamanan jadwal kunci ini \citep{daemen2002}.

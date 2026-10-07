@@ -1,53 +1,571 @@
 \section{Mekanisme Kerja AES}
-Berbeda dengan DES yang menggunakan Jaringan Feistel, AES menggunakan struktur \textbf{Substitusi-Permutasi} (\textit{Substitution-Permutation Network}). Data diproses dalam orientasi \textit{byte} menggunakan matriks dua dimensi berukuran $4 \times 4$ yang disebut \textbf{state}.
+\label{sec:mekanisme-aes}
+
+Berbeda dengan DES yang memakai jaringan Feistel, AES memakai struktur
+\textbf{jaringan substitusi--permutasi} (\textit{substitution-permutation network},
+SPN). Perbedaan filosofisnya dalam: pada jaringan Feistel, separuh blok dibiarkan
+lewat tanpa diubah pada setiap putaran, dan keamanan diperoleh dari banyaknya
+putaran. Pada SPN, \emph{seluruh} bit blok diubah pada setiap putaran --- disubstitusi
+lalu dipermutasi --- sehingga difusi tercapai jauh lebih cepat, dan sebagai
+kompensasinya jumlah putaran dapat ditekan.
+
+Dua ciri teknis AES mengikuti langsung dari pilihan itu. \emph{Pertama}, AES
+beroperasi pada orientasi \textbf{byte}, bukan bit seperti DES. Seluruh tabel dan
+operasinya bekerja atas satuan 8 bit, dan tidak ada satu pun permutasi bit di
+dalamnya. \emph{Kedua}, AES tidak memakai S-box yang berbeda-beda per posisi;
+satu S-box yang sama dipakai untuk seluruh byte pada setiap putaran. Kedua ciri itu
+membuat AES jauh lebih mudah diimplementasikan pada prosesor berarsitektur byte
+maupun pada perangkat keras yang lebar jalurnya kelipatan 8.
 
 \subsection{Representasi State}
-Blok plainteks 128-bit dipetakan ke dalam matriks \texttt{state} $4 \times 4$ sebagai berikut:
+
+Selama perhitungan berlangsung, data yang sedang diproses tidak disimpan sebagai
+larik 16 byte yang lurus, melainkan sebagai matriks dua dimensi berukuran
+$4 \times 4$ byte yang disebut \textbf{state}. Kebiasaan ini memudahkan penulisan
+transformasi kolom (\textit{MixColumns}) dan transformasi baris
+(\textit{ShiftRows}) secara terpisah.
+
+Pada awal enkripsi, 16 byte masukan $in_0, in_1, \dots, in_{15}$ disalin ke dalam
+state secara \textbf{kolom demi kolom}: empat byte pertama mengisi kolom pertama,
+empat byte berikutnya kolom kedua, dan seterusnya. Secara formal, dengan $r$ nomor
+baris dan $c$ nomor kolom,
+\begin{equation}
+s_{r,c} = in_{r + 4c}, \qquad r, c \in \{0,1,2,3\}.
+\label{eq:aes-state}
+\end{equation}
+Jadi urutan masukan $in_0, in_1, in_2, in_3$ menempati baris-baris kolom ke-0, bukan
+baris ke-0. Untuk data contoh $\code{00}\,\code{01}\,\code{02}\,\dots\,\code{0F}$,
+hasil pemetaan itu adalah
 \[
-\text{State} = \begin{bmatrix}
-s_{0,0} & s_{0,1} & s_{0,2} & s_{0,3} \\
-s_{1,0} & s_{1,1} & s_{1,2} & s_{1,3} \\
-s_{2,0} & s_{2,1} & s_{2,2} & s_{2,3} \\
-s_{3,0} & s_{3,1} & s_{3,2} & s_{3,3}
-\end{bmatrix}
+\text{state} =
+\begin{bmatrix}
+\code{00} & \code{04} & \code{08} & \code{0C} \\
+\code{01} & \code{05} & \code{09} & \code{0D} \\
+\code{02} & \code{06} & \code{0A} & \code{0E} \\
+\code{03} & \code{07} & \code{0B} & \code{0F}
+\end{bmatrix}.
 \]
 
-\subsection{Tahapan Enkripsi}
-Proses enkripsi AES terdiri dari putaran awal, beberapa putaran utama, dan satu putaran akhir.
+\begin{center}
+\small
+\begin{tabular}{@{}c*{16}{c}@{}}
+\hline
+\textbf{Posisi} & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 \\
+\hline
+\textbf{Baris}  & 0 & 1 & 2 & 3 & 0 & 1 & 2 & 3 & 0 & 1 & 2 & 3 & 0 & 1 & 2 & 3 \\
+\textbf{Kolom}  & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 & 3 & 3 & 3 & 3 \\
+\hline
+\end{tabular}
+\end{center}
 
-\subsubsection{Initial Round}
-\begin{itemize}
-    \item \textbf{AddRoundKey}: Melakukan operasi XOR antara \texttt{state} awal (plainteks) dengan kunci awal (\textit{cipher key}).
-\end{itemize}
+Pada akhir enkripsi, state disalin kembali ke larik keluaran dengan urutan yang
+sama, yaitu kolom demi kolom, sehingga pemetaan keluarnya adalah kebalikan dari
+Persamaan~\eqref{eq:aes-state}. Dalam banyak deskripsi algoritma, kedua pemetaan
+itu diberi nama fungsi tersendiri, misalnya \code{CopyPlaintextToState} untuk
+pemetaan masuk dan \code{CopyStateToCiphertext} untuk pemetaan keluar.
 
-\subsubsection{Main Rounds (Putaran Utama)}
-Setiap putaran utama terdiri dari empat transformasi:
-\begin{enumerate}
-    \item \textbf{SubBytes}: Substitusi setiap byte dalam \texttt{state} menggunakan tabel \textbf{S-box} non-linear. Tahap ini memberikan efek \textit{confusion}.
-    \item \textbf{ShiftRows}: Pergeseran siklik (\textit{wrapping}) pada baris-baris matriks \texttt{state}. Baris 0 tetap, baris 1 geser 1 byte, baris 2 geser 2 byte, dan baris 3 geser 3 byte. Tahap ini memberikan efek \textit{diffusion}.
-    \item \textbf{MixColumns}: Operasi perkalian matriks antara \texttt{state} dengan matriks konstanta tetap dalam field $\text{GF}(2^8)$. Tahap ini semakin memperkuat difusi antar kolom.
-    \item \textbf{AddRoundKey}: XOR antara \texttt{state} hasil transformasi dengan kunci putaran (\textit{round key}) saat itu.
-\end{enumerate}
+\important{Konvensi kolom ini bersifat mengikat untuk kompatibilitas.} Bila state
+dipetakan baris demi baris, hasil enkripsi akan berbeda dan tidak dapat
+dipertukarkan dengan implementasi AES mana pun. Kesalahan pemetaan state adalah
+salah satu penyebab kegagalan interoperasi yang paling sering terjadi pada
+implementasi mandiri.
 
-\subsubsection{Final Round (Putaran Akhir)}
-Putaran terakhir hampir sama dengan putaran utama, namun \textbf{tanpa tahap MixColumns}:
-\[ \text{SubBytes} \rightarrow \text{ShiftRows} \rightarrow \text{AddRoundKey} \]
+\subsection{Transformasi SubBytes}
 
+\textit{SubBytes} menggantikan setiap byte state secara mandiri (\textit{byte-wise})
+menurut sebuah tabel substitusi 256 entri yang disebut \textbf{S-box}. Karena satu
+S-box melayani semua posisi, transformasi ini tidak menggeser data: byte pada
+posisi $(r,c)$ tetap berada di posisi $(r,c)$, hanya nilainya yang berubah. Untuk
+$s_{r,c} = xy$ dalam notasi heksadesimal, yaitu dengan nibble atas $x$ dan nibble
+bawah $y$,
+\begin{equation}
+s'_{r,c} = \text{S-box}(x, y).
+\label{eq:aes-subbytes}
+\end{equation}
+Contohnya, byte $\code{53}$ disubstitusi menjadi $\code{ED}$ karena S-box baris 5
+kolom 3 bernilai $\code{ED}$, sedangkan $\code{00}$ menjadi $\code{63}$.
+
+SubBytes adalah \textbf{satu-satunya operasi nirlanjar} di dalam AES. Skema
+penyandian yang seluruhnya linier mudah dipecahkan, sebab setiap bit keluarannya
+dapat dinyatakan sebagai gabungan linier bit masukan dan kunci; dengan kata lain,
+sistem persamaan linier atas bit-bit tersebut dapat diselesaikan. SubBytes-lah yang
+mematahkan sifat itu, dan seluruh ketahanan AES terhadap kriptanalisis linier dan
+diferensial bertumpu padanya. Inilah alasan mengapa operasi ini tidak boleh
+digantikan oleh tabel sembarang: S-box AES dibangun dengan perhitungan yang
+terjamin, bukan diisi acak \citep{daemen2002}, dan konstruksinya dibahas pada
+Sub-bab~\ref{sec:gf-aes}.
+
+Tabel~\ref{tab:sbox-aes} memuat S-box AES secara lengkap. Perhatikan bahwa nilainya
+tampak acak, dan memang itulah yang dikehendaki: tidak ada pola yang dapat
+dimanfaatkan penyerang.
+
+\begin{table}[htbp]
+\centering
+\caption{S-box AES: substitusi 8 bit ke 8 bit yang dipakai oleh SubBytes dan SubWord}
+\label{tab:sbox-aes}
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{@{}c*{16}{c}@{}}
+\hline
+      & 0  & 1  & 2  & 3  & 4  & 5  & 6  & 7  & 8  & 9  & A  & B  & C  & D  & E  & F \\
+\hline
+0 & 63 & 7C & 77 & 7B & F2 & 6B & 6F & C5 & 30 & 01 & 67 & 2B & FE & D7 & AB & 76 \\
+1 & CA & 82 & C9 & 7D & FA & 59 & 47 & F0 & AD & D4 & A2 & AF & 9C & A4 & 72 & C0 \\
+2 & B7 & FD & 93 & 26 & 36 & 3F & F7 & CC & 34 & A5 & E5 & F1 & 71 & D8 & 31 & 15 \\
+3 & 04 & C7 & 23 & C3 & 18 & 96 & 05 & 9A & 07 & 12 & 80 & E2 & EB & 27 & B2 & 75 \\
+4 & 09 & 83 & 2C & 1A & 1B & 6E & 5A & A0 & 52 & 3B & D6 & B3 & 29 & E3 & 2F & 84 \\
+5 & 53 & D1 & 00 & ED & 20 & FC & B1 & 5B & 6A & CB & BE & 39 & 4A & 4C & 58 & CF \\
+6 & D0 & EF & AA & FB & 43 & 4D & 33 & 85 & 45 & F9 & 02 & 7F & 50 & 3C & 9F & A8 \\
+7 & 51 & A3 & 40 & 8F & 92 & 9D & 38 & F5 & BC & B6 & DA & 21 & 10 & FF & F3 & D2 \\
+8 & CD & 0C & 13 & EC & 5F & 97 & 44 & 17 & C4 & A7 & 7E & 3D & 64 & 5D & 19 & 73 \\
+9 & 60 & 81 & 4F & DC & 22 & 2A & 90 & 88 & 46 & EE & B8 & 14 & DE & 5E & 0B & DB \\
+A & E0 & 32 & 3A & 0A & 49 & 06 & 24 & 5C & C2 & D3 & AC & 62 & 91 & 95 & E4 & 79 \\
+B & E7 & C8 & 37 & 6D & 8D & D5 & 4E & A9 & 6C & 56 & F4 & EA & 65 & 7A & AE & 08 \\
+C & BA & 78 & 25 & 2E & 1C & A6 & B4 & C6 & E8 & DD & 74 & 1F & 4B & BD & 8B & 8A \\
+D & 70 & 3E & B5 & 66 & 48 & 03 & F6 & 0E & 61 & 35 & 57 & B9 & 86 & C1 & 1D & 9E \\
+E & E1 & F8 & 98 & 11 & 69 & D9 & 8E & 94 & 9B & 1E & 87 & E9 & CE & 55 & 28 & DF \\
+F & 8C & A1 & 89 & 0D & BF & E6 & 42 & 68 & 41 & 99 & 2D & 0F & B0 & 54 & BB & 16 \\
+\hline
+\end{tabular}
+\sumber{NIST, FIPS PUB 197, Tabel 4.}
+\end{table}
+
+Untuk dekripsi kita memerlukan tabel kebalikannya: pemetaan dari byte hasil
+kembali ke byte asalnya. Karena S-box adalah permutasi atas 256 byte --- setiap
+byte masukan memetakan ke byte keluaran yang berbeda --- kebalikannya selalu ada
+dan tunggal. Tabel~\ref{tab:inv-sbox-aes} memuatnya. Perhatikan bahwa S-box dan
+kebalikannya adalah dua tabel yang sama sekali berbeda, bukan sekadar pembacaan
+terbalik: $\text{S-box}(\code{00}) = \code{63}$, tetapi
+$\text{S-box}^{-1}(\code{00}) = \code{52}$.
+
+\subsection{Transformasi ShiftRows}
+
+\textit{ShiftRows} melakukan permutasi dengan menggeser secara siklik
+(\textit{wrapping}) tiga baris terakhir state ke kiri. Besar pergeseran bergantung
+pada nomor baris: baris 0 tidak digeser, baris 1 digeser 1 byte, baris 2 digeser
+2 byte, dan baris 3 digeser 3 byte. Karena panjang setiap baris tepat 4 byte,
+pergeseran sejauh $r$ byte pada baris ke-$r$ membuat byte yang keluar dari ujung
+kiri masuk kembali di ujung kanan. Secara formal,
+\begin{equation}
+s'_{r,c} = s_{r,\,(c + r) \bmod 4}.
+\label{eq:aes-shiftrows}
+\end{equation}
+
+Perhatikanlah apa yang dilakukan transformasi ini terhadap kolom. Keempat byte
+yang semula menempati kolom yang berbeda kini berkumpul di kolom yang sama. Pada
+state contoh di atas, baris-barisnya bergerak sebagai berikut:
+\[
+\begin{bmatrix}
+\code{00} & \code{04} & \code{08} & \code{0C} \\
+\code{01} & \code{05} & \code{09} & \code{0D} \\
+\code{02} & \code{06} & \code{0A} & \code{0E} \\
+\code{03} & \code{07} & \code{0B} & \code{0F}
+\end{bmatrix}
+\longrightarrow
+\begin{bmatrix}
+\code{00} & \code{04} & \code{08} & \code{0C} \\
+\code{05} & \code{09} & \code{0D} & \code{01} \\
+\code{0A} & \code{0E} & \code{02} & \code{06} \\
+\code{0F} & \code{03} & \code{07} & \code{0B}
+\end{bmatrix}.
+\]
+Sekarang kolom ke-0 memuat $\code{00}, \code{05}, \code{0A}, \code{0F}$ --- empat
+byte yang tadinya tersebar pada empat kolom berbeda. Di sinilah letak difusinya,
+dan inilah sebabnya ShiftRows harus bekerja sama dengan MixColumns: ShiftRows
+sendirian hanya menukar posisi, sedangkan MixColumns sendirian hanya mencampur
+di dalam satu kolom. Digabungkan, keduanya menyebarkan pengaruh satu byte ke
+seluruh 16 byte hanya dalam dua putaran.
+
+Gambar~\ref{fig:shiftrows-aes} memperlihatkan pergeseran itu secara visual.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.85\linewidth, height=0.82\textheight, keepaspectratio]{figures/alur-enkripsi-aes.png}
-    \caption{Alur enkripsi AES-128: kunci diekspansi menjadi \textit{round key}, dan \textit{state} diproses melalui SubBytes, ShiftRows, serta MixColumns selama 10 putaran}
-    \label{fig:alur-enkripsi-aes}
+    \includegraphics[width=0.95\linewidth, height=0.55\textheight, keepaspectratio]{figures/shiftrows-aes.png}
+    \caption{Transformasi ShiftRows pada AES: baris ke-$r$ matriks \textit{state} digeser secara siklik ke kiri sejauh $r$ byte}
+    \label{fig:shiftrows-aes}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
 
 \input{figures/subbytes-aes}
 
+\subsection{Transformasi MixColumns}
+
+\textit{MixColumns} memperkuat difusi dengan mengalikan setiap kolom state dengan
+sebuah matriks tetap, dengan seluruh perkalian dan penjumlahan dilakukan di dalam
+medan berhingga $\text{GF}(2^8)$ (lihat Sub-bab~\ref{sec:gf-aes}):
+\begin{equation}
+\begin{bmatrix}
+s'_{0,c} \\ s'_{1,c} \\ s'_{2,c} \\ s'_{3,c}
+\end{bmatrix}
+=
+\begin{bmatrix}
+02 & 03 & 01 & 01 \\
+01 & 02 & 03 & 01 \\
+01 & 01 & 02 & 03 \\
+03 & 01 & 01 & 02
+\end{bmatrix}
+\begin{bmatrix}
+s_{0,c} \\ s_{1,c} \\ s_{2,c} \\ s_{3,c}
+\end{bmatrix}.
+\label{eq:aes-mixcolumns}
+\end{equation}
+Dituliskan per komponen, keempat byte keluaran kolom ke-$c$ adalah
+\begin{equation}
+\begin{aligned}
+s'_{0,c} &= (\code{02} \bullet s_{0,c}) \oplus (\code{03} \bullet s_{1,c}) \oplus s_{2,c} \oplus s_{3,c}, \\
+s'_{1,c} &= s_{0,c} \oplus (\code{02} \bullet s_{1,c}) \oplus (\code{03} \bullet s_{2,c}) \oplus s_{3,c}, \\
+s'_{2,c} &= s_{0,c} \oplus s_{1,c} \oplus (\code{02} \bullet s_{2,c}) \oplus (\code{03} \bullet s_{3,c}), \\
+s'_{3,c} &= (\code{03} \bullet s_{0,c}) \oplus s_{1,c} \oplus s_{2,c} \oplus (\code{02} \bullet s_{3,c}).
+\end{aligned}
+\label{eq:aes-mixcolumns-komponen}
+\end{equation}
+Simbol $\bullet$ menandai perkalian di $\text{GF}(2^8)$, sedangkan $\oplus$ adalah
+penjumlahan di medan yang sama --- yang, seperti akan kita lihat, tidak lain
+daripada operasi XOR biasa.
+
+Matriks pada Persamaan~\eqref{eq:aes-mixcolumns} disebut \emph{sirkulan}: setiap
+baris berikutnya adalah baris sebelumnya yang digeser satu posisi ke kanan dengan
+pembungkusan. Ciri itu membuatnya hanya ditentukan oleh baris pertamanya,
+$(\,02\ 03\ 01\ 01\,)$, sehingga seluruh operasi dapat diimplementasikan sebagai
+campuran geser dan XOR tanpa tabel. Karena baris pertamanya memuat tiga koefisien
+berbeda, matriks ini tergolong matriks MDS (\textit{maximum distance separable}),
+yaitu matriks yang menjamin bahwa perubahan pada satu byte masukan pasti mengubah
+seluruh empat byte keluaran kolom itu. Sifat itulah yang membuat MixColumns
+memberi difusi penuh pada tingkat kolom hanya dalam satu langkah.
+
+Ada pula cara memandang yang lebih halus dan berguna untuk memahami hubungannya
+dengan dekripsi. Bila kolom ke-$c$ dipandang sebagai polinom derajat tiga
+$s(x) = s_{3,c}x^3 + s_{2,c}x^2 + s_{1,c}x + s_{0,c}$, maka
+Persamaan~\eqref{eq:aes-mixcolumns} setara dengan
+\begin{equation}
+s'(x) = a(x) \otimes s(x) \bmod (x^4 + 1), \qquad
+a(x) = \code{03}x^3 + \code{01}x^2 + \code{01}x + \code{02},
+\label{eq:aes-mixcolumns-polinom}
+\end{equation}
+dengan $\otimes$ menyatakan perkalian polinom yang koefisiennya dihitung di
+$\text{GF}(2^8)$ dan hasilnya direduksi modulo $x^4+1$. Reduksi modulo $x^4+1$
+persis sama dengan ``membungkus'' koefisien yang derajatnya melebihi 3, itulah
+sebabnya matriksnya sirkulan. Bentuk polinomial ini memperlihatkan bahwa
+MixColumns sesungguhnya mengalikan kolom dengan sebuah polinom tetap; karena
+polinom itu selalu sama, dekripsinya cukup mengalikan dengan polinom kebalikannya.
+
+\subsection{Transformasi AddRoundKey}
+
+\textit{AddRoundKey} melakukan operasi XOR antara state dengan kunci putaran yang
+bersangkutan, dan hasilnya disimpan kembali ke state:
+\begin{equation}
+s'_{r,c} = s_{r,c} \oplus k_{r,c},
+\label{eq:aes-addroundkey}
+\end{equation}
+dengan $k_{r,c}$ adalah byte state kunci putaran pada posisi yang sama. Kunci
+putaran berukuran sama dengan blok, yaitu 128 bit, sehingga operasi ini
+dilakukan byte demi byte tanpa pergeseran apa pun.
+
+AddRoundKey adalah satu-satunya transformasi putaran yang memakai kunci, dan
+merupakan satu-satunya transformasi yang bersifat \emph{involutif}: menerapkannya
+dua kali dengan kunci yang sama akan mengembalikan keadaan semula, sebab
+$x \oplus k \oplus k = x$. Sifat itu membuat AddRoundKey menjadi titik balik yang
+nyaman pada dekripsi, dan itulah sebabnya urutan transformasi pada dekripsi
+dapat disusun sebagai kebalikan cermin dari urutan pada enkripsi.
+
+\subsection{Alur Lengkap Enkripsi}
+
+Dengan keempat transformasi di atas, seluruh algoritma enkripsi AES dapat
+dirumuskan secara ringkas. Pada putaran awal state dikenai satu kali AddRoundKey
+dengan kunci $K_0$; sesudah itu dijalankan $N_r - 1$ putaran utama yang masing-masing
+terdiri atas SubBytes, ShiftRows, MixColumns, dan AddRoundKey; putaran terakhir
+menjalankan SubBytes, ShiftRows, dan AddRoundKey tanpa MixColumns.
+\begin{equation}
+\begin{aligned}
+&\text{state} \leftarrow \text{plainteks}, \\
+&\text{state} \leftarrow \text{state} \oplus K_0, \\
+&\textbf{untuk } i = 1 \text{ sampai } N_r - 1: \\
+&\qquad \text{state} \leftarrow \text{MixColumns}(\text{ShiftRows}(\text{SubBytes}(\text{state}))) \oplus K_i, \\
+&\text{state} \leftarrow \text{ShiftRows}(\text{SubBytes}(\text{state})) \oplus K_{N_r}, \\
+&\text{cipherteks} \leftarrow \text{state}.
+\end{aligned}
+\label{eq:aes-enkripsi}
+\end{equation}
+Gambar~\ref{fig:alur-enkripsi-aes} memperlihatkan alur yang sama dalam bentuk
+diagram.
+
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\linewidth, height=0.82\textheight, keepaspectratio]{figures/shiftrows-aes.png}
-    \caption{Transformasi ShiftRows pada AES: baris ke-$r$ matriks \textit{state} digeser secara siklik ke kiri sejauh $r$ byte}
-    \label{fig:shiftrows-aes}
+    \includegraphics[width=0.85\linewidth, height=0.75\textheight, keepaspectratio]{figures/alur-enkripsi-aes.png}
+    \caption{Alur enkripsi AES-128: kunci diekspansi menjadi \textit{round key}, dan \textit{state} diproses melalui SubBytes, ShiftRows, serta MixColumns selama 10 putaran}
+    \label{fig:alur-enkripsi-aes}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
+
+Pertanyaan yang wajar muncul: mengapa MixColumns dihilangkan pada putaran
+terakhir, padahal menghilangkannya justru membuat putaran terakhir berbeda dari
+putaran-putaran sebelumnya? Jawabannya bukan karena MixColumns tidak diperlukan,
+melainkan karena pada putaran terakhir ia \emph{tidak lagi menambah apa pun}.
+Perhatikan bahwa setiap putaran diakhiri AddRoundKey, yaitu XOR dengan sebuah
+kunci. Karena MixColumns adalah operasi linier atas keadaan state, ia dapat
+dipindahkan melewati AddRoundKey dengan cara menggantinya memakai kunci putaran
+yang telah dicampur sendiri:
+\[
+\text{MixColumns}(\text{state} \oplus K) = \text{MixColumns}(\text{state}) \oplus \text{MixColumns}(K).
+\]
+Jadi seandainya MixColumns tetap dipasang di putaran terakhir, hasilnya sama saja
+dengan menjalankan AES tanpa MixColumns di putaran terakhir dengan kunci putaran
+terakhir yang telah dicampur lebih dahulu. Karena kesetaraan itu, MixColumns di
+putaran terakhir hanya membuang waktu tanpa menambah keamanan sedikit pun, dan
+karena itu dibuang. Sebagai akibat tambahan, struktur enkripsi dan dekripsi
+menjadi simetris: keduanya sama-sama diakhiri oleh satu transformasi non-linier
+diikuti satu AddRoundKey.
+
+Yang perlu dicatat, AES mencapai difusi penuh jauh lebih cepat daripada DES.
+Setelah satu putaran, satu byte telah memengaruhi satu kolom; setelah dua putaran,
+ia telah memengaruhi seluruh 16 byte state. Sebagai perbandingan, jaringan Feistel
+seperti DES memerlukan sekitar dua kali lebih banyak putaran untuk mencapai
+penyebaran serupa, dan itulah sebabnya AES cukup dengan 10 putaran sementara DES
+memerlukan 16 putaran atas blok yang justru lebih kecil.
+
+\subsection{Dekripsi AES}
+
+Bagian ini membahas bagian yang paling sering terlewatkan ketika AES diperkenalkan
+secara ringkas: bagaimana cipherteks dikembalikan menjadi plainteks. Pada DES kita
+tidak pernah memerlukannya, karena fungsi putarannya tidak perlu dibalik. Pada AES,
+kebutuhan itu muncul dengan sendirinya, dan konsekuensinya cukup besar:
+sebuah implementasi AES harus menyediakan tabel dan matriks tambahan yang khusus
+dipakai untuk dekripsi.
+
+Setiap putaran enkripsi adalah rangkaian
+$\text{AddRoundKey} \circ \text{MixColumns} \circ \text{ShiftRows} \circ \text{SubBytes}$,
+dan untuk membalikkannya rangkaian itu harus dijalankan terbalik dengan setiap
+transformasi diganti kebalikannya. Tinjau satu putaran utama dengan state masukan
+$T$ dan kunci putaran $K_i$; keluarannya adalah
+\[
+U = \text{MixColumns}\bigl(\text{ShiftRows}(\text{SubBytes}(T))\bigr) \oplus K_i .
+\]
+Langkah pertamanya membatalkan AddRoundKey --- cukup XOR dengan $K_i$ sekali lagi,
+sebab transformasi itu involutif --- lalu InvMixColumns, InvShiftRows, dan
+terakhir InvSubBytes:
+\begin{equation}
+T = \text{InvSubBytes}\Bigl(\text{InvShiftRows}\bigl(\text{InvMixColumns}(U \oplus K_i)\bigr)\Bigr).
+\label{eq:aes-dekripsi-putaran}
+\end{equation}
+
+Susunan yang benar-benar dipakai standar \citep{fips197} --- dan yang
+diimplementasikan program pada \code{code/python/aes\_uji.py} --- menuliskan
+kebalikan itu dalam bentuk yang sedikit berbeda, walaupun hasilnya sama:
+\begin{equation}
+\begin{aligned}
+&\text{state} \leftarrow \text{cipherteks}, \\
+&\text{state} \leftarrow \text{state} \oplus K_{N_r}, \\
+&\textbf{untuk } i = N_r - 1 \text{ sampai } 1: \\
+&\qquad \text{state} \leftarrow \text{InvMixColumns}\bigl(\text{InvSubBytes}(\text{InvShiftRows}(\text{state})) \oplus K_i\bigr), \\
+&\text{state} \leftarrow \text{InvSubBytes}(\text{InvShiftRows}(\text{state})) \oplus K_0, \\
+&\text{plainteks} \leftarrow \text{state}.
+\end{aligned}
+\label{eq:aes-dekripsi}
+\end{equation}
+
+Perbedaannya hanya soal penempatan, bukan soal urutan operasi. Kedua susunan
+mengerjakan operasi yang sama atas nilai yang sama; yang bergeser hanyalah batas
+antariterasi. Pada Persamaan~\eqref{eq:aes-dekripsi-putaran}, hasil sementara
+$\text{InvMixColumns}(T_i \oplus K_i) = \text{ShiftRows}(\text{SubBytes}(T_{i-1}))$
+langsung dibalik oleh InvShiftRows dan InvSubBytes di akhir iterasi ke-$i$. Pada
+Persamaan~\eqref{eq:aes-dekripsi}, nilai sementara yang sama itu justru diwariskan
+utuh ke iterasi berikutnya, dan pasangan InvShiftRows--InvSubBytes baru dijalankan
+pada langkah pertama iterasi itu. Jadi state yang dibawa dari satu iterasi ke
+iterasi berikutnya adalah state ``setengah jadi'' yang masih tertutup oleh
+ShiftRows dan SubBytes, dan penutup itulah yang dibuka lebih dahulu; sebagai
+imbalannya, susunan ini membuat badan putaran dekripsi seragam untuk semua
+iterasi.
+
+Dua tempat perlu diperhatikan. Pada iterasi pertama ($i = N_r - 1$), pasangan
+InvShiftRows--InvSubBytes membalik dua transformasi terakhir dari putaran
+terakhir, yang karena tanpa MixColumns langsung menghasilkan state pada akhir
+putaran $N_r - 1$. Pada iterasi terakhir ($i = 1$), state yang tersisa adalah
+$\text{ShiftRows}(\text{SubBytes}(A_0))$ dengan $A_0 = P \oplus K_0$; baris terakhir
+--- InvShiftRows, InvSubBytes, lalu XOR dengan $K_0$ --- mengembalikan plainteks
+$P$.
+
+Susunan ini harus diikuti apa adanya. InvMixColumns tidak komutatif dengan
+InvShiftRows maupun dengan InvSubBytes: InvMixColumns mencampurkan nilai seluruh
+kolom, sedangkan kedua operasi yang lain hanya memindahkan byte tanpa mengubah
+nilainya. Menempatkan InvMixColumns pada posisi yang keliru karena itu
+menghasilkan plainteks yang salah seluruhnya, bukan hanya berbeda sedikit.
+
+Ketiga transformasi invers itu diuraikan berikut ini satu per satu.
+
+\subsubsection{InvShiftRows}
+
+\textit{InvShiftRows} melakukan pergeseran baris ke arah yang berlawanan dari
+ShiftRows, yaitu ke kanan, dengan besar pergeseran yang sama untuk setiap baris:
+baris 0 tetap, baris 1 digeser 1 byte, baris 2 digeser 2 byte, dan baris 3 digeser
+3 byte.
+\begin{equation}
+s'_{r,c} = s_{r,\,(c - r) \bmod 4}.
+\label{eq:aes-inv-shiftrows}
+\end{equation}
+Gambar~\ref{fig:invshiftrows-aes} memperlihatkan gerakannya. Mudah diperiksa bahwa
+menerapkan InvShiftRows sesudah ShiftRows mengembalikan state ke susunan semula,
+sebab $(c + r) - r = c$ modulo 4.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/invshiftrows-aes.png}
+    \caption{Transformasi InvShiftRows: baris ke-$r$ digeser secara siklik ke kanan sejauh $r$ byte, kebalikan dari ShiftRows}
+    \label{fig:invshiftrows-aes}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\subsubsection{InvSubBytes}
+
+\textit{InvSubBytes} bekerja persis seperti SubBytes, hanya saja tabel yang
+dipakai adalah kebalikan dari S-box, yaitu tabel pada
+Tabel~\ref{tab:inv-sbox-aes}:
+\begin{equation}
+s'_{r,c} = \text{S-box}^{-1}(x, y), \qquad \text{jika } s_{r,c} = xy.
+\label{eq:aes-invsubbytes}
+\end{equation}
+Contohnya, byte $\code{ED}$ dikembalikan menjadi $\code{53}$, dan byte
+$\code{63}$ dikembalikan menjadi $\code{00}$.
+
+\begin{table}[htbp]
+\centering
+\caption{S-box invers (\textit{inverse S-box}) yang dipakai oleh InvSubBytes}
+\label{tab:inv-sbox-aes}
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{@{}c*{16}{c}@{}}
+\hline
+      & 0  & 1  & 2  & 3  & 4  & 5  & 6  & 7  & 8  & 9  & A  & B  & C  & D  & E  & F \\
+\hline
+0 & 52 & 09 & 6A & D5 & 30 & 36 & A5 & 38 & BF & 40 & A3 & 9E & 81 & F3 & D7 & FB \\
+1 & 7C & E3 & 39 & 82 & 9B & 2F & FF & 87 & 34 & 8E & 43 & 44 & C4 & DE & E9 & CB \\
+2 & 54 & 7B & 94 & 32 & A6 & C2 & 23 & 3D & EE & 4C & 95 & 0B & 42 & FA & C3 & 4E \\
+3 & 08 & 2E & A1 & 66 & 28 & D9 & 24 & B2 & 76 & 5B & A2 & 49 & 6D & 8B & D1 & 25 \\
+4 & 72 & F8 & F6 & 64 & 86 & 68 & 98 & 16 & D4 & A4 & 5C & CC & 5D & 65 & B6 & 92 \\
+5 & 6C & 70 & 48 & 50 & FD & ED & B9 & DA & 5E & 15 & 46 & 57 & A7 & 8D & 9D & 84 \\
+6 & 90 & D8 & AB & 00 & 8C & BC & D3 & 0A & F7 & E4 & 58 & 05 & B8 & B3 & 45 & 06 \\
+7 & D0 & 2C & 1E & 8F & CA & 3F & 0F & 02 & C1 & AF & BD & 03 & 01 & 13 & 8A & 6B \\
+8 & 3A & 91 & 11 & 41 & 4F & 67 & DC & EA & 97 & F2 & CF & CE & F0 & B4 & E6 & 73 \\
+9 & 96 & AC & 74 & 22 & E7 & AD & 35 & 85 & E2 & F9 & 37 & E8 & 1C & 75 & DF & 6E \\
+A & 47 & F1 & 1A & 71 & 1D & 29 & C5 & 89 & 6F & B7 & 62 & 0E & AA & 18 & BE & 1B \\
+B & FC & 56 & 3E & 4B & C6 & D2 & 79 & 20 & 9A & DB & C0 & FE & 78 & CD & 5A & F4 \\
+C & 1F & DD & A8 & 33 & 88 & 07 & C7 & 31 & B1 & 12 & 10 & 59 & 27 & 80 & EC & 5F \\
+D & 60 & 51 & 7F & A9 & 19 & B5 & 4A & 0D & 2D & E5 & 7A & 9F & 93 & C9 & 9C & EF \\
+E & A0 & E0 & 3B & 4D & AE & 2A & F5 & B0 & C8 & EB & BB & 3C & 83 & 53 & 99 & 61 \\
+F & 17 & 2B & 04 & 7E & BA & 77 & D6 & 26 & E1 & 69 & 14 & 63 & 55 & 21 & 0C & 7D \\
+\hline
+\end{tabular}
+\sumber{NIST, FIPS PUB 197, Tabel 5.}
+\end{table}
+
+\subsubsection{InvMixColumns}
+
+\textit{InvMixColumns} membalikkan MixColumns dengan mengalikan setiap kolom
+dengan matriks kebalikannya di $\text{GF}(2^8)$:
+\begin{equation}
+\begin{bmatrix}
+s'_{0,c} \\ s'_{1,c} \\ s'_{2,c} \\ s'_{3,c}
+\end{bmatrix}
+=
+\begin{bmatrix}
+\code{0E} & \code{0B} & \code{0D} & \code{09} \\
+\code{09} & \code{0E} & \code{0B} & \code{0D} \\
+\code{0D} & \code{09} & \code{0E} & \code{0B} \\
+\code{0B} & \code{0D} & \code{09} & \code{0E}
+\end{bmatrix}
+\begin{bmatrix}
+s_{0,c} \\ s_{1,c} \\ s_{2,c} \\ s_{3,c}
+\end{bmatrix}.
+\label{eq:aes-inv-mixcolumns}
+\end{equation}
+Matriks ini masih sirkulan, tetapi koefisiennya lebih banyak: empat nilai berbeda
+($\code{09}$, $\code{0B}$, $\code{0D}$, $\code{0E}$) sebagai ganti tiga. Akibatnya
+InvMixColumns lebih mahal dihitung daripada MixColumns --- sebuah kenyataan yang
+kadang dikeluhkan pada implementasi perangkat lunak, dan yang menjadi salah satu
+alasan mengapa AES lebih cepat untuk enkripsi daripada untuk dekripsi.
+
+Dalam bahasa polinom pada Persamaan~\eqref{eq:aes-mixcolumns-polinom}, matriks
+kebalikan itu tidak lain adalah polinom kebalikan dari $a(x)$ modulo $x^4+1$.
+Karena $\gcd\bigl(a(x),\, x^4+1\bigr) = 1$, kebalikan itu pasti ada; itulah jaminan
+bahwa MixColumns dapat dibalik.
+
+Mematuhi kebiasaan penamaan yang dipakai pada
+Persamaan~\eqref{eq:aes-mixcolumns-komponen}, keempat komponen InvMixColumns adalah
+\begin{equation}
+\begin{aligned}
+s'_{0,c} &= (\code{0E} \bullet s_{0,c}) \oplus (\code{0B} \bullet s_{1,c}) \oplus (\code{0D} \bullet s_{2,c}) \oplus (\code{09} \bullet s_{3,c}), \\
+s'_{1,c} &= (\code{09} \bullet s_{0,c}) \oplus (\code{0E} \bullet s_{1,c}) \oplus (\code{0B} \bullet s_{2,c}) \oplus (\code{0D} \bullet s_{3,c}), \\
+s'_{2,c} &= (\code{0D} \bullet s_{0,c}) \oplus (\code{09} \bullet s_{1,c}) \oplus (\code{0E} \bullet s_{2,c}) \oplus (\code{0B} \bullet s_{3,c}), \\
+s'_{3,c} &= (\code{0B} \bullet s_{0,c}) \oplus (\code{0D} \bullet s_{1,c}) \oplus (\code{09} \bullet s_{2,c}) \oplus (\code{0E} \bullet s_{3,c}).
+\end{aligned}
+\label{eq:aes-inv-mixcolumns-komponen}
+\end{equation}
+
+\subsubsection{Dua Bentuk Dekripsi yang Setara}
+
+Ada dua cara menyusun dekripsi, dan keduanya patut dikenal karena berpengaruh
+pada rancangan perangkat keras. Bentuk pertama adalah \textbf{\textit{straightforward
+inverse cipher}} seperti pada Persamaan~\eqref{eq:aes-dekripsi}: urutan putaran
+dibalik seluruhnya, sehingga transformasi berjalan sebagai
+InvShiftRows, InvSubBytes, AddRoundKey, InvMixColumns. Bentuk ini paling mudah
+diturunkan, tetapi strukturnya tidak sama dengan enkripsi.
+
+Bentuk kedua adalah \textbf{\textit{equivalent inverse cipher}}, yang menyusun
+dekripsi dengan urutan transformasi sama persis seperti enkripsi ---
+InvSubBytes, InvShiftRows, InvMixColumns, AddRoundKey --- sehingga satu rangkaian
+perangkat keras dapat melayani kedua arah. Harganya adalah kunci putaran harus
+diubah lebih dahulu:
+\begin{equation}
+\tilde{K}_i = \text{InvMixColumns}(K_i) \quad \text{untuk } i = 1, 2, \dots, N_r - 1,
+\label{eq:aes-equiv-kunci}
+\end{equation}
+sedangkan $K_0$ dan $K_{N_r}$ dipakai apa adanya. Perubahan itu berasal dari sifat
+linier InvMixColumns yang diwarisi dari MixColumns:
+\[
+\text{InvMixColumns}(X \oplus K_i) = \text{InvMixColumns}(X) \oplus \text{InvMixColumns}(K_i).
+\]
+Pada Persamaan~\eqref{eq:aes-dekripsi}, InvMixColumns justru dikenakan pada nilai
+yang sudah di-XOR dengan $K_i$. Karena InvMixColumns linier, XOR dengan $K_i$ dapat
+dipindahkan keluar, sehingga InvMixColumns boleh dijalankan lebih dahulu dan
+sisanya menjadi AddRoundKey dengan kunci $\tilde{K}_i$ pada
+Persamaan~\eqref{eq:aes-equiv-kunci}. Seluruh iterasi pun berbentuk InvSubBytes,
+InvShiftRows, InvMixColumns, lalu AddRoundKey --- cermin dari putaran enkripsi.
+(Dapat diperiksa pula bahwa InvSubBytes dan InvShiftRows saling komutatif, sebab
+yang satu mengganti nilai byte sementara yang lain memindahkan posisinya; urutan
+keduanya karena itu bebas.)
+
+Dengan trik itu, satu rangkaian perangkat keras dapat melayani enkripsi dan
+dekripsi sekaligus: cukup dengan memilih tabel S-box atau S-box invers, matriks
+MixColumns atau InvMixColumns, dan urutan kunci putaran. Inilah sebabnya pengubah
+kunci pada perangkat keras AES sering menyediakan dua set kunci putaran.
+
+\important{Tidak ada sifat ``swabalik'' pada AES.} Pada DES, dekripsi memakai
+algoritma yang identik dengan enkripsi; yang berubah hanyalah urutan subkunci.
+Pada AES hal itu tidak mungkin, karena transformasi putarannya linier dan
+nirlanjar sekaligus namun bukan involutif. Setiap implementasi AES karena itu
+harus menyediakan S-box invers, InvShiftRows, dan matriks $\code{0E}\,\code{0B}\,
+\code{0D}\,\code{09}$ secara terpisah. Menambahkan sifat itu adalah salah satu
+harga yang dibayar demi difusi yang jauh lebih cepat.
+
+\subsection{Ringkasan Transformasi per Varian}
+
+Tabel~\ref{tab:transformasi-putaran-aes} merangkum transformasi yang dijalankan
+pada setiap jenis putaran. Isi kolomnya sama untuk ketiga varian AES; yang berbeda
+hanyalah banyaknya putaran utama, yaitu $N_r - 1$.
+
+\begin{table}[htbp]
+\centering
+\caption{Transformasi pada setiap jenis putaran AES. Kolom terakhir berlaku untuk
+ketiga varian; yang berbeda hanyalah banyaknya putaran utama}
+\label{tab:transformasi-putaran-aes}
+\small
+\begin{tabularx}{\linewidth}{@{}l >{\raggedright\arraybackslash}X c c@{}}
+\hline
+\textbf{Putaran} & \textbf{Transformasi berurutan} & \textbf{Banyaknya} & \textbf{MixColumns?} \\
+\hline
+Awal  & AddRoundKey($K_0$) & 1 & ya \\
+Utama & SubBytes, ShiftRows, MixColumns, AddRoundKey & $N_r-1 = 9$ & ya \\
+Akhir & SubBytes, ShiftRows, AddRoundKey & 1 & tidak \\
+\hline
+\end{tabularx}
+\sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{table}
