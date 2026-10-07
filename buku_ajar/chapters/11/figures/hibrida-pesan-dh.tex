@@ -1,0 +1,53 @@
+% Kriptografi hibrida: pesan yang melewati saluran dan pemulihannya di sisi Bob.
+% Dirujuk dari section-01.tex dengan \input{figures/hibrida-pesan-dh}.
+% Gambar diperkecil dengan \resizebox agar seluruh kotak muat dalam \linewidth.
+\begin{figure}[htbp]
+    \centering
+    \resizebox{0.98\linewidth}{!}{%
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners=1pt, minimum height=0.95cm,
+                      text width=2.9cm, align=center, font=\small, inner sep=3pt},
+        panah/.style={-{Latex[length=2.2mm]}, thick},
+        catatan/.style={font=\footnotesize, align=left, text width=13.6cm},
+    ]
+        % --- sisi Alice ---
+        \node[kotak, fill=green!10] (kunci) at (0,0)
+            {Kunci sesi $K$\\acak, 256 bit};
+        \node[kotak, fill=orange!12] (aes) at (0,-2.3)
+            {Pesan $M$};
+        \node[kotak, fill=blue!6] (bungkus) at (3.8,0)
+            {$C_K = E_{\mathrm{RSA},\mathrm{PK}_{\mathrm{Bob}}}(K)$};
+        \node[kotak, fill=orange!12] (cm) at (3.8,-2.3)
+            {$C_M = E_{\mathrm{AES},K}(M)$};
+
+        \draw[panah] (kunci) -- (bungkus);
+        \draw[panah] (aes) -- (cm);
+        \draw[panah] (kunci) -- (aes);
+
+        % --- saluran ---
+        \node[kotak, fill=gray!12] (saluran) at (8.3,-1.15)
+            {Saluran terbuka\\$C_K$ dan $C_M$};
+
+        \draw[panah] (bungkus.east) -- (saluran.west);
+        \draw[panah] (cm.east) -- (saluran.west);
+
+        % --- sisi Bob ---
+        \node[kotak, fill=blue!6] (buka) at (12.8,0)
+            {$K = D_{\mathrm{RSA},\mathrm{SK}_{\mathrm{Bob}}}(C_K)$};
+        \node[kotak, fill=green!10] (pulih) at (12.8,-2.3)
+            {$M = D_{\mathrm{AES},K}(C_M)$};
+
+        \draw[panah] (saluran.east) -- ++(0.5,0) -| (buka.north);
+        \draw[panah] (saluran.east) -- ++(0.5,0) -| (pulih.north);
+        \draw[panah] (buka) -- (pulih);
+
+        \node[catatan, anchor=north] at (6.4,-3.4)
+            {RSA menangani kunci sesi yang pendek, AES menangani seluruh isi
+             pesan. Urutan pemulihan tidak dapat ditukar: $C_K$ memberi kunci,
+             $C_M$ memberi isi};
+    \end{tikzpicture}}
+    \caption{Enam langkah kriptografi hibrida: $C_K$ dan $C_M$ melewati saluran
+    terbuka, lalu dipertemukan kembali oleh Bob}
+    \label{fig:hibrida-pesan-dh}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

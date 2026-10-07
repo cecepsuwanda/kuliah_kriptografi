@@ -1,36 +1,205 @@
 \section{Protokol Pertukaran Kunci Diffie-Hellman}
-Dipublikasikan oleh Whitfield Diffie dan Martin Hellman pada tahun 1976 \citep{diffie1976}, protokol ini memungkinkan dua pihak (misalnya Alice dan Bob) untuk menyepakati sebuah kunci rahasia bersama melalui saluran publik yang tidak aman.
+\label{sec:protokol-dh}
+
+Protokol pertukaran kunci Diffie--Hellman dipublikasikan oleh Whitfield Diffie
+dan Martin Hellman pada tahun 1976 \citep{diffie1976} dan menjadi tonggak
+kelahiran kriptografi kunci-publik. Gagasannya berbeda secara mendasar dari
+seluruh algoritma yang telah dibahas sebelumnya: alih-alih mengirimkan kunci
+rahasia --- dalam bentuk terang maupun terenkripsi --- kedua pihak justru
+menghitungnya sendiri dari nilai-nilai yang dipertukarkan secara terbuka. Kunci
+itu secara harfiah tidak pernah melintasi saluran komunikasi.
 
 \subsection{Parameter Publik}
-Sebelum memulai pertukaran, Alice dan Bob menyepakati dua parameter publik yang tidak perlu dirahasiakan:
+
+Sebelum pertukaran dimulai, Alice dan Bob menyepakati dua parameter yang tidak
+perlu dirahasiakan sama sekali:
+
 \begin{enumerate}
-    \item Sebuah bilangan prima besar, $p$.
-    \item Sebuah bilangan bulat $g$, sedemikian sehingga $g$ adalah akar primitif dari $p$ (di mana $g < p$).
+    \item sebuah bilangan prima besar $p$, dan
+    \item sebuah bilangan bulat $g$ dengan $1 < g < p$ yang merupakan
+          \textbf{akar primitif} (\textit{primitive root}) dari $p$.
 \end{enumerate}
+
+Sebuah bilangan $g$ disebut akar primitif modulo $p$ apabila himpunan pangkat
+$g^1, g^2, \dots, g^{p-1} \bmod p$ memuat \emph{seluruh} bilangan $1$ sampai
+$p-1$ tepat sekali masing-masing. Dengan kata lain, orde dari $g$ modulo $p$
+harus sama dengan $p-1$. Sifat itu diperlihatkan pada
+Tabel~\ref{tab:akar-primitif} untuk modulus kecil $p = 11$, yang memiliki empat
+akar primitif: 2, 6, 7, dan 8.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{@{}l *{10}{c}@{}}
+    \toprule
+    Pangkat & $1$ & $2$ & $3$ & $4$ & $5$ & $6$ & $7$ & $8$ & $9$ & $10$ \\
+    \midrule
+    $g = 7$ & 7 & 5 & 2 & 3 & 10 & 4 & 6 & 9 & 8 & 1 \\
+    \midrule
+    $g = 3$ & 3 & 9 & 5 & 4 & 1 & 3 & 9 & 5 & 4 & 1 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Pangkat modulo $p = 11$. Baris $g = 7$ memuat kesepuluh residu
+    bukan-nol tepat sekali, sedangkan baris $g = 3$ hanya memuat lima nilai yang
+    berulang dengan periode 5}
+    \label{tab:akar-primitif}
+\end{table}
+
+Perbedaan kedua baris itu bukan sekadar keanehan aritmetika. Bila $g$ bukan akar
+primitif, himpunan kunci publik yang mungkin menjadi jauh lebih kecil, dan
+penyerang yang dapat membuktikan bahwa $A$ berada di dalam himpunan kecil itu
+cukup mencari $a$ dengan cara menyeluruh. Untuk $g = 3$ modulo 11, hanya ada lima
+kunci publik yang mungkin, sehingga $a$ dapat ditemukan paling lama dalam lima
+percobaan. Karena alasan itu, pemilihan $g$ harus diperiksa, bukan diandaikan.
 
 \subsection{Prosedur Pertukaran Kunci}
-Langkah-langkah perhitungan Diffie-Hellman adalah sebagai berikut:
+
+Prosedur lengkapnya terdiri atas empat langkah.
+
 \begin{enumerate}
-    \item \textbf{Pembangkitan Kunci Privat}:
-    \begin{itemize}
-        \item Alice memilih bilangan bulat acak $a$ sebagai kunci privatnya.
-        \item Bob memilih bilangan bulat acak $b$ sebagai kunci privatnya.
-    \end{itemize}
-    \item \textbf{Perhitungan dan Pertukaran Kunci Publik}:
-    \begin{itemize}
-        \item Alice menghitung $A = g^a \bmod p$ dan mengirimkan $A$ kepada Bob.
-        \item Bob menghitung $B = g^b \bmod p$ dan mengirimkan $B$ kepada Alice.
-    \end{itemize}
-    \item \textbf{Penghitungan Kunci Rahasia Bersama}:
-    \begin{itemize}
-        \item Alice menghitung $K = B^a \bmod p$.
-        \item Bob menghitung $K = A^b \bmod p$.
-    \end{itemize}
+    \item \textbf{Pembangkitan kunci privat.} Alice memilih bilangan bulat acak
+          $a$ dengan $1 < a < p-1$; Bob memilih bilangan bulat acak $b$ pada
+          rentang yang sama. Kedua nilai itu dirahasiakan dan tidak pernah
+          dikirim ke mana pun.
+    \item \textbf{Perhitungan dan pertukaran kunci publik.} Alice menghitung
+          \[ A = g^a \bmod p \]
+          dan mengirimkan $A$ kepada Bob. Bob menghitung
+          \[ B = g^b \bmod p \]
+          dan mengirimkan $B$ kepada Alice. Nilai $A$ dan $B$ disebut kunci
+          publik, tetapi keduanya tidak perlu dijaga kerahasiaannya.
+    \item \textbf{Penghitungan kunci bersama oleh Alice.} Alice memakai kunci
+          publik Bob dan kunci privatnya sendiri:
+          \[ K = B^a \bmod p . \]
+    \item \textbf{Penghitungan kunci bersama oleh Bob.} Bob memakai kunci
+          publik Alice dan kunci privatnya sendiri:
+          \[ K = A^b \bmod p . \]
 \end{enumerate}
 
-\textbf{Pembuktian Matematis}:
-Kunci yang dihasilkan oleh Alice dan Bob adalah sama karena:
-\[ K = B^a \bmod p = (g^b)^a \bmod p = g^{ba} \bmod p = (g^a)^b \bmod p = A^b \bmod p \]
+Setelah keempat langkah itu, Alice dan Bob memegang bilangan $K$ yang sama.
+Bilangan itulah yang dipakai sebagai kunci algoritma kunci-simetri pada
+percakapan berikutnya.
+
+\subsection{Mengapa Kedua Kunci Pasti Sama}
+
+Kesamaan $K$ bukan kebetulan, melainkan akibat langsung dari sifat assosiatif
+dan komutatif perkalian pangkat. Substitusikan definisi $A$ dan $B$:
+
+\begin{equation}
+\begin{split}
+K_{\text{Alice}} &= B^a \bmod p = (g^b)^a \bmod p = g^{ba} \bmod p \\
+                 &= g^{ab} \bmod p = (g^a)^b \bmod p = A^b \bmod p
+                  = K_{\text{Bob}} .
+\end{split}
+\label{eq:dh-bukti}
+\end{equation}
+
+Rantai kesamaan pada Persamaan~\eqref{eq:dh-bukti} berlaku karena
+$(g^b)^a = g^{ba}$ dan perkalian bilangan bulat bersifat komutatif, yaitu
+$ba = ab$. Perhatikan bahwa yang membuat kedua pihak memperoleh nilai yang sama
+bukan urutan langkah yang mirip, melainkan justru urutan langkah yang
+\emph{berbeda}: Alice memangkatkan $B$ dengan $a$, sedangkan Bob memangkatkan $A$
+dengan $b$. Protokol ini hanya bekerja karena kedua urutan itu bertemu pada nilai
+yang sama.
 
 \input{figures/alur-dh}
 
+\subsection{Serangan Pasif: Apa yang Diketahui Penyadap}
+
+Misalkan Eve menyadap seluruh komunikasi. Yang dapat ia kumpulkan hanyalah
+$p$, $g$, $A$, dan $B$ --- keempatnya memang nilai publik. Untuk memperoleh $K$,
+Eve harus lebih dahulu menemukan $a$ atau $b$, dan untuk itu ia harus
+menyelesaikan persamaan
+
+\[ A = g^a \bmod p \qquad \text{atau} \qquad B = g^b \bmod p , \]
+
+yaitu menghitung \textbf{logaritma diskret} dari $A$ atau $B$ dalam modulus $p$.
+Pekerjaan itu dikenal sebagai \emph{discrete logarithm problem} (DLP), dan
+kesulitannya menjadi satu-satunya penopang keamanan protokol ini. Pembahasan
+rincinya, beserta ukuran modulus yang hari ini dianggap memadai, ada pada
+Subbagian~\ref{subsec:dlog-dh}.
+
+Perlu ditegaskan bahwa Eve tidak dapat memakai jalan pintas apa pun. Ia
+mengetahui $g$, $A$, dan $B$, dan ia mengetahui bahwa $K = g^{ab} \bmod p$;
+tetapi dari ketiga nilai itu tidak ada rumus langsung yang menghasilkan $g^{ab}$
+tanpa mengetahui setidaknya satu di antara $a$ dan $b$. Inilah yang membedakan
+Diffie--Hellman dari protokol yang akan dibahas pada Bab~\ref{chap:rsa}: keamanannya
+tidak bersandar pada kerahasiaan kunci privat, tetapi pada kekerasan sebuah
+perhitungan tertentu atas nilai-nilai yang seluruhnya terbuka.
+
+\subsection{Pemilihan Parameter dan Ukuran yang Memadai}
+\label{subsec:parameter-dh}
+
+Pemilihan $p$ dan $g$ bukan urusan sepele, dan kesalahan di sini telah
+menjatuhkan sistem nyata. Beberapa syarat berikut harus dipenuhi secara
+bersamaan.
+
+\begin{itemize}
+    \item \textbf{Modulus $p$ cukup panjang.} Rekomendasi yang berlaku hari ini
+          adalah paling sedikit 2048 bit, dan 3072 bit untuk perlindungan
+          jangka panjang. Angka-angka itu jauh lebih besar daripada modulus RSA
+          yang memberi tingkat keamanan setara, karena algoritma terbaik untuk
+          logaritma diskret di medan prima bekerja lebih cepat daripada
+          algoritma terbaik untuk memfaktorkan.
+    \item \textbf{$g$ membangkitkan subgrup berorde prima besar.} Yang ideal
+          adalah $p$ berbentuk \emph{safe prime}, yaitu $p = 2q + 1$ dengan $q$
+          juga prima. Pada modulus semacam itu, $g$ dipilih sehingga
+          membangkitkan subgrup berorde $q$ dan bukan seluruh grup berorde
+          $p-1$. Dengan begitu, hasil $\smash{g^a \bmod p}$ selalu berada di
+          dalam subgrup besar dan tidak ada nilai tersembunyi yang berasal dari
+          subgrup kecil, sehingga serangan \emph{subgroup confinement} tidak
+          berlaku (lihat Subbagian~\ref{subsec:serangan-khusus-dh}).
+    \item \textbf{$a$ dan $b$ dibangkitkan dengan keacakan yang benar.} Kunci
+          privat harus diambil dari pembangkit bilangan acak yang aman secara
+          kriptografis, bukan dari pembangkit bilangan acak biasa yang keluarannya
+          dapat diduga. Pelajaran ini mahal harganya: pada tahun 2008 ditemukan
+          bahwa pembangkit acak pustaka OpenSSL pada Debian telah dinonaktifkan
+          sebagian, sehingga jutaan kunci yang dibangkitkan selama dua tahun
+          hanya berasal dari sekitar tiga puluh dua ribu kemungkinan dan dapat
+          didaftar seluruhnya.
+    \item \textbf{Parameter dipilih dari himpunan yang baku.} Karena
+          pemeriksaan setiap parameter memerlukan usaha, praktik yang lazim
+          adalah memakai himpunan parameter yang telah dibakukan, seperti
+          kelompok bernama pada RFC 7919 \citep{rfc7919}. Cara ini menghindari
+          dua bahaya sekaligus: parameter yang lemah karena dibuat sendiri, dan
+          serangan yang menargetkan parameter yang hanya dipakai oleh sedikit
+          pihak, sebagaimana ditunjukkan pada serangan Logjam
+          \citep{adrian2015logjam}.
+\end{itemize}
+
+Serangan Logjam patut dicatat karena ia menyerang parameter, bukan algoritma.
+Penyerangnya tidak memecahkan logaritma diskret pada modulus yang memadai,
+melainkan menurunkan negosiasi agar kedua pihak memakai modulus 512 bit yang
+memang lemah, lalu memecahkannya. Dengan kata lain, protokol yang secara teori
+benar dapat menjadi tidak aman hanya karena pilihan parameternya dapat
+dipengaruhi pihak lain.
+
+\subsection{Sejarah Singkat dan Penamaan}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.62\linewidth]{figures/pionir-diffie-hellman.png}
+    \caption{Whitfield Diffie (kiri) dan Martin Hellman (kanan), perumus
+    protokol pertukaran kunci yang menjadi dasar kriptografi kunci-publik}
+    \label{fig:pionir-dh}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+Makalah tahun 1976 yang memuat protokol ini berjudul \textit{New Directions in
+Cryptography} \citep{diffie1976}. Meskipun namanya selalu dikaitkan dengan kedua
+penulisnya, gagasan itu tidak berdiri sendiri. Ralph Merkle telah lebih dahulu
+mengembangkan konsep distribusi kunci melalui saluran terbuka, dan Hellman
+sendiri menegaskan hal itu secara terbuka. Pada tahun 2002 ia menulis:
+
+\begin{quote}
+\textit{The system \dots\ has since become known as Diffie--Hellman key
+exchange. While that system was first described in a paper by Diffie and me, it
+is a public key distribution system, a concept developed by Merkle, and hence
+should be called ``Diffie--Hellman--Merkle key exchange'' if names are to be
+associated with it.}
+\citep{hellman2002}
+\end{quote}
+
+Usulan itu tidak mengubah penamaan yang sudah lazim, tetapi pengakuan tersebut
+menyadarkan bahwa penemuan besar jarang dapat diatribusikan kepada satu atau dua
+orang saja. Pada tahun 2015, Diffie dan Hellman menerima Penghargaan Turing
+untuk penemuan kriptografi kunci-publik, dan Merkle disebut sebagai penerima
+kontribusi yang sejajar.

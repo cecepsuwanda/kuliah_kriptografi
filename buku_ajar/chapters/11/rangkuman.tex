@@ -1,10 +1,60 @@
 \section{Rangkuman}
 \begin{itemize}
-    \item Persoalan distribusi kunci pada kriptografi simetris diselesaikan dengan kriptografi hibrida atau protokol pertukaran kunci seperti Diffie-Hellman (1976).
-    \item Diffie-Hellman memungkinkan dua pihak menyepakati kunci rahasia bersama melalui saluran publik tanpa pernah mengirimkan kunci itu sendiri.
-    \item Parameter publiknya adalah bilangan prima besar $p$ dan akar primitif $g$ dari $p$ (dengan $g < p$).
-    \item Prosedurnya: Alice menghitung $A = g^a \bmod p$, Bob menghitung $B = g^b \bmod p$, lalu keduanya memperoleh kunci yang sama $K = B^a = A^b = g^{ab} \bmod p$.
-    \item Contoh: $p = 353$, $g = 3$, $a = 97$, dan $b = 233$ menghasilkan $A = 40$, $B = 248$, serta kunci bersama $K = 160$.
-    \item Keamanannya bersandar pada sulitnya menghitung logaritma diskrit: penyadap yang mengetahui $p, g, A, B$ tetap sukar menemukan $a$ atau $b$ bila $p$ sangat besar.
-    \item Diffie-Hellman aman terhadap penyadapan pasif tetapi rentan terhadap serangan aktif \textit{Man-in-the-Middle} karena tidak ada autentikasi; protokol ini dapat diperluas ke tiga pihak ($K = g^{abc} \bmod p$) dan menjadi dasar pengamanan SSL/TLS.
+    \item Persoalan distribusi kunci pada kriptografi simetris muncul karena $n$
+          pengguna memerlukan $\binom{n}{2} = n(n-1)/2$ kunci rahasia berbeda;
+          untuk 1.000 pengguna jumlahnya sudah mencapai 499.500 kunci. Persoalan
+          itu diselesaikan dengan kriptografi hibrida atau dengan protokol
+          pertukaran kunci seperti Diffie--Hellman (1976).
+    \item Kriptografi hibrida mengenkripsi kunci sesi yang pendek dengan RSA,
+          lalu memakai kunci sesi itu untuk memproses seluruh isi pesan dengan
+          AES. Enam langkahnya dirumuskan sebagai
+          $C_K = E_{\text{RSA},\text{PK}_{\text{Bob}}}(K)$ dan
+          $C_M = E_{\text{AES},K}(M)$, yang dipulihkan Bob dengan
+          $K = D_{\text{RSA},\text{SK}_{\text{Bob}}}(C_K)$ dan
+          $M = D_{\text{AES},K}(C_M)$.
+    \item Diffie--Hellman memungkinkan dua pihak menyepakati kunci rahasia bersama
+          melalui saluran publik tanpa pernah mengirimkan kunci itu sendiri.
+    \item Parameter publiknya adalah bilangan prima besar $p$ dan akar primitif
+          $g$ dari $p$. Akar primitif berarti orde $g$ modulo $p$ sama dengan
+          $p-1$; bila syarat itu tidak dipenuhi, himpunan kunci publik yang
+          mungkin menjadi kecil dan dapat didaftar seluruhnya. Untuk $g = 3$
+          modulo 11, hanya lima kunci publik yang mungkin.
+    \item Prosedurnya: Alice menghitung $A = g^a \bmod p$, Bob menghitung
+          $B = g^b \bmod p$, lalu keduanya memperoleh kunci yang sama
+          $K = B^a = A^b = g^{ab} \bmod p$. Kesamaan itu berlaku karena
+          $(g^b)^a = (g^a)^b$; yang menyamakan kedua kunci justru urutan langkah
+          yang berbeda di kedua sisi.
+    \item Contoh: $p = 353$, $g = 3$, $a = 97$, dan $b = 233$ menghasilkan
+          $A = 40$, $B = 248$, serta kunci bersama $K = 160$. Contoh dari
+          perkakas daring, $G = 1601$ dan $N = 4789$, menghasilkan $A = 2716$,
+          $B = 1302$, dan $K = 4257$.
+    \item Keamanannya bersandar pada sulitnya menghitung logaritma diskret:
+          penyadap yang mengetahui $p, g, A, B$ tetap sukar menemukan $a$ atau
+          $b$ bila $p$ sangat besar. Algoritma langkah raksasa-bayi menurunkan
+          biaya dari $p-1$ menjadi sekitar $2\sqrt{p}$ langkah; untuk modulus
+          2048 bit $\sqrt{p}$ berukuran sekitar $2^{1024}$, sehingga panjang
+          minimum yang diterima hari ini adalah 2048 bit.
+    \item Diffie--Hellman aman terhadap penyadapan pasif tetapi rentan terhadap
+          serangan aktif \textit{Man-in-the-Middle}, sebab tidak ada satu pun
+          langkahnya yang memeriksa identitas lawan bicara. Mallory menyepakati
+          $K_1 = g^{am} \bmod p$ dengan Alice dan $K_2 = g^{bm} \bmod p$ dengan
+          Bob, tanpa perlu mengetahui $a$ maupun $b$. Penangkalnya adalah
+          otentikasi, misalnya melalui tanda tangan digital atau sertifikat.
+    \item Pemilihan parameter menentukan keamanan: $p$ harus cukup panjang dan
+          idealnya berbentuk \textit{safe prime} $p = 2q+1$, $g$ harus
+          membangkitkan subgrup berorde prima besar, dan $a$, $b$ harus
+          dibangkitkan dengan keacakan yang benar. Serangan Logjam (2015)
+          memperlihatkan bahwa penurunan mutu parameter dapat menjatuhkan
+          protokol tanpa menyentuh matematikanya.
+    \item Protokol ini dapat diperluas ke tiga pihak dengan pola melingkar,
+          menghasilkan $K = g^{abc} \bmod p$, tetapi jumlah pengirimannya tumbuh
+          secepat $n(n-1)$ sehingga hanya praktis untuk kelompok kecil.
+    \item Diffie--Hellman sesaat (DHE) dan versi kurva eliptiknya (ECDH) memberi
+          \textit{forward secrecy}: kebocoran kunci jangka panjang tidak membuka
+          rekaman percakapan yang sudah terjadi. Karena alasan itu TLS 1.3
+          mewajibkan pertukaran kunci sesaat, dan ECDH dengan kunci 256 bit
+          menggantikan Diffie--Hellman modulus 3072 bit.
+    \item Protokol ini dipakai pada TLS/HTTPS, SSH, IPsec, dan aplikasi pesan
+          modern. Polanya selalu sama: Diffie--Hellman menetapkan kunci,
+          sedangkan algoritma kunci-simetri memproses isi pesan.
 \end{itemize}

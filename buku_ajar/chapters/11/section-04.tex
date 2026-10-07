@@ -1,17 +1,152 @@
 \section{Ekstensi Diffie-Hellman}
+\label{sec:ekstensi-dh}
+
+Protokol dua pihak yang diuraikan pada Subbagian~\ref{sec:protokol-dh} dapat
+diperluas ke beberapa arah. Bagian ini membahas tiga di antaranya: perluasan
+kepada lebih dari dua pihak, pemakaian kunci sesaat yang memberi
+\textit{forward secrecy}, dan wujud protokol ini pada sistem yang dipakai
+sehari-hari.
+
 \subsection{Pertukaran Kunci Tiga Pihak}
-Protokol DH dapat diperluas untuk lebih dari dua pihak. Untuk Alice, Bob, dan Carol, prosesnya melibatkan pertukaran bertahap:
+
+Gagasan Diffie--Hellman tidak terbatas pada dua pihak. Untuk Alice, Bob, dan
+Carol yang ingin menyepakati satu kunci bersama, pertukaran dilakukan secara
+melingkar: setiap pihak memangkatkan nilai yang diterimanya dengan kunci
+privatnya sendiri, lalu meneruskannya kepada pihak berikutnya. Setelah satu
+putaran penuh, setiap pihak telah memangkatkan nilai awal dengan keempat hal
+yang diperlukan, sehingga semuanya sampai pada $K = g^{abc} \bmod p$.
+
+Prosedur lengkapnya terdiri atas dua belas langkah.
+
 \begin{enumerate}
-    \item Alice mengirim $g^a \bmod p$ ke Bob.
-    \item Bob menghitung $(g^a)^b \bmod p$ dan mengirimkannya ke Carol.
+    \item Alice, Bob, dan Carol menyepakati $p$ dan $g$ secara terbuka.
+    \item Alice memilih kunci privat $a$, Bob memilih $b$, dan Carol memilih $c$.
+          Ketiganya dirahasiakan.
+    \item Alice menghitung $g^a \bmod p$ dan mengirimkannya kepada Bob.
+    \item Bob menghitung $(g^a)^b \bmod p = g^{ab} \bmod p$ dan mengirimkannya
+          kepada Carol.
     \item Carol menghitung $K = (g^{ab})^c \bmod p = g^{abc} \bmod p$.
-    \item Proses serupa dilakukan secara siklis sehingga akhirnya semua pihak memiliki kunci rahasia yang sama, yaitu $K = g^{abc} \bmod p$.
+          Carol kini memegang kuncinya.
+    \item Bob menghitung $g^b \bmod p$ dan mengirimkannya kepada Carol.
+    \item Carol menghitung $(g^b)^c \bmod p = g^{bc} \bmod p$ dan mengirimkannya
+          kepada Alice.
+    \item Alice menghitung $K = (g^{bc})^a \bmod p = g^{bca} \bmod p
+          = g^{abc} \bmod p$. Alice kini memegang kuncinya.
+    \item Carol menghitung $g^c \bmod p$ dan mengirimkannya kepada Alice.
+    \item Alice menghitung $(g^c)^a \bmod p = g^{ca} \bmod p$ dan
+          mengirimkannya kepada Bob.
+    \item Bob menghitung $K = (g^{ca})^b \bmod p = g^{cab} \bmod p
+          = g^{abc} \bmod p$. Bob kini memegang kuncinya.
+    \item Alice, Bob, dan Carol kini memiliki kunci rahasia yang sama, yaitu
+          $K = g^{abc} \bmod p$.
 \end{enumerate}
 
+Urutan pada langkah 3 sampai 11 memperlihatkan pola yang berulang tiga kali.
+Setiap pengulangan dimulai dengan kunci publik salah satu pihak, dikalikan
+berturut-turut oleh dua pihak lainnya, dan berakhir pada nilai $g^{abc}$.
+Karena perkalian pangkat bersifat komutatif, ketiga jalur itu bertemu pada
+bilangan yang sama, sebagaimana diperlihatkan pada
+Gambar~\ref{fig:dh-tiga-pihak}.
+
+\input{figures/dh-tiga-pihak}
+
+Sepintas prosedur itu tidak berbiaya banyak: dua belas langkah untuk tiga pihak,
+sedangkan untuk dua pihak hanya diperlukan empat. Namun perhatikan bahwa
+jumlah langkah itu tumbuh jauh lebih cepat daripada jumlah pesertanya. Untuk
+$n$ pihak, setiap pihak harus memangkatkan dan meneruskan nilai yang diterimanya
+sebanyak $n-1$ kali, sehingga seluruh protokol memerlukan $n(n-1)$ pengiriman.
+Karena itu, protokol melingkar semacam ini hanya praktis untuk kelompok yang
+sangat kecil. Untuk kelompok yang besar dipakai pendekatan lain, misalnya
+memilih satu pihak sebagai pusat yang membangkitkan kunci sesi lalu mendistribusikannya
+kepada pihak lain melalui saluran terenkripsi, atau memakai skema berbasis
+struktur pohon yang memangkas jumlah pengiriman.
+
+\subsection{Kunci Sesaat dan \textit{Forward Secrecy}}
+\label{subsec:forward-secrecy}
+
+Pada protokol dasar, kunci privat $a$ dan $b$ dapat dipakai berulang kali untuk
+banyak sesi. Pemakaian ulang semacam itu, yang disebut Diffie--Hellman statis,
+memiliki dua kelemahan. Pertama, bila satu kali saja kunci privat $a$ bocor,
+maka seluruh percakapan yang pernah memakainya --- termasuk percakapan yang sudah
+lama selesai dan mungkin telah direkam --- dapat dibuka oleh penyerang. Kedua,
+pemakaian ulang membuka jalan bagi serangan yang lebih canggih yang mengeksploitasi
+hubungan antarsesi.
+
+Praktik modern menghindari kedua kelemahan itu dengan menjadikan kunci privat
+sebagai nilai \emph{sesaat} (\textit{ephemeral}): $a$ dan $b$ dibangkitkan baru
+untuk setiap sesi dan dibuang begitu sesi berakhir. Protokol dengan sifat ini
+disebut \textbf{DHE} (\textit{Diffie--Hellman Ephemeral}). Karena setiap sesi
+memakai kunci privat yang berbeda, kompromi satu sesi tidak menolong penyerang
+untuk membuka sesi yang lain.
+
+Sifat perlindungan inilah yang disebut \textbf{\textit{forward secrecy}} atau
+\textit{perfect forward secrecy}: kebocoran kunci jangka panjang --- misalnya
+kunci privat peladen yang dipakai untuk tanda tangan pada sertifikatnya --- tidak
+mengakibatkan terbukanya rekaman percakapan yang sudah terjadi. Perhatikan
+bahwa perlindungan ini bekerja ke arah belakang, bukan ke depan: forward secrecy
+tidak menjamin apa pun bagi sesi yang sedang berjalan pada saat kunci itu bocor,
+sebab pada saat itu penyerang tentu dapat menyadap kunci sesi yang sedang
+dipakai.
+
+Inilah alasan mengapa TLS 1.3 menghapus seluruh cara pertukaran kunci yang tidak
+memberi forward secrecy. Pada versi-versi sebelumnya, pertukaran kunci dapat
+dilakukan dengan mengenkripsi kunci sesi memakai kunci publik RSA milik peladen
+--- cara yang telah dibahas pada Subbagian~\ref{subsec:hibrida-eksplisit}. Cara
+itu memang lebih sederhana, tetapi seluruh catatan percakapan yang pernah
+direkam dapat dibuka kembali seketika setelah kunci privat RSA peladen bocor,
+tanpa batas waktu. Sejak TLS 1.3, pertukaran kunci wajib memakai
+Diffie--Hellman sesaat, dan peran kunci RSA direduksi menjadi menandatangani
+nilai pertukaran \citep{rfc8446}.
+
+\subsection{Kurva Eliptik: ECDH}
+
+Cara paling penting untuk memperingan Diffie--Hellman adalah memindahkannya dari
+grup perkalian modulo prima ke grup titik pada kurva eliptik. Protokolnya
+bernama \textbf{ECDH} (\textit{Elliptic Curve Diffie--Hellman}), dan struktur
+langkahnya persis sama dengan yang telah dibahas: kedua pihak memilih kunci
+privat, menghitung titik publik dengan mengalikan titik basis, bertukar titik
+publik, lalu mengalikan lagi. Yang berubah hanyalah arti "perpangkatan" --- ia
+menjadi perkalian skalar pada kurva.
+
+Keuntungannya berupa efisiensi yang besar. ECDH dengan kunci 256 bit memberi
+tingkat keamanan yang kira-kira setara dengan Diffie--Hellman modulus 3072 bit,
+namun dengan kunci yang dua belas kali lebih pendek dan perhitungan yang jauh
+lebih ringan. Karena itu ECDH --- khususnya varian X25519 --- menjadi pilihan
+utama pada TLS 1.3 dan pada hampir seluruh protokol modern yang menuntut
+pertukaran kunci yang cepat. Dasar matematis kurva eliptik, termasuk cara
+memilih titik basis dan menghitung orde grupnya, dibahas pada
+Bab~\ref{chap:ecc}.
+
 \subsection{Implementasi Modern}
-Protokol Diffie-Hellman digunakan secara luas dalam standar keamanan internet modern, seperti dalam protokol SSL (\textit{Secure Sockets Layer}) dan TLS (\textit{Transport Layer Security}) untuk mengamankan koneksi HTTPS.
 
+Protokol Diffie--Hellman dipakai pada hampir setiap koneksi terenkripsi yang
+terjadi hari ini, meskipun penggunanya jarang menyadarinya.
 
+\begin{itemize}
+    \item \textbf{TLS dan HTTPS.} Setiap kunjungan ke situs dengan awalan
+          \texttt{https} diawali dengan pertukaran kunci Diffie--Hellman atau
+          ECDH untuk menyepakati kunci sesi. Setelah kunci itu ada, seluruh isi
+          halaman dienkripsi dengan AES.
+    \item \textbf{SSH.} Protokol untuk masuk ke komputer jarak jauh ini memakai
+          pertukaran kunci Diffie--Hellman untuk membentuk saluran terenkripsi,
+          lalu mengautentikasi pengguna dengan kata sandi atau kunci publik.
+    \item \textbf{IPsec.} Lapisan keamanan pada tingkat jaringan ini memakai
+          Diffie--Hellman untuk membentuk asosiasi keamanan antara dua gerbang
+          jaringan, sehingga seluruh lalu lintas di antaranya dapat dienkripsi
+          tanpa perubahan pada aplikasi.
+    \item \textbf{Aplikasi pesan.} Protokol Signal, yang menjadi dasar enkripsi
+          pada beberapa aplikasi pesan, menjalankan pertukaran kunci
+          Diffie--Hellman secara berlapis dan memperbarui kunci sesi secara
+          berkala, sehingga memberi forward secrecy bahkan pada satu percakapan
+          yang berlangsung lama.
 
+\end{itemize}
 
-
+Perhatikan pola yang berulang pada keempat contoh itu: Diffie--Hellman selalu
+dipakai untuk memperoleh kunci, dan kunci itu selalu dipakai oleh algoritma
+kunci-simetri untuk memproses isi pesan. Inilah bentuk kerja sama antara
+kriptografi kunci-publik dan kunci-simetri yang telah diperkenalkan pada
+Subbagian~\ref{subsec:hibrida-eksplisit}, kini dengan protokol pertukaran kunci
+menggantikan RSA pada tahap penetapan kunci. Protokol pertukaran kunci tidak
+pernah menggantikan AES; ia hanya menjadikan kunci AES dapat diperoleh secara
+aman tanpa pertemuan tatap muka.

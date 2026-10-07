@@ -1,22 +1,265 @@
 \section{Analisis Keamanan}
-Keamanan Diffie-Hellman didasarkan pada sulitnya menghitung \textbf{logaritma diskrit} dalam grup perkalian bilangan bulat modulo $p$.
+\label{sec:keamanan-dh}
 
-Seorang penyadap (Eve) yang mengamati komunikasi hanya akan mengetahui nilai $p, g, A$, dan $B$. Untuk mendapatkan kunci rahasia $K$, Eve harus mengetahui nilai $a$ atau $b$. Namun, untuk mencari $a$ dari persamaan $A = g^a \bmod p$ memerlukan komputasi yang sangat berat jika $p$ adalah bilangan prima yang sangat besar.
+Keamanan Diffie--Hellman bersandar sepenuhnya pada kesulitan menghitung
+logaritma diskret dalam grup perkalian bilangan bulat modulo $p$. Bagian ini
+membahas seberapa kuat sandaran itu, dan kemudian memperlihatkan bahwa kekuatan
+tersebut tidak menolong sama sekali terhadap serangan yang bersifat aktif.
 
-\subsection{Serangan Man-in-the-Middle (MITM)}
-Meskipun aman terhadap penyadapan pasif, Diffie-Hellman rentan terhadap serangan aktif berupa \textit{Man-in-the-Middle}. Dalam serangan ini, penyerang (Mallory) mencegat komunikasi antara Alice dan Bob:
-\begin{enumerate}
-    \item Mallory mencegat $A$ dari Alice dan mengirimkan $M_1 = g^m \bmod p$ kepada Bob.
-    \item Mallory mencegat $B$ dari Bob dan mengirimkan $M_2 = g^m \bmod p$ kepada Alice.
-    \item Alice menghitung kunci $K_1 = (M_2)^a \bmod p$, dan Bob menghitung kunci $K_2 = (M_1)^b \bmod p$.
-    \item Mallory dapat menghitung kedua kunci tersebut ($K_1$ dan $K_2$) dan bertindak sebagai perantara yang mendekripsi, membaca, dan mengenkripsi kembali pesan tanpa diketahui Alice dan Bob.
-\end{enumerate}
+\subsection{Masalah Logaritma Diskret}
+\label{subsec:dlog-dh}
 
+Diberikan bilangan prima $p$, akar primitif $g$, dan sebuah nilai $A$ dengan
+$1 \le A \le p-1$, masalah logaritma diskret menuntut pencarian bilangan bulat
+$a$ sehingga
 
-\begin{figure}[htbp]
+\begin{equation}
+g^a \equiv A \pmod p .
+\label{eq:dlp}
+\end{equation}
+
+Berbeda dari logaritma biasa, tidak ada rumus tertutup untuk
+Persamaan~\eqref{eq:dlp}. Nilai $a$ hanya dapat dicari dengan menjelajahi
+ruang kemungkinan, sehingga seluruh pertaruhannya adalah \emph{kecepatan}
+penjelajahan tersebut.
+
+\paragraph{Pencarian menyeluruh.} Cara paling lugu adalah mencoba
+$a = 1, 2, 3, \dots$ sampai Persamaan~\eqref{eq:dlp} terpenuhi. Cara itu
+memerlukan paling banyak $p-1$ percobaan, sehingga untuk modulus 2048 bit
+diperlukan sekitar $2^{2048}$ percobaan --- angka yang tidak ada artinya secara
+fisik.
+
+\paragraph{Langkah raksasa-bayi (\textit{baby-step giant-step}).} Penjelajahan
+dapat dipercepat secara mendasar dengan menyimpan hasil-hasil antara. Tuliskan
+$a = i \cdot m + j$ dengan $m = \lceil \sqrt{p-1} \rceil$, sehingga
+Persamaan~\eqref{eq:dlp} menjadi
+
+\[ g^{\,i m + j} \equiv A \pmod p
+   \quad\Longleftrightarrow\quad
+   g^{\,j} \equiv A \cdot \left(g^{-m}\right)^{i} \pmod p . \]
+
+Langkah pertama menyimpan $g^j$ untuk seluruh $0 \le j < m$ ke dalam tabel;
+langkah kedua mengalikan $A$ dengan $g^{-m}$ berulang kali sampai hasilnya
+ditemukan di dalam tabel. Karena setiap langkah berukuran $\sqrt{p}$, waktu
+maupun memori yang diperlukan hanya sekitar $2\sqrt{p}$.
+
+Pada parameter kecil $p = 353$ dan $g = 3$, akar kuadrat dari 352 adalah sekitar
+18,8 sehingga $m = 19$. Algoritma itu memerlukan 19 langkah untuk menemukan
+$a = 5 \cdot 19 + 2 = 97$, padahal pencarian menyeluruh memerlukan 97 langkah.
+Perbaikan itu terasa kecil pada modulus sepanjang 9 bit, tetapi pada modulus
+2048 bit ia mengubah $2^{2048}$ menjadi sekitar $2^{1024}$ --- perbaikan yang
+sangat besar, tetapi angka hasilnya masih mustahil. Perhatikan bahwa percepatan
+ini juga menuntut memori sebesar $\sqrt{p}$, dan pada modulus besar kebutuhan
+memori itulah yang lebih dahulu menjadi penghalang.
+
+\paragraph{Metode yang lebih baik.} Untuk medan prima, algoritma terbaik yang
+dikenal hari ini bekerja dalam waktu \textit{subeksponensial} terhadap panjang
+modulus, dengan bentuk yang menyerupai hasil untuk pemfaktoran pada
+Bab~\ref{chap:rsa}:
+
+\begin{equation}
+L_p\!\left[\tfrac{1}{3},\, (64/9)^{1/3}\right]
+= \exp\!\left( (64/9)^{1/3} (\ln p)^{1/3} (\ln \ln p)^{2/3} \right) .
+\label{eq:dlp-index-calculus}
+\end{equation}
+
+Karena bentuk fungsinya sama, panjang modulus yang memberi tingkat keamanan
+setara ternyata juga berdekatan, sebagaimana diperlihatkan pada
+Tabel~\ref{tab:ukuran-dh}. Angka-angka itu bukan hasil hitungan langsung,
+melainkan rekomendasi baku yang diturunkan dari perkiraan biaya komputasi
+terkini; sifatnya perkiraan, dan sebagaimana ditunjukkan pengalaman pemfaktoran
+RSA, perkiraan semacam itu cenderung terlalu optimistis.
+
+\begin{table}[htbp]
     \centering
-    \includegraphics[width=0.75\linewidth, height=0.65\textheight, keepaspectratio]{figures/contoh-numerik-dh.png}
-    \caption{Contoh numerik pertukaran kunci Diffie-Hellman dengan $p = 11$ dan $g = 7$; penyadap dapat membaca seluruh nilai publik tetapi tetap tidak dapat memperoleh kunci bersama}
-    \label{fig:contoh-numerik-dh}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
-\end{figure}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.0cm}
+                                   >{\raggedright\arraybackslash}p{3.4cm}
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Modulus $p$} & \textbf{Perkiraan keamanan} & \textbf{Keterangan} \\
+    \midrule
+    512 bit  & kurang dari 64 bit & pernah dipecahkan untuk parameter ekspor TLS \\
+    1024 bit & sekitar 80 bit     & dianggap dalam jangkauan penyerang yang sangat kuat \\
+    2048 bit & sekitar 112 bit    & panjang minimum yang diterima hari ini \\
+    3072 bit & sekitar 128 bit    & untuk perlindungan jangka panjang \\
+    7680 bit & sekitar 192 bit    & setara AES-192 \\
+    15360 bit & sekitar 256 bit   & setara AES-256 \\
+    \bottomrule
+    \end{tabularx}
+    \caption{Panjang modulus Diffie--Hellman dan perkiraan tingkat keamanan yang
+    diberikannya. Perhatikan bahwa modulusnya jauh lebih panjang daripada
+    modulus RSA yang memberi keamanan setara}
+    \label{tab:ukuran-dh}
+\end{table}
+
+\subsection{Serangan Man-in-the-Middle}
+\label{subsec:mitm-dh}
+
+Kesulitan logaritma diskret melindungi Diffie--Hellman dari penyadapan, tetapi
+tidak melindunginya dari apa pun yang lebih aktif daripada penyadapan. Serangan
+yang paling penting adalah \textbf{man-in-the-middle} (MITM), yang pada dasarnya
+memanfaatkan satu kelemahan mendasar: protokol ini tidak pernah memeriksa
+\emph{siapa} yang berada di ujung lain percakapan.
+
+Misalkan Mallory mampu mencegat dan mengganti pesan pada saluran antara Alice
+dan Bob. Ia memilih kunci privatnya sendiri, $m$, dan menjalankan protokol itu
+dua kali: sekali berpura-pura menjadi Bob di hadapan Alice, dan sekali
+berpura-pura menjadi Alice di hadapan Bob. Urutan pertukarannya diperlihatkan
+pada Tabel~\ref{tab:alur-mitm}.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{@{}l l l@{}}
+    \toprule
+    \textbf{Langkah} & \textbf{Alice} & \textbf{Bob} \\
+    \midrule
+    1 & mengirim $g^a \bmod p$ & (dicegat Mallory) \\
+    2 & menerima $g^m$, dikira dari Bob & mengirim $g^b \bmod p$ \\
+    3 & (dicegat Mallory) & menerima $g^m$, dikira dari Alice \\
+    4 & menghitung $K_1 = (g^m)^a$ & menghitung $K_2 = (g^m)^b$ \\
+    \bottomrule
+    \end{tabular}
+    \caption{Alur pertukaran kunci yang diserang Mallory. Nilai $g^a$ dan $g^b$
+    yang asli tidak pernah sampai ke tujuannya; keduanya diganti dengan $g^m$}
+    \label{tab:alur-mitm}
+\end{table}
+
+Kunci yang dipegang masing-masing pihak berbeda, dan Mallory mengetahui
+keduanya:
+
+\begin{align}
+K_1 &= g^{am} \bmod p = (g^a)^m \bmod p = (g^m)^a \bmod p , \label{eq:mitm-k1} \\
+K_2 &= g^{bm} \bmod p = (g^b)^m \bmod p = (g^m)^b \bmod p . \label{eq:mitm-k2}
+\end{align}
+
+Pada Persamaan~\eqref{eq:mitm-k1}, suku $(g^a)^m$ diperoleh Mallory dari kunci
+publik Alice, sedangkan suku $(g^m)^a$ adalah nilai yang dihitung Alice sendiri.
+Keduanya sama persis, dan itulah yang membuat serangan ini berhasil: Mallory
+mendapatkan $K_1$ tanpa perlu mengetahui $a$, sebab ia memangkatkan $g^a$ dengan
+kunci privatnya sendiri. Alasan yang sama berlaku untuk
+Persamaan~\eqref{eq:mitm-k2}. Susunan ketiga pihak itu diperlihatkan pada
+Gambar~\ref{fig:mitm-dh}.
+
+\input{figures/mitm-dh}
+
+
+Setelah itu Mallory berada dalam kedudukan yang sangat menguntungkan. Pesan
+terenkripsi yang dikirim Alice dengan $K_1$ dapat ia dekripsi, ia baca, ia ubah
+bila perlu, lalu ia enkripsi kembali dengan $K_2$ dan teruskan kepada Bob.
+Sebaliknya, pesan dari Bob dapat ia buka dengan $K_2$ dan teruskan dengan $K_1$.
+Alice dan Bob masing-masing merasa berkomunikasi langsung dengan pihak yang
+benar, karena dari sudut pandang keduanya seluruh perhitungan berjalan mulus dan
+menghasilkan kunci yang konsisten.
+
+Pada parameter yang dipakai di seluruh bab ini, yaitu $p = 353$ dan $g = 3$
+dengan $a = 97$ dan $b = 233$, seorang Mallory yang memilih $m = 101$ akan
+memperoleh $g^m \bmod 353 = 63$. Alice lalu menghitung
+$K_1 = 63^{97} \bmod 353 = 257$, sedangkan Bob menghitung
+$K_2 = 63^{233} \bmod 353 = 249$. Mallory dapat memperoleh kedua nilai itu
+dengan menghitung $40^{101} \bmod 353$ dan $248^{101} \bmod 353$, memakai
+kunci publik yang ia sadap. Perhatikan bahwa $K_1 \neq K_2$; keduanya memang
+harus berbeda, sebab bila sama maka Mallory tidak dapat memisahkan kedua arah
+percakapan.
+
+\subsection{Mengapa Serangan Itu Berhasil dan Bagaimana Menangkalnya}
+\label{subsec:penangkalan-mitm}
+
+Akar penyebab serangan MITM bukanlah kelemahan matematis, melainkan kelemahan
+protokol: tidak ada satu pun langkah pada Subbagian~\ref{sec:protokol-dh} yang
+memeriksa identitas lawan bicara. Protokol itu menjamin bahwa kedua pihak
+menyepakati sebuah kunci yang sama, tetapi tidak menjamin \emph{dengan siapa}
+kunci itu disepakati. Dua hal itu berbeda, dan perbedaannya justru menjadi
+seluruh isi serangan ini.
+
+Karena itu, penangkalnya bukan mengganti bilangan prima atau memperpanjang
+modulus --- memperbesar $p$ tidak menghalangi Mallory sedikit pun, sebab ia tidak
+pernah perlu memecahkan logaritma diskret. Yang diperlukan adalah
+\textbf{otentikasi}: setiap pihak harus dapat memastikan bahwa nilai $g^a$ atau
+$g^b$ yang diterimanya benar-benar berasal dari orang yang dimaksud. Beberapa
+cara yang dipakai dalam praktik:
+
+\begin{itemize}
+    \item \textbf{Tanda tangan digital atas nilai pertukaran.} Alice mengirim
+          $g^a$ beserta tanda tangannya, dan Bob memverifikasi tanda tangan itu
+          dengan kunci publik Alice yang sudah dipercaya. Mallory tidak dapat
+          memalsukannya tanpa kunci privat Alice. Pembahasan tanda tangan
+          digital ada pada Bab~\ref{chap:tanda-tangan-pki}.
+    \item \textbf{Sertifikat dan infrastruktur kunci publik.} Sebelum pertukaran
+          dimulai, kedua pihak saling menyerahkan sertifikat yang mengikat
+          kunci publik kepada identitas. Inilah yang dilakukan pada TLS: kunci
+          publik peladen disahkan oleh otoritas sertifikat, sehingga klien dapat
+          memastikan bahwa dirinya berbicara dengan peladen yang benar.
+          Pembahasannya juga ada pada Bab~\ref{chap:tanda-tangan-pki}.
+    \item \textbf{Protokol Station-to-Station.} Protokol yang dirancang Diffie,
+          van Oorschot, dan Wiener ini memadukan pertukaran kunci dengan tanda
+          tangan atas nilai pertukaran yang telah diikatkan pada sesi tertentu,
+          sehingga setiap upaya penggantian nilai dapat dideteksi
+          \citep{diffie1992}.
+    \item \textbf{Saluran yang telah diautentikasi sebelumnya.} Bila kedua pihak
+          telah berbagi kunci jangka panjang --- misalnya melalui pertemuan
+          tatap muka sekali saja --- kunci itu dapat dipakai untuk mengautentikasi
+          pertukaran Diffie--Hellman berikutnya. Inilah pola yang dipakai pada
+          SSH dan pada protokol Signal.
+\end{itemize}
+
+Pelajaran umumnya penting untuk diingat: pertukaran kunci yang bersifat
+anonim tidak pernah cukup, sekalipun secara matematis sempurna. Kerahasiaan
+memerlukan kepastian identitas, dan keduanya harus dipenuhi secara terpisah.
+
+\subsection{Serangan Khusus terhadap Diffie-Hellman}
+\label{subsec:serangan-khusus-dh}
+
+Selain MITM, terdapat sejumlah serangan yang menyerang pemilihan parameter atau
+penerapan protokolnya. Serangan-serangan ini tidak merusak Diffie--Hellman
+sebagai gagasan, tetapi menunjukkan bahwa penerapan yang tampak benar pun dapat
+menjadi tidak aman.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
+                       >{\raggedright\arraybackslash}p{5.4cm}
+                       >{\raggedright\arraybackslash}p{4.6cm}@{}}
+    \toprule
+    \textbf{Serangan} & \textbf{Prinsip} & \textbf{Penangkalan} \\
+    \midrule
+    \textit{Subgroup confinement} &
+    Bila orde $g$ memiliki faktor kecil, penyerang dapat mengarahkan kunci ke
+    subgrup kecil dan mencarinya dengan menyeluruh &
+    Pakai safe prime $p = 2q+1$ dan pastikan $g$ membangkitkan subgrup berorde
+    $q$ \\
+    \addlinespace
+    Kunci publik tak sah &
+    Nilai $A$ atau $B$ yang diterima tidak diperiksa apakah berada di dalam grup
+    yang benar &
+    Tolak nilai $A \le 1$ atau $A \ge p-1$; untuk kurva eliptik, periksa apakah
+    titiknya berada pada kurva \\
+    \addlinespace
+    Pembangkit acak yang lemah &
+    Kunci privat $a$ atau $b$ berasal dari pembangkit acak yang keluarannya dapat
+    diduga, sehingga dapat didaftar seluruhnya &
+    Pakai pembangkit acak yang aman secara kriptografis; jangan membangkitkan
+    kunci sendiri dengan cara yang tidak teruji \\
+    \addlinespace
+    Penurunan mutu parameter &
+    Penyerang menurunkan negosiasi agar kedua pihak memakai modulus yang lemah,
+    lalu memecahkannya (Logjam 2015) &
+    Tolak modulus di bawah batas minimum; pakai kelompok bernama yang baku \\
+    \addlinespace
+    Pohlig--Hellman &
+    Bila $p-1$ seluruhnya tersusun dari faktor prima kecil, logaritma diskret
+    dapat dipecah menjadi banyak masalah kecil &
+    Pakai safe prime sehingga $p-1 = 2q$ dengan $q$ prima besar \\
+    \bottomrule
+    \end{tabular}
+    \caption{Lima serangan yang menyasar parameter atau penerapan Diffie--Hellman,
+    bukan matematika protokolnya}
+    \label{tab:serangan-dh}
+\end{table}
+
+Perhatikan benang merah pada Tabel~\ref{tab:serangan-dh}: keempat serangan
+pertama sama sekali tidak memerlukan perhitungan logaritma diskret yang berat.
+Penyerangnya cukup memilih modulus yang lemah, menunggu korban memilih kunci
+privatnya dengan cara yang lemah, atau memaksa korban menerima parameter yang
+lemah. Inilah alasan mengapa pembakuan parameter pada
+Subbagian~\ref{subsec:parameter-dh} bukan sekadar kenyamanan, melainkan
+keharusan keamanan.

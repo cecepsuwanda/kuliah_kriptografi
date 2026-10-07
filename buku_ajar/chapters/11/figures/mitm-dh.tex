@@ -1,0 +1,45 @@
+% Serangan man-in-the-middle pada pertukaran kunci Diffie-Hellman.
+% Dirujuk dari section-03.tex dengan \input{figures/mitm-dh}.
+% Mallory mengganti g^a dan g^b dengan g^m, sehingga ia memegang kedua kunci.
+\begin{figure}[htbp]
+    \centering
+    \resizebox{0.98\linewidth}{!}{%
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners=1pt, minimum height=0.9cm,
+                      text width=2.7cm, align=center, font=\small, inner sep=3pt},
+        panah/.style={-{Latex[length=2.2mm]}, thick},
+        palsu/.style={-{Latex[length=2.2mm]}, thick, dashed},
+        catatan/.style={font=\footnotesize, align=left, text width=13.6cm},
+    ]
+        % --- tiga pihak ---
+        \node[kotak, fill=blue!6]   (a) at (0,0)    {Alice};
+        \node[kotak, fill=gray!5]   (m) at (6.4,0)  {Mallory};
+        \node[kotak, fill=green!10] (b) at (12.8,0) {Bob};
+
+        % --- kunci yang dipegang masing-masing ---
+        \node[font=\footnotesize, align=center] at (0,-1.2)
+            {memegang $a$\\ memakai $K_1 = g^{am}$};
+        \node[font=\footnotesize, align=center] at (6.4,-1.2)
+            {memegang $m$\\ mengetahui $K_1$ dan $K_2$};
+        \node[font=\footnotesize, align=center] at (12.8,-1.2)
+            {memegang $b$\\ memakai $K_2 = g^{bm}$};
+
+        % --- pengiriman yang dicegat ---
+        \draw[panah] (a.east) -- node[above, font=\scriptsize] {$g^{a} \bmod p$} (2.6,0);
+        \node[font=\scriptsize, align=center] at (4.5,0.42) {diganti};
+        \draw[palsu] (m.west) -- node[below, font=\scriptsize] {$g^{m} \bmod p$} (2.6,0);
+
+        \draw[palsu] (m.east) -- node[above, font=\scriptsize] {$g^{m} \bmod p$} (10.2,0);
+        \node[font=\scriptsize, align=center] at (11.5,0.42) {seolah dari Alice};
+        \draw[panah] (b.west) -- node[below, font=\scriptsize] {$g^{b} \bmod p$} (10.2,0);
+
+        \node[catatan, anchor=north] at (6.4,-2.2)
+            {Alice dan Bob masing-masing merasa berbicara dengan pihak yang benar,
+             sebab kedua perhitungan berjalan mulus. Mallory memakai $K_1$ untuk
+             membaca arah Alice dan $K_2$ untuk membaca arah Bob};
+    \end{tikzpicture}}
+    \caption{Serangan man-in-the-middle: $g^m$ menggantikan $g^a$ dan $g^b$,
+    sehingga Mallory menyepakati kunci yang berbeda dengan masing-masing pihak}
+    \label{fig:mitm-dh}
+    \sumber{Diolah dari Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

@@ -4,6 +4,12 @@
 1. Jelaskan langkah-langkah matematis yang terjadi dalam pertukaran kunci Diffie-Hellman.
 2. Apa yang dimaksud dengan masalah logaritma diskrit dan mengapa hal ini menjadi fondasi keamanan DH?
 3. Gambarkan alur serangan \textit{Man-in-the-Middle} pada protokol DH dan jelaskan mengapa hal tersebut bisa terjadi.
+4. Diketahui $p = 23$, $g = 5$, $a = 7$, dan $b = 15$. Hitunglah $A$, $B$, dan kunci
+   bersama $K$ dari kedua sisi.
+5. Jelaskan mengapa $g$ harus merupakan akar primitif dari $p$, dan tunjukkan apa
+   yang menjadi salah bila $g = 3$ dipakai pada $p = 11$.
+6. Sebutkan dua alasan mengapa protokol Diffie--Hellman tanpa otentikasi tidak
+   boleh dipakai untuk melindungi percakapan yang sungguh-sungguh rahasia.
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -16,7 +22,21 @@ Saya dapat menguraikan prosedur pertukaran kunci Diffie-Hellman & [ ] \\
 \hline
 Saya dapat menghitung kunci rahasia bersama $K$ menggunakan parameter DH & [ ] \\
 \hline
+Saya dapat memeriksa apakah sebuah $g$ merupakan akar primitif dari $p$ & [ ] \\
+\hline
+Saya dapat menjelaskan mengapa logaritma diskret menjadi dasar keamanan DH & [ ] \\
+\hline
+Saya dapat memperkirakan biaya serangan logaritma diskret menurut panjang modulus & [ ] \\
+\hline
 Saya dapat menganalisis risiko serangan MITM pada protokol DH & [ ] \\
+\hline
+Saya dapat menjelaskan mengapa MITM tidak dapat ditangkis dengan memperbesar modulus & [ ] \\
+\hline
+Saya dapat menjelaskan peran otentikasi dalam menutup celah MITM & [ ] \\
+\hline
+Saya dapat menjelaskan perbedaan DH statis dan DH sesaat (\textit{forward secrecy}) & [ ] \\
+\hline
+Saya dapat menjelaskan pertukaran kunci tiga pihak dan menghitung $g^{abc} \bmod p$ & [ ] \\
 \hline
 Saya dapat menjelaskan implementasi DH pada protokol TLS/SSL & [ ] \\
 \hline

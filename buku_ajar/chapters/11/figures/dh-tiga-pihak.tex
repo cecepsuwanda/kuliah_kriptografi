@@ -1,0 +1,37 @@
+% Pertukaran kunci Diffie-Hellman tiga pihak, melingkar dalam tiga putaran.
+% Dirujuk dari section-04.tex dengan \input{figures/dh-tiga-pihak}.
+\begin{figure}[htbp]
+    \centering
+    \resizebox{0.98\linewidth}{!}{%
+    \begin{tikzpicture}[
+        pihak/.style={draw, rounded corners=1pt, minimum size=1.5cm,
+                      align=center, font=\small, fill=blue!6, inner sep=2pt},
+        panah/.style={-{Latex[length=2.4mm]}, thick},
+        langkah/.style={font=\scriptsize, fill=white, inner sep=2pt,
+                        align=center, midway},
+    ]
+        \node[pihak] (a) at (90:3.1)  {Alice\\$a$};
+        \node[pihak] (b) at (210:3.1) {Bob\\$b$};
+        \node[pihak] (c) at (330:3.1) {Carol\\$c$};
+
+        % putaran 1: g^a -> Bob -> g^ab -> Carol
+        \draw[panah] (a) to[bend right=22]
+            node[langkah] {$g^{a}$} (b);
+        \draw[panah] (b) to[bend right=22]
+            node[langkah] {$g^{ab}$} (c);
+        \draw[panah] (c) to[bend right=22]
+            node[langkah] {$g^{abc} = K$} (a);
+
+        % putaran 2 dan 3 ditandai di luar lingkaran
+        \node[font=\footnotesize, align=left, text width=13.6cm, anchor=north]
+            at (0,-4.2)
+            {Putaran berikutnya berjalan dengan pola sama: $g^{b} \to g^{bc} \to
+             g^{abc}$ untuk Alice, lalu $g^{c} \to g^{ca} \to g^{abc}$ untuk Bob.
+             Setiap pihak memangkatkan nilai yang diterimanya dengan kunci
+             privatnya sendiri, lalu meneruskannya kepada pihak berikutnya};
+    \end{tikzpicture}}
+    \caption{Pertukaran kunci tiga pihak: satu putaran melingkar menghasilkan
+    $g^{abc}$, dan dua putaran berikutnya dengan pola sama}
+    \label{fig:dh-tiga-pihak}
+    \sumber{Diolah dari Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

@@ -6,6 +6,9 @@
 3. Bob memilih kunci privat $b = 233$, hitunglah nilai $B$.
 4. Hitunglah kunci rahasia bersama $K$ yang dihasilkan oleh Alice dan Bob.
 5. Diskusikan bagaimana jika $p$ yang digunakan adalah bilangan kecil; apakah keamanan tetap terjamin?
+6. Ulangi langkah 2 sampai 4 dengan perkakas simulasi daring yang memakai
+   $G = 1601$ dan $N = 4789$. Bandingkan hasilnya dengan
+   Contoh~\ref{ex:dh-1601}.
 \end{obeactivity}
 
 Langkah-langkah pada Aktivitas 11.1 dapat dijalankan langsung melalui program
@@ -21,3 +24,93 @@ primitif dari $p$.
 
 Program yang sama tersedia dalam C++ (\texttt{code/cpp/diffie\_hellman.cpp})
 dan MATLAB (\texttt{code/matlab/diffie\_hellman.m}).
+
+\begin{obeactivity}
+\textbf{Aktivitas 11.2: Memeriksa Akar Primitif dan Memilih Parameter}
+1. Jalankan program pada Listing~\ref{lst:dh-parameter} untuk modulus kecil
+   $p = 11$. Catatlah seluruh akar primitifnya.
+2. Susunlah tabel pangkat $g^{1}$ sampai $g^{10}$ modulo 11 untuk $g = 7$ dan
+   $g = 3$. Bandingkan banyaknya nilai berbeda yang muncul pada kedua baris itu
+   dengan Tabel~\ref{tab:akar-primitif}.
+3. Untuk $g = 3$ dan $a = 6$, hitunglah $A$. Tunjukkan bahwa $a = 1$ dan
+   $a = 11$ menghasilkan nilai $A$ yang sama, lalu jelaskan mengapa hal itu
+   terjadi.
+4. Ulangi percobaan itu untuk modulus $p = 23$. Tentukan akar primitifnya dan
+   periksa berapa banyak akar primitif yang dimiliki $23$.
+5. Diskusikan mengapa jumlah akar primitif modulo $p$ selalu sama dengan
+   $\varphi(p-1)$, dan apa akibatnya bagi pemilihan parameter secara acak.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Siklus pangkat, orde, dan pemeriksaan akar primitif},
+    label={lst:dh-parameter},
+    firstline=58,
+    lastline=85
+]{\codefile{python/dh_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 11.3: Menembus Logaritma Diskret dengan Langkah Raksasa-Bayi}
+1. Jalankan program pada Listing~\ref{lst:dh-serangan}. Catatlah nilai
+   $m = \lceil \sqrt{p-1} \rceil$ untuk $p = 353$.
+2. Berapa banyak perkalian yang diperlukan program untuk menemukan $a$ dari
+   $A = 40$? Bandingkan dengan pencarian menyeluruh yang memerlukan 97 langkah.
+3. Ubah kunci privat Alice menjadi $a = 352$. Berapa banyak langkah yang
+   diperlukan sekarang? Apakah nilainya berubah jauh?
+4. Jelaskan mengapa jumlah langkah pada langkah raksasa-bayi bergantung pada
+   panjang modulus, dan tidak bergantung pada besar kecilnya nilai $a$ itu
+   sendiri.
+5. Perkirakan jumlah langkah yang diperlukan untuk $p$ sepanjang 2048 bit, lalu
+   hitung berapa lama pekerjaan itu bila satu komputer dapat melakukan $10^{9}$
+   perkalian per detik.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Langkah raksasa-bayi untuk logaritma diskret dan serangan man-in-the-middle},
+    label={lst:dh-serangan},
+    firstline=127,
+    lastline=165
+]{\codefile{python/dh_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 11.4: Menyerang Protokol dengan Man-in-the-Middle}
+1. Dengan parameter Contoh~\ref{ex:dh-353}, pilih $m = 101$ sebagai kunci privat
+   penyerang dan hitunglah $g^{m} \bmod p$. Nilai itu menggantikan $A$ maupun
+   $B$.
+2. Hitunglah $K_1$ yang diperoleh Alice dan $K_2$ yang diperoleh Bob. Periksa
+   hasilnya dengan Contoh~\ref{ex:dh-mitm}.
+3. Tunjukkan bahwa penyerang dapat memperoleh kedua kunci itu dari kunci publik
+   yang disadapnya, yaitu dengan menghitung $A^{m} \bmod p$ dan
+   $B^{m} \bmod p$. Apakah penyerang perlu mengetahui $a$ atau $b$?
+4. Rancanglah cara bagi Alice untuk memastikan bahwa nilai yang diterimanya
+   benar-benar berasal dari Bob. Diskusikan mengapa cara itu harus melibatkan
+   sesuatu yang tidak dapat dipalsukan penyerang.
+5. Jelaskan mengapa memperbesar modulus $p$ sama sekali tidak menolong Alice
+   maupun Bob pada serangan ini.
+\end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 11.5: Memperkirakan Kekuatan Parameter}
+1. Jalankan program pada Listing~\ref{lst:dh-keamanan} dan catat perkiraan
+   tingkat keamanan untuk modulus 512, 1024, 2048, 3072, 7680, dan 15360 bit.
+2. Bandingkan daftar itu dengan Tabel~\ref{tab:ukuran-dh}. Berapa panjang
+   modulus yang hari ini dianggap minimum, dan mengapa angka itu jauh lebih
+   besar daripada modulus RSA yang memberi keamanan setara?
+3. Modulus 512 bit pernah dipakai pada parameter ekspor TLS. Jelaskan mengapa
+   pemakaian modulus sependek itu justru berbahaya bukan karena mudah dipecahkan
+   sendiri, melainkan karena memudahkan penyerang menurunkannya menjadi pilihan
+   yang lemah (serangan Logjam).
+4. Diskusikan mengapa Diffie--Hellman sesaat (DHE) lebih disukai daripada
+   Diffie--Hellman statis, dan apa yang dimaksud dengan \textit{forward secrecy}.
+5. Jelaskan mengapa ECDH dengan kunci 256 bit dapat menggantikan Diffie--Hellman
+   modulus 3072 bit.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Perkiraan tingkat keamanan menurut panjang modulus},
+    label={lst:dh-keamanan},
+    firstline=172,
+    lastline=185
+]{\codefile{python/dh_uji.py}}

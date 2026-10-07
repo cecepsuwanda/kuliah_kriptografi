@@ -1,10 +1,24 @@
 \section{Contoh Terhitung}
+\label{sec:contoh-dh}
+
+Seluruh contoh pada bagian ini memakai aritmetika modular yang telah dibahas pada
+Bab~\ref{chap:landasan-matematika}. Contoh pertama sengaja dipilih sekecil
+mungkin agar setiap langkah dapat diperiksa dengan tangan; contoh-contoh
+berikutnya memakai modulus yang lebih besar untuk memperlihatkan bahwa
+prosedurnya sama sekali tidak berubah ketika ukurannya bertambah.
 
 \begin{example}[Pertukaran kunci Diffie-Hellman dengan bilangan kecil]
-Alice dan Bob menyepakati parameter publik $p = 11$ dan $g = 7$. Bilangan $7$ adalah akar primitif dari $11$ karena $7^1, 7^2, \dots, 7^{10} \pmod{11}$ menghasilkan semua nilai $1$ sampai $10$ (lihat Gambar~\ref{fig:contoh-numerik-dh}).
+\label{ex:dh-kecil}
+Alice dan Bob menyepakati parameter publik $p = 11$ dan $g = 7$. Bilangan $7$
+adalah akar primitif dari $11$, sebab pangkatnya menghasilkan kesepuluh residu
+bukan-nol tepat sekali masing-masing, sebagaimana diperlihatkan pada baris
+pertama Tabel~\ref{tab:akar-primitif}.
+
 \begin{enumerate}
     \item Alice memilih kunci privat $a = 6$ dan menghitung kunci publiknya:
     \[ A = g^a \bmod p = 7^6 \bmod 11 = 4. \]
+    Nilai $4$ ini dibaca langsung dari baris $g = 7$ pada
+    Tabel~\ref{tab:akar-primitif}, yaitu kolom keenam.
     \item Bob memilih kunci privat $b = 9$ dan menghitung kunci publiknya:
     \[ B = g^b \bmod p = 7^9 \bmod 11 = 8. \]
     \item Alice menerima $B = 8$ dan menghitung kunci rahasia bersama:
@@ -12,16 +26,165 @@ Alice dan Bob menyepakati parameter publik $p = 11$ dan $g = 7$. Bilangan $7$ ad
     \item Bob menerima $A = 4$ dan menghitung kunci rahasia bersama:
     \[ K = A^b \bmod p = 4^9 \bmod 11 = 3. \]
 \end{enumerate}
-Kedua pihak memperoleh kunci rahasia bersama $K = 3$ tanpa pernah mengirimkan nilai $K$ melalui saluran publik.
+
+Kedua pihak memperoleh kunci rahasia bersama $K = 3$ tanpa pernah mengirimkan
+nilai $K$ melalui saluran publik. Yang melewati saluran hanyalah $A = 4$ dan
+$B = 8$, sebagaimana diperlihatkan pada Gambar~\ref{fig:contoh-numerik-dh}.
+
+Perhatikan betapa kecilnya usaha yang diperlukan seorang penyadap pada modulus
+ini. Ia mengetahui $p = 11$, $g = 7$, dan $A = 4$, sehingga ia hanya perlu
+mencari $a$ pada baris pertama Tabel~\ref{tab:akar-primitif}. Karena nilai $4$
+berada pada kolom keenam, ia langsung memperoleh $a = 6$, lalu menghitung
+$K = 8^6 \bmod 11 = 3$. Pencarian menyeluruh semacam itu memerlukan paling
+banyak sepuluh percobaan, dan itulah sebabnya modulus kecil sama sekali tidak
+memberi keamanan. Yang membuat protokol ini berguna bukan kehalusan prosedurnya,
+melainkan kenyataan bahwa Tabel~\ref{tab:akar-primitif} tidak dapat disusun
+untuk modulus sepanjang 2048 bit.
+\end{example}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\linewidth, height=0.65\textheight, keepaspectratio]{figures/contoh-numerik-dh.png}
+    \caption{Contoh numerik pertukaran kunci Diffie--Hellman dengan $p = 11$ dan
+    $g = 7$, beserta seluruh nilai yang dapat dibaca oleh penyadap; kolom tengah
+    memperlihatkan bahwa $A$ dan $B$ memang melewati saluran terbuka, tetapi
+    kunci bersama $K = 3$ tidak pernah ikut terkirim}
+    \label{fig:contoh-numerik-dh}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+\begin{example}[Mengapa $g$ harus akar primitif]
+\label{ex:dh-bukan-primitif}
+Misalkan Alice dan Bob tetap memakai $p = 11$ tetapi tanpa memeriksa $g$,
+sehingga keduanya bersepakat pada $g = 3$. Bilangan $3$ bukan akar primitif dari
+$11$: pangkatnya berulang dengan periode 5, sesuai baris kedua
+Tabel~\ref{tab:akar-primitif}.
+
+Akibatnya, kunci publik yang mungkin hanya lima buah, yaitu $3, 9, 5, 4$, dan
+$1$. Bila Alice memilih $a = 6$, maka $A = 3^6 \bmod 11 = 3$, dan nilai itu
+sama dengan hasil untuk $a = 1$ maupun $a = 11$. Dengan kata lain, kunci privat
+$a$ tidak lagi dapat ditentukan secara tunggal oleh kunci publiknya, dan
+seorang penyerang cukup mencoba lima kemungkinan untuk menemukan kunci bersama
+--- sama sekali tidak bergantung pada besarnya $a$ yang dipilih Alice.
+
+Inilah alasan mengapa pemeriksaan akar primitif pada
+Subbagian~\ref{subsec:parameter-dh} bukan formalitas. Bilangan prima yang besar
+tidak menolong bila $g$ dipilih sembarangan.
 \end{example}
 
 \begin{example}[Contoh dengan bilangan prima yang lebih besar]
-Alice dan Bob menyepakati $p = 353$ dan $g = 3$; keduanya valid karena $3 < 353$ dan $3$ adalah akar primitif dari $353$.
+\label{ex:dh-353}
+Alice dan Bob menyepakati $p = 353$ dan $g = 3$. Keduanya sah karena $3 < 353$
+dan $3$ adalah akar primitif dari $353$; ordenya modulo $353$ memang $352$,
+yakni tepat $p - 1$.
+
 \begin{enumerate}
-    \item Alice memilih $a = 97$: \quad $A = g^a \bmod p = 3^{97} \bmod 353 = 40$.
-    \item Bob memilih $b = 233$: \quad $B = g^b \bmod p = 3^{233} \bmod 353 = 248$.
-    \item Alice menghitung: \quad $K = B^a \bmod p = 248^{97} \bmod 353 = 160$.
-    \item Bob menghitung: \quad $K = A^b \bmod p = 40^{233} \bmod 353 = 160$.
+    \item Alice memilih $a = 97$ dan menghitung
+          $A = g^a \bmod p = 3^{97} \bmod 353 = 40$, lalu mengirim $A$ kepada Bob.
+    \item Bob memilih $b = 233$ dan menghitung
+          $B = g^b \bmod p = 3^{233} \bmod 353 = 248$, lalu mengirim $B$ kepada Alice.
+    \item Alice menghitung $K = B^a \bmod p = 248^{97} \bmod 353 = 160$.
+    \item Bob menghitung $K = A^b \bmod p = 40^{233} \bmod 353 = 160$.
 \end{enumerate}
-Penyadap yang melihat $p, g, A = 40$, dan $B = 248$ harus menyelesaikan persoalan logaritma diskrit untuk memperoleh $a$ atau $b$. Untuk $p$ sebesar ini perhitungan masih terjangkau komputer, tetapi untuk $p$ berukuran ratusan digit (misalnya 2048 bit) menjadi tidak praktis.
+
+Kedua pihak memperoleh $K = 160$. Penyadap yang melihat $p$, $g$, $A = 40$, dan
+$B = 248$ harus menyelesaikan persoalan logaritma diskret untuk memperoleh $a$
+atau $b$. Pada modulus ini pekerjaan tersebut masih terjangkau komputer: dengan
+algoritma langkah raksasa-bayi, penyerang menyimpan 19 nilai pada tabelnya lalu
+menemukan $a = 97$ dalam 19 langkah pengalian, sesuai perhitungan pada
+Subbagian~\ref{subsec:dlog-dh}. Namun pada modulus 2048 bit, $\sqrt{p}$ berukuran
+sekitar $2^{1024}$, dan angka itu berada jauh di luar jangkauan perangkat apa pun
+yang mungkin dibangun.
+\end{example}
+
+\begin{example}[Parameter dari perkakas simulasi daring]
+\label{ex:dh-1601}
+Perkakas simulasi Diffie--Hellman yang banyak dipakai untuk latihan meminta
+pengguna memasukkan dua bilangan, $G$ dan $N$, dengan $N$ harus prima. Misalkan
+dipilih $G = 1601$ dan $N = 4789$. Kedua nilai itu sah: $4789$ memang prima, dan
+$1601$ adalah akar primitif modulo $4789$ karena ordenya tepat $4788 = N - 1$.
+
+Bob memilih kunci privatnya $x = 20$ dan menghitung
+
+\[ A = G^{x} \bmod N = 1601^{20} \bmod 4789 = 2716 . \]
+
+Alice memilih kunci privatnya $y = 4$ dan menghitung
+
+\[ B = G^{y} \bmod N = 1601^{4} \bmod 4789 = 1302 . \]
+
+Setelah bertukar, keduanya menghitung kunci bersama:
+
+\[
+\begin{aligned}
+K &= B^{x} \bmod N = 1302^{20} \bmod 4789 = 4257, \\
+K &= A^{y} \bmod N = 2716^{4} \bmod 4789 = 4257 .
+\end{aligned}
+\]
+
+Kunci bersama yang diperoleh adalah $K = 4257$.
+
+Contoh ini memperlihatkan dua hal yang tidak terlihat pada modulus kecil.
+Pertama, kedua kunci privat sangat tidak seimbang --- Bob memilih $20$, Alice
+memilih $4$ --- namun keamanan protokol tidak bergantung pada besar kecilnya
+angka itu, melainkan semata-mata pada panjang modulus $N$. Kedua, meskipun
+$y = 4$ sangat kecil sehingga penyerang dapat menemukan $y$ dengan empat
+percobaan, menemukan $y$ hanya menolong penyerang apabila ia juga menyadap
+$A$. Bila penyerang hanya berhasil menebak $y$ tanpa mengetahui kunci publik
+lawan bicaranya, ia tetap tidak dapat menghitung $K$. Karena itu, keacakan
+kunci privat tetap diwajibkan: nilai kecil seperti $y = 4$ sebenarnya berbahaya
+justru karena mudah ditebak, walaupun pada contoh ini tidak berakibat apa-apa.
+\end{example}
+
+\begin{example}[Serangan man-in-the-middle atas contoh yang sama]
+\label{ex:dh-mitm}
+Perhatikan kembali parameter Contoh~\ref{ex:dh-353}, tetapi kali ini dengan
+Mallory yang mencegat saluran. Mallory memilih kunci privatnya sendiri,
+$m = 101$, dan menghitung $g^m \bmod p = 3^{101} \bmod 353 = 63$. Nilai $63$
+inilah yang ia kirimkan kepada kedua pihak, menggantikan $A$ maupun $B$.
+
+\begin{enumerate}
+    \item Alice mengira $63$ berasal dari Bob, sehingga ia menghitung
+    \[ K_1 = 63^{97} \bmod 353 = 257 . \]
+    \item Bob mengira $63$ berasal dari Alice, sehingga ia menghitung
+    \[ K_2 = 63^{233} \bmod 353 = 249 . \]
+    \item Mallory menghitung kedua kunci itu dari kunci publik yang ia sadap:
+    \[
+    \begin{aligned}
+    K_1 &= A^m \bmod p = 40^{101} \bmod 353 = 257, \\
+    K_2 &= B^m \bmod p = 248^{101} \bmod 353 = 249 .
+    \end{aligned}
+    \]
+\end{enumerate}
+
+Hasilnya sama persis dengan yang diperoleh Alice dan Bob. Perhatikan bahwa
+Mallory sama sekali tidak perlu mengetahui $a = 97$ maupun $b = 233$: ia hanya
+memangkatkan kunci publik kedua korban dengan kunci privatnya sendiri, sesuai
+Persamaan~\eqref{eq:mitm-k1} dan~\eqref{eq:mitm-k2}. Sejak saat itu, setiap
+pesan Alice dibuka dengan $K_1 = 257$ dan setiap pesan Bob dibuka dengan
+$K_2 = 249$, sehingga seluruh percakapan dapat dibaca dan diubah.
+
+Perhatikan pula bahwa $K_1 \neq K_2$. Perbedaan itu memang diperlukan Mallory:
+bila kedua kunci sama, arah percakapan tidak lagi dapat dipisahkan dan Alice
+serta Bob akan langsung menyadari kejanggalan pada percakapan mereka.
+\end{example}
+
+\begin{example}[Pertukaran kunci tiga pihak]
+\label{ex:dh-tiga-pihak}
+Alice, Bob, dan Carol menyepakati $p = 353$ dan $g = 3$, lalu memilih kunci
+privat $a = 97$, $b = 233$, dan $c = 41$. Berdasarkan prosedur dua belas langkah
+pada Subbagian~\ref{sec:ekstensi-dh}, ketiganya sampai pada kunci yang sama
+melalui tiga jalur berbeda:
+
+\[
+\begin{aligned}
+\text{Carol:} &\quad K = (g^{ab})^c \bmod p = 350, \\
+\text{Alice:} &\quad K = (g^{bc})^a \bmod p = 350, \\
+\text{Bob:}   &\quad K = (g^{ca})^b \bmod p = 350 .
+\end{aligned}
+\]
+
+Ketiga nilai itu sama dengan $g^{abc} \bmod p = 3^{97 \times 233 \times 41}
+\bmod 353 = 350$. Kesamaan tersebut berlaku karena perkalian pangkat bersifat
+komutatif, sehingga $abc = bca = cab$ walaupun ketiga pihak menempuh urutan
+langkah yang berbeda.
 \end{example}

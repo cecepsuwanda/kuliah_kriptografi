@@ -615,15 +615,118 @@ persamaan bernomor, tanpa contoh terhitung, dan tanpa program pengujian.
    serangan Bleichenbacher 1998 dan OAEP, karena tanpa keduanya pembaca akan
    menyimpulkan bahwa memakai padding sudah cukup untuk mengamankan RSA.
 
-## Bab 11 — Protokol Diffie-Hellman
+## Bab 11 — Protokol Diffie-Hellman  `[x]` SELESAI
 Sumber: `referensi/15-*` (2.457 kata, 8 topik, 11 gambar). Target: ±4.000 kata.
-**Belum punya sitasi.**
+**Menyitasi 5 kunci baru** (`hellman2002`, `diffie1992`, `rfc7919`, `rfc8446`,
+`adrian2015logjam`); dua sitasi lama (`diffie1976`, `stallings2017`) tetap
+dipakai. Bab ini semula **tanpa satu pun sitasi**. `references.bib` 54 entri.
 
-- [ ] Kriptografi hibrida dengan persamaan eksplisit + diagram
-- [ ] Serangan MITM dengan dua kunci bersama eksplisit
-- [ ] Protokol tiga pihak lengkap (11 langkah)
-- [ ] Catatan sejarah "Diffie–Hellman–Merkle"
-- [ ] Contoh numerik kedua ($G=1601$, $N=4789$)
+Hasil: 8.623 kata pada sembilan berkas (empat section 5.377, contoh 1.341,
+praktikum 662, rangkuman 510, latihan 432, evaluasi 301), **30 halaman mandiri**,
+5 tabel bernomor, 6 contoh terhitung, 5 persamaan bernomor, 13 subbagian baru
+(5 → 18), 3 diagram TikZ baru + 3 gambar raster (2 disisipkan kembali, 1 baru
+disalin dari referensi), dan satu program verifikasi baru
+(`code/python/dh_uji.py`, 357 baris, sepuluh blok pengujian yang seluruhnya
+**lulus**). Bab semula 1.415 kata tanpa subbagian bernama, tanpa persamaan
+bernomor, tanpa contoh terhitung, dan tanpa program pengujian.
+
+- [x] **Kriptografi hibrida dengan persamaan eksplisit + diagram** — Subbagian
+  *Kriptografi Hibrida secara Terperinci* (`subsec:hibrida-eksplisit`) memuat
+  enam langkah bernomor dengan rumus $E_{\text{RSA},\text{PK}_{\text{Bob}}}(K) = C_K$,
+  $E_{\text{AES},K}(M) = C_M$, $D_{\text{RSA},\text{SK}_{\text{Bob}}}(C_K) = K$,
+  dan $D_{\text{AES},K}(C_M) = M$, ditutup diagram baru
+  Gambar~\ref{fig:hibrida-pesan-dh} (TikZ) dan paragraf yang menerangkan mengapa
+  urutan pemulihan langkah 5 dan 6 tidak dapat ditukar
+- [x] **Serangan MITM dengan dua kunci bersama eksplisit** — Subbagian
+  *Serangan Man-in-the-Middle* (`subsec:mitm-dh`) dengan
+  Tabel~\ref{tab:alur-mitm} (alur empat pesan), lingkungan `align` bernomor
+  Persamaan~\eqref{eq:mitm-k1} dan \eqref{eq:mitm-k2}, diagram baru
+  Gambar~\ref{fig:mitm-dh}, dan Contoh~\ref{ex:dh-mitm} yang menghitung
+  $M = 3^{101} \bmod 353 = 63$, $K_1 = 257$, dan $K_2 = 249$ secara numerik.
+  Ditambah Subbagian *Mengapa Serangan Itu Berhasil dan Bagaimana Menangkalnya*
+  dengan empat penangkal, termasuk *Station-to-Station* (`diffie1992`)
+- [x] **Protokol tiga pihak lengkap (12 langkah)** — Subbagian *Pertukaran Kunci
+  Tiga Pihak* memuat seluruh dua belas langkah dek (versi lama buku memangkas
+  dua leg), diagram melingkar baru Gambar~\ref{fig:dh-tiga-pihak}, dan catatan
+  bahwa jumlah pengiriman tumbuh secepat $n(n-1)$ sehingga hanya praktis untuk
+  kelompok kecil
+- [x] **Catatan sejarah "Diffie–Hellman–Merkle"** — Subbagian *Sejarah Singkat
+  dan Penamaan* dengan potret
+  Gambar~\ref{fig:pionir-dh} (raster baru disalin dari referensi), kutipan
+  Hellman (`hellman2002`) bahwa nama yang adil adalah *Diffie--Hellman--Merkle*,
+  dan catatan Penghargaan Turing 2015
+- [x] **Contoh numerik kedua ($G = 1601$, $N = 4789$)** — Contoh~\ref{ex:dh-1601}
+  dengan $x = 20 \Rightarrow A = 2716$, $y = 4 \Rightarrow B = 1302$, dan
+  $K = 4257$ dari kedua sisi, beserta pembahasan mengapa $y = 4$ yang sangat
+  kecil tidak berbahaya selama $A$ tidak ikut tersadap
+- [x] **Lima tabel bernomor** — Tabel~\ref{tab:hibrida-vs-dh} (hibrida versus
+  pertukaran kunci), Tabel~\ref{tab:akar-primitif} (pangkat $g = 7$ dan $g = 3$
+  modulo 11), Tabel~\ref{tab:alur-mitm}, Tabel~\ref{tab:ukuran-dh} (panjang
+  modulus versus tingkat keamanan), dan Tabel~\ref{tab:serangan-dh} (empat
+  serangan khusus beserta penangkalnya)
+- [x] **Pemilihan parameter yang tidak dibahas dek sama sekali** — Subbagian
+  *Pemilihan Parameter dan Ukuran yang Memadai* (`subsec:parameter-dh`): panjang
+  modulus minimum, *safe prime* $p = 2q+1$ dan subgrup berorde prima, kisah
+  pembangkit acak lemah Debian OpenSSL 2008, dan grup bernama RFC 7919
+  (`rfc7919`)
+- [x] **Analisis lengkap masalah logaritma diskret** — Subbagian *Masalah
+  Logaritma Diskret* (`subsec:dlog-dh`) dengan Persamaan~\eqref{eq:dlp} dan
+  \eqref{eq:dlp-index-calculus}, penjelasan *index calculus*, serta algoritma
+  **langkah raksasa-bayi** yang tidak ada di dek: untuk $p = 353$ diperoleh
+  $m = \lceil\sqrt{352}\rceil = 19$ dan $a = 97$ ditemukan dalam **24 perkalian**
+  alih-alih 97 langkah pencarian menyeluruh
+- [x] **Serangan Logjam sebagai serangan penurunan parameter** — Subbagian
+  *Serangan Khusus terhadap Diffie--Hellman* menegaskan bahwa Logjam 2015
+  (`adrian2015logjam`) tidak menyerang matematikanya, melainkan menurunkan
+  negosiasi ke modulus ekspor 512 bit yang sudah dipecahkan
+- [x] **Forward secrecy dan TLS 1.3** — Subbagian *Kunci Sesaat dan Forward
+  Secrecy* (`subsec:forward-secrecy`): DHE, mengapa kunci jangka panjang yang
+  bocor tidak membuka rekaman lama, dan mengapa TLS 1.3 (`rfc8446`) mewajibkan
+  pertukaran kunci sesaat
+- [x] **Program verifikasi** `code/python/dh_uji.py` — 357 baris, ASCII + LF,
+      sepuluh banner komentar tepat 68 karakter. Memuat `pbb`, `prima`,
+      `faktorisasi`, `siklus_pangkat`, `orde`, `akar_primitif`,
+      `kunci_publik`, `kunci_bersama`, `pertukaran`, `tiga_pihak`,
+      `langkah_raksasa_bayi`, `serang_mitm`, dan `perkirakan_keamanan`, lalu
+      sepuluh blok `uji_*` yang **seluruhnya lulus** (baris terakhir:
+      `Seluruh pengujian LULUS`). Empat blok disisipkan ke `praktikum.tex`
+      sebagai Listing~\ref{lst:dh-parameter}, \ref{lst:dh-serangan}, dan
+      \ref{lst:dh-keamanan}
+- [x] **Pertumbuhan komponen OBE** — `praktikum.tex` 4 → 5 `obeactivity`,
+      `latihan.tex` 1 → 2 `obereflection` (13 butir), `rangkuman.tex` 12 butir,
+      `evaluasi.tex` 6 butir kuis dan **`competencychecklist` 5 → 12 baris**
+
+### Koreksi terhadap sumber (wajib dicatat)
+
+**Berbeda dari seluruh dek yang sudah diproses, dek `15-*` tidak memuat satu pun
+angka yang salah.** Seluruh nilai yang dipakai buku telah diperiksa ulang dengan
+`code/python/dh_uji.py` sebelum ditata huruf:
+
+| Klaim dek | Verifikasi |
+|---|---|
+| $p = 353$, $g = 3$, $a = 97 \Rightarrow A = 40$ | lulus (UJI 4) |
+| $p = 353$, $b = 233 \Rightarrow B = 248$, $K = 160$ | lulus (UJI 4) |
+| $G = 1601$, $N = 4789$, $x = 20 \Rightarrow A = 2716$ | lulus (UJI 6) |
+| $y = 4 \Rightarrow B = 1302$ | lulus (UJI 6) |
+| $\varphi(352) = 160$ akar primitif $p = 353$ | $352 \times \tfrac{1}{2} \times \tfrac{10}{11} = 160$ |
+| akar primitif $g = 3$ modulo 11 berode 5 | lulus (UJI 2) |
+| $p = 23$ *safe prime* ($23 = 2 \times 11 + 1$) | $q = 11$ prima |
+
+Dua koreksi berikut menyangkut **buku**, bukan dek:
+
+1. **`latihan.tex` semula menyebut "19 langkah langkah raksasa-bayi"** untuk
+   menemukan $a = 97$. Angka 19 adalah $m = \lceil\sqrt{p-1}\rceil$, yaitu ukuran
+   tabel langkah bayi, **bukan** jumlah perkalian. Yang benar adalah **24
+   perkalian** (`m + i` dengan $i = 5$, sebab $97 = 5 \cdot 19 + 2$), sesuai
+   keluaran program. Sekaligus membetulkan kata berulang "langkah langkah".
+2. **Dua gambar raster lama hilang saat penulisan ulang** dan harus disisipkan
+   kembali: `figures/analogi-cat-dh.png` (analogi pencampuran cat) dan
+   `figures/contoh-numerik-dh.png` (contoh $p = 11$, $g = 7$ lengkap dengan kolom
+   penyadap). Keduanya masih dirujuk `\ref` dari `section-01.tex` sehingga tanpa
+   penyisipan kembali keduanya menjadi rujukan menggantung. Gambar pertama
+   diletakkan di Subbagian *Analogi Pencampuran Cat*, gambar kedua di
+   `contoh.tex` setelah Contoh~\ref{ex:dh-kecil} — tempat keduanya paling
+   berguna bagi pembaca.
 
 ## Bab 12 — Algoritma ElGamal
 Sumber: `referensi/14-*` (2.160 kata, 5 topik). Target: ±4.000 kata.
@@ -715,7 +818,9 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   `eq:batas-rekeying`); Bab 10 menambah 15 (`eq:totient-prima`, `eq:totient-rsa`,
   `eq:ed-kongruen`, `eq:ed-kelipatan`, `eq:rsa-pangkat`, `eq:rsa-bukti`,
   `eq:rsa-rumus`, `eq:bezout`, `eq:serang-d`, `eq:gnfs`, `eq:syarat-blok`,
-  `eq:enkripsi-blok`, `eq:panjang-blok`, `eq:dekripsi-blok`, `eq:kerapuhan-rsa`).
+  `eq:enkripsi-blok`, `eq:panjang-blok`, `eq:dekripsi-blok`, `eq:kerapuhan-rsa`);
+  Bab 11 menambah 5 (`eq:dh-bukti`, `eq:dlp`, `eq:dlp-index-calculus`,
+  `eq:mitm-k1`, `eq:mitm-k2`).
   Lanjutkan untuk ElGamal, ECDLP, hash.
 - [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
 - [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 dan 04 sudah punya.)

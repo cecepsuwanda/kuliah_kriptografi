@@ -4,4 +4,47 @@
 1. Mengapa pemilihan akar primitif $g$ sangat penting dalam protokol Diffie-Hellman?
 2. Jelaskan perbedaan mendasar antara peran kunci publik dan kunci privat dalam RSA dibandingkan dengan dalam protokol Diffie-Hellman.
 3. Bagaimana cara mencegah serangan \textit{Man-in-the-Middle} pada pertukaran kunci Diffie-Hellman? (Petunjuk: Pikirkan tentang tanda tangan digital atau sertifikat).
+4. Sebuah organisasi memiliki 500 pegawai yang perlu berkomunikasi rahasia secara
+   berpasangan memakai AES. Hitunglah berapa kunci rahasia yang harus dikelola bila
+   setiap pasangan memakai kunci tersendiri. Bandingkan dengan jumlah kunci bila
+   organisasi itu memakai pasangan kunci Diffie--Hellman sesaat untuk setiap sesi.
+5. Jelaskan mengapa memperbesar modulus $p$ tidak menghalangi serangan
+   \textit{Man-in-the-Middle}, padahal memperbesar $p$ menghalangi penyadapan pasif.
+   Apa yang sesungguhnya menjadi celah keamanan pada serangan tersebut?
+6. Pada protokol Diffie--Hellman sesaat (DHE), kunci privat $a$ dan $b$ dibuang
+   setelah sesi berakhir. Jelaskan bagaimana kebiasaan itu melindungi rekaman
+   percakapan yang sudah lama tersimpan pada saat kunci jangka panjang peladen
+   akhirnya bocor.
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 11.2}
+1. Perhatikan $p = 23$, yang merupakan \textit{safe prime} karena $23 = 2 \times 11 + 1$
+   dengan $q = 11$ juga prima. Tunjukkan bahwa $g = 2$ bukan akar primitif dari $23$,
+   lalu hitunglah ordenya. Jelaskan mengapa $g$ semacam itu justru dianjurkan pada
+   protokol yang memakai subgrup berorde prima.
+2. Diketahui $p = 23$ dan $g = 5$. Tentukan seluruh akar primitif dari $23$ dan
+   periksa bahwa jumlahnya sama dengan $\varphi(22)$. Tunjukkan bahwa $5$ termasuk
+   di dalamnya.
+3. Diketahui $p = 23$, $g = 5$, $a = 7$, dan $b = 15$. Hitunglah $A$, $B$, dan kunci
+   bersama $K$ dari kedua sisi. Periksa hasil Anda dengan
+   Contoh~\ref{ex:dh-kecil} dan dengan program pada Listing~\ref{lst:diffie-hellman}.
+4. Modulus $p = 353$ memiliki $160$ akar primitif, yaitu sebanyak $\varphi(352)$.
+   Jelaskan mengapa jumlah akar primitif modulo $p$ selalu sama dengan
+   $\varphi(p-1)$, dan apa akibat praktisnya bagi pihak yang memilih $g$ secara acak.
+5. Dengan algoritma langkah raksasa-bayi, penyerang memerlukan sekitar
+   $2\sqrt{p}$ langkah. Untuk modulus 2048 bit, tunjukkan bahwa $\sqrt{2^{2048}}$
+   berukuran sekitar $1{,}8 \times 10^{308}$. Bila satu komputer dapat melakukan
+   $10^{9}$ perkalian per detik, perkirakan berapa tahun waktu yang diperlukan.
+   Bandingkan dengan umur alam semesta yang sekitar $1{,}4 \times 10^{10}$ tahun.
+6. Pada contoh $p = 353$, penyerang menemukan $a = 97$ hanya dengan $24$
+   perkalian langkah raksasa-bayi, jauh lebih sedikit daripada $97$ langkah yang
+   diperlukan pencarian menyeluruh. Bila Alice memilih kunci privat yang lebih
+   besar, misalnya $a = 300$, jumlah perkaliannya memang bertambah, tetapi tetap
+   berorde $\sqrt{p}$ dan bukan berorde $a$. Jelaskan mengapa demikian, dan apa
+   yang sebenarnya diukur oleh perkiraan $2\sqrt{p}$ itu.
+7. Rancanglah satu skema sederhana yang memungkinkan Alice dan Bob memastikan
+   keaslian nilai pertukaran mereka dengan memakai tanda tangan digital. Jelaskan
+   bagian mana dari skema Anda yang membuat Mallory tidak dapat menggantikan
+   $g^{a}$ dengan $g^{m}$.
 \end{obereflection}
