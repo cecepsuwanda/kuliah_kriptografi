@@ -1,26 +1,237 @@
 \section{Contoh Terhitung}
+\label{sec:contoh-elgamal}
 
-\begin{example}[Pembangkitan kunci ElGamal]
-Alice memilih bilangan prima $p = 2273$ dan akar primitif $g = 3$ (lihat Gambar~\ref{fig:simulasi-enkripsi-elgamal}). Ia menetapkan kunci privat $x = 243$ dengan $2 \le x \le p-2$, lalu menghitung kunci publiknya:
-\[ y = g^x \bmod p = 3^{243} \bmod 2273 = 461. \]
-Kunci publik Alice adalah $(y, g, p) = (461, 3, 2273)$, sedangkan kunci privatnya $(x, p) = (243, 2273)$.
+Seluruh contoh pada bagian ini memakai aritmetika modular yang telah dibahas
+pada Bab~\ref{chap:landasan-matematika}. Contoh pertama sengaja dipilih sekecil
+mungkin agar setiap langkah dapat diperiksa dengan tangan; contoh berikutnya
+memakai modulus yang lebih besar dan pesan yang lebih panjang untuk
+memperlihatkan bahwa prosedurnya sama sekali tidak berubah ketika ukurannya
+bertambah. Dua contoh terakhir memperlihatkan dua sifat yang hanya muncul pada
+pemakaian yang lebih rumit: sifat homomorfik dan akibat penggunaan ulang kunci
+efemeral.
+
+\begin{example}[Membandingkan akar primitif dan bukan akar primitif]
+\label{ex:elgamal-akar}
+Misalkan $p = 7$. Bilangan $a = 3$ adalah akar primitif dari $7$, sebab
+perpangkatannya menghasilkan keenam residu bukan-nol tepat sekali
+masing-masing:
+\[ 3^{1}, 3^{2}, 3^{3}, 3^{4}, 3^{5}, 3^{6} \equiv 3, 2, 6, 4, 5, 1 \pmod{7} . \]
+Sebaliknya $a = 2$ bukan akar primitif, sebab
+\[ 2^{1}, 2^{2}, 2^{3}, 2^{4}, 2^{5}, 2^{6} \equiv 2, 4, 1, 2, 4, 1 \pmod{7} , \]
+sehingga orderya hanya $3$ dan tiga residu tidak pernah muncul sebagai kunci
+publik. Kedua baris itu diperlihatkan berdampingan pada
+Tabel~\ref{tab:akar-primitif-7}.
+
+Untuk modulus yang sedikit lebih besar, logaritma diskret masih dapat
+diselesaikan dengan mencoba satu per satu. Karena $7$ adalah akar primitif dari
+$p = 41$, persamaan
+\[ 7^{x} \equiv 15 \pmod{41} \]
+dapat diselesaikan dengan menghitung $7^{1} = 7$, $7^{2} = 49 \equiv 8$,
+$7^{3} = 343 \equiv 15$; jadi $x = 3$. Pada $p = 7$ jumlah akar primitifnya
+adalah $\varphi(6) = 2$, yaitu $3$ dan $5$; pada $p = 41$ jumlahnya
+$\varphi(40) = 16$.
 \end{example}
 
-\begin{example}[Enkripsi dan dekripsi ElGamal]
-Bob mengirim pesan $m = 700$ (berada dalam selang $[0, 2272]$) kepada Alice dengan memilih kunci efemeral $k = 1463$.
+\begin{example}[Pembangkitan pasangan kunci ElGamal]
+\label{ex:elgamal-kunci}
+Alice memilih bilangan prima $p = 2273$ dan akar primitif $g = 3$ (lihat
+Gambar~\ref{fig:simulasi-enkripsi-elgamal}). Ia menetapkan kunci privat
+$x = 243$, yang memenuhi syarat $2 \le 243 \le 2271$, lalu menghitung kunci
+publiknya dengan Persamaan~\eqref{eq:elgamal-kunci}:
+\[ y = g^{x} \bmod p = 3^{243} \bmod 2273 = 461 . \]
+Kunci publik Alice adalah $(y, g, p) = (461, 3, 2273)$, sedangkan kunci
+privatnya $(x, p) = (243, 2273)$.
+
+Perhatikan bahwa kunci privat Alice hanya sebuah eksponen, bukan sepasang
+bilangan prima seperti pada RSA. Yang perlu ia jaga hanyalah nilai $243$ itu,
+sebab dari situlah seluruh keamanan pesannya bersumber. Kunci publiknya boleh
+disiarkan melalui papan pengumuman tanpa pengamanan tambahan; nilai $461$,
+$3$, dan $2273$ tidak mengungkapkan apa pun tentang $243$ selain bahwa
+menemukannya menuntut penyelesaian persoalan logaritma diskret.
+\end{example}
+
+\begin{example}[Enkripsi dan dekripsi satu blok]
+\label{ex:elgamal-enkripsi}
+Bob mengirim pesan $m = 700$ kepada Alice, dan nilai itu memang berada di dalam
+selang $[0, 2272]$. Ia memilih kunci efemeral $k = 1463$, yang juga berada di
+dalam selang $[1, 2271]$.
+
 \begin{enumerate}
-    \item Enkripsi oleh Bob:
-    \[ a = g^k \bmod p = 3^{1463} \bmod 2273 = 1439, \]
-    \[ b = y^k \cdot m \bmod p = 461^{1463} \times 700 \bmod 2273 = 74. \]
+    \item Enkripsi oleh Bob memakai kunci publik Alice
+          $(y, g, p) = (461, 3, 2273)$:
+    \begin{align*}
+    a &= g^{k} \bmod p = 3^{1463} \bmod 2273 = 1439, \\
+    b &= y^{k} \cdot m \bmod p = 461^{1463} \times 700 \bmod 2273 = 74 .
+    \end{align*}
     Jadi cipherteks yang dikirim adalah $(a, b) = (1439, 74)$.
-    \item Dekripsi oleh Alice dengan kunci privat $x = 243$:
+    \item Dekripsi oleh Alice dengan kunci privatnya $x = 243$ memakai
+          Persamaan~\eqref{eq:elgamal-invers} dan
+          Persamaan~\eqref{eq:elgamal-dekripsi}:
     \[
     \begin{aligned}
-    (a^x)^{-1} &\equiv a^{\,p-1-x} \pmod p\\
-               &= 1439^{\,2273-1-243} \bmod 2273 = 1439^{\,2029} \bmod 2273 = 1791,
+    \left(a^{x}\right)^{-1} &\equiv a^{\,p-1-x} \pmod{p} \\
+                            &= 1439^{\,2273-1-243} \bmod 2273
+                             = 1439^{\,2029} \bmod 2273 = 1791,
     \end{aligned}
     \]
-    \[ m = b \cdot (a^x)^{-1} \bmod p = 74 \times 1791 \bmod 2273 = 700. \]
+    \[ m = b \cdot \left(a^{x}\right)^{-1} \bmod p
+          = 74 \times 1791 \bmod 2273 = 700 . \]
 \end{enumerate}
-Plainteks $m = 700$ berhasil dipulihkan. Karena $k$ dipilih acak, enkripsi ulang pesan $m$ yang sama dengan $k$ berbeda akan menghasilkan pasangan $(a, b)$ yang berbeda.
+
+Plainteks $m = 700$ berhasil dipulihkan dengan tepat. Perhatikan bahwa eksponen
+$2029$ pada langkah dekripsi berasal dari $p - 1 - x = 2273 - 1 - 243$, yaitu
+jalan pintas untuk menghitung invers tanpa algoritma Euclidean.
+
+Karena $k$ dipilih secara acak, enkripsi ulang pesan $m = 700$ yang sama dengan
+$k$ yang berbeda akan menghasilkan pasangan $(a, b)$ yang berbeda pula. Inilah
+yang dimaksud dengan enkripsi probabilistik pada
+Subbagian~\ref{subsec:k-ulang} di muka.
+\end{example}
+
+\begin{example}[Pesan multi-blok ``HALO'' dengan dua kunci efemeral berbeda]
+\label{ex:elgamal-halo}
+Alice tetap memakai pasangan kunci pada Contoh~\ref{ex:elgamal-kunci}, yaitu
+kunci publik $(y, g, p) = (461, 3, 2273)$. Kali ini Bob ingin mengirim kata
+``HALO'' kepada Alice. Dengan pengodean $A = 00, B = 01, \dots, Z = 25$, setiap
+huruf berubah menjadi dua digit, sebagaimana diperlihatkan pada
+Tabel~\ref{tab:pengodean-halo}.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{@{}l c c c c@{}}
+    \toprule
+    Huruf & H & A & L & O \\
+    \midrule
+    Kode  & 07 & 00 & 11 & 14 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Pengodean kata ``HALO'' menjadi bilangan dengan aturan $A = 00$
+    sampai $Z = 25$, sehingga pesannya menjadi $m = 07001114$}
+    \label{tab:pengodean-halo}
+\end{table}
+
+Rangkaian angka itu menjadi $m = 07001114$. Karena $m$ jauh lebih besar
+daripada modulus $p - 1 = 2272$, Bob harus memecahnya menjadi blok-blok yang
+masing-masing lebih kecil daripada modulus. Dengan panjang blok empat digit
+diperoleh $m_{1} = 0700$ dan $m_{2} = 1114$; keduanya memenuhi syarat
+$0 \le m_{i} \le 2272$.
+
+\begin{enumerate}
+    \item \textbf{Enkripsi $m_{1} = 0700$ dengan $k = 1463$.} Nilai ini
+          kebetulan sama dengan kunci efemeral pada
+          Contoh~\ref{ex:elgamal-enkripsi}, sehingga hasilnya juga sama:
+    \begin{align*}
+    a_{1} &= 3^{1463} \bmod 2273 = 1439, \\
+    b_{1} &= 461^{1463} \times 700 \bmod 2273 = 74 .
+    \end{align*}
+    Cipherteks untuk blok pertama adalah $c_{1} = (1439, 74)$.
+    \item \textbf{Enkripsi $m_{2} = 1114$ dengan $k = 2001$.} Kali ini Bob
+          memilih kunci efemeral yang \emph{berbeda}, sebagaimana mestinya:
+    \begin{align*}
+    a_{2} &= 3^{2001} \bmod 2273 = 1220, \\
+    b_{2} &= 461^{2001} \times 1114 \bmod 2273 = 1682 .
+    \end{align*}
+    Cipherteks untuk blok kedua adalah $c_{2} = (1220, 1682)$.
+\end{enumerate}
+
+Bob mengirimkan kedua pasangan itu kepada Alice. Perhatikan bahwa ukuran
+cipherteksnya kini dua kali lipat: pesan semula delapan digit
+($07001114$), sedangkan cipherteksnya empat bilangan sehingga menjadi enam
+belas digit.
+
+Alice mendekripsinya dengan kunci privat $x = 243$.
+
+\begin{enumerate}
+    \item Untuk $c_{1} = (1439, 74)$:
+    \[ \left(a_{1}^{x}\right)^{-1} = 1439^{\,2029} \bmod 2273 = 1791 , \]
+    \[ m_{1} = 74 \times 1791 \bmod 2273 = 700 = 0700 . \]
+    \item Untuk $c_{2} = (1220, 1682)$:
+    \[ \left(a_{2}^{x}\right)^{-1} = 1220^{\,2029} \bmod 2273 = 1125 , \]
+    \[ m_{2} = 1682 \times 1125 \bmod 2273 = 1114 . \]
+\end{enumerate}
+
+Hasilnya adalah $m_{1} m_{2} = 07001114$, yang dengan pengodean pada
+Tabel~\ref{tab:pengodean-halo} berbunyi ``HALO'' --- sama persis dengan pesan
+yang dikirim Bob.
+
+Contoh ini memperlihatkan dua hal sekaligus. Pertama, pemecahan menjadi blok
+memang diperlukan begitu pesan melebihi modulus, persis seperti pada RSA.
+Kedua, kedua blok memakai kunci efemeral yang berbeda. Andaikan Bob memakai
+$k = 1463$ untuk keduanya, komponen pertama dari kedua cipherteks akan sama
+persis, dan itulah tanda yang membuka serangan pada
+Contoh~\ref{ex:elgamal-k-ulang}.
+\end{example}
+
+\begin{example}[Parameter kedua: modulus 2357 dengan basis 2]
+\label{ex:elgamal-2357}
+Agar tidak terkesan bahwa hasilnya bergantung pada satu himpunan parameter
+tertentu, contoh berikut memakai bilangan prima yang lain, basis yang lain,
+serta kunci privat yang panjang. Misalkan $p = 2357$ dan $g = 2$, yang
+keduanya dapat diperiksa: $2357$ prima dan orde $2$ modulo $2357$ sama dengan
+$2356$, sehingga $2$ benar-benar akar primitif.
+
+Bob memilih kunci privat $x = 1751$ dan menghitung
+\[ y = 2^{1751} \bmod 2357 = 1185 . \]
+Kunci publiknya adalah $(y, g, p) = (1185, 2, 2357)$.
+
+Alice ingin mengirim $m = 2035$ dan memilih $k = 1520$. Enkripsinya:
+\begin{align*}
+a &= 2^{1520} \bmod 2357 = 1430, \\
+b &= 1185^{1520} \times 2035 \bmod 2357 = 697 .
+\end{align*}
+Cipherteksnya $(a, b) = (1430, 697)$. Bob mendekripsinya dengan $x = 1751$:
+\[ \left(a^{x}\right)^{-1} = 1430^{\,2357-1-1751} \bmod 2357 = 1430^{\,605} \bmod 2357 = 872 , \]
+\[ m = 697 \times 872 \bmod 2357 = 2035 . \]
+Plainteks $2035$ pulih kembali.
+
+Perhatikan eksponen $605$ pada langkah dekripsi. Bila ditulis
+$p - 1 - x = 2357 - 1 - 1751$, hasilnya memang $605$. Sumber asli contoh ini
+menuliskannya sebagai $2^{1751} \bmod 2353$ dan bukan $\bmod 2357$; modulus
+$2353$ jelas keliru, sebab tidak sama dengan $p$ yang telah ditetapkan, dan
+memang $2^{1751} \bmod 2353 = 1008 \ne 1185$. Nilai yang benar diperoleh dengan
+modulus $2357$.
+\end{example}
+
+\begin{example}[Membongkar pesan dengan dua kunci efemeral yang sama]
+\label{ex:elgamal-k-ulang}
+Sekarang diperlihatkan apa yang terjadi bila aturan pada
+Contoh~\ref{ex:elgamal-halo} dilanggar. Andaikan Bob memakai kunci efemeral
+$k = 1463$ untuk kedua bloknya, yaitu $m_{1} = 700$ dan $m_{2} = 1114$, pada
+kunci publik Alice $(y, g, p) = (461, 3, 2273)$.
+
+Karena $a = g^{k}$ tidak bergantung pada pesannya, komponen pertama kedua
+cipherteks sama persis:
+\[ a_{1} = a_{2} = 3^{1463} \bmod 2273 = 1439 . \]
+Komponen keduanya berbeda, sebab pesannya berbeda:
+\begin{align*}
+b_{1} &= 461^{1463} \times 700 \bmod 2273 = 74, \\
+b_{2} &= 461^{1463} \times 1114 \bmod 2273 = 988 .
+\end{align*}
+
+Sebuah penyadap yang memergoki kedua pasangan itu tidak perlu menghitung
+logaritma diskret apa pun. Ia cukup mengikuti
+Persamaan~\eqref{eq:elgamal-k-ulang}:
+\[ \frac{b_{1}}{b_{2}} \equiv b_{1} \cdot b_{2}^{-1} \equiv 74 \cdot 988^{-1}
+   \equiv 474 \pmod{2273} , \]
+dan memang
+$\frac{m_{1}}{m_{2}} \equiv 700 \cdot 1114^{-1} \equiv 474 \pmod{2273}$,
+sehingga kedua rasio itu cocok.
+
+Bila penyadap mengetahui bahwa blok pertama berbunyi $0700$ --- misalnya
+karena setiap pesan pada sistem itu diawali dengan penanda yang tetap --- maka
+ia langsung memperoleh blok kedua dengan
+Persamaan~\eqref{eq:elgamal-k-ulang-m2}:
+\[ m_{2} = m_{1} \cdot b_{2} \cdot b_{1}^{-1}
+          = 700 \times 988 \times 74^{-1} \equiv 1114 \pmod{2273} . \]
+Blok kedua terbaca sebagai ``$1114$'', yaitu ``LO''. Bila penanda awalnya tidak
+diketahui, penyadap masih dapat mencoba setiap kandidat $m_{1}$ yang masuk
+akal, menghitung $m_{2}$ yang berpasangan, dan memilih pasangan yang keduanya
+bermakna --- pekerjaan yang jauh lebih ringan daripada menyelesaikan
+logaritma diskret.
+
+Sekali salah satu pasangan plainteks diperoleh, penyadap dapat menghitung
+$y^{k} = b_{1} \cdot m_{1}^{-1} \bmod p = 74 \cdot 700^{-1} \bmod 2273$ dan
+memakainya untuk membuka setiap cipherteks lain yang memakai $k$ yang sama.
+Kunci privat Alice $x = 243$ sendiri tetap tidak terungkap; yang bocor adalah
+isi pesannya. Bagi Alice, akibatnya tidak berbeda.
 \end{example}

@@ -1,18 +1,232 @@
 \section{Analisis Properti ElGamal}
-\subsection{Probabilistic Encryption}
-Salah satu karakteristik unik ElGamal adalah sifat \textbf{enkripsi probabilistik}. Karena penggunaan bilangan acak $k$ yang berbeda untuk setiap sesi enkripsi, pesan yang sama ($m$) jika dienkripsi dua kali dengan kunci publik yang sama akan menghasilkan cipherteks $(a, b)$ yang berbeda. Hal ini mencegah serangan \textit{codebook} dan meningkatkan keamanan terhadap analisis statistik.
+
+Setelah prosedurnya dipahami, pertanyaan berikutnya menyangkut sifat-sifat yang
+melekat pada rancangannya. Beberapa di antaranya menguntungkan, misalnya
+enkripsi probabilistik; beberapa yang lain justru menuntut kewaspadaan, seperti
+sifat homomorfik dan bahaya penggunaan ulang kunci efemeral. Bagian ini
+membahas keduanya secara berimbang, sebab sebuah algoritma tidak cukup dinilai
+dari keunggulannya saja.
+
+\subsection{Enkripsi Probabilistik}
+\label{subsec:probabilistik-elgamal}
+
+Salah satu karakteristik yang paling mencolok dari ElGamal adalah sifat
+\textbf{enkripsi probabilistik}. Karena setiap enkripsi memilih kunci efemeral
+$k$ yang baru, pesan $m$ yang sama bila dienkripsi dua kali dengan kunci publik
+yang sama akan menghasilkan pasangan $(a, b)$ yang berbeda. Nilai $k$ yang
+berbeda menghasilkan $a = g^{k}$ yang berbeda, dan perbedaan itu menjalar ke
+$b = y^{k} m$.
+
+Sifat ini membedakan ElGamal dari RSA tanpa padding. Pada RSA deterministik,
+plainteks yang sama selalu menghasilkan cipherteks yang sama, sehingga seorang
+penyadap dapat membandingkan dua cipherteks dan menyimpulkan bahwa kedua pesan
+itu identik tanpa perlu mendekripsinya. Keadaan itu membuka \textbf{serangan
+buku kode} (\textit{codebook attack}): bila himpunan pesan yang mungkin cukup
+kecil --- misalnya ``ya'' dan ``tidak'', atau nama-nama kandidat dalam sebuah
+pemilihan --- penyerang cukup menyusun tabel cipherteks untuk seluruh
+kemungkinan, lalu mencocokkannya. Pada ElGamal, tabel semacam itu tidak dapat
+disusun, sebab satu pesan yang sama menghasilkan cipherteks berbeda setiap kali
+dienkripsi.
+
+Perlu dicatat bahwa sifat probabilistik itu tidak dengan sendirinya menjamin
+keamanan menyeluruh. Ia mencegah satu jenis serangan, tetapi tidak menyelesaikan
+persoalan keutuhan data, sebagaimana akan terlihat pada subbagian berikutnya.
+
+\subsection{Sifat Homomorfik Multiplikatif}
+
+ElGamal memiliki sifat aljabar yang tidak dimiliki RSA tanpa padding, yaitu
+\textbf{homomorfik multiplikatif}. Bila dua plainteks $m_{1}$ dan $m_{2}$
+dienkripsi menjadi $(a_{1}, b_{1})$ dan $(a_{2}, b_{2})$, maka hasil kali
+komponen demi komponen dari kedua cipherteks itu adalah cipherteks yang sah
+untuk hasil kali kedua plainteks:
+\begin{equation}
+(a_{1} a_{2} \bmod p, \; b_{1} b_{2} \bmod p) \;\longleftrightarrow\;
+m_{1} m_{2} \bmod p .
+\label{eq:elgamal-homomorfik}
+\end{equation}
+
+Kebenaran Persamaan~\eqref{eq:elgamal-homomorfik} dapat diperiksa langsung dari
+definisi. Komponen pertama memberi
+$a_{1} a_{2} = g^{k_{1}} g^{k_{2}} = g^{k_{1} + k_{2}}$, yang berbentuk $g^{k}$
+dengan $k = k_{1} + k_{2}$. Komponen kedua memberi
+$b_{1} b_{2} = y^{k_{1}} m_{1} \cdot y^{k_{2}} m_{2} = y^{k_{1} + k_{2}} (m_{1} m_{2})$,
+yang berbentuk $y^{k} m$ dengan $k$ dan $m$ yang sama. Keduanya karenanya
+merupakan pasangan cipherteks yang sah.
+
+Sifat ini berguna untuk aplikasi tertentu, misalnya penghitungan suara
+elektronik, tetapi sekaligus menjadi kelemahan yang serius. Seorang penyerang
+yang menyadap cipherteks $(a, b)$ untuk pesan $m$ dapat memilih sembarang
+bilangan $t$, menghitung cipherteks $E(t)$ dengan kunci publik yang sama, lalu
+mengalikan keduanya. Hasilnya adalah cipherteks yang bila didekripsi berbunyi
+$m \cdot t \bmod p$ --- sebuah pesan yang diubah penyerang tanpa pernah
+mengetahui $m$. Dengan kata lain, ElGamal bersifat \textbf{mudah diubah}
+(\textit{malleable}) dan tidak memberikan jaminan keutuhan.
+
+Perhatikan bahwa hasil kalinya berlaku modulo $p$, bukan sebagai bilangan
+bulat. Pada contoh dengan $p = 2273$ nanti, mengalikan cipherteks untuk
+$m_{1} = 700$ dan $m_{2} = 1114$ menghasilkan cipherteks untuk
+$700 \cdot 1114 \bmod 2273 = 161$, bukan untuk $779.800$. Karena itu sifat
+homomorfik tidak dapat dipakai begitu saja untuk memulihkan hasil kali yang
+melebihi modulus. Yang tetap berbahaya adalah kemampuannya mengubah pesan
+secara terkendali, dan itulah alasan mengapa ElGamal tidak boleh dipakai
+sendirian tanpa mekanisme keutuhan seperti MAC atau tanda tangan digital yang
+dibahas pada Bab~\ref{chap:hash-mac} dan Bab~\ref{chap:tanda-tangan-pki}.
+
+\subsection{Bahaya Penggunaan Ulang Kunci Efemeral}
+\label{subsec:k-ulang}
+
+Kelemahan yang paling sering menimpa penerapan ElGamal dalam praktik bukanlah
+logaritma diskret, melainkan hal yang jauh lebih sederhana: pemakaian kembali
+kunci efemeral $k$ untuk dua pesan yang berbeda. Bila pengirim membangkitkan
+$k$ sekali dan memakainya berulang, seluruh kerahasiaan pesan-pesan itu runtuh
+sekaligus.
+
+Misalkan dua plainteks $m_{1}$ dan $m_{2}$ dienkripsi dengan kunci efemeral $k$
+yang sama. Karena $a = g^{k}$ tidak bergantung pada pesannya, kedua cipherteks
+memiliki komponen pertama yang identik, yaitu $a_{1} = a_{2} = a$. Komponen
+keduanya masing-masing adalah $b_{1} = y^{k} m_{1}$ dan $b_{2} = y^{k} m_{2}$.
+Bila keduanya dibagi, faktor $y^{k}$ saling meniadakan:
+\begin{equation}
+\frac{b_{1}}{b_{2}} \equiv \frac{y^{k} m_{1}}{y^{k} m_{2}}
+                \equiv \frac{m_{1}}{m_{2}} \pmod{p} .
+\label{eq:elgamal-k-ulang}
+\end{equation}
+
+Persamaan~\eqref{eq:elgamal-k-ulang} memperlihatkan bahwa rasio kedua plainteks
+dapat dihitung oleh siapa pun yang menyadap kedua cipherteks --- tanpa modulus
+dipecahkan, tanpa logaritma diskret dihitung. Karena rasio itu diketahui dan
+$b_{2}$ juga diketahui, kedua pesan dapat dipulihkan dengan
+\begin{equation}
+m_{2} = m_{1} \cdot b_{2} \cdot b_{1}^{-1} \bmod p .
+\label{eq:elgamal-k-ulang-m2}
+\end{equation}
+
+Jadi satu plainteks yang diketahui sudah cukup untuk membuka yang lain. Bila
+$m_{1}$ tidak diketahui, serangan tetap berjalan asalkan himpunan pesan yang
+mungkin cukup kecil: penyerang cukup mencoba setiap kandidat $m_{1}$ pada
+Persamaan~\eqref{eq:elgamal-k-ulang-m2} dan memilih yang menghasilkan $m_{2}$
+bermakna. Itulah sebabnya serangan ini sering dilukiskan sebagai serangan
+tebak-lalu-periksa yang tidak memerlukan perhitungan berat.
+
+Bahayanya tidak terbatas pada dua pesan. Sekali penyerang memperoleh salah satu
+pasangan plainteks, ia dapat menghitung $y^{k} = b_{1} m_{1}^{-1} \bmod p$, dan
+dengan nilai itu membuka seluruh cipherteks lain yang memakai $k$ yang sama.
+Perhatikan bahwa $x$ sendiri tetap tidak terungkap --- penyerang tidak
+memperoleh kunci privat, hanya isi pesan. Namun bagi pemilik pesan, akibatnya
+sama saja.
+
+Karena itu kunci efemeral harus dibangkitkan dari pembangkit bilangan acak yang
+aman secara kriptografis, baru untuk setiap blok pesan, dan segera dibuang
+sesudahnya. Kesalahan yang sama pernah menimpa Sony PlayStation 3 pada tahun
+2010: nilai acak yang dipakai untuk menandatangani perangkat lunak selalu sama,
+sehingga kunci privat penandatanganan dapat dipulihkan oleh siapa pun yang
+memerhatikan dua tanda tangan \citep{fail0verflow2010}. Pelajaran itu berlaku
+sama bagi ElGamal maupun bagi skema turunannya seperti DSA dan ECDSA.
 
 \subsection{Ekspansi Cipherteks}
-Kelemahan utama ElGamal adalah \textbf{ekspansi cipherteks}. Karena satu blok pesan $m$ diubah menjadi pasangan $(a, b)$, maka ukuran cipherteks menjadi dua kali lipat dari ukuran plainteks aslinya.
+\label{subsec:ekspansi-elgamal}
 
-\subsection{Perbandingan: ElGamal vs RSA}
+Kelemahan struktural ElGamal adalah \textbf{ekspansi cipherteks}. Karena satu
+blok pesan $m$ diubah menjadi pasangan $(a, b)$, ukuran cipherteks menjadi dua
+kali ukuran plainteksnya. Untuk pesan yang panjang, pembengkakan itu menjadi
+beban yang nyata: sebuah berkas berukuran 1 MB akan menghasilkan cipherteks
+sekitar 2 MB, dan seluruh tambahan itu harus melewati saluran serta disimpan
+penerima.
+
+Bandingkan dengan RSA, yang cipherteksnya sepanjang modulus --- tidak melebihi
+ukuran plainteks ditambah sedikit kelonggaran. Perbedaan itu menjelaskan
+mengapa ElGamal jarang dipakai untuk mengenkripsi isi pesan secara langsung.
+Sebagaimana pada RSA, pemakaian yang wajar adalah \textbf{kriptografi hibrida}:
+ElGamal dipakai untuk membungkus kunci sesi yang pendek, sedangkan seluruh isi
+pesan diproses oleh algoritma kunci-simetri. Dengan cara itu ekspansi dua kali
+lipat hanya mengenai beberapa ratus bit kunci sesi, bukan seluruh berkas.
+
+Ada satu catatan tambahan yang sering terlewat. Karena blok pesan harus lebih
+kecil daripada modulus, jumlah blok yang diperlukan untuk pesan panjang
+bertambah seiring panjang modulus. Pada modulus yang cukup besar untuk aman
+hari ini, hal itu berarti pemecahan pesan menjadi banyak blok, dan setiap blok
+menuntut kunci efemeral baru. Beban itu sepenuhnya terhapus bila ElGamal hanya
+dipakai untuk membungkus kunci sesi.
+
+\subsection{ElGamal, RSA, dan Diffie--Hellman}
+
+Perbandingan dengan RSA telah disajikan pada Tabel~\ref{tab:elgamal-vs-rsa};
+beberapa hal perlu ditambahkan agar gambarnya lengkap.
+
 \begin{itemize}
-    \item \textbf{Basis Keamanan}: RSA berdasarkan pemfaktoran $n=pq$, ElGamal berdasarkan logaritma diskrit $g^x \bmod p$.
-    \item \textbf{Sifat}: RSA adalah deterministik (tanpa padding), ElGamal adalah probabilistik secara inheren.
-    \item \textbf{Efisiensi}: RSA umumnya lebih cepat dalam proses enkripsi, tetapi ElGamal menawarkan properti keamanan tertentu yang berguna dalam tanda tangan digital.
+    \item \textbf{Basis keamanan.} RSA bersandar pada kesulitan memfaktorkan
+          $n = pq$, sedangkan ElGamal bersandar pada kesulitan menghitung
+          $g^{x} \bmod p$. Keduanya runtuh di hadapan algoritma Shor, tetapi
+          keduanya juga tidak saling bergantung: kelemahan yang ditemukan pada
+          salah satunya tidak dengan sendirinya menjatuhkan yang lain.
+    \item \textbf{Sifat enkripsi.} RSA tanpa padding bersifat deterministik,
+          sedangkan ElGamal bersifat probabilistik secara inheren. Perbedaan
+          itu membuat ElGamal lebih tahan terhadap serangan buku kode, tetapi
+          sekaligus membuatnya tidak dapat dipakai sebagai fungsi deterministik
+          --- misalnya untuk menurunkan kunci dari sebuah pesan.
+    \item \textbf{Efisiensi.} Perpangkatkan modular pada ElGamal dilakukan dua
+          kali untuk setiap blok, yaitu menghitung $g^{k}$ dan $y^{k}$,
+          sedangkan RSA hanya sekali. Ditambah ekspansi dua kali lipat pada
+          cipherteksnya, ElGamal memang lebih boros daripada RSA untuk
+          mengenkripsi pesan.
+    \item \textbf{Keluaran kunci.} ElGamal menghasilkan kunci publik sepanjang
+          modulus yang sama dengan RSA, tetapi kunci privatnya hanya sebuah
+          eksponen $x$ yang tidak perlu memenuhi syarat aritmetika khusus
+          selain selangnya. Pada RSA, memilih $p$ dan $q$ menuntut keduanya
+          prima dan cukup jauh satu dari yang lain.
+    \item \textbf{Hubungan dengan Diffie--Hellman.} ElGamal bukan sekadar
+          kerabat Diffie--Hellman, melainkan penerapannya sebagai sistem
+          kunci-publik penuh. Pada Diffie--Hellman kedua pihak sama-sama
+          berkontribusi pada kunci dan harus berinteraksi lebih dahulu;
+          pada ElGamal kunci publik dapat disiarkan sekali lalu dipakai oleh
+          siapa pun tanpa interaksi. Karena itu ElGamal disebut sebagai
+          \textit{non-interactive}, sedangkan Diffie--Hellman bersifat
+          \textit{interactive}.
 \end{itemize}
 
+Perlu pula dicatat bahwa ElGamal sebenarnya terdiri atas dua gagasan yang
+terpisah, dan keduanya menempuh jalan yang berbeda sejak lama. Sisi
+\emph{enkripsi}-nya kini menjadi pilihan yang jarang dipakai; yang bertahan
+justru sisi \emph{tanda tangan}-nya, sebab dari rancangan tanda tangan ElGamal
+inilah lahir Digital Signature Algorithm (DSA) yang diusulkan NIST pada tahun
+1991 dan dibakukan sebagai FIPS 186 pada tahun 1994
+(Subbagian~\ref{subsec:sejarah-elgamal}), dan dari situ pula tumbuh varian kurva
+eliptiknya. Bab ini membahas sisi enkripsinya; sisi tanda tangannya dibahas pada
+Bab~\ref{chap:tanda-tangan-pki}.
 
+\subsection{Catatan Penerapan: ElGamal di Dunia Nyata}
 
+Sekalipun enkripsi ElGamal jarang dipakai pada sistem baru, ia pernah menjadi
+bagian penting dari sebuah standar yang dipakai luas dan masih dipelihara
+sampai hari ini. OpenPGP, format pesan terenkripsi yang dirumuskan pada
+RFC~4880 \citep{rfc4880}, mencantumkan ElGamal sebagai \emph{algoritma kunci
+publik nomor 16}, dengan keterangan ``(Encrypt-Only)'' pada daftar resminya.
+Kata \emph{encrypt-only} itu bukan kebetulan: OpenPGP hanya mengadopsi sisi
+enkripsi ElGamal dan memakai DSA untuk tanda tangannya, persis pembagian kerja
+yang baru saja diuraikan. Pada implementasi GnuPG, kunci ElGamal semacam ini
+pernah menjadi pilihan bawaan bagi banyak pengguna.
 
+Keadaan itu berubah. RFC~9580, revisi OpenPGP yang terbit pada tahun 2024,
+menetapkan bahwa kunci ElGamal \emph{tidak boleh} dibangkitkan lagi dan
+\emph{tidak boleh} dipakai untuk enkripsi \citep{rfc9580}. Keputusan itu bukan
+sekadar kebijakan administratif, melainkan tanggapan atas serangan yang
+ditemukan De Feo, Poettering, dan Sorniotti dan dilaporkan pada konferensi CCS
+2021 \citep{defeo2021elgamal}. Inti serangan itu berpangkal pada sifat ElGamal
+yang jarang disadari: keamanannya bergantung pada pemahaman bersama mengenai
+\emph{dari grup mana} $g$ dan $y$ berasal. Bila kunci publik dibangkitkan pada
+satu modulus dan dipakai oleh pihak yang mengira modulusnya berbeda, keamanan
+yang sesungguhnya berlaku hanyalah keamanan modulus yang paling lemah di
+antaranya. Penulisnya menyebut keadaan itu sebagai \textbf{ambiguitas
+parameter} (\textit{parameter ambiguity}).
 
+Akibatnya terukur. Dengan memanfaatkan kekaburan konfigurasi itu, penyerang
+dapat memulihkan kunci privat sebuah kunci ElGamal 2048 bit hanya dalam waktu
+sekitar dua setengah jam pada satu inti prosesor biasa --- waktu yang tidak
+sebanding dengan anggapan bahwa 2048 bit memerlukan usaha komputasi yang besar.
+Peneliti melaporkan sekitar dua ribu kunci ElGamal 2048 bit di alam bebas yang
+rentan terhadap serangan ini, dan kelemahannya diakui sebagai CVE-2021-33560
+pada pustaka Libgcrypt serta CVE-2021-40530 pada Crypto++. Pelajaran yang dapat
+dipetik penting bagi perancang sistem: pada ElGamal, modulus $p$ bukan sekadar
+parameter pendamping, melainkan bagian tak terpisahkan dari kunci publik itu
+sendiri. Sebuah kunci publik yang tidak menyebut modulus yang dipakainya
+membawa keamanan yang tidak dapat dipastikan.

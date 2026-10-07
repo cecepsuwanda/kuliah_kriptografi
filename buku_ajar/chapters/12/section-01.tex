@@ -1,27 +1,108 @@
 \section{Pendahuluan}
-Algoritma ElGamal, yang diperkenalkan oleh Taher ElGamal pada tahun 1985 \citep{elgamal1985}, adalah sistem kriptografi kunci-publik yang didasarkan pada kesulitan komputasi dari masalah logaritma diskrit dalam grup finit. Berbeda dengan RSA yang didasarkan pada pemfaktoran bilangan bulat besar, ElGamal lebih erat kaitannya dengan protokol pertukaran kunci Diffie-Hellman.
+\label{sec:pendahuluan-elgamal}
 
-Perbandingan ringkas kedua algoritma disajikan pada Tabel~\ref{tab:elgamal-vs-rsa}.
+Algoritma ElGamal diperkenalkan oleh Taher ElGamal pada tahun 1985
+\citep{elgamal1985}. Ia adalah sistem kriptografi kunci-publik kedua yang
+bertahan lama setelah RSA, dan yang pertama menunjukkan bahwa kesulitan
+menghitung \emph{logaritma diskret} dapat dipakai sebagai landasan sebuah
+sistem kunci-publik yang lengkap --- bukan sekadar protokol pertukaran kunci.
+
+Perbedaan landasan itu penting. RSA bertumpu pada kesulitan memfaktorkan
+bilangan bulat besar, sedangkan ElGamal bertumpu pada kesulitan membalik
+perpangkatkan modular. Keduanya sama-sama sulit, tetapi keduanya juga berbeda:
+kelemahan yang ditemukan pada salah satunya tidak dengan sendirinya menjatuhkan
+yang lain. Bagi perancang sistem, tersedianya dua keluarga algoritma yang
+berdiri sendiri merupakan keuntungan, sebab tidak semua telur diletakkan pada
+satu keranjang.
+
+\subsection{Dari Pertukaran Kunci ke Sistem Kunci-Publik}
+
+Pada Bab~\ref{chap:diffie-hellman} telah dibahas protokol pertukaran kunci
+Diffie--Hellman. Protokol itu memungkinkan dua pihak menyepakati sebuah kunci
+rahasia melalui saluran terbuka, tetapi ia tidak menyediakan sesuatu yang dapat
+disebut kunci publik. Kedua pihak harus berinteraksi lebih dahulu, dan tidak
+ada seorang pun yang dapat mengirim pesan terenkripsi kepada pihak lain tanpa
+lebih dahulu berbicara dengannya.
+
+Gagasan ElGamal adalah mengubah protokol itu menjadi sistem kunci-publik yang
+sesungguhnya. Abstrak makalahnya menyatakan hal itu secara ringkas: ia
+menyajikan sebuah skema tanda tangan yang baru, bersama sebuah penerapan dari
+skema distribusi kunci Diffie--Hellman yang ``mencapai sebuah sistem kriptografi
+kunci-publik'' \citep{elgamal1985}. Perubahan yang dilakukannya bersifat
+mendasar. Pada Diffie--Hellman, kedua pihak sama-sama membangkitkan eksponen
+rahasia dan sama-sama memperoleh kunci yang sama. Pada ElGamal, salah satu pihak
+menerbitkan kunci publiknya sekali saja, dan sesudah itu siapa pun dapat
+mengirim pesan kepadanya tanpa interaksi lebih lanjut.
+
+Karena itulah ElGamal disebut bersifat \textbf{tanpa interaksi}
+(\textit{non-interactive}), sedangkan Diffie--Hellman bersifat
+\textbf{interaktif}. Perbedaan itu menentukan pola pemakaiannya:
+Diffie--Hellman dipakai untuk menyepakati kunci sesi, sedangkan ElGamal dipakai
+seperti RSA --- untuk membungkus sesuatu dengan kunci publik penerima. Pada
+praktiknya, yang dibungkus ElGamal hampir selalu kunci sesi yang pendek, bukan
+isi pesan, dengan alasan yang diuraikan pada
+Subbagian~\ref{subsec:ekspansi-elgamal}.
+
+\subsection{Kedudukan di antara RSA dan Diffie--Hellman}
+
+Perbandingan ringkas antara ElGamal dan RSA disajikan pada
+Tabel~\ref{tab:elgamal-vs-rsa}.
 
 \begin{table}[htbp]
     \centering
     \caption{Perbandingan algoritma ElGamal dan RSA}
     \label{tab:elgamal-vs-rsa}
-    \begin{tabularx}{\linewidth}{|l|X|X|}
-    \hline
+    \begin{tabularx}{\linewidth}{@{}l X X@{}}
+    \toprule
     \textbf{Aspek} & \textbf{ElGamal} & \textbf{RSA} \\
-    \hline
-    Landasan keamanan & Masalah logaritma diskrit & Pemfaktoran bilangan bulat besar \\
-    \hline
-    Sifat enkripsi & Acak: cipherteks berbeda untuk plainteks yang sama & Deterministik \\
-    \hline
+    \midrule
+    Landasan keamanan & Masalah logaritma diskret & Pemfaktoran bilangan bulat
+    besar \\
+    \addlinespace
+    Sifat enkripsi & Acak: cipherteks berbeda untuk plainteks yang sama &
+    Deterministik bila tanpa padding \\
+    \addlinespace
     Ukuran cipherteks & Dua kali panjang plainteks & Sekitar panjang modulus \\
-    \hline
+    \addlinespace
+    Kunci privat & Sebuah eksponen $x$ & Sepasang bilangan prima $p$ dan $q$ \\
+    \addlinespace
+    Operasi per blok & Dua perpangkatkan modular ($g^{k}$ dan $y^{k}$) &
+    Satu perpangkatkan modular \\
+    \addlinespace
+    Sifat aljabar & Homomorfik multiplikatif & Tidak homomorfik \\
+    \addlinespace
     Skema tanda tangan & ElGamal dan DSA & RSA (PKCS\#1) \\
-    \hline
+    \bottomrule
     \end{tabularx}
 \end{table}
 
+Tabel itu memperlihatkan bahwa keduanya bukan sekadar dua cara melakukan hal
+yang sama. ElGamal menukar efisiensi dengan sifat probabilistik, sedangkan RSA
+menukar sifat probabilistik dengan efisiensi. Pada bab ini yang dibahas adalah
+sisi enkripsi ElGamal; sisi tanda tangannya, beserta keturunannya yaitu DSA,
+dibahas pada Bab~\ref{chap:tanda-tangan-pki}.
+
+\subsection{Sejarah dan Penamaan}
+\label{subsec:sejarah-elgamal}
+
+Makalah ElGamal terbit di \textit{IEEE Transactions on Information Theory},
+volume 31, nomor 4, Juli 1985, halaman 469--472 \citep{elgamal1985}. Versi
+awalnya telah dipresentasikan setahun sebelumnya pada konferensi CRYPTO~'84.
+Karena itu tahun yang sering dipakai untuk merujuk gagasan ini berbeda-beda ---
+1984 untuk presentasinya dan 1985 untuk penerbitannya --- sekalipun keduanya
+menunjuk pada karya yang sama.
+
+Makalah itu sebenarnya memuat dua gagasan yang berbeda dalam satu naskah:
+sebuah sistem enkripsi kunci-publik, dan sebuah skema tanda tangan digital.
+Keduanya bertumpu pada persoalan yang sama namun menempuh jalan yang berlainan.
+Sisi enkripsinya dibahas pada bab ini; sisi tanda tangannya menjadi nenek moyang
+langsung dari Digital Signature Algorithm (DSA), yang diusulkan oleh NIST pada
+tahun 1991 dan dibakukan sebagai FIPS 186 pada tahun 1994. DSA mewarisi gagasan
+ElGamal, tetapi meminjam penyempurnaan dari skema Schnorr berupa perhitungan di
+dalam subgrup berorde prima $q$, sehingga tandatangannya jauh lebih pendek
+\citep{fips1865}. Perlu dicatat bahwa DSA sendiri kini telah menyusul langkah
+gurunya: FIPS 186-5 yang terbit pada tahun 2023 tidak lagi mengizinkan
+pembangkitan kunci DSA yang baru \citep{fips1865}.
 
 \begin{figure}[htbp]
     \centering
@@ -30,3 +111,37 @@ Perbandingan ringkas kedua algoritma disajikan pada Tabel~\ref{tab:elgamal-vs-rs
     \label{fig:taher-elgamal}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
+
+Taher Elgamal sendiri tetap berkecimpung lama dalam bidang ini. Setelah
+menyelesaikan penelitian doktoralnya di Stanford dan bekerja di Hewlett-Packard
+Labs, ia menjadi \textit{Chief Scientist} di Netscape Communications pada
+pertengahan dasawarsa 1990-an dan memimpin tim yang merancang Secure Sockets
+Layer (SSL). Karena itulah ia kerap disebut sebagai ``bapak SSL''. Pada tahun
+1998 ia mendirikan Securify, dan pada April 2009 ia menerima
+\textit{Lifetime Achievement Award} dari RSA Conference atas karyanya di bidang
+kriptografi dan perannya sebagai penggerak di balik SSL
+(Gambar~\ref{fig:penghargaan-elgamal}). Pada tahun 2019 ia berbagi Marconi Prize
+bersama Paul Kocher untuk sumbangan yang sama.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.62\linewidth, height=0.3\textheight, keepaspectratio]{figures/penghargaan-elgamal-2009.png}
+    \caption{Taher Elgamal menerima \textit{Lifetime Achievement Award} pada RSA
+    Conference 2009, penghargaan atas karyanya di bidang kriptografi dan
+    perannya dalam merancang SSL}
+    \label{fig:penghargaan-elgamal}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+Mengenai ejaan namanya, Elgamal menuliskan namanya sendiri sebagai ``Elgamal''
+dalam satu kata, sedangkan kepustakaan kriptografi lazim menuliskannya sebagai
+``ElGamal'' dengan huruf G besar. Buku ini memakai bentuk ``ElGamal'' untuk
+nama algoritmanya agar sejalan dengan kebiasaan tersebut, dan ``Taher
+Elgamal'' ketika menuliskan nama orangnya.
+
+Sebagai penutup pendahuluan ini, perlu disampaikan peta bab. Bagian berikutnya
+membahas landasan matematisnya, yaitu akar primitif dan logaritma diskret.
+Bagian ketiga menguraikan ketiga prosedur ElGamal beserta bukti bahwa dekripsinya
+memang benar. Bagian keempat menganalisis sifat-sifatnya, termasuk dua kelemahan
+yang perlu diwaspadai. Contoh terhitung, aktivitas praktikum, latihan, dan
+asesmen ditutup pada bagian-bagian akhir bab.

@@ -6,10 +6,9 @@ Sasaran: ±4.000–6.000 kata/bab (prosa naratif), tabel, contoh terhitung, gamb
 
 Legenda status: `[ ]` belum · `[~]` sedang dikerjakan · `[x]` selesai.
 
-**Kemajuan:** Tahap 1–7 (Bab 01–07) selesai. Buku 323 halaman, gerbang kebersihan
-`output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 8 (Bab 08).
-Panjang bab saat ini di buku penuh: Bab 01 = 23 hal., Bab 02 = 20, Bab 03 = 19,
-Bab 04 = 56, Bab 05 = 30, Bab 06 = 23 (149–171), Bab 07 = 29 (172–200).
+**Kemajuan:** Tahap 1–12 (Bab 01–12) selesai. Buku **437 halaman**, gerbang
+kebersihan `output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 13
+(Bab 13 — Knapsack).
 
 ---
 
@@ -728,13 +727,128 @@ Dua koreksi berikut menyangkut **buku**, bukan dek:
    `contoh.tex` setelah Contoh~\ref{ex:dh-kecil} — tempat keduanya paling
    berguna bagi pembaca.
 
-## Bab 12 — Algoritma ElGamal
-Sumber: `referensi/14-*` (2.160 kata, 5 topik). Target: ±4.000 kata.
+## Bab 12 — Algoritma ElGamal  `[x]` SELESAI
+Sumber: `referensi/14-*` (2.160 kata, 5 topik, 3 gambar di `images/llm/`).
+Target: ±4.000 kata.
+**Menyitasi 5 entri baru** (`defeo2021elgamal`, `rfc4880`, `rfc9580`,
+`fips1865`, `fail0verflow2010`) dan **memperkaya satu entri lama**
+(`elgamal1985` kini lengkap: volume 31, nomor 4, halaman 469–472, DOI
+10.1109/TIT.1985.1057074). `references.bib` 54 → **59 entri**.
 
-- [ ] **Contoh multi-blok "HALO"** dengan dua kunci sesaat ($k=1463$, $k=2001$)
-- [ ] Contoh akar primitif + logaritma diskret
-- [ ] Bukti identitas dekripsi $b/a^x \equiv m$ (environment `equation`)
-- [ ] Contoh lengkap kedua dengan $p=2357$
+Hasil: **8.223 kata** pada sembilan berkas (empat section 4.866, contoh 1.555,
+praktikum 671, latihan 431, rangkuman 420, evaluasi 280), **27 halaman
+mandiri**, 4 tabel bernomor, 6 contoh terhitung, **10 persamaan bernomor**,
+**19 subbagian baru (0 → 19)**, 1 diagram TikZ + 3 gambar raster (1 di antaranya
+baru disalin dari referensi), dan satu program verifikasi baru
+(`code/python/elgamal_uji.py`, 306 baris, sepuluh blok pengujian yang seluruhnya
+**lulus**). Bab semula 1.148 kata, **tanpa satu pun subbagian bernama** (hanya
+empat `\section`), tanpa persamaan bernomor, dan tanpa program pengujian.
+
+- [x] **Contoh multi-blok "HALO" dengan dua kunci efemeral berbeda** — 
+  Contoh~\ref{ex:elgamal-halo}: pengodean $A = 00$ (Tabel~\ref{tab:pengodean-halo}),
+  $m = 07001114$ dipecah menjadi $m_{1} = 0700$ dan $m_{2} = 1114$, dienkripsi
+  dengan $k = 1463$ dan $k = 2001$ menjadi $(1439, 74)$ dan $(1220, 1682)$,
+  lalu dipulihkan kembali. Gap terbesar bab ini.
+- [x] **Contoh akar primitif dan logaritma diskret** — Contoh~\ref{ex:elgamal-akar}
+  membandingkan siklus $a = 3$ ($3, 2, 6, 4, 5, 1$) dengan $a = 2$
+  ($2, 4, 1, \dots$) modulo 7 pada Tabel~\ref{tab:akar-primitif-7}, menghitung
+  $7^{3} \equiv 15 \pmod{41}$, serta $\varphi(6) = 2$ dan $\varphi(40) = 16$
+- [x] **Bukti identitas dekripsi $b/a^{x} \equiv m \pmod p$** —
+  Subbagian~\ref{subsec:bukti-elgamal} dengan Persamaan~\eqref{eq:elgamal-bukti}
+  (`split` di dalam `equation`), menunjukkan faktor $g^{xk}$ saling meniadakan.
+  Bukti ini **sama sekali tidak ada di buku lama** maupun di ringkasan dek.
+- [x] **Contoh lengkap kedua dengan $p = 2357$** — Contoh~\ref{ex:elgamal-2357}:
+  $g = 2$, $x = 1751 \Rightarrow y = 1185$, $m = 2035$, $k = 1520 \Rightarrow
+  (a, b) = (1430, 697)$, dekripsi dengan eksponen $605 = p - 1 - x$ memberi $872$
+- [x] **Pembongkaran pesan karena $k$ dipakai ulang** — Contoh~\ref{ex:elgamal-k-ulang}
+  dengan angka lengkap: $a_{1} = a_{2} = 1439$, $b_{1} = 74$, $b_{2} = 988$,
+  $\frac{b_{1}}{b_{2}} \equiv 474 \equiv \frac{m_{1}}{m_{2}}$, pemulihan
+  $m_{2} = m_{1} b_{2} b_{1}^{-1} \equiv 1114$, dan kebocoran
+  $y^{k} = b_{1} m_{1}^{-1} \equiv 1825$. Derivasinya pada
+  Persamaan~\eqref{eq:elgamal-k-ulang} dan~\eqref{eq:elgamal-k-ulang-m2}
+- [x] **Empat tabel bernomor** — Tabel~\ref{tab:elgamal-vs-rsa} (ElGamal versus
+  RSA, kini bergaya `booktabs` dengan tujuh baris, semula lima baris bergaris
+  penuh), Tabel~\ref{tab:akar-primitif-7}, Tabel~\ref{tab:parameter-elgamal}
+  (kerahasiaan $p, g, x, y, m, k, a, b$), dan Tabel~\ref{tab:pengodean-halo}
+- [x] **Status kerahasiaan yang semula tidak pernah ditabulasikan** —
+  Subbagian *Properti dan Kerahasiaan Parameter*: tabel menegaskan bahwa $k$
+  **harus dirahasiakan sama ketatnya dengan $x$**, sesuatu yang hanya disinggung
+  sekilas pada buku lama
+- [x] **Sepuluh persamaan bernomor** — \eqref{eq:elgamal-kunci},
+  \eqref{eq:elgamal-a}, \eqref{eq:elgamal-b}, \eqref{eq:elgamal-invers},
+  \eqref{eq:elgamal-dekripsi}, \eqref{eq:elgamal-bukti},
+  \eqref{eq:elgamal-homomorfik}, \eqref{eq:elgamal-k-ulang},
+  \eqref{eq:elgamal-k-ulang-m2}, \eqref{eq:dlp-elgamal}. Semula **nol**.
+- [x] **Analisis kelemahan secara berimbang** — Subbagian *Sifat Homomorfik
+  Multiplikatif* (dengan catatan jujur bahwa hasil kalinya berlaku modulo $p$:
+  $700 \times 1114 \bmod 2273 = 161$, bukan $779.800$), *Enkripsi Probabilistik*,
+  *Bahaya Penggunaan Ulang Kunci Efemeral* (termasuk kisah Sony PS3 2010,
+  `fail0verflow2010`), dan *Ekspansi Cipherteks*
+- [x] **Sejarah dan penamaan** — Subbagian~\ref{subsec:sejarah-elgamal}: makalah
+  IEEE Trans. Inf. Theory 31(4):469–472 (1985) dan versi awalnya di CRYPTO '84,
+  riwayat Taher Elgamal (HP Labs → *Chief Scientist* Netscape → SSL → Securify
+  1998 → RSA Conference Lifetime Achievement Award 2009 → Marconi Prize 2019),
+  serta catatan ejaan ``Elgamal'' versus ``ElGamal''. Gambar raster baru
+  Gambar~\ref{fig:penghargaan-elgamal} (`penghargaan-elgamal-2009.png`, disalin
+  dari `referensi/14-*/images/llm/page_002_img_02.png`)
+- [x] **Catatan penerapan OpenPGP** — Subbagian *Catatan Penerapan: ElGamal di
+  Dunia Nyata*: ElGamal sebagai algoritma kunci publik nomor 16 dengan tanda
+  ``(Encrypt-Only)'' pada RFC~4880, pelarangannya oleh RFC~9580 (2024), dan
+  serangan De Feo--Poettering--Sorniotti (CCS 2021) berupa **ambiguitas
+  parameter** — pemulihan kunci privat 2048 bit dalam ±2,5 jam pada satu inti,
+  ±2.000 kunci rentan, CVE-2021-33560 (Libgcrypt) dan CVE-2021-40530 (Crypto++)
+- [x] **Program verifikasi** `code/python/elgamal_uji.py` — 306 baris, ASCII + LF,
+      empat banner komentar tepat 68 karakter. Memuat `prima`, `siklus_pangkat`,
+      `orde`, `akar_primitif`, `phi`, `pbb`, `invers_fermat`,
+      `bangkitkan_kunci`, `enkripsi`, `dekripsi`, `dari_kode`, `ke_kode`, lalu
+      sepuluh blok `uji_*` yang **seluruhnya lulus** (baris terakhir:
+      `Seluruh pengujian LULUS`). Empat blok disisipkan ke `praktikum.tex`
+      sebagai Listing~\ref{lst:elgamal-parameter}, \ref{lst:elgamal-prosedur},
+      \ref{lst:elgamal-blok}, dan \ref{lst:elgamal-serangan}
+- [x] **Pertumbuhan komponen OBE** — `praktikum.tex` 1 → 5 `obeactivity`,
+      `latihan.tex` 1 → 2 `obereflection` (3 → 13 butir), `rangkuman.tex`
+      7 → 15 butir, `evaluasi.tex` 3 → 6 butir kuis dan
+      **`competencychecklist` 5 → 12 baris**
+
+### Koreksi terhadap sumber (wajib dicatat)
+
+Dek `14-*` hampir bersih: **seluruh angkanya benar kecuali satu salah cetak
+modulus.** Semua nilai telah diperiksa ulang dengan `code/python/elgamal_uji.py`
+sebelum ditata huruf:
+
+| Klaim dek | Verifikasi |
+|---|---|
+| $\operatorname{ord}(3, 2273) = 2272$ (akar primitif) | lulus (UJI 2) |
+| $p = 2273$, $g = 3$, $x = 243 \Rightarrow y = 461$ | lulus (UJI 2) |
+| $m = 700$, $k = 1463 \Rightarrow (a, b) = (1439, 74)$ | lulus (UJI 3) |
+| $1439^{2029} \bmod 2273 = 1791$, lalu $74 \times 1791 = 700$ | lulus (UJI 3) |
+| $3^{(p-1)/2} \bmod 2273$ untuk uji akar primitif | lulus (UJI 1) |
+| $\operatorname{ord}(2, 2357) = 2356$ (akar primitif) | lulus (UJI 9) |
+| $p = 2357$, $g = 2$, $x = 1751 \Rightarrow y = 1185$ | lulus (UJI 9) |
+| $m = 2035$, $k = 1520 \Rightarrow (a, b) = (1430, 697)$ | lulus (UJI 9) |
+| $1430^{605} \bmod 2357 = 872$, lalu $697 \times 872 = 2035$ | lulus (UJI 9) |
+
+1. **Salah cetak modulus pada dek.** Dek menuliskan
+   $2^{1751} \pmod{2353} = 1185$. Modulus yang benar adalah **2357**, sesuai $p$
+   yang telah ditetapkan pada dek yang sama; dengan modulus $2353$ hasilnya
+   justru $1008 \ne 1185$. Nilai $1185$ sendiri benar. Buku menuliskan nilai
+   yang benar dan **mencatat kekeliruan itu secara terbuka** di
+   Contoh~\ref{ex:elgamal-2357} supaya mahasiswa yang membandingkan dengan dek
+   tidak mengira buku yang keliru.
+2. **Kalimat DSA pada buku lama keliru.** `section-04.tex` semula menyatakan DSA
+   ``dibakukan oleh NIST pada tahun 1991''. Yang benar: DSA **diusulkan** pada
+   1991 dan **dibakukan sebagai FIPS 186 pada 1994**; lebih jauh, FIPS 186-5
+   (2023) sudah **tidak lagi mengizinkan pembangkitan kunci DSA yang baru**.
+   Sejak Bab 12 fakta ini muncul utuh di Subbagian~\ref{subsec:sejarah-elgamal}
+   dan dirujuk ulang (bukan diulang) di `section-04.tex`.
+3. **Bukti dekripsi absen total.** Baik buku lama maupun dek tidak pernah
+   membuktikan mengapa $m = b \cdot (a^{x})^{-1} \bmod p$ mengembalikan
+   plainteks semula; keduanya hanya menyatakan rumusnya. Bukti itu kini ada
+   (`subsec:bukti-elgamal`).
+4. **Kunci efemeral $k$ tidak pernah digolongkan sebagai rahasia.** Buku lama
+   menyebut $k$ hanya sebagai ``bilangan acak''. Tabel~\ref{tab:parameter-elgamal}
+   menegaskan statusnya, dan seluruh Subbagian~\ref{subsec:k-ulang} menjelaskan
+   akibat kelalaiannya.
 
 ## Bab 13 — Algoritma Knapsack
 Sumber: `referensi/16-*` (2.499 kata, 7 topik, 3 gambar). Target: ±4.000 kata.
@@ -820,8 +934,11 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   `eq:rsa-rumus`, `eq:bezout`, `eq:serang-d`, `eq:gnfs`, `eq:syarat-blok`,
   `eq:enkripsi-blok`, `eq:panjang-blok`, `eq:dekripsi-blok`, `eq:kerapuhan-rsa`);
   Bab 11 menambah 5 (`eq:dh-bukti`, `eq:dlp`, `eq:dlp-index-calculus`,
-  `eq:mitm-k1`, `eq:mitm-k2`).
-  Lanjutkan untuk ElGamal, ECDLP, hash.
+  `eq:mitm-k1`, `eq:mitm-k2`); Bab 12 menambah 10 (`eq:dlp-elgamal`,
+  `eq:elgamal-kunci`, `eq:elgamal-a`, `eq:elgamal-b`, `eq:elgamal-invers`,
+  `eq:elgamal-dekripsi`, `eq:elgamal-bukti`, `eq:elgamal-homomorfik`,
+  `eq:elgamal-k-ulang`, `eq:elgamal-k-ulang-m2`).
+  Lanjutkan untuk ECDLP, hash.
 - [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
 - [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 dan 04 sudah punya.)
   Skrip pembuat gambar raster: `scripts/refactor/figures/entropi_ternate.py`.

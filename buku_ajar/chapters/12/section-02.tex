@@ -1,11 +1,159 @@
 \section{Landasan Matematis}
-Keamanan ElGamal bergantung pada \textbf{Persoalan Logaritma Diskrit}.
+\label{sec:landasan-elgamal}
 
-\subsection{Logaritma Diskrit}
-Misalkan $p$ adalah bilangan prima besar, dan $g$ adalah akar primitif dari $p$. Jika diberikan bilangan bulat $y$ sedemikian sehingga:
-\[ g^x \equiv y \pmod{p} \]
-Maka menemukan nilai $x$ (yang disebut sebagai logaritma diskrit dari $y$ terhadap basis $g$ modulo $p$) adalah sangat sulit secara komputasi untuk $p$ yang cukup besar.
+Keamanan ElGamal tidak bersandar pada kesulitan memfaktorkan bilangan bulat
+sebagaimana RSA, melainkan pada kesulitan menghitung logaritma diskret di dalam
+sebuah grup berhingga. Gagasan itu sebenarnya telah muncul pada
+Subbagian~\ref{subsec:dlog-dh} ketika membahas Diffie--Hellman. Di sini gagasan
+yang sama dirumuskan secara lebih formal, sebab seluruh prosedur ElGamal
+--- pembangkitan kunci, enkripsi, dan dekripsi --- dinyatakan dalam bahasa
+logaritma diskret dan akar primitif. Pembaca yang sudah memahami
+Subbagian~\ref{subsec:dlog-dh} akan mendapati bahwa bagian ini memperjelas
+istilah, bukan menambah perkakas baru.
 
 \subsection{Akar Primitif}
-Bilangan $g$ disebut \textbf{akar primitif} dari $p$ jika perpangkatan $g^1, g^2, \dots, g^{p-1} \pmod{p}$ menghasilkan semua nilai dari $1$ hingga $p-1$ dalam urutan yang berbeda. Properti ini memastikan bahwa ruang kunci publik adalah maksimal.
 
+Seluruh algoritma ElGamal bertumpu pada satu syarat yang menyangkut pilihan $g$:
+bilangan itu harus merupakan akar primitif dari modulusnya. Syarat tersebut
+dirumuskan sebagai berikut.
+
+\begin{definition}[Akar primitif]
+Misalkan $n$ bilangan bulat positif. Bilangan bulat $g$ disebut
+\textbf{akar primitif} dari $n$ bila perpangkatan
+\[ g^{1}, g^{2}, \dots, g^{\varphi(n)} \pmod{n} \]
+menghasilkan nilai-nilai yang berbeda dan semuanya relatif prima terhadap $n$.
+Secara khusus, bila $p$ bilangan prima maka $g$ disebut akar primitif dari $p$
+bila perpangkatan $g^{1}, g^{2}, \dots, g^{p-1} \pmod{p}$ menghasilkan
+$p-1$ nilai yang berbeda seluruhnya.
+\end{definition}
+
+Perhatikan bahwa pada kasus prima syaratnya menjadi jauh lebih sederhana,
+sebab $\varphi(p) = p-1$ untuk $p$ prima --- akibat langsung dari fungsi totient
+Euler yang telah dibahas pada Bab~\ref{chap:rsa}. Karena itu bab ini cukup
+membicarakan modulus prima, dan istilah ``akar primitif dari $p$'' selalu
+berarti akar primitif modulo bilangan prima $p$.
+
+Apa yang sesungguhnya dijamin oleh definisi itu? Bila $g$ bukan akar primitif,
+maka perpangkatan $g^{1}, g^{2}, \dots$ akan berulang lebih cepat daripada
+$p-1$ langkah, sehingga himpunan nilai yang dapat dihasilkan menjadi lebih
+kecil daripada $\{1, 2, \dots, p-1\}$. Himpunan nilai itu disebut subgrup yang
+dibangkitkan oleh $g$, dan ukurannya adalah \textbf{orde} dari $g$. Akar
+primitif adalah unsur yang ordenya maksimum, yaitu tepat $p-1$.
+
+\subsection{Dua Contoh Pembanding pada Modulus Kecil}
+
+Perbedaan antara unsur yang primitif dan yang bukan paling jelas terlihat pada
+contoh terkecil. Misalkan $p = 7$. Bilangan $a = 3$ adalah akar primitif dari
+$7$ karena perpangkatannya menghasilkan keenam residu bukan-nol tepat satu kali
+masing-masing:
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{@{}l c c c c c c c@{}}
+    \toprule
+    $i$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+    \midrule
+    $3^{i} \bmod 7$ & 3 & 2 & 6 & 4 & 5 & \textbf{1} & 3 \\
+    $2^{i} \bmod 7$ & 2 & 4 & \textbf{1} & 2 & 4 & \textbf{1} & 2 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Siklus perpangkatan modulo 7. Baris $a = 3$ memuat seluruh residu
+    bukan-nol tepat sekali, sedangkan baris $a = 2$ hanya memuat tiga nilai
+    berbeda dan berulang dengan periode 3}
+    \label{tab:akar-primitif-7}
+\end{table}
+
+Baris pertama tabel itu memuat $(3, 2, 6, 4, 5, 1)$ --- keenam bilangan
+$1$ sampai $6$ muncul, masing-masing sekali. Sesudah itu perpangkatannya
+kembali berulang: $3^{7} \equiv 3$, $3^{8} \equiv 2$, dan seterusnya. Panjang
+satu siklus tidak pernah melebihi $p - 1$, dan untuk akar primitif panjang itu
+tepat sama dengan $p - 1$.
+
+Baris kedua memperlihatkan hal yang sebaliknya. Untuk $a = 2$ diperoleh
+$(2, 4, 1, 2, 4, 1, 2)$; nilai-nilainya tidak semuanya berbeda, dan tiga
+bilangan di dalam modulus 7 sama sekali tidak pernah muncul. Orde dari $2$
+adalah $3$, bukan $6$, sehingga $2$ bukan akar primitif dari $7$.
+
+Akibatnya bagi ElGamal bersifat praktis. Bila Alice memilih $g$ yang bukan akar
+primitif, maka himpunan kunci publik yang mungkin menjadi jauh lebih kecil
+daripada yang seharusnya, dan seorang penyerang dapat mendaftar seluruh
+anggotanya satu per satu. Pada contoh $p = 7$ dengan $a = 2$ hanya ada tiga
+kunci publik, bukan enam. Pilihan $g$ yang buruk karena itu melemahkan protokol
+tanpa menyentuh sama sekali panjang modulusnya.
+
+Berapa banyak akar primitif yang dimiliki sebuah bilangan prima? Jawabannya
+diketahui secara pasti: tepat $\varphi(p-1)$ buah. Untuk $p = 7$ diperoleh
+$\varphi(6) = 2$, dan memang hanya $3$ dan $5$ yang primitif modulo $7$. Untuk
+$p = 41$ diperoleh $\varphi(40) = 16$. Karena itu tidak perlu merasa khawatir
+kehabisan pilihan: pada modulus yang dipakai sungguhan, yaitu ribuan bit,
+$\varphi(p-1)$ juga sangat besar.
+
+\subsection{Persoalan Logaritma Diskret}
+
+Bila $g$ adalah akar primitif dari $p$, maka pemetaan $x \mapsto g^{x} \bmod p$
+bersifat satu-ke-satu dari himpunan $\{0, 1, \dots, p-2\}$ ke himpunan
+$\{1, 2, \dots, p-1\}$. Setiap unsur yang mungkin muncul sebagai kunci publik
+karena itu berasal dari tepat satu eksponen.
+
+\begin{definition}[Logaritma diskret]
+Misalkan $p$ bilangan prima dan $g$ akar primitif dari $p$. Untuk setiap
+bilangan bulat $y$ dengan $1 \le y \le p-1$ terdapat tepat satu bilangan bulat
+$x$ dengan $0 \le x \le p-2$ sedemikian sehingga
+\begin{equation}
+g^{x} \equiv y \pmod{p} .
+\label{eq:dlp-elgamal}
+\end{equation}
+Bilangan $x$ itu disebut \textbf{logaritma diskret} dari $y$ terhadap basis $g$
+modulo $p$, dan ditulis $x = \log_{g} y$.
+\end{definition}
+
+Yang menjadi \textbf{persoalan logaritma diskret} (\textit{discrete logarithm
+problem}) adalah pekerjaan sebaliknya: bila $p$, $g$, dan $y$ diketahui,
+carilah $x$ yang memenuhi Persamaan~\eqref{eq:dlp-elgamal}. Menghitung
+$g^{x} \bmod p$ dari $x$ adalah pekerjaan yang mudah --- cukup memakai
+perpangkatkan modular berulang yang dibahas pada Bab~\ref{chap:rsa} --- tetapi
+membalik arahnya tidak.
+
+Perhatikan bahwa $x$ ditentukan hanya sampai kelipatan $p-1$. Karena
+$g^{p-1} \equiv 1 \pmod{p}$ menurut Teorema Kecil Fermat, berlaku
+$g^{x + (p-1)} \equiv g^{x} \pmod{p}$, sehingga $x$ dan $x + (p-1)$ menghasilkan
+kunci publik yang sama. Itulah sebabnya eksponen selalu dinyatakan dalam
+selang $0 \le x \le p-2$, persis seperti pada ketentuan kunci privat ElGamal
+yang akan dibahas pada Subbagian~\ref{subsec:kunci-elgamal}.
+
+\subsection{Contoh Menghitung Logaritma Diskret}
+
+Contoh terkecil dari dek aslinya cukup untuk memperlihatkan bahwa
+penyelesaiannya mungkin, sekalipun mahal. Diketahui bahwa $7$ adalah akar
+primitif dari bilangan prima $p = 41$. Carilah $x$ sedemikian sehingga
+\[ 7^{x} \equiv 15 \pmod{41} . \]
+Jawabannya adalah $x = 3$, sebab
+\[ 7^{3} = 343 = 8 \cdot 41 + 15 \equiv 15 \pmod{41} . \]
+
+Pada modulus sekecil ini jawabannya dapat diperoleh dengan mencoba
+$x = 0, 1, 2, 3$ berturut-turut. Yang membuat persoalan ini menjadi sulit
+adalah pertumbuhannya: jumlah percobaan tumbuh mendekati $p$, sedangkan $p$
+pada pemakaian sungguhan berukuran ribuan bit. Sebagaimana telah diuraikan pada
+Subbagian~\ref{subsec:dlog-dh}, algoritma terbaik yang dikenal untuk modulus
+umum memerlukan sekitar $2\sqrt{p}$ langkah. Untuk $p = 41$ angka itu berarti
+sekitar 13 langkah, dan untuk modulus 2048 bit berarti sekitar $2^{1024}$
+langkah --- sebuah pekerjaan yang tidak mungkin diselesaikan dengan sumber daya
+apa pun yang dapat dibayangkan.
+
+\subsection{Perbedaan dengan Masalah Pemfaktoran}
+
+Sekalipun sama-sama menjadi landasan kriptografi kunci-publik, kedua persoalan
+ini tidak identik. RSA bertumpu pada kesulitan memfaktorkan $n = pq$ menjadi
+faktor primanya, sedangkan ElGamal bertumpu pada kesulitan mencari eksponen $x$
+dari $g^{x} \bmod p$. Perbedaan itu penting bukan hanya secara teoretis: ia
+memisahkan kedua keluarga algoritma menjadi dua taruhan yang berdiri sendiri,
+sehingga kelemahan yang ditemukan pada salah satunya tidak dengan sendirinya
+menjatuhkan yang lain.
+
+Yang perlu dicatat secara jujur, bagaimanapun, adalah bahwa pemisahan itu tidak
+menolong terhadap komputer kuantum. Algoritma Shor menyelesaikan pemfaktoran
+dan logaritma diskret dalam waktu polinomial pada model kuantum, sehingga
+keduanya tumbang bersama. Ancaman kuantum bagi RSA yang dibahas pada
+Bab~\ref{chap:rsa} berlaku sama bagi ElGamal, dan alasan yang sama pula yang
+mendorong peralihan ke kriptografi pasca-kuantum yang diperkenalkan pada
+bab akhir buku ini.

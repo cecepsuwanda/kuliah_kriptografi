@@ -1,10 +1,18 @@
 \section{Rangkuman}
 \begin{itemize}
     \item ElGamal (Taher ElGamal, 1985) adalah sistem kunci-publik yang keamanannya bersandar pada persoalan logaritma diskrit, erat terkait dengan Diffie-Hellman.
-    \item Pembangkitan kunci: pilih prima $p$ dan akar primitif $g$, pilih kunci privat $x$ dengan $2 \le x \le p-2$, lalu hitung kunci publik $y = g^x \bmod p$.
-    \item Enkripsi bersifat probabilistik: pilih bilangan acak $k$, hitung $a = g^k \bmod p$ dan $b = y^k \cdot m \bmod p$, sehingga cipherteksnya berupa pasangan $(a, b)$.
-    \item Dekripsi: $m = b \cdot (a^x)^{-1} \bmod p$, dengan $(a^x)^{-1} \equiv a^{p-1-x} \pmod p$.
+    \item Berbeda dari Diffie--Hellman yang interaktif, ElGamal bersifat tanpa interaksi: kunci publik disiarkan sekali, lalu siapa pun dapat mengirim pesan kepadanya.
+    \item Akar primitif $g$ modulo $p$ adalah bilangan yang ordenya $p-1$, sehingga $g^{1}, g^{2}, \dots, g^{p-1}$ menghasilkan seluruh residu bukan-nol modulo $p$ tepat sekali masing-masing.
+    \item Banyaknya akar primitif modulo $p$ adalah $\varphi(p-1)$; untuk $p = 7$ ada $2$ buah, untuk $p = 41$ ada $16$ buah.
+    \item Pembangkitan kunci: pilih prima $p$ dan akar primitif $g$, pilih kunci privat $x$ dengan $2 \le x \le p-2$, lalu hitung kunci publik $y = g^x \bmod p$ (Persamaan~\eqref{eq:elgamal-kunci}).
+    \item Enkripsi bersifat probabilistik: pilih bilangan acak $k$, hitung $a = g^k \bmod p$ dan $b = y^k \cdot m \bmod p$, sehingga cipherteksnya berupa pasangan $(a, b)$ (Persamaan~\eqref{eq:elgamal-a} dan~\eqref{eq:elgamal-b}).
+    \item Dekripsi: $m = b \cdot (a^x)^{-1} \bmod p$, dengan $(a^x)^{-1} \equiv a^{p-1-x} \pmod p$ menurut Teorema Kecil Fermat (Persamaan~\eqref{eq:elgamal-invers} dan~\eqref{eq:elgamal-dekripsi}).
+    \item Kebenaran dekripsi bersandar pada identitas $\frac{b}{a^{x}} \equiv \frac{g^{xk} m}{g^{xk}} \equiv m \pmod p$, yang meniadakan faktor $g^{xk}$ pada pembilang dan penyebut (Persamaan~\eqref{eq:elgamal-bukti}).
     \item Contoh: $p = 2273$, $g = 3$, dan $x = 243$ memberi $y = 461$; pesan $m = 700$ dengan $k = 1463$ menjadi $(a, b) = (1439, 74)$ dan kembali menjadi $700$ setelah dekripsi.
-    \item Karena $k$ berubah setiap sesi, plainteks yang sama menghasilkan cipherteks berbeda; hal ini mencegah serangan \textit{codebook} dan analisis statistik.
-    \item Kelemahannya adalah ekspansi cipherteks (dua kali panjang plainteks); dibanding RSA, ElGamal bersifat probabilistik dan mendasari skema tanda tangan DSA.
+    \item Pesan yang melebihi modulus dipecah menjadi blok; kata ``HALO'' dengan pengodean $A = 00$ menjadi $07001114$, terpecah menjadi $m_{1} = 0700$ dan $m_{2} = 1114$, yang menghasilkan cipherteks $(1439, 74)$ dan $(1220, 1682)$ dengan kunci efemeral $k = 1463$ dan $k = 2001$.
+    \item Karena $k$ berubah setiap sesi, plainteks yang sama menghasilkan cipherteks berbeda; hal ini mencegah serangan \textit{codebook} dan analisis statistik. Namun sifat probabilistik itu tidak menjamin keutuhan data.
+    \item ElGamal bersifat homomorfik multiplikatif: mengalikan komponen demi komponen dua cipherteks menghasilkan cipherteks yang sah bagi hasil kali kedua plainteks, sehingga pesan dapat diubah secara terkendali oleh penyerang.
+    \item Memakai kembali kunci efemeral $k$ untuk dua pesan meruntuhkan keduanya sekaligus: karena $a_{1} = a_{2}$, berlaku $\frac{b_{1}}{b_{2}} \equiv \frac{m_{1}}{m_{2}} \pmod p$, sehingga satu plainteks yang diketahui cukup untuk membuka yang lain --- tanpa perlu menyelesaikan logaritma diskret.
+    \item Kelemahan strukturalnya adalah ekspansi cipherteks dua kali lipat, sehingga ElGamal lazim dipakai secara hibrida untuk membungkus kunci sesi, bukan untuk mengenkripsi isi pesan.
+    \item Pada praktiknya ElGamal harus dibangkitkan dan dipakai dengan modulus yang tidak ambigu; RFC~9580 (2024) melarang pembangkitan kunci ElGamal yang baru pada OpenPGP setelah serangan De Feo--Poettering--Sorniotti (2021).
 \end{itemize}

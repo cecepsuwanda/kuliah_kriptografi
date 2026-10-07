@@ -5,6 +5,9 @@
 2. Bob memilih kunci privat $x = 1751$, hitung kunci publik $y$.
 3. Alice ingin mengirim pesan $m = 2035$ dengan memilih $k = 1520$. Hitunglah pasangan cipherteks $(a, b)$.
 4. Bob melakukan dekripsi menggunakan kunci privatnya. Verifikasi apakah hasilnya kembali menjadi $m = 2035$.
+5. Ulangi percobaan itu untuk modulus kecil $p = 7$ dan $p = 41$. Bilangan mana
+   saja yang menjadi akar primitif, dan berapa banyak akar primitif yang dimiliki
+   masing-masing modulus?
 \end{obeactivity}
 
 Langkah-langkah pada Aktivitas 12.1 dapat dijalankan langsung melalui program
@@ -17,6 +20,104 @@ pesan semula.
     caption={ElGamal: pembangkitan kunci, enkripsi, dan dekripsi},
     label={lst:elgamal}
 ]{\codefile{python/elgamal.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 12.2: Memeriksa Akar Primitif dan Memilih Parameter}
+1. Jalankan program pada Listing~\ref{lst:elgamal-parameter}. Untuk modulus
+   kecil $p = 7$, catatlah siklus pangkat $a = 3$ dan $a = 2$. Mengapa yang
+   pertama disebut akar primitif sedangkan yang kedua tidak?
+2. Susunlah tabel pangkat $g^{1}$ sampai $g^{6}$ modulo 7 seperti pada
+   Tabel~\ref{tab:akar-primitif-7}. Periksa banyaknya nilai berbeda pada setiap
+   baris.
+3. Hitunglah $\varphi(6)$ dan $\varphi(40)$, lalu bandingkan dengan banyaknya
+   akar primitif modulo 7 dan modulo 41. Jelaskan mengapa keduanya harus sama.
+4. Periksa apakah $3$ akar primitif dari $2273$ dan apakah $2$ akar primitif dari
+   $2357$ dengan menghitung ordenya. Apa syarat orde yang harus dipenuhi?
+5. Diskusikan apa yang terjadi bila pengirim memilih $g$ yang bukan akar
+   primitif: berapa banyak nilai $y$ yang mungkin muncul, dan mengapa hal itu
+   memperlemah sistem.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Pemeriksaan bilangan prima, siklus pangkat, orde, dan akar primitif},
+    label={lst:elgamal-parameter},
+    firstline=27,
+    lastline=61
+]{\codefile{python/elgamal_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 12.3: Membangkitkan Kunci dan Bertukar Pesan}
+1. Jalankan program pada Listing~\ref{lst:elgamal-prosedur}. Dengan $p = 2273$,
+   $g = 3$, dan $x = 243$, hitunglah $y$ dan bandingkan dengan
+   Contoh~\ref{ex:elgamal-kunci}.
+2. Enkripsikan $m = 700$ dengan $k = 1463$. Periksa bahwa hasilnya
+   $(a, b) = (1439, 74)$ seperti pada Contoh~\ref{ex:elgamal-enkripsi}.
+3. Hitunglah $\left(a^{x}\right)^{-1}$ dengan dua cara: sekali memakai eksponen
+   $p - 1 - x$, sekali memakai algoritma Euclidean diperluas. Apakah hasilnya
+   sama?
+4. Buktikan bahwa $b \cdot \left(a^{x}\right)^{-1} \equiv m \pmod{p}$ dengan
+   menuliskan langkah-langkahnya seperti pada
+   Persamaan~\eqref{eq:elgamal-bukti}.
+5. Jelaskan mengapa $x = 1$ dan $x = p - 1$ tidak boleh dipakai sebagai kunci
+   privat.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Pembangkitan kunci, enkripsi, dan dekripsi ElGamal},
+    label={lst:elgamal-prosedur},
+    firstline=76,
+    lastline=101
+]{\codefile{python/elgamal_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 12.4: Pesan Multi-Blok dan Enkripsi Probabilistik}
+1. Jalankan program pada Listing~\ref{lst:elgamal-blok}. Enkripsikan kata
+   ``HALO'' dengan pengodean $A = 00$ sampai $Z = 25$. Mengapa rangkaian
+   angkanya harus diawali angka nol, dan apa akibatnya bila nol itu dibuang?
+2. Pesan itu dipecah menjadi dua blok. Berapa panjang blok yang dipakai, dan
+   mengapa blok tidak boleh melebihi $p - 1$?
+3. Kedua blok dienkripsi dengan kunci efemeral yang berbeda, yaitu $k = 1463$
+   dan $k = 2001$. Periksa bahwa $a_{1} \ne a_{2}$. Apa yang akan terjadi bila
+   kedua $k$ itu sama?
+4. Enkripsikan pesan $m = 700$ sebanyak tiga kali dengan $k$ yang berlainan.
+   Bandingkan ketiga cipherteksnya. Sifat apa yang diperlihatkan oleh hasilnya?
+5. Diskusikan mengapa sifat itu menghalangi serangan buku kode, sedangkan RSA
+   tanpa padding tidak menghalanginya.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Enkripsi multi-blok dan enkripsi probabilistik},
+    label={lst:elgamal-blok},
+    firstline=163,
+    lastline=195
+]{\codefile{python/elgamal_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 12.5: Membongkar Pesan karena Kunci Efemeral Dipakai Ulang}
+1. Jalankan program pada Listing~\ref{lst:elgamal-serangan}, yang mengenkripsi
+   $m_{1} = 700$ dan $m_{2} = 1114$ dengan $k = 1463$ yang sama.
+2. Periksa bahwa $a_{1} = a_{2}$. Mengapa komponen pertama cipherteks tidak
+   bergantung pada pesannya?
+3. Hitunglah $\frac{b_{1}}{b_{2}} \bmod p$ dan $\frac{m_{1}}{m_{2}} \bmod p$.
+   Apakah keduanya sama? Jelaskan mengapa demikian.
+4. Dengan menganggap blok pertama diketahui bernilai $0700$, pulihkan blok
+   kedua memakai Persamaan~\eqref{eq:elgamal-k-ulang-m2}. Bandingkan hasilnya
+   dengan Contoh~\ref{ex:elgamal-k-ulang}.
+5. Hitunglah $y^{k} = b_{1} \cdot m_{1}^{-1} \bmod p$. Jelaskan mengapa nilai
+   itu dapat dipakai untuk membuka setiap cipherteks lain yang memakai $k$ yang
+   sama, dan mengapa kunci privat $x$ sendiri tetap tidak terungkap.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Pembongkaran pesan ketika kunci efemeral dipakai ulang},
+    label={lst:elgamal-serangan},
+    firstline=227,
+    lastline=247
+]{\codefile{python/elgamal_uji.py}}
 
 Program yang sama tersedia dalam C++ (\texttt{code/cpp/elgamal.cpp}) dan MATLAB
 (\texttt{code/matlab/elgamal.m}).

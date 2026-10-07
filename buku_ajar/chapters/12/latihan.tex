@@ -4,4 +4,47 @@
 1. Apa yang terjadi jika pengirim menggunakan nilai $k$ yang sama untuk dua pesan yang berbeda? Analisis risikonya terhadap keamanan pesan.
 2. Jelaskan mengapa pemilihan $g$ sebagai akar primitif dari $p$ sangat penting dalam algoritma ElGamal.
 3. Mengapa ukuran cipherteks ElGamal selalu dua kali lipat dari ukuran plainteksnya?
+4. Diberikan parameter $p = 2357$, $g = 2$, dan kunci privat $x = 900$. Hitunglah
+   kunci publik $y$, lalu enkripsikan $m = 1234$ dengan $k = 1000$. Periksa bahwa
+   dekripsinya memang mengembalikan $1234$.
+5. Cipherteks $(a_{1}, b_{1}) = (1439, 74)$ adalah hasil enkripsi $m_{1} = 700$
+   pada modulus $p = 2273$. Bila penyerang memperoleh cipherteks lain
+   $(a_{2}, b_{2}) = (1220, 1682)$ untuk pesan yang tidak diketahui, dapatkah ia
+   memperoleh pesan kedua itu? Jelaskan langkah yang harus dilakukannya, atau
+   jelaskan mengapa ia tidak dapat melakukannya.
+6. Mengapa invers $\left(a^{x}\right)^{-1}$ dapat dihitung sebagai
+   $a^{\,p-1-x} \bmod p$? Sebutkan teorema yang mendasarinya, dan syarat apa yang
+   harus dipenuhi oleh $a$ agar teorema itu berlaku.
+7. Jelaskan mengapa kunci privat $x = 1$ dan $x = p-1$ dikecualikan dari selang
+   pemilihan kunci. Tunjukkan apa yang terjadi pada kunci publik $y$ dalam kedua
+   kasus itu.
+8. Misalkan $p = 2273$ dan pesan yang dikirim adalah rangkaian delapan digit
+   $07001114$. Bandingkan pemecahan menjadi blok empat digit dengan pemecahan
+   menjadi blok tiga digit. Berapa blok yang dihasilkan masing-masing cara, dan
+   masalah apa yang muncul pada pemecahan tiga digit?
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 12.2}
+1. Sistem ElGamal memakai $k$ baru untuk setiap blok pesan, sehingga satu blok
+   memerlukan dua perpangkatkan modular. Bandingkan biaya itu dengan RSA, yang
+   hanya memerlukan satu perpangkatkan per blok, dan jelaskan mengapa ElGamal
+   tetap dipandang layak dipakai.
+2. Sebuah berkas multimedia berukuran 1 MB hendak dikirim dengan aman. Mengapa
+   tidak tepat mengenkripsinya langsung dengan ElGamal? Rancanglah skema
+   kriptografi hibrida yang memakai ElGamal untuk membungkus kunci sesi dan AES
+   untuk isinya, lalu sebutkan besaran apa saja yang melewati saluran.
+3. Tunjukkan bahwa ElGamal bersifat homomorfik multiplikatif. Perlihatkan
+   langkahnya untuk $m_{1} = 700$ dan $m_{2} = 1114$ pada modulus $2273$, lalu
+   jelaskan mengapa sifat itu berbahaya bagi keutuhan pesan.
+4. OpenPGP pernah mencantumkan ElGamal sebagai algoritma kunci publik nomor 16
+   dengan keterangan \textit{encrypt-only}. Jelaskan mengapa keterangan itu
+   diberikan, dan mengapa RFC~9580 (2024) kemudian melarang pembangkitan kunci
+   ElGamal yang baru.
+5. Bandingkan ElGamal dengan protokol Diffie--Hellman dari sudut kebutuhan
+   interaksi. Dalam keadaan apa keunggulan ElGamal itu menjadi menentukan, dan
+   dalam keadaan apa keunggulan itu tidak berguna?
+6. Jelaskan mengapa algoritma Shor mengancam baik RSA maupun ElGamal, sekalipun
+   keduanya bersandar pada persoalan yang berbeda. Apa yang harus dilakukan
+   sebuah lembaga yang hari ini menyimpan data rahasia jangka panjang?
 \end{obereflection}
