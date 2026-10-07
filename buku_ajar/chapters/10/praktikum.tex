@@ -2,11 +2,11 @@
 \begin{obeactivity}
 \textbf{Aktivitas 10.1: Simulasi RSA dengan Bilangan Prima Kecil}
 1. Pilih dua bilangan prima kecil, misal $p=3$ dan $q=11$.
-2. Hitung $n$ dan $\phi(n)$.
-3. Pilih $e$ yang relatif prima terhadap $\phi(n)$.
+2. Hitung $n$ dan $\varphi(n)$.
+3. Pilih $e$ yang relatif prima terhadap $\varphi(n)$.
 4. Hitung $d$ menggunakan metode coba-coba atau Algoritma Euclidean.
 5. Cobalah mengenkripsi pesan $m=5$ dan dekripsi kembali hasilnya.
-6. Diskusikan apa yang terjadi jika $e$ tidak relatif prima terhadap $\phi(n)$.
+6. Diskusikan apa yang terjadi jika $e$ tidak relatif prima terhadap $\varphi(n)$.
 \end{obeactivity}
 
 Langkah-langkah pada Aktivitas 10.1 dapat dijalankan langsung melalui program
@@ -22,3 +22,105 @@ terhitung Bab 10, sehingga setiap angka dapat diperiksa satu per satu.
 
 Program yang sama tersedia dalam C++ (\texttt{code/cpp/rsa.cpp}) dan MATLAB
 (\texttt{code/matlab/rsa.m}).
+
+\begin{obeactivity}
+\textbf{Aktivitas 10.2: Menghitung Kunci Privat dengan Algoritma Euclidean Diperluas}
+1. Jalankan Algoritma Euclidean biasa pada $\varphi(n)$ dan $e$ untuk parameter
+   latihan $p = 47$, $q = 71$, dan $e = 79$. Catat setiap hasil bagi $q_i$ dan sisa
+   $r_i$ pada lembar kerja.
+2. Bandingkan jejak Anda dengan Tabel~\ref{tab:euclid-dipertluas}. Berapa banyak
+   pembagian yang diperlukan? Berapa banyak nilai $k$ yang harus dicoba bila Anda
+   memakai cara coba-coba pada Persamaan~\eqref{eq:serang-d}?
+3. Jalankan program pada Listing~\ref{lst:rsa-euclid} dan periksa bahwa koefisien $t$
+   pada baris terakhir sama dengan kunci privat $d$.
+4. Ulangi untuk $e = 17$ dan modulus yang sama. Apakah $e$ yang lebih kecil selalu
+   memberi jejak yang lebih pendek? Jelaskan mengapa jawabannya bergantung pada
+   hasil bagi $q_i$ dan bukan pada besarnya $e$.
+5. Gantilah $e$ dengan sebuah nilai yang tidak relatif prima terhadap
+   $\varphi(n)$, misalnya $e = 46$. Program akan menolak permintaan itu; jelaskan
+   mengapa invers modulo memang tidak ada dalam keadaan tersebut.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Algoritma Euclidean diperluas dan penghitungan invers modulo},
+    label={lst:rsa-euclid},
+    firstline=31,
+    lastline=58
+]{\codefile{python/rsa_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 10.3: Enkripsi dan Dekripsi Pesan Multi-Blok}
+1. Kodekan nama Anda sendiri --- paling sedikit sepuluh huruf --- memakai aturan
+   $\text{A} = 00$ sampai $\text{Z} = 25$.
+2. Pecah deretan kode itu menjadi blok empat digit. Periksa setiap blok memenuhi
+   syarat pada Persamaan~\eqref{eq:syarat-blok}; bila ada blok yang melebihi
+   $n - 1$, perpendek panjang bloknya dan ulangi.
+3. Enkripsi setiap blok dengan kunci publik $(79, 3337)$ dan tuliskan cipherteksnya
+   dalam empat digit, termasuk nol di depan bila ada.
+4. Dekripsi kembali cipherteks Anda dengan kunci privat $(1019, 3337)$ dan
+   terjemahkan hasilnya menjadi huruf. Apakah nama Anda pulih dengan tepat?
+5. Hapus semua nol di depan pada cipherteks Anda, lalu coba dekripsi deretan angka
+   yang sudah rusak itu. Jelaskan apa yang terjadi dan mengapa.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Pengodean pesan, pemecahan blok, dan penjagaan angka nol di depan},
+    label={lst:rsa-pesan},
+    firstline=87,
+    lastline=123
+]{\codefile{python/rsa_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 10.4: Membuktikan RSA Telanjang Bersifat Deterministik dan Rapuh}
+1. Enkripsi blok $m = 0203$ dua kali dengan kunci publik yang sama. Bandingkan kedua
+   cipherteksnya dan jelaskan mengapa hasilnya identik.
+2. Bangun kamus seluruh huruf abjad memakai program pada Listing~\ref{lst:rsa-serangan},
+   lalu bacalah cipherteks $c = 1493$ hanya dengan kamus itu, tanpa memakai kunci
+   privat. Huruf apa yang Anda peroleh?
+3. Ubah cipherteks $c = 1493$ menjadi $c' = c \cdot 3^{79} \bmod 3337$. Dekripsikan
+   $c'$ dengan kunci privat $(1019, 3337)$. Berapa hasilnya, dan bagaimana kaitannya
+   dengan plainteks asli $m = 16$?
+4. Rancanglah satu cara sederhana untuk menyisipkan keacakan sebelum pemangkatan,
+   misalnya dengan menggabungkan pesan dan bilangan acak menjadi satu blok. Periksa
+   apakah cara Anda mematahkan kamus pada butir 2, dan jelaskan biaya yang harus
+   dibayar (petunjuk: berapa byte pesan yang hilang untuk setiap blok).
+5. Diskusikan mengapa skema \textit{padding} baku seperti OAEP lebih dapat dipercaya
+   daripada rancangan sendiri.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Serangan kamus dan peragaan kerapuhan perubahan pada RSA telanjang},
+    label={lst:rsa-serangan},
+    firstline=129,
+    lastline=156
+]{\codefile{python/rsa_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 10.5: Memperkirakan Usaha Pemfaktoran}
+1. Jalankan program pada Listing~\ref{lst:rsa-pemfaktoran} dan catat perkiraan usaha
+   pemfaktoran untuk modulus 256, 512, 768, 1024, 2048, dan 3072 bit.
+2. Bandingkan perkiraan itu dengan rekor pemfaktoran pada
+   Subbagian~\ref{subsec:kesulitan-pemfaktoran}. Berapa lama jeda antara ramalan
+   Rivest pada 1977 untuk modulus 129 digit dan pemecahannya pada 1994?
+3. Perkirakan sendiri waktu yang dibutuhkan untuk memfaktorkan modulus 512 bit bila
+   sebuah komputer pribadi dapat menguji $10^{9}$ kandidat pembagi per detik
+   (petunjuk: bandingkan hasilnya dengan perkiraan pada Tabel~\ref{tab:ukuran-kunci-rsa},
+   lalu jelaskan mengapa cara menguji kandidat pembagi bukan cara yang dipakai
+   penyerang).
+4. Hitung berapa lama RSA-2048 bertahan terhadap algoritma Shor bila komputer
+   kuantum yang memadai sudah tersedia, dan jelaskan mengapa panjang kunci tidak
+   dapat dipakai sebagai penangkal serangan itu.
+5. Diskusikan mengapa pola \textit{harvest now, decrypt later} membuat ancaman
+   komputasi kuantum relevan bahkan sebelum komputer kuantumnya ada.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Perkiraan usaha pemfaktoran menurut panjang modulus},
+    label={lst:rsa-pemfaktoran},
+    firstline=162,
+    lastline=175
+]{\codefile{python/rsa_uji.py}}

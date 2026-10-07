@@ -2,6 +2,42 @@
 \begin{obereflection}
 \textbf{Latihan 10.1}
 1. Mengapa RSA memerlukan bilangan prima yang sangat besar untuk keamanan praktis?
-2. Jika $\phi(n)$ diketahui oleh penyerang, apakah kunci privat $d$ dapat ditemukan dengan mudah? Jelaskan.
-3. Apa keuntungan utama dari sistem kriptografi hibrida dibandingkan hanya menggunakan RSA?
+2. Jika $\varphi(n)$ diketahui oleh penyerang, apakah kunci privat $d$ dapat ditemukan
+   dengan mudah? Jelaskan.
+3. Apa keuntungan utama dari sistem kriptografi hibrida dibandingkan hanya menggunakan
+   RSA?
+4. Jelaskan mengapa penyerang yang berhasil memperoleh $d$ tetap harus dianggap telah
+   membocorkan seluruh pasangan kunci, bukan sekadar kunci privatnya.
+5. Sebuah sistem memakai $e = 3$ tanpa \textit{padding}. Untuk pesan yang sangat pendek,
+   jelaskan mengapa pemulihan plainteks cukup dilakukan dengan menghitung akar pangkat
+   tiga biasa.
+6. Dengan parameter $p = 47$ dan $q = 71$, hitunglah $\varphi(n)$ dan periksa bahwa
+   $e = 17$ memenuhi syarat sebagai kunci publik. Kemudian tentukan $d$ yang
+   bersesuaian.
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 10.2}
+1. Dua pengguna membangkitkan kunci masing-masing dengan modulus yang sama, yaitu
+   $n = pq$, tetapi memilih $e_1$ dan $e_2$ yang berbeda dan keduanya relatif prima
+   terhadap $\varphi(n)$. Jelaskan mengapa keadaan itu berbahaya bagi keduanya.
+2. Sebuah modulus dibentuk dari dua bilangan prima yang berdekatan, misalnya
+   $p = 1000003$ dan $q = 1000033$, sehingga $n = 1000036000099$. Tunjukkan bahwa
+   $\bigl\lceil\sqrt{n}\bigr\rceil^2 - n$ merupakan bilangan kuadrat sempurna, lalu
+   faktorkan $n$ dari hasil itu. Berapa langkah yang dibutuhkan metode Fermat, dan
+   mengapa syarat pada Subbagian~\ref{sec:prosedur-rsa} melarang pasangan prima
+   semacam itu?
+3. Perkirakan waktu yang dibutuhkan untuk mencoba seluruh kunci pada modulus 512 bit
+   bila satu kunci dapat diuji dalam satu nanodetik (petunjuk: $2^{512} \approx
+   1{,}34 \times 10^{154}$). Bandingkan hasilnya dengan waktu yang benar-benar dipakai
+   penyerang untuk memecahkan modulus 512 bit pada 1999, lalu jelaskan mengapa kedua
+   angka itu berbeda jauh.
+4. Pada Contoh~\ref{ex:rsa-hello-alice}, blok ketiga adalah $1400$ dan blok keempat
+   $1108$. Jelaskan mengapa kedua angka itu tidak dapat dibaca sebagai dua huruf
+   masing-masing bila nol di depan diabaikan.
+5. RSA-250 yang dipecahkan pada 2020 berukuran 829 bit. Berdasarkan
+   Tabel~\ref{tab:ukuran-kunci-rsa}, berapa perkiraan selisih panjang dengan modulus
+   2048 bit, dan apa artinya bagi pemakaian RSA saat ini?
+6. Jelaskan mengapa kriptografi simetris tidak perlu diganti oleh skema pasca-kuantum
+   selama panjang kuncinya dinaikkan, sedangkan RSA harus diganti sepenuhnya.
 \end{obereflection}

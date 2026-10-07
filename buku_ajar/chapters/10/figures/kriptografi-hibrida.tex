@@ -1,0 +1,48 @@
+% Diagram kriptografi hibrida: kunci sesi dibungkus RSA, pesan dienkripsi AES.
+% Dirujuk dari section-04.tex dengan \input{figures/kriptografi-hibrida}.
+% Gambar diperkecil dengan \resizebox agar seluruh kotak muat dalam \linewidth.
+\begin{figure}[htbp]
+    \centering
+    \resizebox{0.98\linewidth}{!}{%
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners=1pt, minimum height=0.95cm,
+                      text width=3.3cm, align=center, font=\small, inner sep=3pt},
+        panah/.style={-{Latex[length=2.2mm]}, thick},
+        catatan/.style={font=\footnotesize, align=left, text width=13.4cm},
+    ]
+        % --- baris pengirim ---
+        \node[kotak, fill=green!10]  (kunci) at (0,0) {Kunci sesi $K$\\(acak, 256 bit)};
+        \node[kotak, fill=blue!6]    (bungkus) at (4.4,0) {$c_K = K^{e} \bmod n$\\kunci publik penerima};
+        \node[kotak, fill=green!10]  (pesan) at (0,-2.2) {Pesan $M$};
+        \node[kotak, fill=orange!12] (aes) at (4.4,-2.2) {$c_M = E_K(M)$\\AES-256};
+
+        \draw[panah] (kunci) -- (bungkus);
+        \draw[panah] (pesan) -- (aes);
+        \draw[panah] (kunci) -- (aes);
+
+        % --- saluran ---
+        \node[kotak, fill=gray!12] (saluran) at (9.4,-1.1)
+            {Saluran terbuka\\$c_K$ dan $c_M$ dikirim bersama};
+
+        \draw[panah] (bungkus.east) -- (saluran.west);
+        \draw[panah] (aes.east) -- (saluran.west);
+
+        % --- baris penerima ---
+        \node[kotak, fill=blue!6]    (buka) at (14.4,0)
+            {$K = c_K^{\,d} \bmod n$\\kunci privat penerima};
+        \node[kotak, fill=green!10]  (pulih) at (14.4,-2.2) {$M = D_K(c_M)$\\pesan pulih};
+
+        \draw[panah] (saluran.east) -- ++(0.5,0) -| (buka.north);
+        \draw[panah] (saluran.east) -- ++(0.5,0) -| (pulih.north);
+        \draw[panah] (buka) -- (pulih);
+
+        \node[catatan, anchor=north] at (7.2,-3.2)
+            {Algoritma kunci-publik menangani 256 bit kunci sesi, algoritma kunci-simetri
+             menangani seluruh isi pesan. Kunci sesi dibuang setelah sesi berakhir,
+             sehingga kebocorannya tidak merusak sesi yang lain};
+    \end{tikzpicture}}
+    \caption{Kriptografi hibrida: kunci sesi dibungkus dengan RSA, sedangkan pesan
+    dienkripsi dengan AES memakai kunci sesi tersebut}
+    \label{fig:kriptografi-hibrida}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}

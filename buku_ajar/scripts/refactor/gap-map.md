@@ -491,14 +491,129 @@ Contoh~\ref{ex:gost-round}.
    lulus. Angka pada `contoh.tex` berasal dari sumber primer itu, bukan dari
    dek.
 
-## Bab 10 — Algoritma RSA
+## Bab 10 — Algoritma RSA  `[x]` SELESAI
 Sumber: `referensi/13-*` (6.603 kata, 20 topik, 17 gambar). Target: ±5.000 kata.
+**Menyitasi 7 kunci baru** (`atkins1995rsa129`, `boneh1999`, `shor1997`,
+`bellare1994oaep`, `bleichenbacher1998`, `rfc8017`, `fips203`); dua sitasi lama
+(`rsa1978`, `diffie1976`) tetap dipakai. `references.bib` 49 entri.
 
-- [ ] Penurunan rumus RSA dari Teorema Euler (environment `equation`)
-- [ ] **Contoh multi-blok "HELLO ALICE"** lengkap
-- [ ] Contoh totient $\varphi(20)=8$
-- [ ] Tabel parameter rahasia/umum + tabel kesulitan faktorisasi
-- [ ] Ancaman kuantum (Shor) + himpunan parameter kedua
+Hasil: 8.869 kata pada sembilan berkas (empat section 5.630, contoh 1.393,
+praktikum 743, rangkuman 493, latihan 333, evaluasi 277), **29 halaman mandiri**,
+8 tabel bernomor, 6 contoh terhitung, 15 persamaan bernomor, 12 subbagian baru
+(8 → 20), 1 diagram TikZ baru + 1 gambar raster yang disisipkan kembali, dan satu
+program verifikasi baru (`code/python/rsa_uji.py`, 331 baris, sembilan blok
+pengujian yang seluruhnya **lulus**). Bab semula 1.360 kata tanpa satu pun
+persamaan bernomor, tanpa contoh terhitung, dan tanpa program pengujian.
+
+- [x] **Penurunan rumus RSA dari Teorema Euler** — Sub-bab *Penurunan Rumus
+  Enkripsi dan Dekripsi* (`sec:landasan-rsa`) dengan lingkungan `definition`
+  (fungsi totient Euler) dan `theorem` (Teorema Euler), lalu rantai bernomor
+  Persamaan~\eqref{eq:totient-prima} → \eqref{eq:totient-rsa} (dengan
+  justifikasi kombinatorial) → \eqref{eq:ed-kongruen} →
+  \eqref{eq:ed-kelipatan} → \eqref{eq:rsa-pangkat} → \eqref{eq:rsa-bukti} →
+  \eqref{eq:rsa-rumus}. Ditutup dengan argumen CRT yang membuktikan dekripsi
+  benar untuk **semua** $0 \le m < n$, bukan hanya $m$ yang relatif prima
+  terhadap $n$ — kasus yang tidak dibahas dek sama sekali
+- [x] Contoh totient $\varphi(20) = 8$ beserta kedelapan residu koprima $1, 3, 7,
+  9, 11, 13, 17, 19$ dan contoh Teorema Euler $a = 3$, $n = 10$, $3^4 = 81
+  \equiv 1 \pmod{10}$
+- [x] **Contoh multi-blok ``HELLO ALICE''** lengkap (Contoh~\ref{ex:rsa-hello-alice}):
+  $m = 07041111140011080204$ → blok $0704, 1111, 1400, 1108, 0204$ →
+  $C = 0328, 0301, 2653, 2986, 1164$ → dekripsi dengan $d = 1019$.
+  Meliputi Tabel~\ref{tab:pengodean-hello} (pengodean per huruf),
+  blok `aligned` lima enkripsi, dan Tabel~\ref{tab:jejak-hello-alice} (jejak
+  huruf → angka → cipherteks → huruf kembali). Ditambah paragraf yang menerangkan
+  mengapa $c_2 = 0301$ **wajib** ditulis empat digit dan mengapa
+  $c_1 = 0704$ harus dipecah dengan $k = 4$ meskipun rumus panjang blok hanya
+  menjamin $k \le 3$ (kode dua huruf terbesar, 2525, masih di bawah $n = 3337$)
+- [x] **Algoritma Euclidean diperluas menggantikan coba-coba pada $k$** —
+  Sub-bab *Menghitung Kunci Privat dengan Algoritma Euclidean Diperluas*:
+  identitas Bézout \eqref{eq:bezout}, Tabel~\ref{tab:euclid-dipertluas} rekursi
+  $r_i, s_i, t_i$ lengkap, dan Contoh~\ref{ex:euclid-rsa} yang memperoleh
+  $d = 1019$ dalam **lima pembagian** alih-alih 25 percobaan $k$. Ini
+  memperbaiki cara pengajaran dek yang hanya memakai coba-coba
+- [x] Dua tabel baru: **parameter dan kerahasiaannya** (Tabel~\ref{tab:properti-rsa}:
+  $p, q, n, \varphi(n), e, d, m, c$) dan **ukuran kunci versus rekor pemfaktoran**
+  (Tabel~\ref{tab:ukuran-kunci-rsa}: 256 sampai 3072 bit) yang diletakkan
+  berdampingan dengan kronologi RSA-129 (1994) → RSA-250 (829 bit, 2020)
+- [x] **Ancaman komputasi kuantum** (Algoritma Shor) dalam Sub-bab *Ancaman
+  Komputasi Kuantum*: mengapa Grover hanya kuadratik sehingga AES-256 cukup
+  sedangkan RSA tidak punya penangkal, pola *harvest now, decrypt later*, dan
+  migrasi ke kriptografi pasca-kuantum (NIST FIPS 203, Agustus 2024)
+- [x] Sub-bab baru **Kriptografi Hibrida** (empat langkah eksplisit
+  \eqref{eq:...} + diagram `figures/kriptografi-hibrida`) menjelaskan mengapa RSA
+  jarang dipakai langsung untuk pesan dan bagaimana kunci sesi AES-256 dibungkus
+  dengan RSA — jembatan menuju Bab 11
+- [x] Sub-bab baru **Padding OAEP dan Keamanan Semantik** (`subsec:padding-oaep`):
+  determinisme, serangan kamus (Tabel~\ref{tab:kamus-rsa} 26 huruf dibangkitkan
+  hanya dari kunci publik), kerapuhan perkalian
+  $c' = c \cdot s^e \bmod n = (m \cdot s)^e \bmod n$ \eqref{eq:kerapuhan-rsa},
+  struktur blok PKCS \#1 v1.5, Bleichenbacher 1998, dan OAEP
+  (Bellare–Rogaway 1994, RFC 8017)
+- [x] **Tabel ringkasan 7 keluarga serangan RSA** (Tabel~\ref{tab:serangan-rsa}:
+  serangan/prinsip/penangkalan), termasuk serangan Man-in-the-Middle yang
+  diuraikan sebagai narasi Carol, dan batas 245 byte pesan untuk RSA-2048
+  dengan PKCS \#1 v1.5
+- [x] **Himpunan parameter kedua** $p = 7$, $q = 11 \Rightarrow n = 77$,
+  $\varphi = 60$, $d = 43$, $8^7 \bmod 77 = 57$; ditambah parameter latihan
+  ketiga $e = 17$ pada modulus yang sama ($d = 2273$) di `latihan.tex`
+- [x] **Contoh terhitung** 4 → 6 (`contoh.tex`, seluruhnya memakai
+  $p=47, q=71, e=79$): pembangkitan kunci, satu blok, HELLO ALICE, dan
+  kerapuhan RSA telanjang (determinisme blok $0203$ menghasilkan $1488$ dua
+  kali, plus perubahan $c = 1493 \to c' = 2304$ yang didekripsi menjadi
+  $48 = 16 \times 3$)
+- [x] Program verifikasi `code/python/rsa_uji.py` (331 baris, ASCII + LF):
+  `pbb`, `euclid_diperluas` (dengan jejak per langkah), `invers_modulo`,
+  pembangkitan kunci, enkripsi/dekripsi, pengodean–pemecahan–penyambungan blok
+  dengan penjagaan nol di depan, kamus huruf & serangan kamus, peragaan
+  kerapuhan, dan perkiraan pemfaktoran berdasarkan panjang modulus. Sembilan
+  blok pengujian memeriksa ulang setiap angka pada contoh, tabel, dan latihan;
+  keluaran akhir `Seluruh pengujian LULUS`
+- [x] `latihan.tex` 3 → 9 butir (dua kelompok `obereflection`, termasuk butir
+  Fermat $p=1000003, q=1000033$ dengan pemeriksaan $\lceil\sqrt{n}\rceil^2 - n$
+  sebagai kuadrat sempurna, estimasi $2^{512} \approx 1{,}34 \times 10^{154}$,
+  dan pertanyaan pasca-kuantum); `rangkuman.tex` → 15 butir;
+  `evaluasi.tex` kuis 3 → 6, checklist 6 → 11 baris; `praktikum.tex` 1 → 5
+  aktivitas dengan empat kutipan listing dari `rsa_uji.py`
+
+### Koreksi terhadap sumber (wajib dicatat)
+
+1. **$\varphi(n)$ pada dek salah hitung.** Dek menulis
+   $\varphi(n) = (p-1)(q-1) = 46 \times 60 = 3220$ untuk $p = 47$, $q = 71$.
+   Faktor keduanya seharusnya $q - 1 = 70$, bukan 60: $46 \times 60 = 2760$
+   jelas tidak sama dengan 3220. Produk yang benar tetap 3220, sehingga
+   $d = 1019$ pada dek kebetulan tidak terpengaruh — tetapi baris itu
+   mengajarkan langkah yang salah dan sudah diperbaiki menjadi
+   $46 \times 70 = 3220$ di `contoh.tex` dan `section-02.tex`.
+2. **Deretan kode ``HELLO ALICE'' pada dek berlebih satu blok.** Dek menulis
+   $m = 070411111140011080204$ (21 digit), yang tidak habis dibagi empat
+   sehingga terpecah menjadi enam blok alih-alih lima. Deretan yang benar adalah
+   $07041111140011080204$ (20 digit) — dek menyisipkan satu ``11'' berlebih.
+   Kesalahan ini diperbaiki dan diverifikasi program
+   (`rsa_uji.py`, UJI 4 memeriksa `len(kode) == 20`).
+3. **Label blok kelima pada dek tertukar.** Dek menulis $m_1 = 204 \to c_5$
+   untuk blok terakhir; seharusnya $m_5 = 0204 \to c_5 = 1164$. Notasi pada dek
+   mencampur indeks 1 dan 5 dalam satu baris. Diperbaiki menjadi berindeks lima
+   yang konsisten, dan nol di depan ditulis eksplisit karena itulah justru inti
+   pelajarannya.
+4. **Cara menghitung $d$ pada dek tidak dapat dipakai untuk modulus nyata.**
+   Dek hanya menyebut ``dicoba nilai $k$ sampai pembilang habis dibagi''.
+   Untuk $n = 3337$ cara itu masih dapat dikerjakan dengan tangan, tetapi
+   untuk modulus 617 digit (RSA-2048) tidak ada nilai $k$ yang dapat ditemukan
+   dengan cara itu. Buku menambahkan Algoritma Euclidean diperluas sebagai
+   cara yang benar dan menunjukkan bahwa ia memerlukan lima pembagian untuk
+   parameter yang sama. Ini bukan kesalahan angka, melainkan kesalahan metode.
+5. **Klaim ketahanan RSA-129 pada dek terbalik arahnya.** Dek menyebut
+   tantangan RSA-129 (1977) dan pemecahannya pada 1994, tetapi menyajikannya
+   sebagai bukti keunggulan RSA. Buku menambahkan pembacaan yang jujur: Rivest
+   memperkirakan $4 \times 10^{16}$ tahun sedangkan kenyataannya delapan bulan,
+   dan kemajuan pemfaktoran selalu lebih cepat daripada perkiraan — itulah
+   alasan RSA-1024 kini dianggap terlalu tipis meskipun belum dipecahkan.
+6. **Dek tidak menyebut OAEP maupun Bleichenbacher.** Bagian *padding* pada dek
+   berhenti pada PKCS \#1 v1.5 tanpa menyebut bahwa skema itu sendiri dapat
+   diserang. Buku menambahkan Sub-bab~\ref{subsec:padding-oaep} lengkap dengan
+   serangan Bleichenbacher 1998 dan OAEP, karena tanpa keduanya pembaca akan
+   menyimpulkan bahwa memakai padding sudah cukup untuk mengamankan RSA.
 
 ## Bab 11 — Protokol Diffie-Hellman
 Sumber: `referensi/15-*` (2.457 kata, 8 topik, 11 gambar). Target: ±4.000 kata.
@@ -595,8 +710,13 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   `eq:aes-inv-mixcolumns`, `eq:aes-inv-mixcolumns-komponen`, `eq:aes-enkripsi`,
   `eq:aes-dekripsi-putaran`, `eq:aes-dekripsi`, `eq:aes-equiv-kunci`,
   `eq:aes-polinom-pereduksi`, `eq:aes-invers-pangkat`, `eq:aes-sbox-affine`,
-  `eq:aes-sbox-rumus`).
-  Lanjutkan untuk penurunan RSA, ElGamal, ECDLP, hash.
+  `eq:aes-sbox-rumus`); Bab 09 menambah 7 (`eq:jadwal-kunci-rc5`, `eq:pw-qw`,
+  `eq:rc5-enkripsi`, `eq:gost-putaran`, `eq:gost-jadwal-kunci`, `eq:gost-cbc`,
+  `eq:batas-rekeying`); Bab 10 menambah 15 (`eq:totient-prima`, `eq:totient-rsa`,
+  `eq:ed-kongruen`, `eq:ed-kelipatan`, `eq:rsa-pangkat`, `eq:rsa-bukti`,
+  `eq:rsa-rumus`, `eq:bezout`, `eq:serang-d`, `eq:gnfs`, `eq:syarat-blok`,
+  `eq:enkripsi-blok`, `eq:panjang-blok`, `eq:dekripsi-blok`, `eq:kerapuhan-rsa`).
+  Lanjutkan untuk ElGamal, ECDLP, hash.
 - [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
 - [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 dan 04 sudah punya.)
   Skrip pembuat gambar raster: `scripts/refactor/figures/entropi_ternate.py`.
@@ -636,6 +756,21 @@ diperbaiki; polanya akan terulang di bab-bab berikut, jadi perhatikan sejak awal
   section-03) → ganti dengan titik dua atau ubah susunan kalimatnya.
 - **Rangkaian `\texttt` berisi biner/heksadesimal di dalam `array`** aman selama tiap baris
   di bawah ~68 karakter; bila lebih, pecah menjadi dua tampilan atau pindahkan ke `tabular`.
+- **Baris komentar `# -----…-----` (banner) di dalam berkas Python yang di-`lstinputlisting`
+  TIDAK dapat dipotong.** `breaklines=true` hanya memenggal pada spasi, sedangkan banner
+  sama sekali tidak mengandung spasi, sehingga baris itu meluber utuh. Bab 10 mengalaminya:
+  banner 77 karakter → `Overfull 51,49pt`; dipendekkan ke 72 → masih `19,99pt`; baru 68
+  karakter yang muat. **Ukuran yang benar-benar muat adalah <= 68 karakter** (dari
+  pengukuran: ~6,3pt per karakter terhadap `\linewidth` 442,8pt). Berkas
+  `rc5_gost_uji.py` dan `aes_uji.py` memakai banner 72 karakter dan kebetulan tidak
+  bermasalah karena baris banner itu tidak pernah masuk ke rentang `firstline`/`lastline`
+  listing mana pun — jadi 72 **tidak** boleh dianggap aman. **Aturan: berkas
+  `code/python/*.py` baru dibuat dengan banner 68 karakter**, dan begitulah
+  `rsa_uji.py` disetel; berkas lama yang bannernya tidak pernah masuk rentang listing
+  dibiarkan apa adanya (72) agar commit per bab tetap bersih. Kesalahan ini juga sulit
+  dilacak karena LaTeX melaporkan nomor baris berkas induk (`praktikum.tex`), bukan
+  nomor baris berkas listing; cara isolasinya adalah mempersempit
+  `firstline`/`lastline` berulang kali.
 - **Isi kotak OBE (`obeassessment`, `obeactivity`, dll.) lebih sempit daripada `\linewidth`**
   karena padding tcolorbox. Rangkaian `\code{...}` 32 byte yang aman di badan teks justru
   menghasilkan `Overfull` **dan** `Underfull badness 10000` di dalam kotak (Bab 08

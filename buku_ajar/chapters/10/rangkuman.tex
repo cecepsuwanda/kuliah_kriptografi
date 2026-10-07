@@ -1,10 +1,52 @@
 \section{Rangkuman}
 \begin{itemize}
-    \item Kriptografi kunci-publik memakai sepasang kunci: kunci publik untuk enkripsi dan kunci privat untuk dekripsi; untuk $n$ pengguna cukup $2n$ kunci, jauh lebih sedikit daripada sekitar $n(n-1)/2$ kunci pada sistem simetris.
-    \item Keamanan RSA bersandar pada sulitnya memfaktorkan modulus $n = p \cdot q$ menjadi dua bilangan prima pembentuknya.
-    \item Fungsi Totient Euler untuk $n = p \cdot q$ adalah $\phi(n) = (p-1)(q-1)$, dan Teorema Euler ($a^{\phi(n)} \equiv 1 \pmod n$ bila $\text{PBB}(a,n)=1$) menjamin kebenaran dekripsi RSA.
-    \item Pembangkitan kunci: pilih $p, q$ prima, hitung $n = pq$ dan $\phi(n)$, pilih $e$ dengan $\text{PBB}(e,\phi(n))=1$, lalu hitung $d \equiv e^{-1} \pmod{\phi(n)}$.
-    \item Enkripsi $c = m^e \bmod n$ dan dekripsi $m = c^d \bmod n$ saling membalik karena $e \cdot d \equiv 1 \pmod{\phi(n)}$.
-    \item Contoh: $p=47$, $q=71$ memberi $n=3337$, $\phi(n)=3220$, $e=79$, dan $d=1019$; pesan $m=16$ terenkripsi menjadi $c=1493$ lalu kembali menjadi $m=16$.
-    \item RSA jarang dipakai langsung untuk data besar; praktiknya memakai kriptografi hibrida (RSA mengenkripsi kunci sesi, AES/DES mengenkripsi data), dan distribusi kunci publik tetap rentan serangan \textit{Man-in-the-Middle}.
+    \item Kriptografi kunci-publik memakai sepasang kunci: kunci publik untuk enkripsi dan
+          kunci privat untuk dekripsi; untuk $n$ pengguna cukup $2n$ kunci, jauh lebih
+          sedikit daripada sekitar $n(n-1)/2$ kunci pada sistem simetris.
+    \item Kriptografi kunci-publik bertumpu pada fungsi satu arah dengan pintu jebakan,
+          yaitu fungsi yang mudah dihitung tetapi praktis mustahil dibalik kecuali bila
+          informasi rahasianya diketahui.
+    \item Keamanan RSA bersandar pada sulitnya memfaktorkan modulus $n = p \cdot q$ menjadi
+          dua bilangan prima pembentuknya; sampai kini kesukaran itu masih berupa asumsi
+          komputasi, bukan teorema yang terbukti.
+    \item Fungsi Totient Euler untuk $n = p \cdot q$ adalah $\varphi(n) = (p-1)(q-1)$, dan
+          Teorema Euler ($a^{\varphi(n)} \equiv 1 \pmod n$ bila $\text{PBB}(a,n)=1$)
+          menjamin kebenaran dekripsi RSA.
+    \item Penurunan rumusnya berjalan dari $e \cdot d = k\varphi(n) + 1$ menuju
+          $m^{ed} = m \cdot (m^{\varphi(n)})^k \equiv m \pmod n$; untuk pesan yang tidak
+          relatif prima terhadap $n$, kesimpulan yang sama diperoleh melalui Teorema Sisa
+          Tionghoa, sehingga dekripsi RSA benar untuk seluruh $m$ dengan $0 \le m < n$.
+    \item Pembangkitan kunci: pilih $p, q$ prima, hitung $n = pq$ dan $\varphi(n)$, pilih
+          $e$ dengan $\text{PBB}(e,\varphi(n))=1$, lalu hitung $d \equiv e^{-1}
+          \pmod{\varphi(n)}$.
+    \item Kunci privat dihitung dengan Algoritma Euclidean diperluas, bukan dengan
+          menebak nilai $k$; untuk $\varphi(n) = 3220$ dan $e = 79$ jejaknya hanya lima
+          pembagian dan menghasilkan $d = 1019$.
+    \item Syarat bilangan prima yang dipilih: panjangnya hampir sama, selisih $p-q$ tidak
+          kecil, $p-1$ dan $q-1$ memuat faktor prima besar, serta dibangkitkan secara
+          acak. Nilai $e$ yang lazim dipakai adalah $65537$.
+    \item Enkripsi $c = m^e \bmod n$ dan dekripsi $m = c^d \bmod n$ saling membalik karena
+          $e \cdot d \equiv 1 \pmod{\varphi(n)}$.
+    \item Pesan yang lebih panjang daripada modulus harus dipecah menjadi blok dengan
+          syarat $0 \le m_i \le n-1$; panjang blok harus tetap sama dan angka nol di depan
+          wajib dipertahankan agar batas antrablok tidak bergeser.
+    \item Contoh: $p=47$, $q=71$ memberi $n=3337$, $\varphi(n)=3220$, $e=79$, dan
+          $d=1019$. Pesan ``HELLO ALICE'' dikodekan menjadi $07041111140011080204$,
+          dipecah menjadi lima blok, dienkripsi menjadi $0328, 0301, 2653, 2986, 1164$,
+          lalu pulih dengan tepat.
+    \item RSA tanpa \textit{padding} bersifat deterministik sehingga penyerang dapat
+          menyusun kamus cipherteks untuk setiap kandidat pesan, dan rapuh terhadap
+          perubahan karena $c \cdot s^e \bmod n$ didekripsi menjadi $m \cdot s \bmod n$.
+          OAEP menutup kedua celah itu dengan menyisipkan keacakan sebelum pemangkatan.
+    \item RSA hanya aman bila $n$ cukup besar; modulus 256 bit dapat dipecahkan dalam
+          hitungan jam, 768 bit sudah pernah dipecahkan pada 2009, dan 1024 bit dianggap
+          terlalu tipis. Panjang minimum yang dianjurkan sekarang adalah 2048 bit, dan
+          3072 bit untuk data yang harus bertahan lama.
+    \item Algoritma Shor memfaktorkan $n$ dalam waktu polinomial pada komputer kuantum,
+          sehingga RSA, ElGamal, dan ECC harus bermigrasi ke skema pasca-kuantum; AES
+          cukup diperkuat dengan menaikkan panjang kuncinya.
+    \item RSA jarang dipakai langsung untuk data besar; praktiknya memakai kriptografi
+          hibrida (RSA mengenkripsi kunci sesi, AES/DES mengenkripsi data), dan distribusi
+          kunci publik tetap rentan serangan \textit{Man-in-the-Middle} selama tidak ada
+          sertifikat digital yang menjamin keasliannya.
 \end{itemize}

@@ -1,29 +1,141 @@
 \section{Prosedur Algoritma RSA}
+\label{sec:prosedur-rsa}
+
 Sistem RSA bekerja melalui tiga tahap utama: pembangkitan kunci, enkripsi, dan dekripsi.
+Ketiganya dijalankan dengan rumus yang sangat pendek, tetapi masing-masing menyimpan
+syarat yang bila dilanggar akan merusak keamanan atau bahkan membuat pesan tidak dapat
+dipulihkan. Subbagian berikut menguraikan ketiga tahap itu beserta syaratnya.
 
 \subsection{Pembangkitan Pasangan Kunci}
-Untuk membuat pasangan kunci, langkah-langkah berikut dilakukan:
+
+Pembangkitan kunci dijalankan satu kali oleh pemilik kunci dan hasilnya dipakai untuk
+banyak transaksi. Langkah-langkahnya sebagai berikut.
+
 \begin{enumerate}
     \item Pilih dua bilangan prima besar yang berbeda, $p$ dan $q$.
     \item Hitung modulus $n = p \cdot q$.
-    \item Hitung nilai $\phi(n) = (p - 1)(q - 1)$.
-    \item Pilih bilangan bulat $e$ sebagai kunci publik sedemikian sehingga $1 < e < \phi(n)$ dan $\text{PBB}(e, \phi(n)) = 1$.
-    \item Hitung kunci privat $d$ sebagai invers modulo dari $e$ terhadap $\phi(n)$:
-    \[ d \equiv e^{-1} \pmod{\phi(n)} \quad \text{atau} \quad e \cdot d \equiv 1 \pmod{\phi(n)} \]
+    \item Hitung nilai $\varphi(n) = (p - 1)(q - 1)$.
+    \item Pilih bilangan bulat $e$ sebagai kunci publik sedemikian sehingga
+          $1 < e < \varphi(n)$ dan $\text{PBB}\bigl(e, \varphi(n)\bigr) = 1$.
+    \item Hitung kunci privat $d$ sebagai invers modulo dari $e$ terhadap $\varphi(n)$:
+          \[ d \equiv e^{-1} \pmod{\varphi(n)} \quad \text{atau} \quad e \cdot d \equiv 1 \pmod{\varphi(n)} . \]
 \end{enumerate}
-\textbf{Hasil}: Kunci Publik $(e, n)$ dan Kunci Privat $(d, n)$.
 
-\subsection{Proses Enkripsi}
-Jika Bob ingin mengirim pesan $m$ kepada Alice, Bob menggunakan kunci publik Alice $(e, n)$:
+Hasil akhirnya adalah kunci publik $(e, n)$ yang boleh disebarkan dan kunci privat
+$(d, n)$ yang harus dijaga. Setelah $d$ diperoleh, nilai $p$, $q$, dan $\varphi(n)$ tidak
+diperlukan lagi dan sebaiknya dihapus dari memori --- bila nilai-nilai itu tetap
+tersimpan, penyerang yang berhasil membacanya dapat menghitung $d$ seketika.
+
+Nilai $e$ yang paling banyak dipakai adalah $65537 = 2^{16} + 1$, bukan karena angka itu
+ajaib melainkan karena tiga alasan praktis: ia cukup besar untuk menghindari serangan
+terhadap eksponen kecil, bentuk binernya hanya memuat dua bit bernilai satu sehingga
+pemangkatannya cepat, dan ia ganjil serta prima sehingga hampir selalu relatif prima
+terhadap $\varphi(n)$. Nilai $e = 3$ juga sah secara matematis, tetapi hanya aman bila
+dipakai bersama skema \textit{padding} yang benar seperti dibahas pada
+Subbagian~\ref{subsec:padding-oaep}; tanpa \textit{padding}, $e = 3$ dapat dipecahkan
+hanya dengan akar pangkat tiga biasa.
+
+\subsection{Syarat Bilangan Prima yang Dipilih}
+
+Tidak setiap pasangan bilangan prima cocok dipakai. Selain harus berbeda dan berukuran
+besar, ada empat syarat yang harus dipenuhi agar modulus $n$ benar-benar sukar
+difaktorkan:
+
+\begin{itemize}
+    \item \textbf{Panjang $p$ dan $q$ hampir sama.} Bila salah satunya jauh lebih pendek,
+          penyerang dapat menduga faktor yang kecil dengan mencoba semua bilangan prima
+          sampai batas tertentu. Selisih panjang yang dianjurkan tidak lebih dari beberapa
+          bit, misalnya dua bilangan prima 1024 bit untuk modulus 2048 bit.
+    \item \textbf{Selisih $p - q$ tidak kecil.} Bila $p$ dan $q$ berdekatan, nilai $n$ dapat
+          didekati dengan kuadrat salah satunya dan faktorisasinya dapat dicari dengan
+          metode Fermat, yang memeriksa $\bigl\lceil\sqrt{n}\bigr\rceil^2 - n$ terhadap
+          bilangan kuadrat sempurna. Semakin besar $|p - q|$, semakin banyak langkah yang
+          dibutuhkan metode itu.
+    \item \textbf{$p - 1$ dan $q - 1$ masing-masing memuat faktor prima besar.} Bila
+          keduanya hanya tersusun dari faktor prima kecil, modulusnya rentan terhadap
+          algoritma pemfaktoran Pollard $p - 1$ yang bekerja selama batas faktor prima
+          terbesarnya masih terjangkau.
+    \item \textbf{Bilangan prima dibangkitkan secara acak.} Bilangan prima yang diambil
+          dari daftar tetap atau dibangkitkan dengan pembangkit acak yang lemah dapat
+          diduga kembali oleh penyerang, betapa pun panjangnya. Pembangkit yang dipakai
+          harus memenuhi syarat kriptografis, bukan sekadar pembangkit bilangan
+          pseudo-acak biasa.
+\end{itemize}
+
+Syarat-syarat tersebut menjelaskan mengapa pembangkitan kunci RSA bukan pekerjaan
+sembarang orang: satu pasangan prima yang lemah membuat seluruh sistemnya runtuh,
+meskipun panjang kuncinya tampak memadai.
+
+\subsection{Enkripsi dan Pengodean Pesan}
+
+Rumus enkripsinya sendiri hanya satu baris. Yang menuntut kehati-hatian adalah mengubah
+pesan berbentuk teks menjadi bilangan bulat $m$ yang memenuhi syarat panjang.
+
 \begin{enumerate}
-    \item Ubah pesan $m$ menjadi integer sedemikian sehingga $0 \le m < n$.
-    \item Hitung cipherteks $c$ dengan rumus:
-    \[ c = m^e \pmod{n} \]
+    \item \textit{Preprocessing}: pesan dikodekan menjadi bilangan bulat $m$. Bila
+          hasil pengodeannya lebih besar atau sama dengan $n$, pesan harus dipecah menjadi
+          blok-blok $m_1, m_2, \dots, m_t$ dengan syarat
+          \begin{equation}
+          0 \le m_i \le n - 1 \quad \text{untuk setiap } i = 1, 2, \dots, t .
+          \label{eq:syarat-blok}
+          \end{equation}
+    \item Hitung cipherteks setiap blok dengan kunci publik $(e, n)$:
+          \begin{equation}
+          c_i = m_i^{\,e} \bmod n .
+          \label{eq:enkripsi-blok}
+          \end{equation}
 \end{enumerate}
 
-\subsection{Proses Dekripsi}
-Alice menerima cipherteks $c$ dan menggunakan kunci privatnya $(d, n)$ untuk mengembalikan pesan asli:
-\[ m = c^d \pmod{n} \]
+Penentuan panjang blok mengikuti batas pada Persamaan~\eqref{eq:syarat-blok}. Bila pesan
+dikodekan menjadi $k$ digit desimal per blok, maka blok terbesar yang mungkin adalah
+$10^k - 1$, sehingga harus berlaku $10^k - 1 \le n - 1$, yaitu
+
+\begin{equation}
+10^k \le n .
+\label{eq:panjang-blok}
+\end{equation}
+
+Untuk modulus $n = 3337$ yang terdiri atas empat digit, syarat $10^k \le n$ baru
+terpenuhi pada $k = 3$, sebab $10^4 = 10000$ melebihi $3337$. Meskipun demikian, pada
+contoh terhitung nanti tetap dipakai blok empat digit. Alasannya, syarat yang menentukan
+bukan panjang $n$ dalam digit melainkan nilai terbesar yang benar-benar muncul pada pesan.
+Kode dua huruf paling besar pada pengodean yang dipakai adalah $2525$, dan
+$2525 < 3337$ sehingga Persamaan~\eqref{eq:syarat-blok} tetap terpenuhi walaupun
+kapasitas teoretis blok empat digit belum seluruhnya terpakai. Pilihan panjang blok
+karena itu harus diperiksa terhadap pesan yang sesungguhnya dikirim, bukan sekadar
+terhadap panjang modulus.
+
+Satu hal kecil yang mudah terlewat adalah \textbf{penjagaan angka nol di depan}. Pada
+contoh berkode huruf, huruf A dikodekan sebagai $00$. Bila blok $0704$ dituliskan tanpa
+nol di depan menjadi $704$, hasil enkripsinya berbeda dan, yang lebih berbahaya, jumlah
+digitnya berkurang sehingga batas blok berikutnya bergeser. Penerima akan memulihkan
+deretan angka yang tidak sejajar lagi dengan pengodean asalnya. Karena itu panjang setiap
+blok harus tetap sama --- dalam contoh ini selalu empat digit --- dan penulisan kembali
+nol di depan termasuk bagian dari prosedur, bukan sekadar kerapian penulisan.
+
+\subsection{Dekripsi dan Pengodean Kembali}
+
+\begin{enumerate}
+    \item Hitung kembali setiap blok plainteks dengan kunci privat $(d, n)$:
+          \begin{equation}
+          m_i = c_i^{\,d} \bmod n .
+          \label{eq:dekripsi-blok}
+          \end{equation}
+    \item \textit{Postprocessing}: rangkaikan kembali seluruh $m_i$ menjadi deretan angka
+          yang sama panjangnya seperti pada pengodean semula, lalu terjemahkan kembali
+          menjadi huruf.
+\end{enumerate}
+
+Kebenaran Persamaan~\eqref{eq:dekripsi-blok} telah ditunjukkan pada
+Subbagian~\ref{sec:landasan-rsa}. Yang perlu diperhatikan di sini adalah bahwa dekripsi
+memerlukan $n$ yang sama dengan yang dipakai pada enkripsi. Modulus $n$ muncul pada kedua
+kunci justru karena alasan itu: ia menyatakan ruang tempat seluruh perhitungan modulo
+berlangsung, sehingga tanpa modulus yang sama penerima tidak akan memperoleh hasil yang
+konsisten.
+
+Langkah-langkah pada ketiga tahap itu dapat dibaca sebagai satu alur pada
+Gambar~\ref{fig:alur-rsa}. Perhatikan bahwa kunci publik mengalir menuju kotak enkripsi
+sebagai tanda bahwa siapa pun dapat mengenkripsi, sedangkan kunci privat hanya menuju
+kotak dekripsi sebagai tanda bahwa hanya pemiliknya yang dapat membuka pesan.
 
 \input{figures/alur-rsa}
-

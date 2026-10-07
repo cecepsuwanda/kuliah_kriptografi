@@ -1,22 +1,282 @@
 \section{Analisis Keamanan RSA}
-Keamanan RSA terletak pada sulitnya menentukan $d$ jika hanya diketahui $(e, n)$. Untuk mendapatkan $d$, penyerang harus mengetahui $\phi(n)$, yang berarti penyerang harus mampu memfaktorkan $n$ menjadi $p$ dan $q$.
+\label{sec:keamanan-rsa}
 
-\subsection{Ukuran Kunci dan Komputasi}
-Semakin besar $n$, semakin sulit proses pemfaktoran. Saat ini, panjang kunci RSA minimal 1024 bit direkomendasikan, namun 2048 bit atau lebih lebih disarankan untuk keamanan jangka panjang.
+Keamanan RSA terletak pada sulitnya menentukan $d$ jika hanya diketahui $(e, n)$. Untuk
+mendapatkan $d$, penyerang harus mengetahui $\varphi(n)$, yang berarti penyerang harus
+mampu memfaktorkan $n$ menjadi $p$ dan $q$. Subbagian berikut menelusuri rantai penalaran
+itu secara utuh, kemudian memeriksa di mana rantai tersebut masih kuat dan di mana ia
+mulai mengendor --- sebab kelemahan RSA yang paling sering dieksploitasi dalam praktik
+bukanlah pemfaktoran, melainkan hal-hal yang berada di luar rumusnya.
 
-\subsection{Kriptografi Hibrida (\textit{Hybrid Cryptography})}
-Karena RSA jauh lebih lambat daripada algoritma simetris (seperti AES), dalam praktiknya RSA tidak digunakan untuk mengenkripsi pesan besar. Sebaliknya, digunakan sistem \textbf{Kriptografi Hibrida}:
+\subsection{Kesulitan Pemfaktoran sebagai Dasar Keamanan}
+\label{subsec:kesulitan-pemfaktoran}
+
+Rantai penalaran yang menghubungkan pemfaktoran dengan keamanan RSA hanya terdiri atas dua
+langkah. Pertama, sekali $n$ berhasil difaktorkan menjadi $p$ dan $q$, nilai $\varphi(n)$
+dapat dihitung seketika dengan Persamaan~\eqref{eq:totient-rsa}:
+
+\[
+\varphi(n) = (p-1)(q-1) .
+\]
+
+Kedua, karena $e$ diumumkan sebagai bagian dari kunci publik, kunci dekripsi $d$ dapat
+dihitung dari kekongruenan pada Persamaan~\eqref{eq:ed-kongruen}:
+
+\begin{equation}
+e \cdot d \equiv 1 \pmod{\varphi(n)} \;\Longrightarrow\; d = \frac{1 + k\,\varphi(n)}{e} .
+\label{eq:serang-d}
+\end{equation}
+
+Jadi memfaktorkan $n$ berarti memperoleh seluruh kunci privat. Sebaliknya, sejauh yang
+diketahui sampai kini, tidak ada cara memperoleh $d$ yang lebih mudah daripada
+memfaktorkan $n$.
+
+Yang jarang disebut dalam pengantar RSA adalah bahwa implikasi itu berlaku dua arah:
+penyerang yang berhasil memperoleh $d$ --- misalnya dari komputer yang tidak dijaga ---
+juga dapat memfaktorkan $n$. Alasannya, dengan $e$ dan $d$ yang memenuhi
+Persamaan~\eqref{eq:ed-kongruen}, nilai $e \cdot d - 1$ merupakan kelipatan genap dari
+$\varphi(n)$, dan kelipatan semacam itu selalu dapat dipakai untuk menemukan akar kuadrat
+nontrivial dari $1$ modulo $n$; dari akar semacam itu, faktor $p$ dan $q$ dapat dihitung
+dengan pembagi bersama terbesar \citep{boneh1999}. Kesimpulan praktisnya penting:
+kebocoran $d$ tidak dapat ditambal hanya dengan membangkitkan $d$ yang baru, sebab
+modulusnya sudah ikut bocor. Yang harus diganti adalah seluruh pasangan kunci.
+
+Satu catatan kejujuran ilmiah perlu disampaikan di sini. Sampai hari ini belum ada bukti
+bahwa pemfaktoran bilangan bulat memang sukar secara komputasi. Yang ada hanyalah
+keyakinan berdasarkan puluhan tahun usaha yang gagal. Keamanan RSA karena itu bersandar
+pada sebuah \emph{asumsi} komputasi, bukan pada sebuah teorema. Algoritma pemfaktoran
+tercepat yang diketahui sekarang, yaitu \textit{General Number Field Sieve}, memiliki
+kompleksitas sub-eksponensial terhadap panjang $n$ dalam bit,
+
+\begin{equation}
+L_n\left[\tfrac{1}{3}, \left(\tfrac{64}{9}\right)^{1/3}\right]
+= O\!\left( \exp\!\left( \left(\tfrac{64}{9}\right)^{1/3} b \, \bigl(\ln b\bigr)^{2/3} \right) \right) ,
+\label{eq:gnfs}
+\end{equation}
+
+dengan $b$ menyatakan panjang modulus dalam bit. Bentuk pada Persamaan~\eqref{eq:gnfs}
+memang tumbuh jauh lebih lambat daripada eksponensial murni, tetapi tetap jauh lebih cepat
+daripada polinomial. Di situlah seluruh keamanan RSA bergantung.
+
+\subsection{Ukuran Kunci dan Rekor Pemfaktoran}
+
+Dari Persamaan~\eqref{eq:gnfs} dapat disimpulkan bahwa RSA hanya aman bila $n$ cukup
+besar. Perkiraan besarnya usaha yang diperlukan untuk beberapa panjang modulus dirangkum
+pada Tabel~\ref{tab:ukuran-kunci-rsa}.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}X c@{}}
+    \toprule
+    \textbf{Panjang $n$} & \textbf{Perkiraan usaha pemfaktoran} & \textbf{Kedudukan} \\
+    \midrule
+    256 bit  & Beberapa jam dengan satu komputer pribadi dan perangkat lunak bebas & Tidak aman \\
+    512 bit  & Beberapa ratus komputer yang bekerja bersama & Tidak aman \\
+    768 bit  & Sudah pernah dipecahkan pada 2009 dengan biaya komputasi besar & Tidak aman \\
+    1024 bit & Belum pernah dipecahkan secara publik, tetapi dianggap terlalu tipis & Tidak dianjurkan \\
+    2048 bit & Di luar jangkauan teknologi sekarang & Minimum yang dianjurkan \\
+    3072 bit & Diperkirakan aman sampai beberapa dekade mendatang & Dianjurkan untuk jangka panjang \\
+    \bottomrule
+    \end{tabularx}
+    \caption{Perkiraan usaha pemfaktoran modulus RSA menurut panjangnya. Batas yang
+    dianjurkan bergerak naik seiring bertambahnya kemampuan komputasi}
+    \label{tab:ukuran-kunci-rsa}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; Boneh, \textit{Twenty Years of Attacks on the RSA Cryptosystem}.}
+\end{table}
+
+Angka-angka pada tabel itu bukan dugaan belaka, melainkan hasil dari rangkaian tantangan
+pemfaktoran yang dijalankan secara terbuka. Pada 1977 Rivest menaksir bahwa modulus 129
+digit (setara 426 bit) baru dapat dipecahkan dalam waktu 40 kuadriliun tahun. Kenyataannya
+modulus itu dipecahkan pada 1994 setelah sekitar 600 sukarelawan dari 24 negara
+menyumbangkan waktu komputer mereka melalui Internet selama delapan bulan penuh
+\citep{atkins1995rsa129}. Tantangan berikutnya jatuh jauh lebih cepat: RSA-155 (512 bit)
+pada 1999, RSA-200 (200 digit) pada 2005, RSA-768 pada 2009, dan RSA-250 (829 bit) pada
+2020, yang sampai kini menjadi rekor terakhir. Pola yang tampak dari deretan itu adalah
+bahwa perkiraan selalu meleset ke arah terlalu optimistis --- modulus yang diramalkan baru
+dapat dipecahkan berabad-abad kemudian ternyata jatuh dalam hitungan tahun.
+
+Karena itulah angka yang sering dipakai sebagai patokan, yaitu 1024 bit, sebenarnya
+berasal dari pertengahan dekade 1990-an dan hanya boleh diperlakukan sebagai batas bawah
+yang sudah kedaluwarsa. Untuk data yang harus tetap rahasia sepuluh tahun ke depan atau
+lebih, panjang yang dianjurkan adalah 3072 bit.
+
+\subsection{Ancaman Komputasi Kuantum}
+
+Ancaman yang jauh lebih besar daripada kemajuan komputer biasa datang dari arah yang sama
+sekali berbeda. Pada 1994, Peter Shor menunjukkan bahwa komputer kuantum dapat
+memfaktorkan bilangan bulat dan menghitung logaritma diskret dalam waktu polinomial
+\citep{shor1997}. Artinya, algoritma pada Persamaan~\eqref{eq:gnfs} yang tadinya
+sub-eksponensial dapat digantikan oleh algoritma yang skalanya tumbuh hanya secepat
+pangkat dari panjang masukannya. Pada komputer kuantum yang cukup besar, RSA-2048 akan
+runtuh dalam hitungan jam.
+
+Perlu ditegaskan bahwa yang runtuh bukan hanya RSA. Algoritma Shor memecahkan masalah
+pemfaktoran dan logaritma diskret sekaligus, sehingga ElGamal (Bab~\ref{chap:elgamal}) dan
+kriptografi kurva eliptik (Bab~\ref{chap:ecc}) juga terancam. Sebaliknya, kriptografi
+simetris jauh lebih tahan: algoritma Grover memang mempercepat pencarian kunci secara
+menyeluruh, tetapi percepatannya hanya kuadratik, sehingga AES-128 dapat dipertahankan
+dengan menaikkan panjang kuncinya menjadi AES-256.
+
+Sampai saat ini belum ada komputer kuantum yang cukup besar untuk menjalankan algoritma
+Shor pada modulus 2048 bit; perkiraan yang ada menyebutkan kebutuhan puluhan juta kubit
+fisik setelah koreksi galat diperhitungkan. Meskipun demikian, ancaman itu tidak boleh
+ditunda penanganannya, karena adanya pola yang disebut \textit{harvest now, decrypt
+later}: penyerang merekam cipherteks hari ini dengan harapan dapat mendekripsinya
+setelah komputer kuantum tersedia. Data yang nilai kerahasiaannya bertahan lama ---
+rekam medis, dokumen negara, rahasia dagang --- sudah terancam sejak saat perekamannya,
+bukan sejak komputer kuantumnya dibangun.
+
+Tanggapan yang sudah berjalan adalah migrasi ke kriptografi pasca-kuantum. Pada Agustus
+2024, NIST menetapkan tiga standar pertama untuk keperluan itu \citep{fips203}, yaitu
+standar pertukaran kunci berbasis kisi (ML-KEM/Kyber) dan dua standar tanda tangan digital
+(ML-DSA/Dilithium dan SLH-DSA/SPHINCS+). Karena RSA tidak dapat diperkuat hanya dengan
+memperpanjang kuncinya, sistem yang dibangun hari ini sebaiknya dirancang agar algoritmanya
+dapat ditukar tanpa membongkar seluruh arsitekturnya.
+
+\subsection{Kriptografi Hibrida}
+
+Dua kenyataan membuat RSA tidak dapat dipakai sendirian untuk mengenkripsi data. Pertama,
+RSA sangat lambat: untuk jumlah data yang sama, perangkat lunak RSA umumnya ratusan sampai
+ribuan kali lebih lambat daripada AES. Kedua, RSA hanya dapat mengenkripsi pesan yang
+lebih pendek daripada modulusnya, yaitu paling banyak sekitar 245 byte untuk RSA-2048
+dengan \textit{padding} PKCS \#1 v1.5 dan lebih sedikit lagi bila memakai OAEP. Sebuah
+berkas berukuran 1 MB tidak mungkin dienkripsi langsung dengan RSA, bukan karena lambat
+saja, melainkan karena tidak muat.
+
+Jalan keluarnya adalah \textbf{kriptografi hibrida} (\textit{hybrid cryptography}), yaitu
+memakai algoritma kunci-publik dan algoritma kunci-simetri secara bergotong royong:
+algoritma kunci-publik dipakai untuk hal yang kecil tetapi mahal (kunci sesi),
+algoritma kunci-simetri dipakai untuk hal yang besar tetapi murah (data). Urutannya
+sebagai berikut.
+
 \begin{enumerate}
-    \item Sesi dimulai dengan membangkitkan kunci simetris acak (Kunci Sesi).
-    \item Kunci Sesi dienkripsi menggunakan kunci publik penerima (menggunakan RSA).
-    \item Pesan utama dienkripsi menggunakan Kunci Sesi (menggunakan AES/DES).
-    \item Penerima mendekripsi Kunci Sesi dengan kunci privatnya, lalu menggunakan kunci tersebut untuk mendekripsi pesan.
+    \item Pengirim membangkitkan kunci sesi acak berukuran pendek, misalnya 256 bit untuk
+          AES-256. Kunci ini hanya berlaku untuk satu sesi dan dibuang setelahnya.
+    \item Kunci sesi itu dienkripsi dengan kunci publik $(e, n)$ penerima:
+          $c_K = K^e \bmod n$.
+    \item Pesan utama dienkripsi dengan kunci sesi memakai algoritma simetris:
+          $c_M = E_K(M)$.
+    \item Penerima mendekripsi kunci sesi dengan kunci privatnya,
+          $K = c_K^{\,d} \bmod n$, lalu memakai $K$ untuk mendekripsi
+          $M = D_K(c_M)$.
 \end{enumerate}
 
-\subsection{Serangan Man-in-the-Middle (MITM)}
-Kelemahan utama distribusi kunci publik adalah kemungkinan adanya penyerang (Carol) yang mencegat komunikasi. Carol dapat mengirimkan kunci publik palsu kepada Alice dan Bob, sehingga Carol dapat mendekripsi semua pesan yang mereka kirimkan satu sama lain tanpa terdeteksi.
+Cipherteks kunci dan cipherteks pesan dapat dikirim bersamaan melalui saluran yang sama,
+sebab keduanya sudah terlindungi. Alur pertukaran itu digambarkan pada
+Gambar~\ref{fig:kriptografi-hibrida}. Karena kunci sesi hanya dipakai sekali, kebocorannya
+tidak merusak sesi yang lain; itulah keuntungan tambahan yang tidak dimiliki pemakaian
+kunci simetris jangka panjang.
 
+\input{figures/kriptografi-hibrida}
 
+\subsection{Padding OAEP dan Keamanan Semantik}
+\label{subsec:padding-oaep}
 
+Sampai di sini seluruh pembahasan mengasumsikan bahwa rumus $c = m^e \bmod n$ dipakai apa
+adanya. Asumsi itu justru melahirkan kelemahan yang paling sering dieksploitasi dalam
+praktik, sebab RSA tanpa \textit{padding} bersifat \textbf{deterministik}: plainteks yang
+sama selalu menghasilkan cipherteks yang sama. Penyerang yang menguasai saluran dapat
+membangun kamus rahasia berisi terjemahan setiap kandidat pesan, lalu mencocokkan
+cipherteks yang disadap dengan isi kamus itu. Dalam perang, taktik semacam ini pernah
+dipakai untuk mengenali laporan rutin seperti pesan ``tidak ada kabar'' yang dikirim pada
+jam yang sama setiap hari.
 
+Kelemahan kedua adalah \textbf{kerapuhan terhadap perubahan} (\textit{malleability}).
+Bila penyerang menyadap $c = m^e \bmod n$ dan mengalikannya dengan $s^e$ untuk suatu $s$
+pilihannya, maka
 
+\begin{equation}
+c' = c \cdot s^e \bmod n = (m \cdot s)^e \bmod n .
+\label{eq:kerapuhan-rsa}
+\end{equation}
+
+Cipherteks $c'$ yang baru itu, bila diteruskan kepada penerima yang sah, akan didekripsi
+menjadi $m \cdot s \bmod n$ --- pesan yang berubah tanpa penyerang perlu mengetahui $m$
+sama sekali. Pada kenyataan inilah serangan \textit{chosen-ciphertext} bersandar.
+
+Jalan keluarnya adalah menambahkan \textbf{padding}, yaitu mengubah pesan menjadi bentuk
+yang lebih panjang dan beracak sebelum dipangkatkan. Skema pertama yang banyak dipakai
+adalah \textit{PKCS \#1 v1.5}, yang membentuk blok
+
+\begin{center}
+\code{00} $\|$ \code{02} $\|$ \code{PS} $\|$ \code{00} $\|$ \code{M},
+\end{center}
+
+dengan \code{PS} berupa string byte bukan nol yang panjangnya mengisi sisa blok. Padding
+ini memang menutup serangan kamus, tetapi Daniel Bleichenbacher menunjukkan pada 1998
+bahwa informasi \emph{apakah} suatu cipherteks berhasil didekripsi atau gagal dapat
+dipakai penyerang sebagai oracle untuk memulihkan pesan sedikit demi sedikit
+\citep{bleichenbacher1998}.
+
+Standar yang dipakai sekarang adalah \textbf{OAEP} (\textit{Optimal Asymmetric Encryption
+Padding}), yang diperkenalkan oleh Mihir Bellare dan Phillip Rogaway pada 1994
+\citep{bellare1994oaep}. OAEP menyisipkan keacakan ke dalam blok pesan melalui dua
+pemanggilan fungsi hash, sehingga enkripsi menjadi \emph{probabilistik}: plainteks yang
+sama dienkripsi dua kali menghasilkan cipherteks yang berbeda. Dalam model oracle acak,
+OAEP terbukti aman terhadap serangan \textit{chosen-ciphertext}. Karena uraian lengkapnya
+menuntut perkakas fungsi hash yang baru dibahas pada Bab~\ref{chap:hash-mac}, di sini
+cukup dicatat dua kesimpulan praktisnya: jangan sekali-kali memakai RSA telanjang untuk
+mengenkripsi pesan, dan pakailah skema padding yang sudah baku seperti yang diatur pada
+RFC 8017 \citep{rfc8017} --- jangan merancang sendiri.
+
+\subsection{Serangan Man-in-the-Middle}
+
+Kelemahan terakhir bukan terletak pada matematikanya, melainkan pada cara kunci publik
+disebarkan. RSA menjamin bahwa pesan hanya dapat dibuka oleh pemilik kunci privat, tetapi
+ia tidak menjamin bahwa kunci publik yang dipakai benar-benar milik orang yang
+dimaksud. Bila Alice dan Bob bertukar kunci publik melalui saluran yang dapat disadap,
+seorang penyerang bernama Carol dapat mencegat kedua kiriman itu.
+
+Carol kemudian menyamar sebagai Alice di hadapan Bob dan sebagai Bob di hadapan Alice.
+Kepada Bob ia mengirimkan kunci publiknya sendiri sambil mengaku sebagai Alice, dan
+sebaliknya kepada Alice ia mengirimkan kunci publiknya sambil mengaku sebagai Bob. Sejak
+saat itu, setiap pesan dari Bob dienkripsi dengan kunci publik Carol, didekripsi oleh
+Carol, disalin, lalu dienkripsi kembali dengan kunci publik Alice yang asli dan diteruskan.
+Alice dan Bob tidak menyadari kehadiran pihak ketiga, sebab pesan yang mereka terima tetap
+masuk akal dan tanda tangannya tetap sah menurut kunci yang mereka pegang.
+
+Serangan ini tidak dapat diatasi dengan memperbesar modulus atau memperbaiki algoritmanya.
+Yang dibutuhkan adalah cara membuktikan keaslian kunci publik, dan jawaban bakunya adalah
+\textbf{infrastruktur kunci publik} (\textit{public key infrastructure}), yaitu kunci
+publik yang diterbitkan bersama sertifikat digital yang ditandatangani oleh lembaga
+terpercaya. Pembahasan lengkapnya ada pada Bab~\ref{chap:tanda-tangan-pki}. Untuk
+pertukaran kunci tanpa saluran semacam itu, protokol Diffie--Hellman pada
+Bab~\ref{chap:diffie-hellman} menawarkan pendekatan yang berbeda, meskipun ia pun tetap
+rentan terhadap penyusup di tengah bila tidak disertai otentikasi.
+
+\subsection{Ringkasan Keluarga Serangan terhadap RSA}
+
+Rangkaian pembahasan di atas dapat diringkas menjadi peta serangan pada
+Tabel~\ref{tab:serangan-rsa}. Yang perlu disadari adalah bahwa hanya satu dari
+serangan-serangan itu yang menyentuh inti matematis RSA; sisanya menyerang cara
+algoritmanya dipakai.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Serangan} & \textbf{Prinsip} & \textbf{Penangkalan} \\
+    \midrule
+    Pemfaktoran modulus & Faktorkan $n$ menjadi $p$ dan $q$, lalu hitung $d$ &
+    Perbesar $n$ sampai di luar jangkauan komputasi \\
+    Serangan kamus & RSA bersifat deterministik, sehingga cipherteks dapat
+    dicocokkan dengan kandidat pesan & Tambahkan \textit{padding} beracak (OAEP) \\
+    \textit{Chosen-ciphertext} & Manfaatkan kerapuhan perubahan
+    (Persamaan~\eqref{eq:kerapuhan-rsa}) atau kelebihan informasi galat dekripsi &
+    Pakai OAEP dan balas galat secara seragam \\
+    Eksponen kecil & Akar pangkat tiga biasa cukup bila $m^3 < n$ dan tanpa
+    \textit{padding} & Pakai $e = 65537$ bersama OAEP \\
+    Modulus bersama & Dua pengguna yang berbagi $n$ dapat saling menghitung $d$ &
+    Setiap pengguna membangkitkan modulusnya sendiri \\
+    Penyusup di tengah & Kunci publik palsu disisipkan pada pertukaran kunci &
+    Sertifikat digital dan infrastruktur kunci publik \\
+    Komputasi kuantum & Algoritma Shor memfaktorkan $n$ dalam waktu polinomial &
+    Migrasi ke kriptografi pasca-kuantum \\
+    \bottomrule
+    \end{tabularx}
+    \caption{Keluarga serangan terhadap RSA. Hanya serangan pertama dan terakhir yang
+    menyentuh landasan matematisnya; sisanya adalah akibat dari cara pemakaian}
+    \label{tab:serangan-rsa}
+    \sumber{Boneh, \textit{Twenty Years of Attacks on the RSA Cryptosystem}; Stallings,
+    \textit{Cryptography and Network Security}.}
+\end{table}

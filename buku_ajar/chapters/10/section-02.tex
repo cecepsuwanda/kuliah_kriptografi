@@ -1,10 +1,216 @@
 \section{Landasan Matematis RSA}
-Keamanan RSA didasarkan pada fakta bahwa mengalikan dua bilangan prima besar adalah mudah, tetapi memfaktorkan hasil perkaliannya kembali menjadi dua bilangan prima asalnya adalah sangat sulit secara komputasi.
+\label{sec:landasan-rsa}
+
+Keamanan RSA didasarkan pada fakta bahwa mengalikan dua bilangan prima besar adalah mudah,
+tetapi memfaktorkan hasil perkaliannya kembali menjadi dua bilangan prima asalnya adalah
+sangat sulit secara komputasi. Sisi kemudahan itulah yang dipakai penerima pesan untuk
+membangun kuncinya, sedangkan sisi kesulitannya menjadi benteng bagi pesan yang telah
+dienkripsi. Untuk memahami mengapa kedua sisi itu benar-benar saling melengkapi, tiga
+perkakas matematis berikut perlu dikuasai lebih dahulu: fungsi Totient Euler, Teorema
+Euler, dan Algoritma Euclidean diperluas.
 
 \subsection{Fungsi Totient Euler}
-Fungsi Totient Euler, $\phi(n)$, menentukan jumlah bilangan bulat positif kurang dari $n$ yang relatif prima terhadap $n$. Untuk $n = p \cdot q$ (di mana $p$ dan $q$ adalah bilangan prima), maka:
-\[ \phi(n) = (p - 1)(q - 1) \]
+
+\begin{definition}[Fungsi Totient Euler]
+Untuk setiap bilangan bulat positif $n$, nilai $\varphi(n)$ menyatakan banyaknya bilangan
+bulat positif yang tidak lebih besar dari $n$ dan relatif prima terhadap $n$, yaitu
+banyaknya $k$ dengan $1 \le k \le n$ dan $\text{PBB}(k, n) = 1$.
+\end{definition}
+
+Sebagai gambaran, $\varphi(20) = 8$ sebab di antara bilangan $1$ sampai $20$ hanya delapan
+bilangan yang relatif prima terhadap $20$, yaitu
+
+\[
+1,\ 3,\ 7,\ 9,\ 11,\ 13,\ 17,\ 19 .
+\]
+
+Untuk bilangan prima $p$, seluruh bilangan $1, 2, \dots, p-1$ relatif prima terhadap $p$,
+sehingga
+
+\begin{equation}
+\varphi(p) = p - 1 .
+\label{eq:totient-prima}
+\end{equation}
+
+Sifat yang paling penting bagi RSA adalah bahwa $\varphi$ bersifat multiplikatif: bila
+$p$ dan $q$ relatif prima satu terhadap yang lain, maka $\varphi(pq) = \varphi(p)\varphi(q)$.
+Karena $p$ dan $q$ pada RSA adalah dua bilangan prima yang berbeda dan karenanya saling
+relatif prima, Persamaan~\eqref{eq:totient-prima} memberi
+
+\begin{equation}
+\varphi(n) = \varphi(p)\,\varphi(q) = (p-1)(q-1) .
+\label{eq:totient-rsa}
+\end{equation}
+
+Alasan intuitifnya mudah dilihat. Di antara bilangan $1$ sampai $pq-1$ terdapat $pq-1$
+bilangan; yang tidak relatif prima terhadap $pq$ adalah kelipatan $p$ (sebanyak $q-1$
+buah) dan kelipatan $q$ (sebanyak $p-1$ buah), sedangkan kelipatan $pq$ tidak ada di dalam
+selang itu. Jadi
+
+\[
+\varphi(pq) = (pq - 1) - (q-1) - (p-1) = pq - p - q + 1 = (p-1)(q-1).
+\]
+
+Inilah sebabnya nilai $\varphi(n)$ harus dirahasiakan. Siapa pun yang mengetahui $p$ dan
+$q$ dapat menghitungnya dalam satu langkah, tetapi bagi pihak lain nilai itu tersembunyi
+di balik kesulitan pemfaktoran yang sama.
 
 \subsection{Teorema Euler}
-RSA memanfaatkan Teorema Euler yang menyatakan bahwa jika $\text{PBB}(a, n) = 1$, maka:
-\[ a^{\phi(n)} \equiv 1 \pmod{n} \]
+
+\begin{theorem}[Teorema Euler]
+Jika $a$ dan $n$ relatif prima, yaitu $\text{PBB}(a, n) = 1$, maka
+\[
+a^{\varphi(n)} \equiv 1 \pmod{n} .
+\]
+\end{theorem}
+
+Sebagai contoh, ambillah $a = 3$ dan $n = 10$. Karena $\text{PBB}(3, 10) = 1$ dan
+$\varphi(10) = 4$, teorema itu menjamin $3^4 = 81 \equiv 1 \pmod{10}$, dan hasil itu memang
+benar.
+
+Teorema Euler memberi cara membalik pemangkatan modulo tanpa harus memfaktorkan apa pun,
+asalkan eksponennya dipilih dengan benar. Perhatikan bahwa teorema itu tidak mensyaratkan
+eksponennya prima atau genap --- yang penting adalah hubungan antara eksponen dan
+$\varphi(n)$. Kekongruenan $a^{\varphi(n)} \equiv 1$ juga tetap berlaku bila kedua ruas
+dipangkatkan dengan bilangan bulat $k$ yang sebarang, sebab $1^k = 1$.
+
+\subsection{Penurunan Rumus Enkripsi dan Dekripsi}
+
+Dengan dua perkakas di atas, kebenaran RSA dapat diturunkan dalam beberapa baris. Misalkan
+$e$ dan $d$ dipilih sedemikian sehingga keduanya saling membalik modulo $\varphi(n)$,
+yaitu
+
+\begin{equation}
+e \cdot d \equiv 1 \pmod{\varphi(n)} .
+\label{eq:ed-kongruen}
+\end{equation}
+
+Persamaan~\eqref{eq:ed-kongruen} setara dengan pernyataan bahwa $e \cdot d$ merupakan
+kelipatan $\varphi(n)$ ditambah satu, sehingga selalu ada bilangan bulat $k$ dengan
+
+\begin{equation}
+e \cdot d = k\,\varphi(n) + 1 .
+\label{eq:ed-kelipatan}
+\end{equation}
+
+Enkripsi RSA memangkatkan plainteks dengan $e$, dan dekripsi memangkatkan cipherteks
+dengan $d$. Karena itu hasil akhirnya adalah plainteks yang dipangkatkan dengan $e \cdot
+d$:
+
+\begin{equation}
+(m^e)^d = m^{e \cdot d} = m^{\,k\varphi(n)+1} .
+\label{eq:rsa-pangkat}
+\end{equation}
+
+Dengan mengeluarkan satu faktor $m$ dari eksponen pada Persamaan~\eqref{eq:rsa-pangkat},
+bentuk terakhir dapat ditulis sebagai $m \cdot \bigl(m^{\varphi(n)}\bigr)^k$, dan di sinilah
+Teorema Euler masuk. Bila $\text{PBB}(m, n) = 1$, maka $m^{\varphi(n)} \equiv 1 \pmod n$,
+sehingga
+
+\begin{equation}
+(m^e)^d = m \cdot \bigl( m^{\varphi(n)} \bigr)^{k} \equiv m \cdot 1^k \equiv m \pmod{n} .
+\label{eq:rsa-bukti}
+\end{equation}
+
+Persamaan~\eqref{eq:rsa-bukti} menyatakan dengan tepat apa yang dibutuhkan: enkripsi lalu
+dekripsi mengembalikan pesan semula. Jadi,
+
+\begin{equation}
+c = m^e \bmod n, \qquad m = c^d \bmod n .
+\label{eq:rsa-rumus}
+\end{equation}
+
+Satu syarat pada penurunan di atas perlu diperiksa ulang. Teorema Euler menuntut
+$\text{PBB}(m, n) = 1$, sedangkan tidak ada jaminan bahwa pesan $m$ yang dikirim seseorang
+selalu relatif prima terhadap modulus $n$. Bila $m$ kebetulan merupakan kelipatan $p$ atau
+kelipatan $q$, penurunan pada Persamaan~\eqref{eq:rsa-bukti} tidak berlaku apa adanya.
+
+Untungnya, kesimpulannya tetap benar, dan hal itu dapat ditunjukkan dengan Teorema Sisa
+Tionghoa. Misalkan $m$ adalah kelipatan $p$, maka $m \equiv 0 \pmod p$ sehingga
+$m^{ed} \equiv 0 \equiv m \pmod p$ secara otomatis. Sementara itu $m$ tidak habis dibagi
+$q$ (sebab $0 < m < n$ dan $m$ hanya kelipatan $p$), sehingga $\text{PBB}(m, q) = 1$ dan
+penurunan di atas berlaku untuk modulus $q$, memberi $m^{ed} \equiv m \pmod q$. Karena
+kekongruenan itu berlaku baik modulo $p$ maupun modulo $q$ dengan $p$ dan $q$ prima yang
+berbeda, ia juga berlaku modulo hasil kalinya $n = pq$. Jadi identitas
+$m^{ed} \equiv m \pmod n$ benar untuk \emph{semua} $m$ dengan $0 \le m < n$, bukan hanya
+untuk pesan yang kebetulan relatif prima terhadap $n$.
+
+\begin{example}[Di luar jangkauan praktik, tetapi perlu diperiksa]
+Dengan parameter $p = 47$, $q = 71$ (sehingga $n = 3337$, $e = 79$, dan $d = 1019$), ambil
+pesan yang justru habis dibagi $p$, yaitu $m = 47$. Enkripsinya memberi
+$c = 47^{79} \bmod 3337 = 2303$, dan dekripsi mengembalikan
+$2303^{1019} \bmod 3337 = 47$. Hal yang sama berlaku untuk $m = 71$, yang memberi
+$c = 1988$ dan kembali menjadi $71$. Kedua kasus itu keluar dari syarat Teorema Euler,
+tetapi RSA tetap memulihkan pesan dengan tepat, sesuai argumen Teorema Sisa Tionghoa di
+atas.
+\end{example}
+
+Kemungkinan seseorang memilih $m$ yang habis dibagi $p$ atau $q$ tanpa sengaja sangat
+kecil, yaitu sekitar $1/p + 1/q$ untuk pesan yang dipilih secara acak. Meskipun demikian,
+fakta bahwa RSA tetap benar pada kasus itu penting diketahui, sebab tanpa penjelasan
+tersebut penurunan rumusnya tampak hanya berlaku untuk sebagian pilihan pesan.
+
+\subsection{Menghitung Kunci Privat dengan Algoritma Euclidean Diperluas}
+
+Langkah terakhir pembangkitan kunci adalah mencari $d$ dari kekongruenan
+$e \cdot d \equiv 1 \pmod{\varphi(n)}$. Cara yang ditunjukkan pada banyak contoh ---
+mencoba nilai $k = 1, 2, 3, \dots$ sampai $\bigl(1 + k\varphi(n)\bigr)/e$ menjadi bilangan
+bulat --- benar secara aritmetika, tetapi tidak dapat dipakai dalam praktik: untuk
+$\varphi(n)$ yang panjangnya ratusan digit, nilai $k$ yang dicari kira-kira sebesar
+$\varphi(n)$ itu sendiri, sehingga pencobaannya memerlukan waktu yang jauh lebih lama
+daripada memfaktorkan $n$. Cara yang dipakai oleh semua implementasi nyata adalah
+\textbf{Algoritma Euclidean diperluas}.
+
+Algoritma itu memanfaatkan kenyataan berikut. Untuk setiap pasangan bilangan bulat
+$\varphi(n)$ dan $e$, terdapat bilangan bulat $s$ dan $t$ dengan
+
+\begin{equation}
+s \cdot \varphi(n) + t \cdot e = \text{PBB}\bigl(\varphi(n), e\bigr) .
+\label{eq:bezout}
+\end{equation}
+
+Sebab $e$ dipilih relatif prima terhadap $\varphi(n)$, nilai $\text{PBB}$ pada
+Persamaan~\eqref{eq:bezout} adalah $1$, sehingga $t \cdot e \equiv 1 \pmod{\varphi(n)}$
+dan $t$ adalah balikan yang dicari. Jadi $d = t \bmod \varphi(n)$. Koefisien $t$ diperoleh
+dengan menjalankan Algoritma Euclidean seperti biasa, lalu menelusuri kembali langkahnya
+sambil memelihara dua pembantu $s$ dan $t$; teknik pelacakan itu disebut \textit{extended
+Euclidean algorithm}.
+
+\begin{example}[Menghitung $d = 1019$ tanpa mencoba nilai $k$]
+\label{ex:euclid-rsa}
+Jalankan Algoritma Euclidean pada $3220$ dan $79$. Tabel~\ref{tab:euclid-dipertluas}
+memperlihatkan jejaknya, dengan $r_i = s_i \cdot 3220 + t_i \cdot 79$ pada setiap baris.
+Baris pertama adalah keadaan awal sebelum pembagian apa pun dijalankan.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabularx}{\linewidth}{@{}c c c r r >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    Langkah $i$ & $q_i$ & $r_i$ & $s_i$ & $t_i$ & Pemeriksaan $s_i(3220) + t_i(79)$ \\
+    \midrule
+    0 & ---  & 3220 & $1$   & $0$    & $3220$ \\
+    1 & $40$ & $79$ & $0$   & $1$    & $79$ \\
+    2 & $1$  & $60$ & $1$   & $-40$  & $3220 - 40 \times 79 = 60$ \\
+    3 & $3$  & $19$ & $-1$  & $41$   & $-3220 + 41 \times 79 = 19$ \\
+    4 & $6$  & $3$  & $4$   & $-163$ & $4 \times 3220 - 163 \times 79 = 3$ \\
+    5 & $3$  & $1$  & $-25$ & $1019$ & $-25 \times 3220 + 1019 \times 79 = 1$ \\
+    \bottomrule
+    \end{tabularx}
+    \caption{Jejak Algoritma Euclidean diperluas untuk $\varphi(n) = 3220$ dan $e = 79$.
+    Proses berhenti ketika sisanya mencapai $1$, dan koefisien $t_5$ pada kolom terakhir
+    itulah kunci privat $d$}
+    \label{tab:euclid-dipertluas}
+\end{table}
+
+Pada baris terakhir diperoleh $-25 \times 3220 + 1019 \times 79 = 1$. Koefisien $3220$
+tidak dipakai karena habis dimodulokan, sehingga yang tersisa adalah
+
+\[
+1019 \times 79 \equiv 1 \pmod{3220}
+\]
+
+dan kunci privatnya $d = 1019$. Hasil itu sama dengan yang diperoleh cara coba-coba pada
+contoh terhitung nanti, tetapi di sini $d$ didapat dalam lima pembagian saja, bukan
+setelah 25 percobaan. Perbedaan itu tampak sepele untuk bilangan kecil; untuk
+$\varphi(n)$ sepanjang 300 digit, keduanya berada pada alam yang sama sekali berbeda.
+\end{example}

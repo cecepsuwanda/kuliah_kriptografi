@@ -1,20 +1,36 @@
 \section{Contoh Terhitung}
+\label{sec:contoh-rsa}
+
+Seluruh perhitungan pada bagian ini memakai parameter yang sama, yaitu $p = 47$,
+$q = 71$, dan $e = 79$, sehingga kunci publiknya $(e, n) = (79, 3337)$ dan kunci
+privatnya $(d, n) = (1019, 3337)$. Modulusnya sengaja dipilih kecil supaya setiap langkah
+dapat diperiksa dengan tangan, tetapi seluruh sifat yang diperlihatkan berlaku sama pada
+modulus sepanjang 2048 bit. Keempat contoh berikut disusun berurutan: membangkitkan kunci,
+mengenkripsi satu blok, mengenkripsi pesan yang lebih panjang daripada modulusnya, lalu
+memperlihatkan dua kelemahan RSA telanjang yang menjelaskan mengapa \textit{padding}
+diperlukan.
 
 \begin{example}[Pembangkitan kunci RSA]
+\label{ex:rsa-kunci}
 Alice memilih dua bilangan prima kecil $p = 47$ dan $q = 71$.
 \begin{enumerate}
     \item Hitung modulus:
     \[ n = p \cdot q = 47 \times 71 = 3337. \]
     \item Hitung fungsi Totient Euler:
-    \[ \phi(n) = (p-1)(q-1) = 46 \times 70 = 3220. \]
-    \item Pilih kunci publik $e = 79$; syaratnya terpenuhi karena $1 < 79 < 3220$ dan $\text{PBB}(79, 3220) = 1$.
-    \item Hitung kunci privat $d$ sebagai invers $e$ modulo $\phi(n)$:
-    \[ e \cdot d \equiv 1 \pmod{3220} \;\Longrightarrow\; d = \frac{1 + k\,\phi(n)}{e} = \frac{1 + 3220k}{79}. \]
+    \[ \varphi(n) = (p-1)(q-1) = 46 \times 70 = 3220. \]
+    \item Pilih kunci publik $e = 79$; syaratnya terpenuhi karena $1 < 79 < 3220$ dan
+          $\text{PBB}(79, 3220) = 1$.
+    \item Hitung kunci privat $d$ sebagai invers $e$ modulo $\varphi(n)$:
+    \[ e \cdot d \equiv 1 \pmod{3220} \;\Longrightarrow\; d = \frac{1 + k\,\varphi(n)}{e}
+       = \frac{1 + 3220k}{79}. \]
     Nilai $k = 1, 2, 3, \dots$ dicoba hingga pembilang habis dibagi 79; untuk $k = 25$,
     \[ d = \frac{1 + 3220 \times 25}{79} = \frac{80501}{79} = 1019. \]
     Pemeriksaan: $79 \times 1019 = 80501 = 1 + 25 \times 3220$.
 \end{enumerate}
-Kunci publik Alice adalah $(e, n) = (79, 3337)$ dan kunci privatnya $(d, n) = (1019, 3337)$; hanya $n$ dan $e$ yang boleh disebarkan.
+Kunci publik Alice adalah $(e, n) = (79, 3337)$ dan kunci privatnya $(d, n) = (1019, 3337)$;
+hanya $n$ dan $e$ yang boleh disebarkan. Prosedur yang sama dijalankan dengan Algoritma
+Euclidean diperluas pada Contoh~\ref{ex:euclid-rsa}, yang menghasilkan nilai $d$ yang sama
+dalam lima pembagian saja, tanpa perlu menebak nilai $k$.
 \end{example}
 
 \begin{example}[Enkripsi dan dekripsi RSA]
@@ -25,5 +41,146 @@ Bob mengirim pesan $m = 16$ kepada Alice menggunakan kunci publik $(e, n) = (79,
     \item Dekripsi oleh Alice dengan kunci privat $(d, n) = (1019, 3337)$:
     \[ m = c^d \bmod n = 1493^{1019} \bmod 3337 = 16. \]
 \end{enumerate}
-Plainteks $m = 16$ pulih dengan tepat. Untuk pesan yang lebih panjang, pesan dikodekan menjadi barisan digit lalu dipecah menjadi blok $m_i < n$ (misalnya $m_1 = 0704$) dan setiap blok dienkripsi secara terpisah.
+Plainteks $m = 16$ pulih dengan tepat. Perhatikan bahwa bilangan $16$ di sini adalah
+sebuah bilangan bulat, bukan huruf; cara mengubah teks menjadi bilangan bulat dibahas
+pada contoh berikutnya.
+\end{example}
+
+\begin{example}[Enkripsi pesan multi-blok ``HELLO ALICE'']
+\label{ex:rsa-hello-alice}
+Bob ingin mengirim pesan $M = \text{HELLO ALICE}$ kepada Alice. Pesan itu harus diubah
+lebih dahulu menjadi bilangan bulat, lalu dipecah menjadi blok-blok yang lebih kecil
+daripada modulus.
+
+\textbf{Langkah 1: pengodean.} Setiap huruf dikodekan menjadi dua digit menurut aturan
+$\text{A} = 00$, $\text{B} = 01$, sampai $\text{Z} = 25$. Spasi diabaikan, sebagaimana
+lazim pada contoh ini, dan dikembalikan kemudian ketika pesan diterjemahkan.
+Tabel~\ref{tab:pengodean-hello} memperlihatkan hasilnya.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{@{}l *{10}{c}@{}}
+    \toprule
+    Huruf & H & E & L & L & O & A & L & I & C & E \\
+    \midrule
+    Kode & 07 & 04 & 11 & 11 & 14 & 00 & 11 & 08 & 02 & 04 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Pengodean pesan ``HELLO ALICE'' dengan aturan $\text{A}=00$ sampai
+    $\text{Z}=25$. Spasi tidak dikodekan}
+    \label{tab:pengodean-hello}
+\end{table}
+
+Deretan kodenya menjadi $m = 07041111140011080204$, yaitu bilangan 20 digit. Nilai itu
+jauh lebih besar daripada $n = 3337$, sehingga harus dipecah. Dengan mengambil empat digit
+per blok diperoleh $m_1 = 0704$, $m_2 = 1111$, $m_3 = 1400$, $m_4 = 1108$, dan
+$m_5 = 0204$. Kelimanya memenuhi syarat $0 \le m_i \le 3336$ pada
+Persamaan~\eqref{eq:syarat-blok}.
+
+\textbf{Langkah 2: enkripsi.} Setiap blok dienkripsi dengan kunci publik Alice,
+$c_i = m_i^{79} \bmod 3337$. Hasilnya adalah
+
+\[
+\begin{aligned}
+m_1 = 0704 &\quad\longrightarrow\quad c_1 = 704^{79} \bmod 3337 = 0328, \\
+m_2 = 1111 &\quad\longrightarrow\quad c_2 = 1111^{79} \bmod 3337 = 0301, \\
+m_3 = 1400 &\quad\longrightarrow\quad c_3 = 1400^{79} \bmod 3337 = 2653, \\
+m_4 = 1108 &\quad\longrightarrow\quad c_4 = 1108^{79} \bmod 3337 = 2986, \\
+m_5 = 0204 &\quad\longrightarrow\quad c_5 = 204^{79} \bmod 3337 = 1164 .
+\end{aligned}
+\]
+
+Bob mengirimkan cipherteks $C = 0328, 0301, 2653, 2986, 1164$ kepada Alice.
+
+Perhatikan penulisan $c_2 = 0301$ dan bukan $301$. Nilai $c_2$ memang hanya tiga digit,
+tetapi ia harus tetap dituliskan dalam empat digit agar sejajar dengan blok-blok yang
+lain. Bila nol di depan itu dibuang, Alice -- atau program apa pun yang membaca
+cipherteks itu sebagai satu deretan panjang -- akan kehilangan batas antrablok dan
+memperoleh hasil yang kacau. Aturan yang sama berlaku pada pengodean huruf A, yang
+nilainya $00$ dan bukan sekadar kosong.
+
+\textbf{Langkah 3: dekripsi.} Alice memakai kunci privatnya, $m_i = c_i^{1019} \bmod 3337$,
+dan memperoleh kembali kelima blok semula. Tabel~\ref{tab:jejak-hello-alice} merangkum
+seluruh perjalanan pesan dari huruf sampai huruf kembali.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{@{}c c c c l@{}}
+    \toprule
+    \textbf{Blok} & \textbf{Plainteks $m_i$} & \textbf{Cipherteks $c_i$} & \textbf{Pulih} &
+    \textbf{Huruf} \\
+    \midrule
+    1 & \code{0704} & \code{0328} & \code{0704} & H, E \\
+    2 & \code{1111} & \code{0301} & \code{1111} & L, L \\
+    3 & \code{1400} & \code{2653} & \code{1400} & O, A \\
+    4 & \code{1108} & \code{2986} & \code{1108} & L, I \\
+    5 & \code{0204} & \code{1164} & \code{0204} & C, E \\
+    \bottomrule
+    \end{tabular}
+    \caption{Jejak enkripsi dan dekripsi pesan ``HELLO ALICE'' dengan kunci publik
+    $(79, 3337)$ dan kunci privat $(1019, 3337)$}
+    \label{tab:jejak-hello-alice}
+\end{table}
+
+Deretan angka yang dipulihkan adalah $07041111140011080204$, yang diterjemahkan kembali
+menjadi $\text{HELLOALICE}$. Spasi yang tadi diabaikan kini harus disisipkan kembali oleh
+Alice berdasarkan pengetahuannya tentang bahasa, sebab tidak ada satu pun bit di dalam
+cipherteks yang menyimpan informasi tentang posisi spasi.
+\end{example}
+
+\begin{example}[Mengapa RSA telanjang berbahaya]
+\label{ex:rsa-telanjang}
+Dua sifat RSA tanpa \textit{padding} dapat diperlihatkan langsung dengan parameter yang
+sama, dan keduanya menerangkan mengapa skema \textit{padding} pada
+Subbagian~\ref{subsec:padding-oaep} bukan pilihan melainkan keharusan.
+
+\textbf{Sifat pertama: deterministik.} Karena rumus $c = m^e \bmod n$ tidak memuat unsur
+keacakan sama sekali, plainteks yang sama selalu menghasilkan cipherteks yang sama. Pesan
+``CDCD'' dikodekan menjadi dua blok kembar $m = 0203$; keduanya menghasilkan cipherteks
+$c = 0203^{79} \bmod 3337 = 1488$. Penyerang yang menyadap deretan cipherteks itu
+langsung mengetahui bahwa dua blok pertama pesan tersebut identik, tanpa perlu membuka
+apa pun.
+
+Lebih jauh, karena $e$ dan $n$ bersifat umum, penyerang dapat menyusun kamus terjemahan
+seluruh kandidat pesan yang mungkin. Tabel~\ref{tab:kamus-rsa} memperlihatkan kamus untuk
+seluruh huruf abjad, yang dihitung hanya dari kunci publik Alice.
+
+\begin{table}[htbp]
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}l r@{\ }r@{\ }r@{\ }r@{\ }r@{\ }r@{\ }r@{\ }r@{\ }r@{\ }r@{\ }r@{\ }r@{\ }r@{}}
+    \toprule
+    Huruf & A & B & C & D & E & F & G & H & I & J & K & L & M \\
+    Kode  & 00 & 01 & 02 & 03 & 04 & 05 & 06 & 07 & 08 & 09 & 10 & 11 & 12 \\
+    $c$ & 0000 & 0001 & 3139 & 0158 & 2497 & 0270 & 2086 & 1254 & 2807 & 1605 & 3269 & 2120 & 0760 \\
+    \midrule
+    Huruf & N & O & P & Q & R & S & T & U & V & W & X & Y & Z \\
+    Kode  & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & 23 & 24 & 25 \\
+    $c$ & 2066 & 1983 & 2616 & 1493 & 0827 & 2562 & 1265 & 0116 & 1249 & 0702 & 2524 & 3022 & 2823 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Kamus sandi untuk seluruh huruf abjad, dihitung hanya dari kunci publik
+    $(79, 3337)$. Tabel semacam ini dapat dibangkitkan penyerang dalam waktu sekejap}
+    \label{tab:kamus-rsa}
+\end{table}
+
+\textbf{Sifat kedua: kerapuhan terhadap perubahan.} Misalkan penyerang menyadap
+cipherteks $c = 1493$, yang tidak ia ketahui adalah plainteks $m = 16$. Ia memilih
+bilangan $s = 3$ dan menghitung $s^e \bmod n = 3^{79} \bmod 3337 = 158$. Kemudian ia
+mengganti cipherteks yang disadap dengan
+
+\[
+c' = c \cdot s^e \bmod n = 1493 \times 158 \bmod 3337 = 2304 .
+\]
+
+Bila cipherteks palsu itu diteruskan kepada Alice, dekripsinya adalah
+$2304^{1019} \bmod 3337 = 48$, sedangkan $m \cdot s = 16 \times 3 = 48$. Jadi penyerang
+berhasil mengubah pesan Alice menjadi bilangan 48 tanpa pernah mengetahui bahwa pesan
+aslinya adalah 16. Bila pesan itu menyatakan nomor rekening atau nominal transfer,
+perubahan tersebut dapat berakibat sangat serius.
+
+Kedua sifat itulah yang dihilangkan oleh OAEP. Dengan menyisipkan keacakan sebelum
+pemangkatan, OAEP membuat enkripsi menjadi probabilistik sehingga kamus pada
+Tabel~\ref{tab:kamus-rsa} tidak lagi berguna, dan membuat perubahan cipherteks tidak lagi
+menghasilkan perubahan plainteks yang dapat diprediksi.
 \end{example}
