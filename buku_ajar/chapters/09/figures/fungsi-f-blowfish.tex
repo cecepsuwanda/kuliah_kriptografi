@@ -1,0 +1,46 @@
+% Diagram fungsi F pada Blowfish.
+% Dirujuk dari section-03.tex dengan \input{figures/fungsi-f-blowfish}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners=1pt, minimum height=0.85cm,
+                      text width=2.2cm, align=center, font=\small, inner sep=2pt},
+        op/.style={font=\small},
+        panah/.style={-{Latex[length=2mm]}, thick},
+        catatan/.style={font=\footnotesize, align=left, text width=12.6cm},
+    ]
+        \node[kotak] (s1) at (0,0)    {$S_1[a]$};
+        \node[kotak] (s2) at (3.0,0)  {$S_2[b]$};
+        \node[kotak] (s3) at (6.0,0)  {$S_3[c]$};
+        \node[kotak] (s4) at (9.0,0)  {$S_4[d]$};
+        \node[op] (o1) at (1.5,0)  {$+$};
+        \node[op] (o2) at (4.5,0)  {$\oplus$};
+        \node[op] (o3) at (7.5,0)  {$+$};
+        \node (f)  at (11.3,0)  {$F(x)$};
+
+        \draw[panah] (s1) -- (o1);
+        \draw[panah] (o1) -- (s2);
+        \draw[panah] (s2) -- (o2);
+        \draw[panah] (o2) -- (s3);
+        \draw[panah] (s3) -- (o3);
+        \draw[panah] (o3) -- (s4);
+        \draw[panah] (s4) -- (f);
+
+        \node[font=\footnotesize, anchor=north] at (1.5,-0.62) {$\bmod 2^{32}$};
+        \node[font=\footnotesize, anchor=north] at (7.5,-0.62) {$\bmod 2^{32}$};
+
+        \node[font=\footnotesize, anchor=south] at (0,-0.12)  {$a$};
+        \node[font=\footnotesize, anchor=south] at (3.0,-0.12) {$b$};
+        \node[font=\footnotesize, anchor=south] at (6.0,-0.12) {$c$};
+        \node[font=\footnotesize, anchor=south] at (9.0,-0.12) {$d$};
+
+        \node[catatan, anchor=north] at (5.1,-1.25)
+            {$x$ (32 bit) dipecah menjadi empat byte $a, b, c, d$. Setiap kotak-S
+             berisi 256 entri 32 bit dan seluruhnya dibangkitkan dari kunci, sehingga
+             penyerang tidak pernah mengetahuinya sebelum kunci ditebak};
+    \end{tikzpicture}
+    \caption{Fungsi $F$ pada Blowfish. Dua penjumlahan modulo $2^{32}$ dipisahkan oleh
+    satu XOR, sehingga luaran tidak dapat dipisahkan per byte}
+    \label{fig:fungsi-f-blowfish}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; Schneier, \textit{Blowfish}.}
+\end{figure}

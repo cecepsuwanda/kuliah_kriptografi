@@ -1,22 +1,114 @@
 \section{Algoritma Block Cipher Lainnya}
-Selain DES, AES, dan RC, terdapat beberapa algoritma penting lainnya yang memiliki karakteristik unik:
+\label{sec:cipher-lainnya}
+
+Selain DES, AES, GOST, dan RC, ada sejumlah \textit{block cipher} lain yang penting untuk
+dikenal. Sebagian besar di antaranya ikut serta dalam kompetisi AES dan gagal, sebagian
+lagi tetap dipakai karena sudah tertanam di sistem yang sulit diubah. Mempelajari
+mereka bermanfaat bukan karena kita akan memakainya, melainkan karena setiap algoritma
+memperlihatkan pilihan rancangan yang berbeda untuk masalah yang sama.
 
 \subsection{Blowfish dan Twofish}
-\begin{itemize}
-    \item \textbf{Blowfish}: Dirancang oleh Bruce Schneier, menggunakan blok 64-bit dan kunci variabel (32-448 bit). Menggunakan struktur Feistel dengan 16 putaran.
-    \item \textbf{Twofish}: Kelanjutan dari Blowfish dan merupakan salah satu finalis AES. Menggunakan blok 128-bit dan kunci hingga 256 bit.
-\end{itemize}
 
-\subsection{Serpent dan MARS}
-\begin{itemize}
-    \item \textbf{Serpent}: Finalis AES yang sangat menekankan keamanan. Menggunakan 32 putaran dengan operasi substitusi-permutasi, menjadikannya salah satu yang paling konservatif dan aman.
-    \item \textbf{MARS}: FinalH AES dari IBM. Memiliki jumlah putaran yang besar (32 putaran) dan menggunakan struktur yang kompleks untuk mencapai keamanan tinggi.
-\end{itemize}
+\textbf{Blowfish} dirancang oleh Bruce Schneier pada 1993 dan diterbitkan pada 1994
+sebagai alternatif bebas paten bagi DES \citep{schneier1994blowfish}. Parameternya
+adalah blok 64 bit, kunci 32 sampai 448 bit, dan 16 putaran dengan struktur Jaringan
+Feistel.
 
+Blowfish tidak memakai kotak-S yang tetap. Ia memiliki larik kunci putaran
+$P[0..17]$ yang berisi delapan belas kata 32 bit, dan empat kotak-S
+$S_1, S_2, S_3, S_4$ yang masing-masing berisi 256 entri 32 bit. Seluruhnya, yaitu
+$18 + 4 \times 256 = 1042$ kata, dibangkitkan pada saat kunci dipasang, melalui prosedur
+berikut:
 
+\begin{enumerate}
+    \item Isi larik $P$ dan keempat kotak-S dengan digit heksadesimal bilangan $\pi$.
+          Digit $\pi$ dipakai sebagai sumber keacakan awal karena maknanya sudah
+          diketahui publik, sehingga perancang tidak dapat menyembunyikan pilihan
+          tertentu di dalamnya.
+    \item XOR-kan $P[0]$ dengan 32 bit pertama kunci, $P[1]$ dengan 32 bit berikutnya,
+          dan seterusnya secara bergilir sampai seluruh larik $P$ terpakai.
+    \item Enkripsi blok nol dengan larik $P$ dan kotak-S yang sedang berlaku, lalu
+          simpan kedua kata hasilnya sebagai $P[0]$ dan $P[1]$.
+    \item Enkripsi blok nol lagi dengan larik yang baru saja diperbarui, lalu simpan
+          hasilnya sebagai $P[2]$ dan $P[3]$. Ulangi sampai seluruh 18 entri $P$
+          terisi.
+    \item Lanjutkan prosedur yang sama untuk mengisi keempat kotak-S secara berurutan.
+          Karena setiap enkripsi menghasilkan dua kata, diperlukan
+          $1042/2 = 521$ enkripsi untuk menuntaskan seluruh proses.
+\end{enumerate}
 
+Prosedur ini menjelaskan mengapa Blowfish relatif lambat ketika kunci dipasang tetapi
+sangat cepat ketika blok demi blok dienkripsi: seluruh biaya komputasi berada di depan.
+Prosedur itu pula yang membuat Blowfish sangat tahan terhadap kriptanalisis yang
+mengandalkan struktur kotak-S, sebab penyerang tidak pernah mengetahui isi keempat
+kotak-S sebelum kuncinya ditebak.
 
+Fungsi $F$ pada Blowfish menerima 32 bit dan memecahnya menjadi empat byte $a$, $b$,
+$c$, dan $d$. Keempat byte itu dipakai sebagai indeks keempat kotak-S, lalu hasilnya
+digabung dengan dua jenis operasi yang berbeda:
 
+\begin{equation}
+F(x) = \bigl( (S_1[a] \boxplus S_2[b]) \oplus S_3[c] \bigr) \boxplus S_4[d],
+\label{eq:fungsi-f-blowfish}
+\end{equation}
+
+dengan $x = a \| b \| c \| d$ dan $\boxplus$ menyatakan penjumlahan modulo $2^{32}$.
+Rangkaian operasi tersebut digambarkan pada Gambar~\ref{fig:fungsi-f-blowfish}.
+Penggunaan penjumlahan dan XOR secara berselang-seling bukan kebetulan: XOR bersifat
+linear atas bit sehingga mudah dianalisis, sedangkan penjumlahan memiliki penjalaran
+bawaan (\textit{carry}) yang nonlinear. Menggabungkan keduanya memaksa penyerang
+memperhitungkan dua aljabar yang berbeda sekaligus.
+
+\input{figures/fungsi-f-blowfish}
+
+Enkripsi Blowfish mengikuti pola Feistel 16 putaran. Pada setiap putaran ke-$i$,
+setengah blok kiri di-XOR dengan kunci putaran $P[i-1]$, fungsi $F$ dikenakan atas hasil
+XOR dengan kunci putaran $P[i]$ pada setengah blok kanan dan hasilnya di-XOR dengan
+setengah blok kiri, lalu kedua setengah blok bertukar peran. Setelah 16 putaran,
+pertukaran terakhir dibatalkan dan enkripsi ditutup dengan penyaringan
+$R \leftarrow R \oplus P[17]$, $L \leftarrow L \oplus P[18]$ dengan penomoran satu-basis
+seperti pada bahan sumber. Penyaringan di kedua ujung inilah yang membuat dua blok
+plainteks yang hanya berbeda pada putaran pertama tetap menghasilkan cipherteks yang
+sama sekali berbeda.
+
+Dua catatan praktis perlu disampaikan. Pertama, Blowfish memiliki sejumlah kecil kunci
+lemah yang dapat dikenali dari nilai larik $P$ hasil pembangkitan. Cara pencegahan yang
+disarankan perancangnya sederhana: \textit{hash} kunci terlebih dahulu, misalnya dengan
+SHA-256, sebelum diserahkan kepada Blowfish, sehingga kunci lemah tidak pernah tercapai.
+Kedua, seperti halnya GOST, ukuran blok 64 bit membatasi banyaknya data yang boleh
+dienkripsi dengan satu kunci sampai sekitar $2^{32}$ blok, yaitu sekitar 32 GiB.
+Karena itu Blowfish tidak lagi dianjurkan untuk sistem baru; keberadaannya kini
+dipertahankan terutama untuk menjaga kompatibilitas.
+
+\textbf{Twofish} adalah kelanjutan Blowfish oleh Schneier bersama Kelsey, Whiting,
+Wagner, Hall, dan Ferguson, dan merupakan salah satu dari lima finalis AES
+\citep{schneier1998twofish}. Bloknya diperbesar menjadi 128 bit dan panjang kuncinya
+128, 192, atau 256 bit, sedangkan jumlah putarannya 16. Meskipun masih berkerabat
+dengan Blowfish, Twofish bukan Feistel murni: ia mengolah dua kata sekaligus dalam satu
+putaran dan memakai penyaringan kunci di awal dan di akhir.
+
+Inti Twofish adalah fungsi $g$ yang menyaring 32 bit masukan melalui empat kotak-S
+$8 \times 8$ yang bergantung pada kunci, dilanjutkan dengan perkalian oleh sebuah
+matriks MDS (\textit{maximum distance separable}) berukuran $4 \times 4$ atas medan
+$\text{GF}(2^8)$, lalu digabungkan dengan luaran $g$ yang kedua melalui transformasi
+PHT (\textit{pseudo-Hadamard transform}) berbentuk $(u, v) \mapsto (u + v,\ u + 2v)$
+dengan seluruh penjumlahan modulo $2^{32}$. Rangkaian itu ditampilkan pada
+Gambar~\ref{fig:fungsi-g-twofish}.
+
+\input{figures/fungsi-g-twofish}
+
+Perlu dicatat bahwa bahan sumber menyebut Twofish memiliki lima kotak-S. Yang benar
+adalah empat kotak-S $8 \times 8$ yang bergantung pada kunci, yang masing-masing
+disusun dari dua permutasi tetap $q_0$ dan $q_1$ dengan menyisipkan bahan kunci.
+Perbedaan ini penting, karena justru sifat \emph{bergantung kunci} itulah yang menjadi
+ciri khas keluarga Blowfish--Twofish sekaligus menjadi kelemahan mereka di perangkat
+keras: kotak-S yang berubah setiap kali kunci berganti tidak dapat ditanam sebagai
+tabel tetap di dalam sirkuit.
+
+Matriks MDS pada Gambar~\ref{fig:fungsi-g-twofish} memainkan peran yang sama dengan
+lapisan MixColumns pada AES, yaitu menyebarkan perubahan satu byte ke seluruh empat
+byte keluaran. Satu putaran Twofish secara lengkap, termasuk penyaringan masukan dan
+keluaran, ditampilkan pada Gambar~\ref{fig:putaran-twofish}.
 
 \begin{figure}[htbp]
     \centering
@@ -26,10 +118,97 @@ Selain DES, AES, dan RC, terdapat beberapa algoritma penting lainnya yang memili
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
 
-\begin{figure}[htbp]
+\subsection{Serpent dan MARS}
+
+\textbf{Serpent} dirancang oleh Ross Anderson, Eli Biham, dan Lars Knudsen dan juga
+merupakan finalis AES \citep{anderson1998serpent}. Bloknya 128 bit dengan kunci 128,
+192, atau 256 bit, dan jumlah putarannya 32. Berbeda dari Blowfish dan Twofish,
+Serpent sama sekali tidak memakai Jaringan Feistel: ia adalah jaringan
+substitusi--permutasi (\textit{SPN}) murni, sebagaimana AES. Seluruh 128 bit diolah
+sekaligus pada setiap putaran melalui tiga langkah yang berurutan: XOR dengan subkunci,
+substitusi oleh 32 kotak-S yang bekerja serentak, dan transformasi linier. Strukturnya
+ditampilkan pada Gambar~\ref{fig:putaran-serpent}.
+
+\input{figures/putaran-serpent}
+
+Serpent memiliki delapan kotak-S berbeda, masing-masing berukuran $4 \times 4$ bit.
+Pada setiap putaran, ke-32 nibble penyusun blok 128 bit disubstitusi secara serentak
+dengan salah satu dari kedelapan kotak-S itu menurut pola yang tetap. Cara
+implementasinya menarik: alih-alih menyimpan tabel, sebuah kata 32 bit dapat memuat 32
+nibble yang berasal dari \emph{posisi} yang sama pada 32 blok berbeda. Teknik yang
+dikenal sebagai \textit{bit-slicing} ini memungkinkan sebuah komputer 32 bit memproses
+32 blok sekaligus dengan biaya satu blok, dan inilah alasan Serpent dirancang di sekitar
+kotak-S $4 \times 4$ dan bukan kotak-S yang lebih besar.
+
+Kekuatan Serpent terletak pada transformasi liniernya, yang dirancang memiliki
+\textit{branch number} tinggi sehingga perbedaan satu bit pada masukan menyebar ke
+beberapa bit sekaligus pada luaran. Akibatnya difusi tercapai jauh lebih cepat daripada
+pada Feistel, dan 32 putaran menghasilkan margin keamanan yang sangat lebar: hingga
+kini serangan terbaik yang dipublikasikan hanya mampu menjangkau sekitar sepertiga
+dari seluruh putaran. Harga yang harus dibayar adalah kecepatan. Tanpa pemanfaatan
+\textit{bit-slicing}, Serpent adalah finalis AES yang paling lambat di perangkat lunak;
+inilah yang menjadi pertimbangan utama NIST ketika memilih Rijndael sebagai pemenang.
+
+\textbf{MARS} diajukan oleh IBM dan merupakan finalis AES dengan perolehan suara
+paling sedikit \citep{burwick1998mars}. Bloknya 128 bit dengan kunci 128 sampai 448 bit.
+Yang membedakannya adalah struktur putarannya. Bahan sumber menyebut MARS melakukan
+operasi substitusi--permutasi pada setiap putaran; gambaran itu kurang tepat. MARS
+adalah Feistel tak seimbang (\textit{unbalanced Feistel}) dengan rancangan yang
+heterogen, dan 32 putarannya terbagi menjadi tiga fase yang berbeda sifatnya
+(Gambar~\ref{fig:mars-mixing}):
+
+\begin{enumerate}
+    \item \textbf{Delapan putaran \textit{forward mixing}} yang bekerja tanpa kunci.
+          Fase ini memakai perkalian dan rotasi atas data untuk mempercepat
+          penyebaran perubahan bit masukan.
+    \item \textbf{Enam belas putaran inti} (\textit{core}) yang memakai kunci. Setiap
+          putaran inti memakai pencarian kotak-S dan rotasi yang besarnya ditentukan
+          oleh data itu sendiri.
+    \item \textbf{Delapan putaran \textit{backward mixing}} yang juga bekerja tanpa
+          kunci dan merupakan kebalikan dari fase pertama.
+\end{enumerate}
+
+\input{figures/mars-mixing}
+
+Rancangan tiga fase ini mencerminkan kompromi yang berbeda dari ketiga finalis lainnya.
+Dua fase tepi yang murah menanggung sebagian besar pekerjaan difusi, sehingga fase inti
+yang mahal dapat dibuat lebih pendek. Perluasan kuncinya menghasilkan 40 kata, jauh
+lebih banyak daripada yang dibutuhkan putaran inti, dan biaya pemasangan kunci inilah
+yang menjadi salah satu kelemahan MARS dibandingkan para pesaingnya.
+
+\subsection{Perbandingan Cipher Simetris}
+
+Sebagai penutup bab, Tabel~\ref{tab:perbandingan-cipher-simetris} membandingkan
+algoritma-algoritma yang telah dibahas pada bab ini bersama beberapa algoritma simetris
+lain yang sering muncul di dalam literatur. Tabel ini disadur dari bahan sumber dengan
+beberapa angka yang diperbaiki agar sesuai dengan spesifikasi resmi masing-masing
+algoritma.
+
+\begin{table}[htbp]
     \centering
-    \includegraphics[width=0.95\linewidth, height=0.8\textheight, keepaspectratio]{figures/perbandingan-block-cipher.png}
-    \caption{Perbandingan beberapa algoritma block cipher berdasarkan perancang, panjang kunci, dan strukturnya}
-    \label{fig:perbandingan-block-cipher}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
-\end{figure}
+    \begin{tabularx}{\linewidth}{@{}l >{\raggedright\arraybackslash}X l >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Cipher} & \textbf{Perancang} & \textbf{Panjang kunci} & \textbf{Keterangan} \\
+    \midrule
+    \textit{Blowfish}   & Bruce Schneier                & 32--448 bit     & Usang; blok 64 bit membatasi data per kunci \\
+    \textit{DES}        & IBM                           & 56 bit          & Terlalu lemah untuk dipakai kini \\
+    \textit{IDEA}       & Massey dan Lai                & 128 bit         & Baik, tetapi berpaten \\
+    \textit{RC4}        & Ronald Rivest                 & 40--2048 bit    & Cipher alir; sebagian kunci lemah, kini dilarang \\
+    \textit{RC5}        & Ronald Rivest                 & 0--2040 bit     & Baik, tetapi berpaten \\
+    \textit{Rijndael}   & Daemen dan Rijmen             & 128/192/256 bit & Pilihan terbaik; menjadi AES \\
+    \textit{Serpent}    & Anderson, Biham, Knudsen      & 128/192/256 bit & Sangat kuat; lambat tanpa \textit{bit-slicing} \\
+    \textit{Triple DES} & IBM                           & 112 atau 168 bit & Pilihan kedua; masih dipakai di perbankan \\
+    \textit{Twofish}    & Schneier dkk.                 & 128/192/256 bit & Sangat kuat; kotak-S bergantung kunci \\
+    \bottomrule
+    \end{tabularx}
+    \caption{Perbandingan sejumlah algoritma kriptografi simetris}
+    \label{tab:perbandingan-cipher-simetris}
+    \sumber{Disadur dari Munir, \textit{IF4020 Kriptografi}, ITB, dengan koreksi angka
+    menurut spesifikasi resmi tiap algoritma.}
+\end{table}
+
+Perhatikan dua koreksi terhadap bahan sumber. Panjang kunci Blowfish pada bahan sumber
+tertulis 1 sampai 448 bit, padahal spesifikasi resminya menetapkan paling sedikit 32
+bit. Panjang kunci RC5 tertulis 128 sampai 256 bit, padahal RC5 justru terkenal karena
+panjang kuncinya dapat dipilih bebas dari 0 sampai 2040 bit; angka 128 sampai 256 bit
+adalah panjang kunci Rijndael dan bukan RC5.

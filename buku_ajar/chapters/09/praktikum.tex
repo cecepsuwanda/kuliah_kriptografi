@@ -2,6 +2,108 @@
 \begin{obeactivity}
 \textbf{Aktivitas 9.1: Perbandingan Struktur Cipher}
 1. Buatlah tabel perbandingan antara DES, AES, dan GOST berdasarkan: ukuran blok, panjang kunci, jumlah putaran, dan struktur (Feistel vs Substitusi-Permutasi).
-2. Analisis mengapa algoritma dengan jumlah putaran lebih banyak (seperti GOST atau Serpent) cenderung lebih aman tetapi lebih lambat.
-3. Diskusikan keuntungan fleksibilitas parameter pada RC5 dibandingkan dengan algoritma yang parameternya tetap.
+2. Bandingkan GOST dan Serpent, yang keduanya memakai 32 putaran. Jelaskan mengapa
+   jumlah putaran yang sama dapat menghasilkan catatan keamanan yang sangat berbeda,
+   lalu hubungkan jawaban Anda dengan Sub-bab~\ref{subsec:kriptanalisis-gost}.
+3. Analisis mengapa algoritma dengan jumlah putaran yang lebih banyak umumnya lebih
+   lambat, dan sebutkan satu contoh algoritma yang justru memperoleh kembali
+   kecepatannya melalui teknik implementasi tertentu.
+4. Diskusikan keuntungan fleksibilitas parameter pada RC5 dibandingkan dengan algoritma yang parameternya tetap.
+\end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 9.2: Menjalankan Jadwal Kunci RC5 dengan Tangan}
+1. Ambil kunci satu byte \code{00} dan tetapkan $w = 32$, $r = 0$, sehingga $t = 2$
+   dan $c = 1$.
+2. Hitung $n = 3 \cdot \max(t,c)$, lalu kerjakan langkah pencampuran satu per satu
+   menurut Persamaan~\eqref{eq:jadwal-kunci-rc5}. Catat nilai $X$, $Y$, $S[0]$, dan
+   $S[1]$ pada setiap langkah dalam sebuah tabel.
+3. Bandingkan tabel Anda dengan Tabel~\ref{tab:jejak-jadwal-kunci-rc5}. Bila ada
+   perbedaan, periksa kembali urutan pembaruan $X$ dan $Y$: langkah $S$ harus
+   memakai $Y$ yang lama, dan langkah $L$ harus memakai $X$ yang baru.
+4. Ulangi langkah 1--3 untuk $r = 8$. Berapa langkah pencampuran yang diperlukan
+   sekarang, dan mengapa jumlahnya berubah?
+\end{obeactivity}
+
+Fungsi pembangkitan kunci putaran pada Aktivitas 9.2 dapat diperiksa langsung melalui
+program pada Listing~\ref{lst:rc5-jadwal}. Program itu mengikuti ketiga tahap pada
+Sub-bab~\ref{sec:rc5-rc6} secara harfiah: penyalinan kunci ke larik $L$ dengan urutan
+\textit{little-endian}, inisialisasi $S$ dari $P_w$ dan $Q_w$, lalu pencampuran
+sebanyak $n = 3 \cdot \max(t, c)$ langkah.
+
+\lstinputlisting[
+    language=Python,
+    firstline=42,
+    lastline=82,
+    firstnumber=1,
+    caption={Pembangkitan kunci putaran RC5: larik $L$, inisialisasi $S$, dan pencampuran},
+    label={lst:rc5-jadwal}
+]{\codefile{python/rc5_gost_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 9.3: Memeriksa Implementasi terhadap Vektor Uji RFC 2040}
+1. Jalankan program pada Listing~\ref{lst:rc5-vektor} dan catat keluarannya. Program
+   itu memeriksa tujuh belas vektor uji resmi RFC 2040 yang mencakup $r = 0$ sampai
+   $r = 16$ dan panjang kunci $b = 1$ sampai $b = 16$ byte.
+2. Perhatikan bahwa vektor uji RFC 2040 bekerja dalam mode CBC, sedangkan blok yang
+   masuk ke RC5 adalah hasil XOR plainteks dengan blok sebelumnya. Jelaskan mengapa
+   vektor pertama, yang memakai vektor inisialisasi nol dan plainteks nol, tetap dapat
+   dipakai untuk memeriksa jadwal kunci.
+3. Ubah panjang kunci pada salah satu vektor menjadi 20 byte dengan menambahkan empat
+   byte nol di belakangnya. Apakah cipherteksnya berubah? Jelaskan mengapa panjang
+   kunci yang berbeda menghasilkan larik $S$ yang berbeda meskipun byte kuncinya
+   sebagian besar sama.
+4. Bandingkan fungsi \texttt{enkripsi\_rc5} dan \texttt{dekripsi\_rc5}. Tunjukkan bahwa
+   keduanya tidak saling mencerminkan secara langsung, melainkan menempuh putaran
+   dalam urutan yang berlawanan sebagaimana Persamaan~\eqref{eq:rc5-putaran}.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    firstline=186,
+    lastline=231,
+    firstnumber=1,
+    caption={Daftar vektor uji RFC 2040 dan pemeriksaannya, termasuk mode CBC},
+    label={lst:rc5-vektor}
+]{\codefile{python/rc5_gost_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 9.4: Fungsi Putaran GOST dengan Tangan}
+1. Salin kedelapan kotak-S pada Tabel~\ref{tab:kotak-s-gost} ke dalam tabel Anda
+   sendiri, lalu periksa bahwa setiap baris merupakan permutasi dari bilangan 0
+   sampai 15. Kotak-S buatan mana pun yang tidak memenuhi syarat ini pasti salah.
+2. Ambil $R = \code{12345678}$ dan $K = \code{61626364}$. Hitung $R + K$ modulo
+   $2^{32}$, pecah hasilnya menjadi delapan nibble, dan substitusikan setiap nibble
+   dengan Tabel~\ref{tab:kotak-s-gost}.
+3. Gabungkan kedelapan luaran kembali menjadi bilangan 32 bit, geser sirkuler ke kiri
+   11 bit, lalu XOR dengan $L = \code{01020304}$. Bandingkan hasil Anda dengan
+   Contoh~\ref{ex:gost-round}.
+4. Ubah satu bit saja pada $R$, misalnya menjadi \code{12345679}, dan hitung ulang
+   seluruh langkah. Berapa banyak bit pada $R_i$ yang berubah? Bandingkan dengan
+   jawaban Anda untuk DES pada Bab 7.
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    firstline=151,
+    lastline=179,
+    firstnumber=1,
+    caption={Kedelapan kotak-S GOST dan fungsi putarannya sesuai RFC 4357 dan RFC 5830},
+    label={lst:gost-putaran}
+]{\codefile{python/rc5_gost_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 9.5: Menghitung Batas Rekeying}
+1. Untuk \textit{block cipher} berukuran blok $n$ bit, banyaknya plainteks yang boleh
+   dienkripsi dengan satu kunci dibatasi oleh paradoks ulang tahun, yaitu $2^{n/2}$
+   blok. Hitung batas itu untuk $n = 32$, $64$, dan $128$ bit, baik dalam satuan blok
+   maupun dalam satuan byte.
+2. Bandingkan batas untuk $n = 64$ dengan banyaknya data yang diolah sistem nyata,
+   misalnya sebuah server web yang mengenkripsi beberapa terabita sehari. Berapa lama
+   satu kunci boleh dipakai sebelum batas itu tercapai?
+3. Cari informasi tentang serangan Courtois--Misztal (2011) dan Dinur--Dunkelman--Shamir
+   (2012) atas GOST, lalu tentukan berapa banyak data yang dituntut masing-masing
+   serangan. Apakah data sebanyak itu masih berada di dalam batas rekeying?
+4. Susun satu paragraf yang menjelaskan, dengan bahasa Anda sendiri, mengapa kompleksitas
+   $2^{178}$ tidak boleh diterjemahkan menjadi ``GOST belum pecah'' tanpa syarat.
 \end{obeactivity}

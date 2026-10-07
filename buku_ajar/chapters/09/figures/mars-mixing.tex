@@ -1,0 +1,37 @@
+% Diagram pembagian 32 putaran MARS: forward mixing, core, backward mixing.
+% Dirujuk dari section-03.tex dengan \input{figures/mars-mixing}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        fase/.style={draw, rounded corners=1pt, minimum height=1.3cm,
+                     text width=3.9cm, align=center, font=\small, inner sep=3pt},
+        panah/.style={-{Latex[length=2mm]}, thick},
+        catatan/.style={font=\footnotesize, align=left, text width=12.9cm},
+    ]
+        \node[fase] (fwd) at (0,0)
+            {\textbf{8 putaran}\\ \textit{forward mixing}\\
+             perkalian, rotasi data,\\ penambahan kunci};
+        \node[fase] (core) at (4.4,0)
+            {\textbf{16 putaran}\\ \textit{core}\\
+             kotak-S, rotasi bergantung\\ data, penambahan kunci};
+        \node[fase] (bwd) at (8.8,0)
+            {\textbf{8 putaran}\\ \textit{backward mixing}\\
+             kebalikan \textit{forward mixing},\\ mengacak kembali};
+
+        \draw[panah] (-2.2,0) -- (fwd);
+        \draw[panah] (fwd) -- (core);
+        \draw[panah] (core) -- (bwd);
+        \draw[panah] (bwd) -- (11.0,0);
+
+        \node[catatan, anchor=north] at (4.4,-1.4)
+            {Kedua fase \textit{mixing} bekerja tanpa kunci dan dirancang agar tidak
+             dapat dibalik. Seluruh 32 putaran memakai kunci hasil perluasan dari
+             40 kata, sehingga biaya pemasangan kuncinya paling mahal di antara
+             kelima finalis AES};
+    \end{tikzpicture}
+    \caption{Pembagian 32 putaran MARS. Rancangan ini menempatkan ketahanan terhadap
+    kriptanalisis pada putaran inti, sementara putaran tepi mempercepat penyebaran
+    perubahan bit masukan}
+    \label{fig:mars-mixing}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; Burwick dkk., \textit{MARS}.}
+\end{figure}

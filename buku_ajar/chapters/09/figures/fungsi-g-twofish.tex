@@ -1,0 +1,44 @@
+% Diagram fungsi g pada Twofish: empat kotak-S bergantung kunci, matriks MDS, lalu PHT.
+% Dirujuk dari section-03.tex dengan \input{figures/fungsi-g-twofish}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners=1pt, minimum height=0.72cm,
+                      text width=1.5cm, align=center, font=\small, inner sep=2pt},
+        besar/.style={draw, rounded corners=1pt, minimum height=1.1cm,
+                      text width=2.5cm, align=center, font=\small, inner sep=2pt},
+        panah/.style={-{Latex[length=2mm]}, thick},
+        catatan/.style={font=\footnotesize, align=left, text width=11.6cm},
+    ]
+        \node (x) at (0,0) {$X$};
+        \node[kotak] (s0) at (2.4, 1.35) {$S_0[x_0]$};
+        \node[kotak] (s1) at (2.4, 0.45) {$S_1[x_1]$};
+        \node[kotak] (s2) at (2.4,-0.45) {$S_2[x_2]$};
+        \node[kotak] (s3) at (2.4,-1.35) {$S_3[x_3]$};
+        \node[besar] (mds) at (5.4,0) {matriks MDS\\$4 \times 4$ di $\text{GF}(2^8)$};
+        \node (t) at (7.9,0) {$T$};
+        \node[besar] (pht) at (10.4,0) {PHT\\$(u,v) \mapsto (u+v,\ u+2v)$};
+        \node (f) at (12.6,0) {$(F_0, F_1)$};
+
+        \draw[panah] (x) -- (s0);
+        \draw[panah] (x) -- (s1);
+        \draw[panah] (x) -- (s2);
+        \draw[panah] (x) -- (s3);
+        \draw[panah] (s0) -- (mds);
+        \draw[panah] (s1) -- (mds);
+        \draw[panah] (s2) -- (mds);
+        \draw[panah] (s3) -- (mds);
+        \draw[panah] (mds) -- (t);
+        \draw[panah] (t) -- (pht);
+        \draw[panah] (pht) -- (f);
+
+        \node[catatan, anchor=north west] at (-1.0,-2.2)
+            {Setiap $S_j$ adalah kotak-S $8 \times 8$ yang bergantung pada kunci, dan
+             $x_0, \dots, x_3$ adalah empat byte penyusun $X$. PHT menggabungkan
+             luaran $g$ ini dengan luaran $g$ yang kedua menjadi pasangan $F_0, F_1$};
+    \end{tikzpicture}
+    \caption{Fungsi $g$ pada Twofish beserta penggabung PHT. Matriks MDS menjamin
+    perubahan satu bit masukan menyebar ke seluruh byte keluaran}
+    \label{fig:fungsi-g-twofish}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; Schneier dkk., \textit{Twofish}.}
+\end{figure}

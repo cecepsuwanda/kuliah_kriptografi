@@ -1,45 +1,277 @@
 \section{Contoh Terhitung}
 
-\begin{example}[Satu putaran RC5 dengan $w = 16$]
-Tinjau RC5 berukuran kata $w = 16$ bit (blok 32 bit) dengan $r = 2$ putaran. Blok plainteks dipecah menjadi $A_0 = \code{0x1234}$ dan $B_0 = \code{0x2345}$, dengan kunci putaran
+Seluruh bilangan heksadesimal pada bagian ini ditulis tanpa awalan \code{0x}, kecuali
+bila dinyatakan lain. Contoh~\ref{ex:rc5-jadwal} dan Contoh~\ref{ex:rc5-vektor}
+diverifikasi terhadap vektor uji resmi RFC 2040, sehingga setiap angka di dalamnya
+dapat diperiksa ulang oleh pembaca dengan program buatan sendiri.
+
+\begin{example}[Pembentukan kunci putaran RC5-32/0/1]
+\label{ex:rc5-jadwal}
+Tinjau RC5 dengan $w = 32$ bit, $r = 0$ putaran, dan kunci eksternal satu byte
+$K = \code{00}$. Karena $r = 0$, putaran tidak ada sama sekali, sehingga cipherteksnya
+adalah larik $S$ itu sendiri. Contoh ini dipilih justru karena kecil: seluruh proses
+pembangkitan kunci dapat diikuti dengan tangan dalam enam langkah.
+
+\textbf{Jumlah kunci putaran.} $t = 2r + 2 = 2$, yaitu $S[0]$ dan $S[1]$.
+Karena $b = 1$ byte dan $w/8 = 4$ byte per kata, $c = \lceil 1/4 \rceil = 1$, sehingga
+larik $L$ hanya beranggota satu kata, yaitu $L[0] = \code{00000000}$ (satu byte nol,
+tiga byte sisanya diisi nol). Banyaknya langkah pencampuran adalah
+$n = 3 \cdot \max(t, c) = 3 \cdot 2 = 6$.
+
+\textbf{Inisialisasi awal.} Dari Tabel~\ref{tab:konstanta-pw-qw}, $P_{32} = \code{B7E15163}$
+dan $Q_{32} = \code{9E3779B9}$. Maka
 \[
-\begin{aligned}
-S_0 &= \code{0x1A2B}, & S_1 &= \code{0x0C0D}, & S_2 &= \code{0x3344},\\
-S_3 &= \code{0x5566}, & S_4 &= \code{0x7788}, & S_5 &= \code{0x1122}.
-\end{aligned}
+S[0] = \code{B7E15163}, \qquad
+S[1] = \code{B7E15163} + \code{9E3779B9} = \code{5618CB1C}.
 \]
-Seluruh penjumlahan dilakukan modulo $2^{16}$, dan $\mathrm{ROTL}_{16}(x,r)$ menyatakan rotasi sirkuler kiri sejauh $r \bmod 16$ bit.
 
-\textbf{Langkah 1: penyaringan awal.}
-\[ A = A_0 + S_0 = \code{0x1234} + \code{0x1A2B} = \code{0x2C5F} = 11359, \]
-\[ B = B_0 + S_1 = \code{0x2345} + \code{0x0C0D} = \code{0x2F52} = 12114. \]
+\textbf{Langkah pencampuran pertama.} Dengan $i = j = X = Y = 0$ pada awalnya, langkah
+pertama mengerjakan
+\[
+S[0] \leftarrow \mathrm{ROTL}_{32}(\code{B7E15163} + 0 + 0,\ 3) = \code{BF0A8B1D},
+\]
+sebab pergeseran tiga bit pada \code{B7E15163} memindahkan tiga bit teratasnya
+(\code{101}) ke posisi terbawah, sehingga hasilnya \code{BF0A8B18} $\oplus$ \code{5}
+$=$ \code{BF0A8B1D}. Nilai $X$ lalu diperbarui menjadi $X = \code{BF0A8B1D}$, dan
+$i$ maju menjadi 1.
 
-\textbf{Langkah 2: putaran $i = 1$.}
-\[ A \leftarrow \mathrm{ROTL}_{16}(A \oplus B,\; B) + S_2. \]
-\[ A \oplus B = \code{0x2C5F} \oplus \code{0x2F52} = \code{0x030D} = 781,\qquad B \bmod 16 = 2, \]
-\[ \mathrm{ROTL}_{16}(\code{0x030D}, 2) = \code{0x0C34} = 3124,\qquad A = 3124 + 13124 = \code{0x3F78} = 16248. \]
-\[ B \leftarrow \mathrm{ROTL}_{16}(B \oplus A,\; A) + S_3. \]
-\[ B \oplus A = \code{0x2F52} \oplus \code{0x3F78} = \code{0x102A} = 4138,\qquad A \bmod 16 = 8, \]
-\[ \mathrm{ROTL}_{16}(\code{0x102A}, 8) = \code{0x2A10} = 10768,\qquad B = 10768 + 21862 = \code{0x7F76} = 32630. \]
+Langkah $L$ berikutnya memakai $X$ yang baru tetapi $Y$ yang masih nol:
+\[
+L[0] \leftarrow \mathrm{ROTL}_{32}(\code{00000000} + \code{BF0A8B1D} + 0,\ \code{BF0A8B1D}).
+\]
+Besarnya pergeseran adalah \code{BF0A8B1D} modulo 32, yaitu \code{1D} $= 29$. Jadi
+larik $L$ diputar ke kiri 29 bit, atau sama dengan diputar ke kanan 3 bit --- persis
+kebalikan dari langkah sebelumnya:
+\[
+L[0] = \mathrm{ROTL}_{32}(\code{BF0A8B1D}, 29) = \code{B7E15163}, \qquad Y \leftarrow \code{B7E15163}.
+\]
+Kebetulan aritmetika ini membuat $L[0]$ kembali ke nilai $S[0]$ sebelum pencampuran.
+Kebetulan tersebut tidak berlaku umum, tetapi membuat langkah pertama mudah diperiksa
+dengan tangan.
 
-\textbf{Langkah 3: putaran $i = 2$.}
-\[ A \leftarrow \mathrm{ROTL}_{16}(\code{0x3F78} \oplus \code{0x7F76},\; \code{0x7F76}) + S_4, \]
-\[ \code{0x3F78} \oplus \code{0x7F76} = \code{0x400E} = 16398,\qquad \mathrm{ROTL}_{16}(\code{0x400E}, 6) = \code{0x0390} = 912, \]
-\[ A = 912 + 30600 = \code{0x7B18} = 31512. \]
-\[ B \leftarrow \mathrm{ROTL}_{16}(\code{0x7F76} \oplus \code{0x7B18},\; \code{0x7B18}) + S_5, \]
-\[ \code{0x7F76} \oplus \code{0x7B18} = \code{0x046E} = 1134,\qquad \mathrm{ROTL}_{16}(\code{0x046E}, 8) = \code{0x6E04} = 28164, \]
-\[ B = 28164 + 4386 = \code{0x7F26} = 32550. \]
+\textbf{Langkah pencampuran berikutnya.} Kelima langkah sisanya dikerjakan dengan aturan
+yang sama. Karena $c = 1$, indeks $j$ selalu bernilai nol, sehingga kolomnya dapat
+diabaikan. Hasilnya ditabulasikan pada Tabel~\ref{tab:jejak-jadwal-kunci-rc5}.
 
-Cipherteks keluarannya adalah $(A,B) = (\code{0x7B18},\code{0x7F26}) = (31512, 32550)$. Kombinasi XOR, rotasi bergantung-data, dan penjumlahan dengan konstanta membuat satu bit plainteks menyebar ke banyak posisi bit cipherteks---inilah sumber difusi RC5.
+\begin{table}[htbp]
+    \centering
+    \small
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{@{}c c l l l l@{}}
+    \toprule
+    \textbf{Langkah} & $i$ & $X$ & $Y$ & $S[0]$ & $S[1]$ \\
+    \midrule
+    1 & 0 & \code{BF0A8B1D} & \code{B7E15163} & \code{BF0A8B1D} & \code{5618CB1C} \\
+    2 & 1 & \code{68253CE6} & \code{CFBF59AF} & \code{BF0A8B1D} & \code{68253CE6} \\
+    3 & 0 & \code{B7790D97} & \code{BDF03D55} & \code{B7790D97} & \code{68253CE6} \\
+    4 & 1 & \code{EC743E96} & \code{A5CA0342} & \code{B7790D97} & \code{EC743E96} \\
+    5 & 0 & \code{4DBA7B7A} & \code{E994E81F} & \code{4DBA7B7A} & \code{EC743E96} \\
+    6 & 1 & \code{1E1D1179} & \code{B7F146E1} & \code{4DBA7B7A} & \code{1E1D1179} \\
+    \bottomrule
+    \end{tabular}
+    \caption{Jejak enam langkah pencampuran larik $L$ dan $S$ pada RC5-32/0/1 dengan
+    kunci satu byte nol}
+    \label{tab:jejak-jadwal-kunci-rc5}
+\end{table}
+
+\textbf{Hasil.} Kunci putarannya adalah $S[0] = \code{4DBA7B7A}$ dan
+$S[1] = \code{1E1D1179}$. Karena enkripsi RC5 dengan $r = 0$ hanya menjumlahkan kedua
+kata plainteks dengan $S[0]$ dan $S[1]$, plainteks nol menghasilkan cipherteks
+$(S[0], S[1])$. Penulisan kedua kata itu secara \textit{little-endian} menghasilkan
+barisan byte
+
+\[
+\code{7a7bba4d79111d1e},
+\]
+
+yang persis sama dengan vektor uji RC5-32/0/1 yang diterbitkan RFC 2040. Kesesuaian ini
+menunjukkan bahwa urutan pembaruan $X$ dan $Y$ pada
+Persamaan~\eqref{eq:jadwal-kunci-rc5} telah dikerjakan dengan benar.
 \end{example}
 
-\begin{example}[Operasi aritmetika pada fungsi $f$ GOST]
-Fungsi $f$ GOST menerapkan penjumlahan modulo $2^{32}$ dengan kunci putaran, substitusi delapan kotak-S ($4 \times 4$ bit), lalu pergeseran sirkuler kiri 11 bit.
-\begin{enumerate}
-    \item \textbf{Penjumlahan modulo $2^{32}$.} Untuk $R_{i-1} = \code{0x0A0B0C0D}$ dan $K_i = \code{0x01020304}$,
-    \[ (R_{i-1} + K_i) \bmod 2^{32} = \code{0x0A0B0C0D} + \code{0x01020304} = \code{0x0B0D0F11} = 185405201. \]
-    \item \textbf{Pergeseran sirkuler kiri 11 bit.} Misalkan luaran substitusi kedelapan kotak-S adalah $\code{0x80000001}$ (bit ke-31 dan bit ke-0 bernilai 1). Bit ke-31 bergeser ke posisi $(31 + 11) \bmod 32 = 10$, sedangkan bit ke-0 bergeser ke posisi 11, sehingga
-    \[ \mathrm{ROTL}_{32}(\code{0x80000001}, 11) = \code{0x00000C00} = 3072. \]
-\end{enumerate}
-Hasil ini menjelaskan mengapa GOST lebih tahan \textit{brute-force} daripada DES: kunci GOST 256 bit ($2^{256} \approx 1{,}16 \times 10^{77}$) versus DES 56 bit ($2^{56} \approx 7{,}21 \times 10^{16}$), yaitu sekitar $2^{200} \approx 1{,}61 \times 10^{60}$ kali lebih banyak; ditambah 32 putaran (DES 16) dan kotak-S $4\times4$ (DES $6\times4$), kriptanalisis GOST jauh lebih berat.
+\begin{example}[Satu enkripsi penuh RC5 dengan $w = 16$]
+\label{ex:rc5-kecil}
+Untuk memudahkan pemeriksaan putaran demi putaran, tinjau RC5 berukuran kata $w = 16$ bit
+(blok 32 bit) dengan $r = 2$ putaran. Blok plainteks dipecah menjadi $A_0 = \code{1234}$
+dan $B_0 = \code{2345}$, dengan kunci putaran
+\[
+\begin{aligned}
+S[0] &= \code{1A2B}, & S[1] &= \code{0C0D}, & S[2] &= \code{3344},\\
+S[3] &= \code{5566}, & S[4] &= \code{7788}, & S[5] &= \code{1122}.
+\end{aligned}
+\]
+Keenam nilai $S[i]$ di sini dipilih sembarang semata-mata agar perhitungannya pendek;
+pada pemakaian yang sebenarnya, nilai-nilai itu dihasilkan oleh prosedur pada
+Persamaan~\eqref{eq:jadwal-kunci-rc5}. Seluruh penjumlahan dilakukan modulo $2^{16}$,
+dan $\mathrm{ROTL}_{16}(x,r)$ menyatakan rotasi sirkuler kiri sejauh $r \bmod 16$ bit.
+
+\textbf{Langkah 1: penyaringan awal.}
+\[ A = A_0 + S_0 = \code{1234} + \code{1A2B} = \code{2C5F} = 11359, \]
+\[ B = B_0 + S_1 = \code{2345} + \code{0C0D} = \code{2F52} = 12114. \]
+
+\textbf{Langkah 2: putaran $i = 1$.}
+\[ A \leftarrow \mathrm{ROTL}_{16}(A \oplus B,\; B) + S[2]. \]
+\[ A \oplus B = \code{2C5F} \oplus \code{2F52} = \code{030D} = 781,\qquad B \bmod 16 = 2, \]
+\[ \mathrm{ROTL}_{16}(\code{030D}, 2) = \code{0C34} = 3124,\qquad A = 3124 + 13124 = \code{3F78} = 16248. \]
+\[ B \leftarrow \mathrm{ROTL}_{16}(B \oplus A,\; A) + S[3]. \]
+\[ B \oplus A = \code{2F52} \oplus \code{3F78} = \code{102A} = 4138,\qquad A \bmod 16 = 8, \]
+\[ \mathrm{ROTL}_{16}(\code{102A}, 8) = \code{2A10} = 10768,\qquad B = 10768 + 21862 = \code{7F76} = 32630. \]
+
+\textbf{Langkah 3: putaran $i = 2$.}
+\[ A \leftarrow \mathrm{ROTL}_{16}(\code{3F78} \oplus \code{7F76},\; \code{7F76}) + S[4], \]
+\[ \code{3F78} \oplus \code{7F76} = \code{400E} = 16398,\qquad \mathrm{ROTL}_{16}(\code{400E}, 6) = \code{0390} = 912, \]
+\[ A = 912 + 30600 = \code{7B18} = 31512. \]
+\[ B \leftarrow \mathrm{ROTL}_{16}(\code{7F76} \oplus \code{7B18},\; \code{7B18}) + S[5], \]
+\[ \code{7F76} \oplus \code{7B18} = \code{046E} = 1134,\qquad \mathrm{ROTL}_{16}(\code{046E}, 8) = \code{6E04} = 28164, \]
+\[ B = 28164 + 4386 = \code{7F26} = 32550. \]
+
+Cipherteks keluarannya adalah $(A,B) = (\code{7B18},\code{7F26}) = (31512, 32550)$.
+Perhatikan bahwa putaran kedua sudah mengubah hampir seluruh bit $A$: nilai
+\code{3F78} pada akhir putaran pertama berubah menjadi \code{7B18}, dan perubahan itu
+berasal dari rotasi sejauh enam bit yang ditentukan oleh nilai $B$. Kombinasi XOR,
+rotasi bergantung data, dan penjumlahan dengan konstanta inilah yang membuat satu bit
+plainteks menyebar ke banyak posisi bit cipherteks dalam dua putaran saja.
+\end{example}
+
+\begin{example}[Verifikasi RC5-32/8/1 terhadap vektor uji RFC 2040]
+\label{ex:rc5-vektor}
+Contoh ini memakai kunci yang sama dengan Contoh~\ref{ex:rc5-jadwal}, yaitu satu byte
+nol, tetapi dengan $w = 32$ dan $r = 8$. Karena hasilnya dapat dibandingkan dengan
+vektor uji resmi, contoh ini sekaligus berfungsi sebagai pemeriksaan menyeluruh atas
+fungsi putaran RC5.
+
+\textbf{Jadwal kunci.} Sekarang $t = 2r + 2 = 18$ dan $c = 1$, sehingga
+$n = 3 \cdot \max(18, 1) = 54$ langkah pencampuran. Pencampuran itu menghasilkan larik
+$S$ berikut:
+\[
+\begin{aligned}
+S[0..3]  &= \code{2803FD4F}\ \code{97010A03}\ \code{CA8E4329}\ \code{DF87317A}, \\
+S[4..7]  &= \code{CE857D2B}\ \code{2F9D4CE4}\ \code{EB8C205E}\ \code{F4B87065}, \\
+S[8..11] &= \code{4C15FB7A}\ \code{83C1A03D}\ \code{3929AB6D}\ \code{BE7C2983}, \\
+S[12..15]&= \code{870C5B04}\ \code{3ED92C7B}\ \code{63BBC032}\ \code{8E1A2960}, \\
+S[16..17]&= \code{19F8B3C2}\ \code{9C17C694}.
+\end{aligned}
+\]
+
+\textbf{Masukan.} Vektor uji RFC 2040 untuk $R = 8$ dan kunci \code{00} bekerja dalam
+mode CBC dengan vektor inisialisasi \code{0102030405060708} dan blok plainteks
+\code{1020304050607080}. Karena mode CBC mendahului enkripsi dengan XOR terhadap blok
+sebelumnya, masukan sesungguhnya bagi RC5 adalah
+\[
+\code{1020304050607080} \oplus \code{0102030405060708} = \code{1133221144332255},
+\]
+yang dalam penyusunan \textit{little-endian} berarti $A_0 = \code{44332211}$ dan
+$B_0 = \code{88776655}$.
+
+\textbf{Penyaringan dan putaran.} Penyaringan awal memberi
+$A = \code{44332211} + \code{2803FD4F} = \code{6C371F60}$ dan
+$B = \code{88776655} + \code{97010A03} = \code{1F786F58}$ (keduanya modulo $2^{32}$).
+Kedelapan putaran selanjutnya dihitung dengan Persamaan~\eqref{eq:rc5-putaran} dan
+hasilnya dicatat pada Tabel~\ref{tab:jejak-putaran-rc5}.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Putaran} & $A_i$ & $B_i$ \\
+    \midrule
+    0 (setelah penyaringan) & \code{6C371F60} & \code{1F786F58} \\
+    1 & \code{03019298} & \code{9FA3AB5C} \\
+    2 & \code{184FA0C7} & \code{25A31AA7} \\
+    3 & \code{E1E9507C} & \code{B0FD1512} \\
+    4 & \code{61CF3FCB} & \code{15186EC6} \\
+    5 & \code{6EFDEECA} & \code{547C5B72} \\
+    6 & \code{5DED450A} & \code{83530CA1} \\
+    7 & \code{21385389} & \code{64D87AA4} \\
+    8 & \code{77FB4696} & \code{A89C8F63} \\
+    \bottomrule
+    \end{tabularx}
+    \caption{Jejak putaran demi putaran RC5-32/8/1 dengan kunci satu byte nol, mulai
+    dari keadaan setelah penyaringan awal}
+    \label{tab:jejak-putaran-rc5}
+\end{table}
+
+\textbf{Pembandingan dengan vektor uji.} Setelah putaran kedelapan, $A = \code{77FB4696}$
+dan $B = \code{A89C8F63}$. Karena RC5 hanya menyaring di awal, kedua kata itu langsung
+merupakan cipherteks. Penulisan \textit{little-endian} menghasilkan barisan byte
+\code{9646fb77} dan \code{638f9ca8}, sehingga cipherteks lengkapnya adalah
+
+\[
+\code{9646fb77638f9ca8}.
+\]
+
+Nilai itu persis sama dengan vektor uji yang diterbitkan RFC 2040 untuk
+RC5-32/8/1 dengan kunci \code{00}, vektor inisialisasi \code{0102030405060708}, dan
+plainteks \code{1020304050607080}. Dengan demikian fungsi putaran
+(Persamaan~\eqref{eq:rc5-putaran}), penyaringan awal, dan jadwal kunci semuanya telah
+terlaksana dengan benar pada contoh ini.
+\end{example}
+
+\begin{example}[Satu putaran GOST]
+\label{ex:gost-round}
+Fungsi $f$ GOST menerapkan penjumlahan modulo $2^{32}$ dengan kunci putaran, substitusi
+delapan kotak-S ($4 \times 4$ bit), lalu pergeseran sirkuler kiri 11 bit. Tinjau
+keadaan pada awal putaran ke-$i$ dengan $L_{i-1} = \code{01020304}$ dan
+$R_{i-1} = \code{12345678}$, sedangkan kunci putarannya adalah
+$K_i = \code{61626364}$, yaitu empat byte pertama dari kunci contoh
+\code{'abcdefghijklmnopqrstuvwxyz123456'}.
+
+\textbf{Langkah 1: penjumlahan modulo $2^{32}$.}
+\[
+R_{i-1} + K_i = \code{12345678} + \code{61626364} = \code{7396B9DC} = 1939257820.
+\]
+
+\textbf{Langkah 2: substitusi kedelapan kotak-S.} Hasil penjumlahan dipecah menjadi
+delapan nibble, dimulai dari nibble paling kanan. Nibble paling kanan, yaitu \code{C},
+menjadi masukan $S_1$; nibble berikutnya, \code{D}, menjadi masukan $S_2$; dan
+seterusnya sampai nibble paling kiri, \code{7}, menjadi masukan $S_8$. Pembacaan
+Tabel~\ref{tab:kotak-s-gost} untuk setiap pasangan menghasilkan nilai berikut.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \begin{tabular}{@{}l *{8}{c}@{}}
+    \toprule
+    \textbf{Nibble ke-} & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+    \midrule
+    Masukan              & \code{C} & \code{D} & \code{9} & \code{B} & \code{6} & \code{9} & \code{3} & \code{7} \\
+    Kotak-S              & $S_1$ & $S_2$ & $S_3$ & $S_4$ & $S_5$ & $S_6$ & $S_7$ & $S_8$ \\
+    Luaran               & \code{7} & \code{7} & \code{F} & \code{C} & \code{D} & \code{6} & \code{1} & \code{4} \\
+    \bottomrule
+    \end{tabular}
+    \caption{Substitusi kedelapan nibble pada fungsi $f$ GOST untuk masukan
+    \code{7396B9DC}}
+    \label{tab:jejak-substitusi-gost}
+\end{table}
+
+Sebagai pemeriksaan, $S_1$ berisi permutasi $4, 10, 9, 2, 13, 8, 0, 14, 6, 11, 1, 12,
+7, 15, 5, 3$. Karena masukan \code{C} sama dengan 12, elemen ke-12 (dihitung dari nol)
+adalah 7. Untuk $S_6$, masukan \code{9} menghasilkan 6, dan seterusnya.
+
+Kedelapan luaran digabung kembali menjadi satu bilangan 32 bit dengan nibble dari $S_1$
+menempati posisi paling kanan:
+\[
+S_1 \| S_2 \| \cdots \| S_8 = \code{4}\,\code{1}\,\code{6}\,\code{D}\,\code{C}\,\code{F}\,\code{7}\,\code{7}
+= \code{416DCF77} = 1097707383.
+\]
+
+\textbf{Langkah 3: pergeseran sirkuler kiri 11 bit.}
+\[
+\mathrm{ROTL}_{32}(\code{416DCF77}, 11) = \code{6E7BBA0B}.
+\]
+
+\textbf{Langkah 4: XOR dengan setengah blok kiri.} Menurut
+Persamaan~\eqref{eq:putaran-gost}, hasil fungsi $f$ di-XOR dengan $L_{i-1}$:
+\[
+R_i = L_{i-1} \oplus f(R_{i-1}, K_i) = \code{01020304} \oplus \code{6E7BBA0B} = \code{6F79B90F}.
+\]
+Sementara itu, setengah blok kiri yang baru bukan hasil perhitungan apa pun, melainkan
+hanya setengah blok kanan yang lama: $L_i = R_{i-1} = \code{12345678}$. Keadaan pada
+akhir putaran ke-$i$ karena itu adalah $(L_i, R_i) = (\code{12345678}, \code{6F79B90F})$.
+
+Perlu ditegaskan bahwa contoh ini berhenti pada satu putaran saja. Untuk memperoleh
+cipherteks, ke-32 putaran harus dikerjakan dengan kunci putaran menurut
+Tabel~\ref{tab:jadwal-kunci-gost}. Yang perlu diingat, panjang kunci 256 bit pada GOST
+tidak membuat cipherteksnya lebih sukar dianalisis daripada DES; alasannya telah
+diuraikan pada Subbagian~\ref{subsec:kriptanalisis-gost}.
 \end{example}

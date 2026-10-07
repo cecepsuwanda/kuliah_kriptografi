@@ -1,0 +1,36 @@
+% Diagram satu putaran GOST (Magma) beserta tiga operasi pada fungsi f.
+% Dirujuk dari section-01.tex dengan \input{figures/putaran-gost}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners=1pt, minimum height=1.15cm,
+                      text width=2.9cm, align=center, font=\small, inner sep=2pt},
+        xor/.style={draw, circle, inner sep=0pt, minimum size=6mm, font=\small},
+        panah/.style={-{Latex[length=2mm]}, thick},
+        catatan/.style={font=\footnotesize, align=left, text width=10.0cm},
+    ]
+        \node (L) at (0.6,0)    {$L_{i-1}$};
+        \node (R) at (0.6,-1.9) {$R_{i-1}$};
+        \node[kotak] (plus) at (3.1,-1.9)  {penjumlahan dengan\\$K_i \bmod 2^{32}$};
+        \node[kotak] (sbox) at (6.6,-1.9)  {delapan kotak-S\\$4 \times 4$ bit};
+        \node[kotak] (rot)  at (10.1,-1.9) {geser sirkuler\\kiri 11 bit};
+        \node[xor]   (x)    at (6.6,0)     {$\oplus$};
+        \node (Ro)  at (11.4,0) {$R_i$};
+
+        \draw[panah] (L) -- (x);
+        \draw[panah] (x) -- (Ro);
+        \draw[panah] (R) -- (plus);
+        \draw[panah] (plus) -- (sbox);
+        \draw[panah] (sbox) -- (rot);
+        \draw[panah] (rot.north) |- (x.east);
+
+        \node[catatan, anchor=north west] at (1.0,-3.0)
+            {Fungsi $f(R_{i-1}, K_i)$ tersusun atas ketiga operasi di atas, dan
+             setengah blok kiri hanya disalin: $L_i = R_{i-1}$. Kunci putaran $K_i$
+             berasal dari jadwal pada Tabel~\ref{tab:jadwal-kunci-gost}};
+    \end{tikzpicture}
+    \caption{Satu putaran GOST. Setengah blok kanan diolah fungsi $f$, hasilnya di-XOR
+    dengan setengah blok kiri, lalu kedua setengah blok bertukar peran}
+    \label{fig:putaran-gost}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; RFC 5830.}
+\end{figure}

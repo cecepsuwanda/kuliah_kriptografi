@@ -363,15 +363,133 @@ FIPS PUB 197 untuk AES-128/192/256, pada enkripsi **dan** dekripsi.
    $\code{57}\cdot\code{83}=\code{C1}$, matriks InvMixColumns `0E 0B 0D 09`).
    Tidak ada koreksi; angka itu tetap dipakai sebagai bahan §4.
 
-## Bab 09 — Studi Algoritma Block Cipher Lainnya
+## Bab 09 — Studi Algoritma Block Cipher Lainnya  `[x]` SELESAI
 Sumber: `referensi/11-*` (3.352 kata, 11 topik, 19 gambar). Target: ±4.500 kata.
+**Menyitasi 13 kunci** (13 entri `.bib` baru: `rfc5830`, `rfc4357`, `rfc7801`,
+`rfc8891`, `rivest1994rc5`, `rivest1998rc6`, `schneier1994blowfish`,
+`schneier1998twofish`, `anderson1998serpent`, `burwick1998mars`,
+`courtois2011gost`, `isobe2011gost`, `dinur2012gost`).
 
-- [ ] **Koreksi keamanan GOST** + tabel kompleksitas serangan + batas rekeying 2³² blok
-- [ ] Identitas standar GOST 28147-89 → Magma → Kuznyechik
-- [ ] Jadwal kunci RC5: $P_w$/$Q_w$, array $S$, algoritma enkripsi
-- [ ] Tabel jadwal kunci GOST + contoh substitusi S-box
-- [ ] Kedalaman Blowfish, Serpent, Twofish, MARS (masing-masing 1 TikZ)
-- [ ] Ganti gambar raster tabel perbandingan → tabel `booktabs`
+Hasil: 9.135 kata pada delapan berkas (tiga section 5.844, contoh 1.735,
+praktikum 722, rangkuman 414, evaluasi 219, latihan 201), **29 halaman mandiri**,
+10 tabel bernomor, 4 contoh terhitung, 7 persamaan bernomor, 5 diagram TikZ baru,
+dan satu program verifikasi baru (`code/python/rc5_gost_uji.py`, 326 baris). Bab
+semula hanya ±1.400 kata tanpa satu pun persamaan bernomor maupun contoh
+terhitung. Seluruh angka pada contoh, tabel, dan latihan **dihitung ulang dengan
+program**: implementasi RC5 umum ($w$, $r$, $b$) dicocokkan terhadap **17 vektor
+uji resmi RFC 2040** dan implementasi fungsi putaran GOST dicocokkan terhadap
+Contoh~\ref{ex:gost-round}.
+
+- [x] **Koreksi keamanan GOST** (Temuan #1) — Sub-bab *Kriptanalisis GOST dan Batas
+  Rekeying* (`subsec:kriptanalisis-gost`) dengan
+  Tabel~\ref{tab:kompleksitas-serangan-gost} ($2^{256} \to 2^{228} \to 2^{178}$,
+  data $2^{64}$, memori $2^{70}$; Dinur dkk.\ $2^{224}$/$2^{192}$), penurunan batas
+  rekeying $2^{64/2} = 2^{32}$ blok $= 2^{35}$ byte $\approx 32$ GiB, dan kotak
+  `\important` yang melarang kesimpulan "GOST lebih aman daripada DES".
+  Nada di `praktikum.tex` diperbaiki: butir lama "jumlah putaran lebih banyak
+  cenderung lebih aman" diganti menjadi perbandingan GOST versus Serpent yang
+  sama-sama 32 putaran tetapi bercatatan keamanan berbeda
+- [x] Identitas standar GOST 28147-89 → Magma (GOST R 34.12-2015) → Kuznyechik:
+  Sub-bab *Riwayat dan Identitas Standar* + Tabel~\ref{tab:parameter-gost},
+  termasuk penjelasan mengapa Kuznyechik bukan "GOST 28147-89 versi baru"
+- [x] Jadwal kunci RC5 lengkap: larik $L$ dengan urutan *little-endian*
+  (termasuk aturan pengisian nol), $S[0]=P_w$, $S[i]=S[i-1]+Q_w$, pencampuran
+  $n = 3\cdot\max(t,c)$ langkah — Persamaan~\eqref{eq:jadwal-kunci-rc5};
+  penurunan $P_w$ dan $Q_w$ dari $e$ dan $\phi$
+  (Persamaan~\eqref{eq:pw-qw}, Tabel~\ref{tab:konstanta-pw-qw}) beserta alasan
+  *nothing up my sleeve*
+- [x] Algoritma enkripsi dan dekripsi RC5
+  (Persamaan~\eqref{eq:rc5-putaran}), penjelasan rotasi bergantung data dan
+  mengapa dekripsi harus menempuh putaran dalam urutan terbalik; RC6
+  (Persamaan~\eqref{eq:rc6-putaran}) dengan penjelasan mengapa $x(2x+1)$
+  merupakan pemetaan satu-ke-satu modulo $2^w$
+- [x] Tabel jadwal kunci putaran GOST 32 putaran (`tab:jadwal-kunci-gost`, 17 kolom,
+  `\footnotesize` + `\tabcolsep=4pt`), tabel Kotak-S lengkap
+  (`tab:kotak-s-gost`), dan contoh pemecahan kunci
+  ``abcdefghijklmnopqrstuvwxyz123456'' → $K_1=\text{abcd}$ … $K_8=\text{3456}$;
+  fungsi putaran dalam Persamaan~\eqref{eq:putaran-gost} dan
+  \eqref{eq:fungsi-f-gost} + diagram `figures/putaran-gost`
+- [x] Kedalaman keempat cipher lain, masing-masing satu diagram TikZ baru:
+  Blowfish (fungsi $F$, `figures/fungsi-f-blowfish`,
+  Persamaan~\eqref{eq:fungsi-f-blowfish}, prosedur 1042 kata / 521 enkripsi dari
+  digit $\pi$), Twofish (`figures/fungsi-g-twofish`, matriks MDS + PHT),
+  Serpent (`figures/putaran-serpent`), dan MARS (`figures/mars-mixing`,
+  tiga fase 8+16+8)
+- [x] Gambar raster tabel perbandingan cipher simetris **dihapus** dan diganti
+  tabel `booktabs`/`tabularx` sungguhan (`tab:perbandingan-cipher-simetris`,
+  sembilan algoritma); berkas `figures/perbandingan-block-cipher.png`
+  (140 KB) dihapus karena sudah tidak dirujuk
+- [x] `contoh.tex` ditulis ulang total menjadi empat `example` bernomor:
+  (1) `ex:rc5-jadwal` — enam langkah jadwal kunci RC5-32/0/1 dengan kunci
+  satu byte, tabel jejak `tab:jejak-jadwal-kunci-rc5`, hasil
+  $S[0]=\code{4DBA7B7A}$, $S[1]=\code{1E1D1179}$;
+  (2) `ex:rc5-kecil` — enkripsi penuh RC5-16/2/2 langkah demi langkah, dengan
+  catatan eksplisit bahwa keenam nilai $S[i]$ dipilih untuk ilustrasi;
+  (3) `ex:rc5-vektor` — larik $S$ 18 kata RC5-32/8/1, penyaringan CBC
+  ($A_0=\code{44332211}$, $B_0=\code{88776655}$), tabel jejak delapan putaran
+  `tab:jejak-putaran-rc5`, dan pemeriksaan terhadap vektor RFC 2040
+  `9646fb77638f9ca8`;
+  (4) `ex:gost-round` — satu putaran GOST dengan tabel substitusi
+  `tab:jejak-substitusi-gost` ($\code{7396B9DC} \to \code{416DCF77} \to
+  \code{6E7BBA0B} \to R_i = \code{6F79B90F}$)
+- [x] `praktikum.tex`: Aktivitas 9.1 (perbandingan struktur, butir menyesatkan
+  diperbaiki) tetap, ditambah 9.2 (jadwal kunci RC5 dengan tangan), 9.3
+  (memeriksa terhadap vektor RFC 2040), 9.4 (fungsi putaran GOST dengan tangan
+  + uji avalanche satu bit), 9.5 (menghitung batas rekeying dan menilai
+  kriptanalisis GOST); tiga penggalan `rc5_gost_uji.py` sebagai listing
+- [x] `latihan.tex` 3 → 8 butir (dua kelompok `obereflection`); butir lama 2
+  dipersempit agar hanya membahas pencarian kunci menyeluruh;
+  `rangkuman.tex` 7 → 11 butir; `evaluasi.tex` kuis 3 → 6, checklist 5 → 7 baris
+- [x] Program verifikasi baru `code/python/rc5_gost_uji.py` (326 baris, ASCII + LF):
+  RC5 umum ($w$, $r$, $b$) + CBC, GOST RFC 4357/5830, dan empat blok pengujian
+  mandiri. Ketujuh belas vektor RFC 2040 adalah kutipan langsung dari §9.2–9.3
+  RFC; seluruhnya **lulus** ketika dijalankan
+
+### Koreksi terhadap sumber (wajib dicatat)
+
+1. **Klaim keamanan GOST pada dek `11-*` menyesatkan** dan telah tersebar ke
+   buku versi lama. Dek hanya menyebut "kunci 256 bit … lebih tahan terhadap
+   *brute force*" tanpa menyebut satu pun hasil kriptanalisis, padahal dek itu
+   sendiri memuat bagian *Cryptanalysis of GOST* yang menyatakan kompleksitas
+   serangan turun dari $2^{256}$ ke $2^{178}$ dan Courtois menyebut GOST
+   "a deeply flawed cipher". Buku kini memuat kedua sisi itu sekaligus dan
+   menambahkan batas rekeying $2^{32}$ blok yang tidak ada di dek.
+2. **Tabel perbandingan cipher simetris pada dek salah dua angka.** Panjang
+   kunci Blowfish tertulis "1 sampai 448 bit" (spesifikasi resminya menetapkan
+   paling sedikit 32 bit), dan panjang kunci RC5 tertulis "128 sampai 256 bit"
+   (RC5 justru dapat dipilih dari 0 sampai 2040 bit; 128–256 bit itu panjang
+   kunci Rijndael). Keduanya diperbaiki pada
+   Tabel~\ref{tab:perbandingan-cipher-simetris} dan didokumentasikan di paragraf
+   penutup Sub-bab *Perbandingan Cipher Simetris*.
+3. **Twofish disebut memiliki lima kotak-S.** Yang benar adalah empat kotak-S
+   $8 \times 8$ yang bergantung pada kunci, masing-masing disusun dari permutasi
+   tetap $q_0$ dan $q_1$. Koreksi ini dicatat langsung di dalam §3, karena sifat
+   *bergantung kunci* itulah yang menjadi ciri khas sekaligus kelemahan
+   keluarga Blowfish–Twofish di perangkat keras.
+4. **MARS disebut melakukan substitusi–permutasi pada setiap putaran.** MARS
+   sebenarnya adalah Feistel tak seimbang (*unbalanced Feistel*) dengan tiga fase
+   yang berbeda sifatnya. Koreksi ini disertai penguraian 8 putaran *forward
+   mixing* + 16 putaran inti + 8 putaran *backward mixing*
+   (`figures/mars-mixing`).
+5. **Kotak-S GOST nomor 6 pada dek berakhir `14 14`.** Kedelapan kotak-S GOST
+   harus merupakan permutasi dari 0 sampai 15, sehingga `14 14` jelas salah dan
+   yang benar adalah `14 15`. Kesalahan ini diverifikasi dengan program: buku
+   memakai `14 15`, dan `rc5_gost_uji.py` memeriksa sifat permutasi itu pada
+   setiap kali dijalankan.
+6. **Kode semu jadwal kunci RC5 pada dek mengandung dua salah tulis**:
+   $n = 3\cdot\max(r, c)$ seharusnya $n = 3\cdot\max(t, c)$ (dengan $t = 2r+2$,
+   bukan $r$), dan pada baris pembaruan tertulis $i \leftarrow (l+1) \bmod t$
+   dengan huruf $l$, bukan $i$. Keduanya diperbaiki pada
+   Persamaan~\eqref{eq:jadwal-kunci-rc5}, dan urutan pembaruan $X$/$Y$ yang
+   benar ditegaskan secara eksplisit karena menukarnya menghasilkan larik $S$
+   yang tidak kompatibel dengan vektor uji resmi.
+7. **Vektor uji yang dipakai buku diverifikasi ulang dari sumber primer.**
+   Penurunan jadwal kunci RC5 pertama kali dilakukan dengan menerka urutan
+   pembaruan; nilai yang diperoleh dari ingatan/hasil pencarian tidak cocok
+   dengan implementasi mana pun. Setelah program diuji terhadap keenam belas
+   vektor pada §9.3 RFC 2040, urutan yang benar ditemukan dan seluruh vektor
+   lulus. Angka pada `contoh.tex` berasal dari sumber primer itu, bukan dari
+   dek.
 
 ## Bab 10 — Algoritma RSA
 Sumber: `referensi/13-*` (6.603 kata, 20 topik, 17 gambar). Target: ±5.000 kata.
@@ -450,8 +568,13 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
 
 ## Cacat lintas bab yang harus diperbaiki sambil jalan
 
-- [ ] **Bab 09 menyesatkan soal keamanan GOST** — buku menyiratkan GOST "lebih aman";
+- [x] **Bab 09 menyesatkan soal keamanan GOST** — buku menyiratkan GOST "lebih aman";
   referensi `11-*` menyatakan sebaliknya (2²⁵⁶ → 2¹⁷⁸). Perbaiki + imbangi di `praktikum.tex`.
+  **Selesai:** Sub-bab *Kriptanalisis GOST dan Batas Rekeying*
+  (`subsec:kriptanalisis-gost`) + `tab:kompleksitas-serangan-gost` + batas rekeying
+  2³² blok + kotak `\important`; `praktikum.tex` butir 2 diganti, butir baru 9.5
+  ditambahkan; `rangkuman.tex` butir keunggulan GOST dipersempit dan dua butir
+  koreksi ditambahkan.
 - [~] **Environment `equation`/`align` ber-nomor** mulai dipakai sejak Bab 03
   (`eq:pembagian`, `eq:mod-tambah`, `eq:mod-kali`, `eq:invers`, `eq:euler`,
   `eq:entropi`); Bab 04 menambah 8 persamaan bernomor (`eq:caesar`,
@@ -548,3 +671,15 @@ diperbaiki; polanya akan terulang di bab-bab berikut, jadi perhatikan sejak awal
 - **Paragraf yang memuat beberapa nilai heksadesimal 16 digit berurutan** sulit dipatahkan
   TeX dan menghasilkan `Underfull` (Bab 07, butir rangkuman kunci lemah) → pindahkan
   nilai-nilainya ke `center` tersendiri.
+- **Node TikZ tanpa `text width` tidak pernah membungkus teks.** Keterangan gambar yang
+  ditulis berbaris-baris di dalam sumber `figures/*.tex` tetap keluar sebagai **satu baris
+  raksasa**, karena TikZ mengabaikan perpindahan baris di dalam node. Bab 09 sempat
+  menghasilkan enam `Overfull` sampai **293pt** (≈10cm) dari lima diagram baru; penyebabnya
+  bukan koordinat, melainkan dua node keterangan tanpa `text width`. Solusi: beri setiap
+  node keterangan gaya `catatan/.style={font=\footnotesize, align=left, text width=...}`
+  lalu pilih lebarnya agar ujungnya masih di dalam rentang node gambar. Ukur juga lebar
+  kata terpanjang di dalam kotak: Bab 09 sempat `Overfull 8,5pt` karena kata
+  "transformasi" (≈54pt) tidak muat di `text width=1.75cm`; menaikkannya ke `2.2cm`
+  cukup, dan kotak di sekitarnya perlu dijarakkan ulang agar panah tetap punya ruang.
+  **Cara memastikan siapa pelakunya:** `Overfull` pada log muncul *sebelum* penanda
+  `(figures/nama.tex`, jadi pasangkan dengan penanda berkas terakhir sebelum baris itu.

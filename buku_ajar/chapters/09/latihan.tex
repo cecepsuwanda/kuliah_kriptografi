@@ -2,6 +2,22 @@
 \begin{obereflection}
 \textbf{Latihan 9.1}
 1. Mengapa penggunaan operasi perkalian pada RC6 memberikan keuntungan keamanan dibandingkan hanya menggunakan XOR dan rotasi seperti pada RC5?
-2. Jelaskan mengapa GOST dianggap lebih sulit diserang dengan \textit{brute force} dibandingkan DES.
+2. Jelaskan mengapa GOST dianggap lebih sulit diserang dengan \textit{brute force} dibandingkan DES. Batasi jawaban Anda pada serangan pencarian kunci menyeluruh saja, dan sebutkan secara eksplisit aspek keamanan mana yang tidak tercakup oleh jawaban itu.
 3. Apa perbedaan mendasar antara pendekatan desain Blowfish dan Twofish?
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 9.2}
+1. Jelaskan mengapa jadwal kunci GOST jauh lebih murah diimplementasikan daripada jadwal
+   kunci DES, dan sebutkan konsekuensi keamanan yang timbul dari kesederhanaan itu.
+2. Mengapa larik $L$ pada jadwal kunci RC5 dibaca dengan urutan \textit{little-endian}?
+   Apa yang terjadi bila sebuah implementasi memakai urutan \textit{big-endian}?
+3. Konstanta $P_w$ dan $Q_w$ diturunkan dari bilangan $e$ dan $\phi$. Apakah RC5 akan
+   menjadi lebih lemah bila kedua konstanta itu diganti dengan nilai acak lain? Jelaskan
+   alasan Anda.
+4. Blowfish dan GOST sama-sama berukuran blok 64 bit. Jelaskan bagaimana keterbatasan ini
+   memengaruhi cara kedua algoritma itu seharusnya dipakai dalam sistem nyata.
+5. Serpent adalah finalis AES yang paling lambat di perangkat lunak, tetapi justru
+   dirancang agar dapat dipercepat dengan \textit{bit-slicing}. Jelaskan gagasan teknik
+   tersebut dan mengapa pemilihan kotak-S $4 \times 4$ bit menjadi prasyaratnya.
 \end{obereflection}

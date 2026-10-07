@@ -54,3 +54,7 @@ Desktop.ini
 # IDE / Editor
 .vscode/
 .idea/
+
+# Python (program verifikasi di buku_ajar/code/python/)
+__pycache__/
+*.pyc

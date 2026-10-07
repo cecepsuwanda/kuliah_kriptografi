@@ -1,0 +1,35 @@
+% Diagram struktur putaran Serpent: 32 kali {XOR subkunci, kotak-S, transformasi linier}.
+% Dirujuk dari section-03.tex dengan \input{figures/putaran-serpent}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners=1pt, minimum height=0.9cm,
+                      text width=2.2cm, align=center, font=\small, inner sep=2pt},
+        panah/.style={-{Latex[length=2mm]}, thick},
+        catatan/.style={font=\footnotesize, align=left, text width=13.2cm},
+    ]
+        \node[kotak] (ip) at (0,0) {permutasi\\awal (IP)};
+        \node[draw, rounded corners=1pt, inner sep=6pt,
+              fit={(2.5,0.85) (9.5,-0.85)}] (rnd) {};
+        \node[kotak] (kx)  at (3.0,0) {XOR dengan\\$\hat{K}_i$};
+        \node[kotak] (sb)  at (5.5,0) {32 kotak-S\\$4 \times 4$ bit};
+        \node[kotak] (lt)  at (8.0,0) {transformasi\\linier (LT)};
+        \node[kotak] (ipv) at (11.4,0) {permutasi\\akhir (IP$^{-1}$)};
+
+        \draw[panah] (ip) -- (rnd);
+        \draw[panah] (kx) -- (sb);
+        \draw[panah] (sb) -- (lt);
+        \draw[panah] (rnd) -- (ipv);
+
+        \node[font=\footnotesize, anchor=north] at (5.7,-1.1)
+            {diulang 32 kali (putaran terakhir tanpa LT)};
+        \node[catatan, anchor=north west] at (-1.0,-1.75)
+            {Tiga puluh tiga subkunci $\hat{K}_0, \dots, \hat{K}_{32}$ diturunkan dari
+             kunci melalui cipher itu sendiri, sehingga jadwal kuncinya justru lebih
+             mahal daripada jadwal kunci DES};
+    \end{tikzpicture}
+    \caption{Struktur Serpent. Seluruh blok diproses dalam satu jalur substitusi-permutasi
+    berputar, dengan sebuah transformasi linier bit demi bit sebagai pelebur antarputaran}
+    \label{fig:putaran-serpent}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; Anderson, Biham, \& Knudsen, \textit{Serpent}.}
+\end{figure}

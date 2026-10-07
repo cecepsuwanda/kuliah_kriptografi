@@ -4,6 +4,11 @@
 1. Jelaskan mekanisme kerja fungsi $f$ pada algoritma GOST.
 2. Apa yang dimaksud dengan parameter $w, r, b$ pada RC5 dan bagaimana pengaruhnya terhadap performa cipher?
 3. Bandingkan antara Serpent dan AES dari sisi jumlah putaran dan filosofi desainnya.
+4. Hitunglah $t$, $c$, dan $n$ untuk RC5-32/12/16, lalu jelaskan mengapa $n$ tidak sama dengan $t \times 3$ pada kasus ini.
+5. Sebuah sistem memakai satu kunci GOST untuk mengenkripsi 100 GiB data. Jelaskan
+   risiko yang timbul dan kapan kunci itu seharusnya diganti.
+6. Apa perbedaan struktur antara MARS dan Serpent, dan bagaimana perbedaan itu
+   tercermin pada pembagian putarannya?
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -12,7 +17,11 @@ Indikator Kompetensi & Tercapai \\
 \hline
 Saya dapat menjelaskan mekanisme kerja GOST dan perbedaannya dengan DES & [ ] \\
 \hline
+Saya dapat menjelaskan hasil kriptanalisis GOST dan batas rekeying $2^{n/2}$ blok & [ ] \\
+\hline
 Saya dapat menguraikan parameter fleksibel pada RC5 dan RC6 & [ ] \\
+\hline
+Saya dapat menjalankan jadwal kunci RC5 dan memeriksanya terhadap vektor uji RFC 2040 & [ ] \\
 \hline
 Saya dapat membedakan karakteristik Blowfish, Twofish, Serpent, dan MARS & [ ] \\
 \hline
