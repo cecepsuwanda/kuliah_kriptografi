@@ -1127,17 +1127,112 @@ dalam bab (Contoh~\ref{ex:gf2m}, Contoh~\ref{ex:gf11}, dan catatan koreksi pada
 Subbagian~\ref{subsec:enumerasi-gf-p}) supaya pembaca yang membandingkan dengan
 berkas sumber tidak mengira buku ini yang salah hitung.
 
-## Bab 15 — Fungsi Hash dan MAC (tanpa sumber referensi)
+## Bab 15 — Fungsi Hash dan MAC (tanpa sumber referensi)  `[x]` SELESAI
 Sumber: `menezes1996` (HAC Bab 9), `stallings2017`, `katz2020`, FIPS 180-4, FIPS 202,
-SP 800-107, SP 800-38B, RFC 4231. Target: ±5.000 kata.
+SP 800-107, SP 800-38B, RFC 4231, RFC 4493. Target: ±5.000 kata. Bab ini tidak
+punya berkas di `referensi/`, sehingga seluruh materi disusun dari sumber
+silabus tersebut. **22 entri baru** di `references.bib` (`merkle1989`,
+`damgard1989`, `rivest1992md5`, `kelsey2005second`, `wang2004md5`, `wang2005sha1`,
+`stevens2009rogue`, `stevens2017shattered`, `leurent2020sha1`, `bertoni2011keccak`,
+`fips1804`, `fips202`, `bellare1996hmac`, `fips1981`, `rfc2104`, `rfc3174`,
+`rfc4231`, `rfc4493`, `sp800107`, `sp80038b`, `sp80038d`,
+`bernstein2005poly1305`); `references.bib` 68 → **90 entri**.
 
-- [ ] Mekanisme internal kompresi MD5/SHA-1/SHA-2 + gambar alur
-- [ ] Vektor uji nyata (RFC 4231 / jejak kompresi SHA-256)
-- [ ] Serangan tabrakan nyata: Wang 2004, SHAttered
-- [ ] SHA-3/Keccak: rate/capacity, Keccak-f[1600], padding
-- [ ] MAC selain HMAC: CBC-MAC, CMAC, GMAC/Poly1305, UMAC; AEAD
-- [ ] Notasi formal PRF/PRP, EUF-CMA, batas ulang tahun
-- [ ] Gambar + entri `.bib`
+Hasil: **11.990 kata** pada sembilan berkas (tiga section 8.385, contoh 1.602,
+praktikum 678, latihan 412, rangkuman 383, evaluasi 352) — semula 1.830 kata, jadi
+**6,6 kali** — **39 halaman mandiri**, **16 persamaan bernomor** (semula **nol**),
+**8 tabel bernomor** (semula **nol**), **5 gambar bernomor** (semula 2 diagram
+TikZ: `alur-fungsi-hash`, `skema-hmac`; kini ditambah `batas-birthday`,
+`konstruksi-sponge`, dan satu gambar raster `longsoran-sha256`), **7 contoh
+terhitung** di dalam environment `example` (semula **nol**), **21 subbagian**
+(14 → 21), dan **38 sitasi** (semula 10).
+
+- [x] **Mekanisme internal kompresi + gambar alur** — Subbagian
+  `subsec:anatomi-sha256`: jadwal pesan (Persamaan~\eqref{eq:sha256-jadwal}),
+  enam fungsi pembantu $\mathrm{Ch}$, $\mathrm{Maj}$, $\Sigma_0$, $\Sigma_1$
+  (Persamaan~\eqref{eq:sha256-fungsi}), pembaruan register
+  (Persamaan~\eqref{eq:sha256-kompresi}), jejak kompresi pesan `abc` pada enam
+  putaran terpilih (Tabel~\ref{tab:trace-sha256}), plus anatomi MD5
+  (Persamaan~\eqref{eq:md5-putaran}) dan konstruksi Merkle--Damgård
+  (Persamaan~\eqref{eq:md-iterasi})
+- [x] **Vektor uji nyata menggantikan hash mainan** — vektor HMAC-SHA-256
+  RFC 4231 TC1--TC4 dan TC6 (Tabel~\ref{tab:hmac-vektor}), jejak kompresi SHA-256
+  satu blok 512 bit (`ba7816bf…f20015ad`), dan serangan panjang-ekstensi
+  sungguhan pada `H(K‖m)` dengan $K = \texttt{"kunci"}$
+  (Contoh~\ref{ex:length-extension}); seluruh angka dicocokkan dengan
+  `hashlib`/`hmac` di `code/python/hash_uji.py`
+- [x] **Serangan tabrakan nyata** — Subbagian `subsec:kriptanalisis-hash`:
+  Wang 2004 (MD5) \citep{wang2004md5}, Wang 2005 (SHA-1) \citep{wang2005sha1},
+  *chosen-prefix* Stevens 2009 \citep{stevens2009rogue}, **SHAttered** 2017
+  $\approx 2^{63{,}1}$ operasi kompresi \citep{stevens2017shattered}, dan
+  serangan pilih-awalan SHA-1 berbiaya $2^{63{,}4}$ oleh Leurent--Peyrin 2020
+  \citep{leurent2020sha1}
+- [x] **SHA-3/Keccak** — Subbagian `subsec:konstruksi-hash` dan diagram
+  `figures/konstruksi-sponge`: pemisahan *rate* dan kapasitas, Keccak-f[1600]
+  24 putaran, padding, dan alasan mengapa konstruksi sponge tahan terhadap
+  serangan panjang-ekstensi serta tidak bergantung pada ketahanan kolisi sebuah
+  fungsi kompresi \citep{bertoni2011keccak,fips202}
+- [x] **Batas ulang tahun + perbandingan parameter** — penurunan
+  Persamaan~\eqref{eq:birthday-peluang} sampai \eqref{eq:birthday-50}, diagram
+  skala relatif `figures/batas-birthday`, dan Tabel~\ref{tab:parameter-hash}
+  (MD5, SHA-1, SHA-224/256, SHA-384/512, SHA-3) beserta status keamanannya
+- [x] **Banyak MAC, bukan hanya HMAC** — Subbagian `subsec:hmac` (HMAC,
+  Persamaan~\eqref{eq:hmac-panjang-kunci} dan \eqref{eq:hmac-rumus}, diagram
+  `figures/skema-hmac`), CBC-MAC (Persamaan~\eqref{eq:cbc-mac}) beserta serangan
+  sambungannya, CMAC (Persamaan~\eqref{eq:cmac-subkunci}), Poly1305
+  (Persamaan~\eqref{eq:poly1305}), dan GMAC — dihimpun pada
+  Tabel~\ref{tab:perbandingan-mac}
+- [x] **AEAD dan syarat keunikan nonce** — Subbagian `subsec:aead`: GCM, CCM,
+  dan ChaCha20-Poly1305 beserta keunggulan/kelemahan masing-masing
+  (Tabel~\ref{tab:aead}), dan akibat pengulangan nonce pada GCM
+  \citep{sp80038d,rfc8439}
+- [x] **Notasi formal PRF/PRP dan EUF-CMA** — permainan EUF-CMA pada
+  Subbagian `sec:mac` dengan peluang menang $\approx 2^{-t}$
+  \citep{katz2020}, penegasan bahwa keamanan HMAC bersandar pada sifat PRF dan
+  **bukan** pada ketahanan kolisi, serta tiga bentuk naif $H(K\|m)$,
+  $H(m\|K)$, dan $H(K\|m\|K)$ beserta alasan kegagalan masing-masing
+- [x] **Perbandingan tag waktu-konstan** — Subbagian `subsec:tag-waktu-konstan`:
+  perbandingan naif yang berhenti pada byte pertama berbeda menurunkan biaya
+  pemalsuan dari $2^{t}$ menjadi sekitar $t \cdot 256$, dibandingkan dengan
+  bentuk waktu-konstan, ditutup sitasi SP 800-107 \citep{sp800107}
+- [x] **Gambar raster pertama untuk bab ini** — `longsoran-sha256.png`
+  (Gambar~\ref{fig:longsoran-sha256}): digest 256 bit dua pesan yang berbeda
+  satu huruf kecil-besar ditampilkan sebagai dua petak $16 \times 16$, ditambah
+  petak ketiga yang menyorot $115$ bit yang berubah. Dibangkitkan oleh
+  `scripts/refactor/figures/avalanche_hash.py` dengan pustaka standar saja
+  (`hashlib` + `zlib`) karena matplotlib tidak tersedia di lingkungan ini;
+  dilengkapi pembahasan uji longsoran (harapan $128$ bit, simpangan baku $8$,
+  nilai $115$ berada $1{,}6$ simpangan baku dari harapan)
+- [x] **Program verifikasi** `code/python/hash_uji.py` (10.017 byte, ASCII + LF):
+  jejak kompresi SHA-256, aturan padding Merkle--Damgård, serangan
+  panjang-ekstensi, lima vektor RFC 4231, batas ulang tahun untuk empat panjang
+  digest, dan perbandingan tag waktu-konstan. Seluruh nilainya dicocokkan dengan
+  `hashlib`/`hmac` dan **cocok**; `praktikum.tex` memuat enam `lstinputlisting`
+  yang menampilkan potongan-potongan berkas ini melalui `\codefile{}`
+- [x] **Pertumbuhan komponen OBE** — `praktikum.tex` 1 → 4 `obeactivity`
+  (Aktivitas 15.1 efek longsoran, 15.2 jejak kompresi, 15.3 panjang-ekstensi,
+  15.4 vektor MAC), `latihan.tex` 1 → 4 `obereflection` (3 → 15 butir),
+  `rangkuman.tex` 7 → 12 butir, `evaluasi.tex` 3 → 10 butir kuis dan
+  `competencychecklist` 5 → 12 baris
+
+### Koreksi angka (temuan verifikasi sendiri)
+
+Contoh CMAC pada bab ini semula ditulis dengan **kunci yang seluruhnya nol**
+(`0000…0000`) dan empat tag. Verifikasi silang dengan OpenSSL 3.2.4 menunjukkan
+klaim itu tidak konsisten dengan angkanya:
+
+| Klaim semula | Verifikasi |
+|---|---|
+| Kunci yang dipakai adalah nol | **salah** — $E_K(0^{128})$ hanya memberi `7df76b0c…` bila $K = \texttt{2b7e151628aed2a6abf7158809cf4f3c}$ (kunci vektor uji RFC 4493); dengan kunci nol hasilnya `66e94bd4ef8a2c3b884cfa59ca342b2e` |
+| `320 bit (3 blok): ce0cbf17…` | **salah** — itu CMAC pesan **256 bit**; nilai 320 bit yang benar `dfa66747de9ae63030ca32611497c827` |
+| `512 bit (4 blok): c47c4d9d…` | **salah** — tidak cocok dengan kunci mana pun dan pesan mana pun yang diuji; nilai 512 bit yang benar `51f0bebf7e3b9d92fc49741779363cfe` |
+| Subkunci $K_1$, $K_2$ | **benar** — `fbeed618…` dan `f7ddac30…` memang penggandaan berurutan dari `7df76b0c…` dengan $\mathrm{Rb} = \texttt{0x87}$ |
+| Perintah OpenSSL pada contoh | **tidak lengkap** — tidak ada pesan yang disalurkan dan kuncinya salah; diganti bentuk `printf '…' \| xxd -r -p \| openssl mac …` yang benar-benar menghasilkan `070a16b4…` |
+
+Seluruh angka CMAC pada `contoh.tex` dan `section-03.tex` kini bersesuaian dengan
+vektor uji RFC 4493 \citep{rfc4493} (0, 128, 320, dan 512 bit), dan keempatnya
+sudah diverifikasi ulang dengan OpenSSL. Nilai $L$, $K_1$, $K_2$, dan $E_K(K_2)$
+yang semula benar tetap dipertahankan.
 
 ## Bab 16 — Otentikasi dan Tanda Tangan Digital (tanpa sumber referensi)
 Sumber: `stallings2017`, `menezes1996`, `rsa1978`, `katz2020`, FIPS 186-5, RFC 5280,

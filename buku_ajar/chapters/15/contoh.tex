@@ -1,22 +1,36 @@
 \section{Contoh Terhitung}
 Setiap angka pada contoh berikut diverifikasi secara numerik dengan Python.
 
-\subsection{Biaya Serangan Birthday pada MD5 dan SHA-256}
-Untuk peluang kolisi sekitar $50\%$, jumlah pesan acak yang harus dicoba adalah $k \approx 1{,}177 \cdot 2^{n/2}$.
+\begin{example}[Biaya Serangan Birthday pada MD5 dan SHA-256]
+Untuk peluang kolisi sekitar $50\%$, jumlah pesan acak yang harus dicoba adalah
+$k \approx 1{,}177 \cdot 2^{n/2}$ menurut Persamaan~\eqref{eq:birthday-50}.
 
 \textbf{(a) MD5}, $n = 128$:
 \[ k \approx 1{,}177 \cdot 2^{64} = 1{,}177 \cdot 18.446.744.073.709.551.616 \approx 2{,}17\times10^{19}. \]
 
-\textbf{(b) SHA-256}, $n = 256$:
-\[ k \approx 1{,}177 \cdot 2^{128} = 1{,}177 \cdot (3{,}402823669\times10^{38}) \approx 4{,}01\times10^{38}. \]
+\textbf{(b) SHA-1}, $n = 160$:
+\[ k \approx 1{,}177 \cdot 2^{80} \approx 1{,}42\times10^{24}. \]
 
-Rasio keduanya adalah $2^{128}/2^{64} = 2^{64} = 18.446.744.073.709.551.616$. Jadi SHA-256 membutuhkan sekitar $1{,}8\times10^{19}$ kali lebih banyak usaha daripada MD5.
+\textbf{(c) SHA-256}, $n = 256$:
+\[ k \approx 1{,}177 \cdot 2^{128} \approx 1{,}177 \cdot 3{,}402823669\times10^{38} \approx 4{,}01\times10^{38}. \]
 
-\subsection{Padding Merkle--Damgård}
-Aturan padding Merkle--Damgård untuk blok 512 bit: tambahkan $1$ bit ``1'', lalu $k$ bit ``0'', lalu panjang pesan $L$ dalam 64 bit, dengan syarat
+\textbf{(d) SHA-512}, $n = 512$:
+\[ k \approx 1{,}177 \cdot 2^{256} \approx 1{,}36\times10^{77}. \]
+
+Rasio antara SHA-256 dan MD5 adalah $2^{128}/2^{64} = 2^{64} =
+18.446.744.073.709.551.616$. Jadi menembus ketahanan kolisi SHA-256 menuntut
+sekitar $1{,}8\times10^{19}$ kali lebih banyak usaha daripada menembus MD5.
+Angka itu menjelaskan mengapa MD5 sudah lama tidak layak: pada tahun 2004,
+kolisinya justru tidak ditemukan melalui penelusuran $2^{64}$ ini, melainkan
+jauh lebih murah melalui kelemahan struktur kompresinya.
+\end{example}
+
+\begin{example}[Padding Merkle--Damgård]
+Aturan padding Merkle--Damgård untuk blok 512 bit: tambahkan $1$ bit ``1'', lalu
+$k$ bit ``0'', lalu panjang pesan $L$ dalam 64 bit, dengan syarat
 \[ L + 1 + k + 64 \equiv 0 \pmod{512}, \qquad 0 \le k < 512 . \]
 
-\textbf{Contoh: pesan \code{"abc"}.} Panjang $L = 3 \text{ byte} = 24$ bit.
+\textbf{Contoh: pesan \code{abc}.} Panjang $L = 3 \text{ byte} = 24$ bit.
 \[ 24 + 1 + k + 64 \equiv 0 \pmod{512} \;\Rightarrow\; k = 423 . \]
 Total $= 24 + 1 + 423 + 64 = 512$ bit, sehingga terbentuk \textbf{1 blok}.
 
@@ -24,15 +38,245 @@ Total $= 24 + 1 + 423 + 64 = 512$ bit, sehingga terbentuk \textbf{1 blok}.
 \[ 1000 + 1 + k + 64 \equiv 0 \pmod{512} \;\Rightarrow\; k = 471, \]
 total $= 1000 + 1 + 471 + 64 = 1536$ bit, yaitu \textbf{3 blok}.
 
-\subsection{HMAC dengan Fungsi Hash Mainan}
-Agar struktur ipad/opad terlihat, pakai fungsi hash mainan $H(b_1,\dots,b_t) = \left(\sum_i b_i\right) \bmod 256$ dan kunci 1 byte $K = \code{0x3A}$, pesan $m = \code{0x41}$, serta $\mathrm{ipad} = \code{0x36}$, $\mathrm{opad} = \code{0x5C}$.
+\textbf{Contoh kasus batas: pesan $L = 448$ bit.}
+\[ 448 + 1 + k + 64 \equiv 0 \pmod{512} \;\Rightarrow\; k = 511 , \]
+total $= 448 + 1 + 511 + 64 = 1024$ bit, yaitu \textbf{2 blok}. Perhatikan bahwa
+pesan yang panjangnya $448$ bit justru memerlukan blok tambahan, sebab bit ``1''
+selalu disisipkan dan tidak ada tempat lagi untuknya pada blok pertama.
+\end{example}
+
+\begin{example}[Jejak Kompresi SHA-256 untuk Pesan \code{abc}]
+Contoh ini menjalankan Persamaan~\eqref{eq:sha256-jadwal} sampai
+Persamaan~\eqref{eq:sha256-kompresi} secara manual untuk pesan \code{abc}.
+Blok 512 bit yang telah diberi padding adalah
+\[
+\code{61626380}\ \underbrace{\code{00}\cdots\code{00}}_{52 \text{ byte}}\
+\code{0000000000000018} ,
+\]
+sehingga enam belas kata pertama jadwal pesan bernilai $W_0 = \code{61626380}$
+dan $W_1 = W_2 = \cdots = W_{14} = \code{00000000}$, serta $W_{15} =
+\code{00000018}$. Dari situ dibangkitkan kata-kata berikutnya, dan beberapa yang
+pertama adalah
+
+\[
+W_{16} = \code{61626380}, \quad
+W_{17} = \code{000f0000}, \quad
+W_{18} = \code{7da86405}, \quad
+W_{19} = \code{600003c6} .
+\]
+
+Perhatikan $W_{16}$: nilainya sama persis dengan $W_0$. Bukan kebetulan --- untuk
+pesan yang amat pendek, banyak suku pada penjumlahan jadwal pesan bernilai nol,
+sehingga kata-kata awal dapat berulang. Inilah salah satu gejala struktural yang
+dimanfaatkan serangan pada SHA-1.
+
+Delapan register dimulai dari nilai awal tetap, lalu diperbarui selama 64 putaran
+menurut Persamaan~\eqref{eq:sha256-kompresi}. Tabel~\ref{tab:trace-sha256}
+memperlihatkan keadaan dua di antaranya pada putaran terpilih. Sesudah seluruh
+putaran selesai, kedelapan register dijumlahkan kembali ke nilai awalnya, dan
+hasilnya adalah
+
+\[
+\code{ba7816bf}\ \code{8f01cfea}\ \code{414140de}\ \code{5dae2223}\
+\code{b00361a3}\ \code{96177a9c}\ \code{b410ff61}\ \code{f20015ad} ,
+\]
+
+yang tepat sama dengan keluaran \code{hashlib.sha256(b"abc")} pada Python. Jejak
+lengkapnya diperlihatkan pada Aktivitas~\ref{act:hash-sha256} dalam bab ini dan
+dapat dijalankan sendiri oleh mahasiswa.
+\end{example}
+
+\begin{example}[Serangan Panjang-Ekstensi pada SHA-256 yang Sesungguhnya]
+\label{ex:length-extension}
+Sebuah sistem memakai skema naif $H(K \| m)$ dengan kunci rahasia $K$ dan fungsi
+hash SHA-256. Misalkan kunci adalah $K = \code{"kunci"}$ (5 byte) dan penyerang
+menyaksikan pesan $m = \code{"pesan"}$ (5 byte) beserta tag-nya. Nilai
+$H(K \,\|\, m)$ yang terlihat di saluran adalah
+
+\begin{center}
+\code{d2c8323f441dc775f1433dbd55341f7baa94e4f832d85f50e32cb3ce40211ac4}
+\end{center}
+
+Penyerang tidak mengetahui $K$, tetapi ia mengetahui $|K \| m| = 10$ byte $= 80$
+bit, dan itu sudah cukup. Panjang $80$ bit menuntut padding sebanyak $k = 367$
+bit, sehingga blok pertama yang diproses mesin secara efektif adalah
+
+\[
+\code{kuncipesan} \,\|\, \code{80}\
+\underbrace{\code{00}\cdots\code{00}}_{45 \text{ byte}}\
+\code{0000000000000050} ,
+\]
+
+yaitu $10 + 1 + 45 + 8 = 64$ byte. Penyerang menempelkan pesan tambahan
+pilihannya, misalnya untai \code{\&penerima=Budi} yang panjangnya 14 byte, lalu
+mulai dari keadaan internal yang sama dengan hash di atas dan melanjutkan
+kompresi hanya atas pesan tambahan itu. Ia memperoleh
+
+\[
+\code{80e43e01b64b6c9b05103acf3afaf58743b775ea6b53195974282e4796aa9f84} ,
+\]
+
+yang tepat sama dengan $H(K \,\|\, m \,\|\, \mathrm{pad} \,\|\,
+\text{\code{\&penerima=Budi}})$ sebagaimana dihitung oleh \code{hashlib}. Tag itu sah
+menurut skema, padahal penyerang tidak pernah mengetahui satu byte pun dari $K$.
+
+Yang perlu digarisbawahi: biaya serangan ini \emph{nol} tambahan. Penyerang hanya
+menghitung hash dari 14 byte tambahan, sama seperti menghitung hash pesan biasa.
+Tidak ada $2^{128}$ pencarian, tidak ada kolisi. Seluruh kekuatan skema lenyap
+hanya karena keadaan internal sama dengan nilai yang dipublikasikan --- tepat
+seperti dijelaskan pada Subbagian~\ref{subsec:length-extension}.
+
+Bila tag tersebut dianggap sebagai izin atas operasi tertentu, penyerang baru
+saja memperluas izinnya dari ``pesan'' menjadi ``pesan'' ditambah perintah
+penerimaan kepada pihak lain. Skema $H(K \| m)$ tidak aman; HMAC pada
+Subbagian~\ref{subsec:hmac} dirancang justru untuk menutup celah ini.
+\end{example}
+
+\begin{example}[Vektor Uji HMAC-SHA-256 menurut RFC 4231]
+Angka-angka pada Tabel~\ref{tab:hmac-vektor} dihitung ulang dan dicocokkan dengan
+keluaran \code{hmac.new(kunci, pesan, hashlib.sha256)}:
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\code{TC1: b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7}\\[2pt]
+\code{TC2: 5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843}\\[2pt]
+\code{TC3: 773ea91e36800e46854db8ebd09181a72959098b3ef8c122d9635514ced565fe}\\[2pt]
+\code{TC4: 82558a389a443c0ea4cc819899f2083a85f0faa3e578f8077a2e3ff46729665b}\\[2pt]
+\code{TC6: 60e431591ee0b67f0d8a26aacbf5b77f8e0bc6213728c5140546040f0ee37f54}
+\end{minipage}
+\end{center}
+
+Kasus TC1 memakai kunci 20 byte bernilai \code{0x0b} dan pesan \code{Hi There}.
+Terhadap serangan panjang-ekstensi, penyerang tidak memperoleh apa pun. Ia
+memang mengetahui tag akhir lapis luar, tetapi untuk memperpanjangnya ia harus
+memulai dari keadaan internal yang dihasilkan blok $K^{+} \oplus \mathrm{opad}$
+--- dan keadaan itu justru tidak pernah dipublikasikan. Menghitung mundur dari
+tag akhir tidak mungkin, sebab SHA-256 bukan fungsi yang dapat dibalik.
+
+Kasus TC6 memperlihatkan cabang $H(K)$ pada Persamaan~\eqref{eq:hmac-panjang-kunci}
+bekerja: kuncinya 131 byte, melebihi blok 64 byte, sehingga lebih dahulu di-hash
+menjadi 32 byte sebelum dipakai. Tag yang dihasilkan tetap cocok, dan itu sekaligus
+menjadi kasus uji yang baik untuk memeriksa implementasi sendiri --- kesalahan
+pada aturan panjang kunci sering tidak tampak pada kunci pendek.
+\end{example}
+
+\begin{example}[CMAC dengan AES-128: Vektor Uji RFC 4493]
+Contoh ini menghitung CMAC menurut SP 800-38B \citep{sp80038b} atas vektor uji
+baku RFC 4493 \citep{rfc4493}, sehingga siapa pun dapat memeriksanya. AES-128
+dipakai dengan kunci
+\[
+K = \code{2b7e151628aed2a6abf7158809cf4f3c} .
+\]
+Blok nol yang dienkripsi dengan kunci itu memberi
+\[
+L = E_K(0^{128}) = \code{7df76b0c1ab899b33e42f047b91b546f} .
+\]
+Menurut Persamaan~\eqref{eq:cmac-subkunci}, $K_1 = L \cdot x$. Bit teratas $L$
+adalah \code{7} $= 0111_2$, jadi bit teratasnya bernilai $0$; hasil penggandaan
+$L$ yang digeser satu bit ke kiri adalah
+\[
+K_1 = \code{fbeed618357133667c85e08f7236a8de} .
+\]
+Bit teratas $K_1$ adalah \code{f} $= 1111_2$, sehingga penggandaan berikutnya
+memerlukan XOR dengan $\mathrm{Rb} = \code{0x87}$:
+\[
+K_2 = \code{f7ddac306ae266ccf90bc11ee46d513b} .
+\]
+
+Dengan dua subkunci itu, CMAC menghasilkan tag berikut.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\code{kosong : bb1d6929e95937287fa37d129b756746}\\[2pt]
+\code{128 bit: 070a16b46b4d4144f79bdd9dd04a287c}\\[2pt]
+\code{320 bit: dfa66747de9ae63030ca32611497c827}\\[2pt]
+\code{512 bit: 51f0bebf7e3b9d92fc49741779363cfe}
+\end{minipage}
+\end{center}
+
+Keempat pesan uji itu bukan pesan sembarang, melainkan satu pesan yang
+diperpanjang sedikit demi sedikit, sehingga perilaku CMAC pada blok yang penuh
+dan pada blok yang terakhirnya tidak penuh dapat diperiksa pada satu rangkaian:
 
 \begin{itemize}
-    \item Kunci efektif dalam: $K \oplus \mathrm{ipad} = \code{0x3A} \oplus \code{0x36} = \code{0x0C} = 12$.
-    \item Kunci efektif luar: $K \oplus \mathrm{opad} = \code{0x3A} \oplus \code{0x5C} = \code{0x66} = 102$.
-    \item Lapis dalam: $h_1 = H(\code{0x0C}, \code{0x41}) = (12 + 65) \bmod 256 = 77$.
-    \item Lapis luar: $\mathrm{Tag} = H(\code{0x66}, 77) = (102 + 77) \bmod 256 = 179$.
+    \item 128 bit, satu blok penuh:
+          \[ \code{6bc1bee22e409f96e93d7e117393172a}; \]
+    \item 320 bit, ditambah dua potongan:
+          \[ \code{ae2d8a571e03ac9c9eb76fac45af8e51}
+             \quad \text{dan} \quad \code{30c81c46a35ce411}; \]
+    \item 512 bit, ditambah dua potongan lagi:
+          \[ \code{e5fbc1191a0a52ef}
+             \quad \text{dan} \quad \code{f69f2445df4f9b17ad2b417be66c3710}. \]
+\end{itemize}
+
+Perhatikan kasus 128 bit: pesannya tepat satu blok penuh, jadi blok akhir itu
+tidak diberi padding dan memperoleh perlakuan $K_1$. Kasus 320 bit berakhir
+dengan potongan 24 bit, sehingga blok akhirnya diberi padding dan memperoleh
+perlakuan $K_2$. Kedua cabang pada Persamaan~\eqref{eq:cmac-subkunci} dengan
+demikian terpakai, dan itulah sebabnya keempat vektor ini dipilih sebagai uji
+baku.
+
+Verifikasi silang dengan perintah OpenSSL, dengan pesan disalurkan melalui
+masukan baku:
+
+\begin{center}
+\begin{minipage}{0.9\linewidth}
+\begin{verbatim}
+printf '6bc1bee22e409f96e93d7e117393172a' | xxd -r -p |
+  openssl mac -macopt cipher:AES-128-CBC \
+    -macopt hexkey:2b7e151628aed2a6abf7158809cf4f3c CMAC
+\end{verbatim}
+\end{minipage}
+\end{center}
+
+memberi nilai yang sama untuk keempat kasus, jadi implementasi AES dan CMAC di
+sini tidak mengandung kekeliruan.
+
+Kasus pesan kosong menarik untuk ditelaah. Karena tidak ada blok pesan sama
+sekali, blok akhir dibentuk dari padding dan memperoleh perlakuan $K_2$, sehingga
+tag-nya adalah $E_K(K_2)$. Bila aturan subkunci salah diterapkan --- misalnya
+$K_1$ dipakai untuk blok kosong --- hasilnya akan berbeda jauh. Kasus batas
+semacam ini justru yang paling sering menimbulkan kesalahan implementasi, dan
+karena itu patut selalu diuji.
+
+Satu peringatan penutup: nilai-nilai di atas hanya berlaku untuk kunci uji baku
+itu, bukan untuk kunci sembarang. Kunci tersebut dipilih karena muncul pada vektor
+uji resmi, bukan karena aman; pada pemakaian sungguhan kunci CMAC harus
+dibangkitkan secara acak seperti kunci simetris lainnya. Yang diuji di sini adalah
+kesesuaian implementasi dengan baku, bukan kekuatan kuncinya.
+\end{example}
+
+\begin{example}[HMAC dengan Fungsi Hash Mainan]
+Agar struktur ipad/opad terlihat tanpa terhalang detail internal SHA-256, pakai
+fungsi hash mainan $H(b_1,\dots,b_t) = \left(\sum_i b_i\right) \bmod 256$ dan kunci
+1 byte $K = \code{0x3A}$, pesan $m = \code{0x41}$, serta $\mathrm{ipad} =
+\code{0x36}$, $\mathrm{opad} = \code{0x5C}$.
+
+\begin{itemize}
+    \item Kunci efektif dalam: $K \oplus \mathrm{ipad} = \code{0x3A} \oplus
+          \code{0x36} = \code{0x0C} = 12$.
+    \item Kunci efektif luar: $K \oplus \mathrm{opad} = \code{0x3A} \oplus
+          \code{0x5C} = \code{0x66} = 102$.
+    \item Lapis dalam: $h_1 = H(\code{0x0C}, \code{0x41}) = (12 + 65) \bmod 256
+          = 77$.
+    \item Lapis luar: $\mathrm{Tag} = H(\code{0x66}, 77) = (102 + 77) \bmod 256
+          = 179$.
 \end{itemize}
 Hasilnya $\mathrm{HMAC}(K,m) = 179$.
 
-\textbf{Perbandingan dengan $H(K\|m)$.} Untuk skema naif $H(K\|m) = (58 + 65) \bmod 256 = 123 = \code{0x7B}$. Penyerang yang tahu tag ini dan panjang $K$ dapat menghitung $H(K\|m\|\code{0x42})$ tanpa $K$, yaitu $123 + 66 = 189 \pmod{256}$; penambahan byte \code{0x42} mengubah tag secara terprediksi. Serangan \textit{length extension} inilah yang tidak mungkin dilakukan terhadap HMAC dua lapis.
+\textbf{Perbandingan dengan $H(K\|m)$.} Untuk skema naif $H(K\|m) = (58 + 65)
+\bmod 256 = 123 = \code{0x7B}$. Penyerang yang tahu tag ini dan panjang $K$ dapat
+menghitung $H(K\|m\|\code{0x42})$ tanpa $K$, yaitu $123 + 66 = 189 \pmod{256}$;
+penambahan byte \code{0x42} mengubah tag secara terprediksi. Serangan
+\emph{length extension} inilah yang tidak mungkin dilakukan terhadap HMAC dua
+lapis.
+
+Bandingkan pula dengan struktur HMAC pada angka mainan ini. Untuk memperpanjang
+tag 179, penyerang harus memulai dari keadaan setelah blok $K \oplus
+\mathrm{opad}$, yaitu keadaan yang hanya muncul di dalam lapis luar dan tidak
+pernah disiarkan. Ia hanya melihat hasil akhirnya, sehingga tidak punya titik
+pijakan --- persis sebagaimana pada SHA-256 sungguhan di
+Contoh~\ref{ex:length-extension}.
+\end{example}

@@ -10,6 +10,12 @@
 Langkah-langkah pada Aktivitas 15.1 dapat dijalankan langsung melalui program
 pada Listing~\ref{lst:hash-avalanche}. Program itu menghitung SHA-256 dari
 kedua kalimat, membandingkan digestnya, dan menghitung berapa bit yang berbeda.
+Hasil yang seharusnya Anda peroleh diperlihatkan pada
+Gambar~\ref{fig:longsoran-sha256}: $115$ dari $256$ bit berubah, yaitu
+$44{,}92\%$ --- mendekati setengah, sebagaimana disyaratkan oleh uji longsoran
+pada Subbagian~\ref{subsec:anatomi-sha256}. Bila angka yang Anda peroleh
+berbeda jauh dari setengah, ada yang salah pada pesan yang di-hash, bukan pada
+SHA-256.
 
 \lstinputlisting[
     language=Python,
@@ -21,3 +27,113 @@ Program yang sama tersedia dalam C++ (\texttt{code/cpp/hash\_avalanche.cpp})
 dan MATLAB (\texttt{code/matlab/hash\_avalanche.m}); keduanya memuat
 implementasi SHA-256 sendiri karena bahasanya tidak menyediakannya secara
 bawaan.
+
+\begin{obeactivity}
+\textbf{Aktivitas 15.2: Menelusuri Jejak Kompresi SHA-256}
+\label{act:hash-sha256}
+1. Jalankan \texttt{python code/python/hash\_uji.py} dan catat keadaan register
+   $a$ dan $e$ pada putaran 1, 2, 16, 32, 48, dan 64.
+2. Bandingkan digest yang dihasilkan dengan keluaran \texttt{hashlib.sha256}.
+3. Ubah pesan masukan menjadi \texttt{abd} dan amati pada putaran ke berapa
+   keadaan register mulai berbeda dari \texttt{abc}.
+4. Periksa hasil perhitungan padding untuk tiga panjang pesan yang tercetak:
+   mengapa panjang 448 bit justru memerlukan dua blok, bukan satu?
+\end{obeactivity}
+
+Berbeda dengan Aktivitas 15.1 yang memakai \texttt{hashlib} sebagai kotak hitam,
+aktivitas ini membuka isi kotaknya. SHA-256 ditulis dari definisi sehingga setiap
+putaran dapat diperiksa satu per satu. Bagian jadwal pesan dan fungsi kompresi
+(Persamaan~\eqref{eq:sha256-jadwal} dan~\eqref{eq:sha256-kompresi}) diperlihatkan
+pada Listing~\ref{lst:hash-jadwal}, sedangkan aturan padding
+(Persamaan~\eqref{eq:padding-sha}) beserta pengulangan bloknya ada pada
+Listing~\ref{lst:hash-padding}.
+
+\lstinputlisting[
+    language=Python,
+    caption={Jadwal pesan dan fungsi kompresi SHA-256 selama 64 putaran},
+    label={lst:hash-jadwal},
+    firstline=60,
+    lastline=90
+]{\codefile{python/hash_uji.py}}
+
+\lstinputlisting[
+    language=Python,
+    caption={Aturan padding Merkle--Damgård dan pengulangan blok SHA-256},
+    label={lst:hash-padding},
+    firstline=92,
+    lastline=110
+]{\codefile{python/hash_uji.py}}
+
+Hasil menjalankan program untuk pesan \texttt{abc} memperlihatkan bahwa sesudah
+satu putaran saja register $a$ sudah berubah dari \code{6a09e667} menjadi
+\code{5d6aebcd}, dan sesudah 64 putaran digestnya berakhir dengan
+\code{ba7816bf} --- tepat sama dengan nilai baku. Perhatikan juga bahwa peredaran
+nilai pada register tidak memperlihatkan pola apa pun terhadap kesederhanaan
+masukan \texttt{abc}. Itulah wujud konkret sifat \emph{diffusion} yang dibahas
+pada Subbagian~\ref{subsec:konstruksi-hash}.
+
+\begin{obeactivity}
+\textbf{Aktivitas 15.3: Membuktikan Serangan Panjang-Ekstensi}
+1. Jalankan program dan catat nilai $H(K \| m)$ untuk $K = \texttt{"kunci"}$ dan
+   $m = \texttt{"pesan"}$.
+2. Perhatikan bahwa penyerang hanya mengetahui panjang $|K \| m| = 10$ byte,
+   bukan isi $K$.
+3. Bandingkan tag palsu yang dihitung dari keadaan internal dengan hash yang
+   dihitung \texttt{hashlib} atas pesan yang diperpanjang. Apakah keduanya sama?
+4. Diskusikan: berapa operasi tambahan yang dibutuhkan penyerang dibandingkan
+   dengan menghitung hash pesan biasa?
+\end{obeactivity}
+
+Serangan pada Aktivitas 15.3 memperlihatkan bahwa skema $H(K \| m)$ dapat
+ditembus tanpa mengetahui kunci sama sekali. Seluruh serangan itu dijalankan oleh
+fungsi pada Listing~\ref{lst:hash-ekstensi}, yang hanya melanjutkan kompresi dari
+digest yang sudah diketahui. Hasil numeriknya dibahas pada
+Contoh~\ref{ex:length-extension}.
+
+\lstinputlisting[
+    language=Python,
+    caption={Inti serangan panjang-ekstensi: melanjutkan kompresi dari digest},
+    label={lst:hash-ekstensi},
+    firstline=117,
+    lastline=130
+]{\codefile{python/hash_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 15.4: Menguji MAC: HMAC, Vektor RFC 4231, dan Waktu-Konstan}
+1. Jalankan program dan periksa apakah kelima vektor uji HMAC-SHA-256 cocok
+   dengan keluaran \texttt{hmac.new}.
+2. Perhatikan TC6: kuncinya 131 byte, melebihi ukuran blok 64 byte. Cabang mana
+   pada Persamaan~\eqref{eq:hmac-panjang-kunci} yang dipakai?
+3. Hitung sendiri batas ulang tahun untuk $n = 128$, $160$, $256$, dan $512$,
+   lalu bandingkan dengan nilai yang tercetak.
+4. Pada bagian terakhir, kedua fungsi pemeriksa tag menolak tag yang diubah.
+   Jelaskan mengapa cara pertama tetap berbahaya meskipun jawabannya benar.
+\end{obeactivity}
+
+Listing~\ref{lst:hash-hmac} memuat HMAC yang ditulis mengikuti
+Persamaan~\eqref{eq:hmac-rumus}, sedangkan Listing~\ref{lst:hash-uji} memuat
+program pengujiannya: jejak kompresi, aturan padding, serangan panjang-ekstensi,
+kelima vektor RFC 4231, batas ulang tahun, dan perbandingan tag secara
+waktu-konstan.
+
+\lstinputlisting[
+    language=Python,
+    caption={HMAC-SHA-256 dari definisi: penyesuaian panjang kunci dan dua lapis hash},
+    label={lst:hash-hmac},
+    firstline=136,
+    lastline=146
+]{\codefile{python/hash_uji.py}}
+
+\lstinputlisting[
+    language=Python,
+    caption={Program pengujian: jejak kompresi, panjang-ekstensi, vektor RFC 4231,
+    batas ulang tahun, dan perbandingan waktu-konstan},
+    label={lst:hash-uji},
+    firstline=166,
+    lastline=263
+]{\codefile{python/hash_uji.py}}
+
+Sesudah aktivitas ini, mahasiswa diharapkan dapat menjawab pertanyaan yang
+menjadi inti bab ini: bukan sekadar \emph{apa} fungsi hash itu, melainkan
+\emph{mengapa} setiap pilihan konstruksinya diambil, dan apa yang terjadi bila
+pilihan itu keliru.

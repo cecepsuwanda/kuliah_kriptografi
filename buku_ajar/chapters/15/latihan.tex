@@ -5,3 +5,52 @@
 2. Apa perbedaan mendasar antara penggunaan fungsi hash untuk \textit{checksum} file dengan penggunaan hash dalam tanda tangan digital?
 3. Dalam skenario apa HMAC lebih tepat digunakan dibandingkan hanya menggunakan fungsi hash biasa?
 \end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 15.2}
+1. Panjang blok SHA-256 adalah 512 bit, sedangkan panjang digestnya 256 bit.
+   Mengapa keadaan internalnya 256 bit dan bukan 512 bit? Apa akibatnya bila
+   keadaan internal justru lebih pendek daripada digest?
+2. Polinom reduksi pada perkalian $GF(2^{128})$ untuk CMAC adalah
+   $x^{128} + x^{7} + x^{2} + x + 1$, sehingga konstanta $\mathrm{Rb} = \code{0x87}$.
+   Dari mana byte \code{87} itu berasal? Jelaskan langkahnya.
+3. Pada Persamaan~\eqref{eq:hmac-panjang-kunci}, kunci yang lebih panjang
+   daripada blok di-hash lebih dahulu, bukan dipotong. Tunjukkan mengapa
+   pemotongan akan merugikan keamanan dengan memberikan satu contoh kunci
+   yang berbeda tetapi setara efektifnya bila dipotong.
+4. Hitung berapa pesan maksimum yang boleh diberi tag dengan satu kunci bila
+   panjang tag 128 bit dan penyerang hanya boleh menebak satu kali. Hubungkan
+   jawaban itu dengan batas blok per kunci pada SP 800-38D.
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 15.3}
+1. Bandingkan struktur HMAC dan CMAC dari sisi bahan yang dibutuhkan dan
+   lingkungan pemakaian yang cocok untuk masing-masing.
+2. Jelaskan mengapa HMAC-SHA-1 masih dianggap aman meskipun SHA-1 sendiri sudah
+   lama runtuh sebagai fungsi hash. Sifat apa yang menjadi tumpuan keamanan
+   HMAC, dan mengapa sifat itu tidak tersentuh oleh serangan kolisi?
+3. Sebuah sistem menghasilkan nonce untuk GCM dengan cara
+   \texttt{nonce = int(time.time())}. Apa yang salah, dan serangan apa yang
+   menjadi mungkin? Usulkan perbaikan yang tidak bergantung pada jam sistem.
+4. Rancang skema MAC sederhana dari AES yang membedakan pesan berdasarkan
+   panjangnya, lalu perlihatkan satu cara penyerang memalsukan tag atas pesan
+   yang lebih panjang. Petunjuk: pelajari serangan sambungan pada CBC-MAC.
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 15.4}
+1. Diberikan $H$ adalah fungsi hash dengan digest 64 bit. Berapa pesan yang
+   harus dicoba agar peluang kolisi mencapai $50\%$? Bila setiap percobaan
+   memerlukan satu mikrodetik, berapa lama waktu yang dibutuhkan?
+2. Mengapa bit ``1'' pada padding selalu disisipkan, bahkan ketika pesan sudah
+   berakhir tepat pada batas blok? Apa yang akan terjadi pada keamanan bila
+   aturan itu dihapus?
+3. Sebuah basis data menyimpan kata sandi sebagai SHA-256 tanpa \textit{salt}.
+   Jelaskan dua serangan berbeda yang menjadi mungkin, dan bagaimana penambahan
+   \textit{salt} menutup keduanya.
+4. Bila penyerang dapat mengukur waktu tanggapan server dengan ketelitian satu
+   mikrodetik, berapa banyak percobaan yang ia butuhkan untuk memulihkan tag
+   128 bit pada pemeriksaan yang tidak waktu-konstan? Bandingkan dengan
+   $2^{128}$ dan jelaskan mengapa perbedaan itu menentukan.
+\end{obereflection}

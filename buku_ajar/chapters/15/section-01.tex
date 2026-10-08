@@ -1,27 +1,395 @@
 \section{Konsep Dasar Fungsi Hash}
-Fungsi hash adalah algoritma yang memetakan data input dengan ukuran variabel menjadi output dengan ukuran tetap (fixed size), yang sering disebut sebagai \textit{hash value}, \textit{digest}, atau \textit{fingerprint}.
 
-Berbeda dengan enkripsi yang bersifat dua arah (ada enkripsi dan dekripsi), fungsi hash adalah \textbf{fungsi satu arah} (\textit{one-way function}). Artinya, sangat mudah untuk menghitung hash dari sebuah pesan, tetapi secara komputasi tidak mungkin untuk mengembalikan pesan asli dari nilai hash-nya.
+Bab-bab sebelum ini membahas kerahasiaan: bagaimana menyembunyikan isi pesan dari
+mata yang tidak berhak. Namun kerahasiaan bukan satu-satunya layanan keamanan yang
+dibutuhkan. Sering kali isi pesan justru boleh diketahui siapa saja, asalkan
+dapat dipastikan bahwa isi itu \emph{tidak berubah} dan bahwa ia datang dari
+pihak yang benar. Inilah masalah \textbf{integritas data}, dan perkakas utamanya
+adalah \textbf{fungsi hash}.
+
+Fungsi hash adalah algoritma yang memetakan data berukuran apa pun --- satu huruf,
+satu berkas berukuran gigabita, atau seluruh basis data --- menjadi keluaran
+berukuran tetap (\textit{fixed size}) yang disebut \textit{hash value},
+\textit{message digest}, atau \textit{fingerprint}. Berbeda dengan enkripsi yang
+bersifat dua arah (ada enkripsi, ada dekripsi), fungsi hash adalah \textbf{fungsi
+satu arah} (\textit{one-way function}). Menghitung hash dari sebuah pesan selalu
+mudah; mengembalikan pesan asli dari nilai hash-nya, secara komputasi, tidak dapat
+dilakukan.
 
 \input{figures/alur-fungsi-hash}
 
+\subsection{Definisi dan Notasi}
+
+Secara formal, fungsi hash kriptografis adalah pemetaan
+
+\begin{equation}
+H : \{0, 1\}^{*} \longrightarrow \{0, 1\}^{n},
+\label{eq:hash-definisi}
+\end{equation}
+
+yang menerima untai bit dengan panjang sembarang (termasuk panjang nol) dan
+mengembalikan untai bit tetap sepanjang $n$. Nilai $n$ disebut panjang digest, dan
+besarnya berbeda-beda antara algoritma: MD5 memakai $n = 128$, SHA-1 memakai
+$n = 160$, sedangkan keluarga SHA-2 dan SHA-3 menyediakan $n = 224$, $256$, $384$,
+dan $512$.
+
+Perhatikan bahwa domain $H$ jauh lebih besar daripada kodomainnya. Ada tak
+berhingga banyak pesan yang mungkin dan hanya $2^{n}$ nilai hash yang mungkin,
+sehingga pasti ada pasangan pesan berbeda dengan hash yang sama. Kenyataan itu
+bukan cacat perancangan, melainkan hukum matematika yang tidak dapat dielakkan
+oleh algoritma apa pun. Yang dapat dirancang hanyalah \emph{seberapa sukar}
+pasangan semacam itu ditemukan, dan di situlah letak seluruh persoalan.
+
+Satu gagasan lagi diperlukan sebelum properti keamanan dapat dirumuskan. Sebagian
+besar fungsi hash praktis tidak memproses pesan sepanjang apa pun dalam satu
+langkah. Karena itu fungsi hash modern dibangun dari sebuah \textbf{fungsi
+kompresi} (\textit{compression function}) $f$ yang menerima blok pesan berukuran
+tetap dan mengubah keadaan internal berukuran tetap pula. Properti keamanan yang
+dirumuskan untuk $H$ sesungguhnya bertumpu pada properti $f$, dan hal ini akan
+dibahas lebih jauh pada Subbagian~\ref{subsec:padding-hash} dan
+Subbagian~\ref{subsec:konstruksi-hash}.
+
 \subsection{Karakteristik Fungsi Hash Kriptografis}
-Sebuah fungsi hash dikatakan layak digunakan untuk keperluan kriptografi jika memenuhi properti berikut:
+
+Sebuah fungsi hash dikatakan layak dipakai untuk keperluan kriptografi jika
+memenuhi properti berikut:
+
 \begin{enumerate}
-    \item \textbf{Efisiensi}: Perhitungan hash untuk input apa pun harus dapat dilakukan dengan cepat.
-    \item \textbf{Pre-image Resistance}: Diberikan nilai hash $h$, sangat sulit untuk menemukan pesan $m$ sedemikian sehingga $H(m) = h$.
-    \item \textbf{Second Pre-image Resistance}: Diberikan pesan $m_1$, sangat sulit untuk menemukan pesan $m_2 \neq m_1$ sedemikian sehingga $H(m_1) = H(m_2)$.
-    \item \textbf{Collision Resistance}: Sangat sulit untuk menemukan dua pesan berbeda $m_1$ dan $m_2$ sedemikian sehingga $H(m_1) = H(m_2)$.
+    \item \textbf{Efisiensi}: Perhitungan hash untuk input apa pun harus dapat
+          dilakukan dengan cepat.
+    \item \textbf{Pre-image Resistance}: Diberikan nilai hash $h$, sangat sulit
+          untuk menemukan pesan $m$ sedemikian sehingga $H(m) = h$.
+    \item \textbf{Second Pre-image Resistance}: Diberikan pesan $m_1$, sangat
+          sulit untuk menemukan pesan $m_2 \neq m_1$ sedemikian sehingga
+          $H(m_1) = H(m_2)$.
+    \item \textbf{Collision Resistance}: Sangat sulit untuk menemukan dua pesan
+          berbeda $m_1$ dan $m_2$ sedemikian sehingga $H(m_1) = H(m_2)$.
 \end{enumerate}
 
-\subsection{Serangan Birthday dan Batas Nyata Ketahanan Kolisi}
-Ketahanan kolisi tidak sebesar yang disarankan ukuran digest. Karena \textit{birthday paradox}, menemukan dua pesan berhash sama hanya membutuhkan sekitar $\sqrt{2^n} = 2^{n/2}$ percobaan acak, bukan $2^n$ \citep{stallings2017,menezes1996}. Untuk $k$ pesan acak, peluang terjadinya kolisi adalah
-\[ P(\text{kolisi}) \approx 1 - e^{-k(k-1)/(2\cdot 2^n)} \approx \frac{k^2}{2^{\,n+1}}, \]
-sehingga peluang $50\%$ dicapai pada $k \approx 1{,}177 \cdot 2^{n/2}$. Angka konkret:
-\begin{itemize}
-    \item MD5 ($n=128$): $k \approx 1{,}177 \cdot 2^{64} \approx 2{,}2\times10^{19}$ ($2^{64} = 18.446.744.073.709.551.616$).
-    \item SHA-1 ($n=160$): $k \approx 1{,}177 \cdot 2^{80} \approx 1{,}4\times10^{24}$.
-    \item SHA-256 ($n=256$): $k \approx 1{,}177 \cdot 2^{128} \approx 4{,}0\times10^{38}$.
-\end{itemize}
-\important{Ini berarti kekuatan efektif terhadap kolisi hanya $n/2$ bit, bukan $n$ bit.} SHA-256 setara 128 bit dan masih aman, sedangkan MD5 setara 64 bit dan sudah dapat ditembus GPU \citep{menezes1996}. Karena itu properti yang menentukan pilihan hash untuk tanda tangan digital adalah \textit{collision resistance}, bukan pre-image resistance.
+Ketiga properti keamanan itu tampak serupa, tetapi pertanyaannya berbeda dan
+biayanya pun berbeda. Perbedaan itu paling jelas bila dituliskan sebagai
+persoalan pencarian:
 
+\begin{align}
+\text{\textit{Pre-image}:}   \quad & \text{diberikan } h, \text{ cari } m
+   \text{ dengan } H(m) = h ,
+   \label{eq:preimage} \\[2pt]
+\text{\textit{Second pre-image}:} \quad & \text{diberikan } m_1, \text{ cari }
+   m_2 \neq m_1 \text{ dengan } H(m_2) = H(m_1) ,
+   \label{eq:second-preimage} \\[2pt]
+\text{\textit{Kolisi}:} \quad & \text{cari sebarang pasangan } m_1 \neq m_2
+   \text{ dengan } H(m_1) = H(m_2) .
+   \label{eq:kolisi}
+\end{align}
+
+Pada persoalan pre-image dan second pre-image, sasarannya sudah ditetapkan lebih
+dahulu: penyerang harus menemukan pesan yang hash-nya tepat sama dengan sebuah
+nilai tertentu. Peluang setiap tebakan adalah $1/2^{n}$, sehingga dibutuhkan
+sekitar $2^{n}$ percobaan. Pada persoalan kolisi, sasarannya tidak ditetapkan:
+penyerang bebas memilih \emph{apa saja} yang penting dua pesannya berhash sama.
+Kebebasan itu mengubah biayanya secara drastis, dan penyebabnya adalah paradoks
+ulang tahun.
+
+Tabel~\ref{tab:ketahanan-hash} merangkum ketiga properti itu beserta biaya
+pencarian yang diharapkan dan kegunaannya masing-masing.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Tiga properti keamanan fungsi hash dan biaya penyerangannya}
+    \label{tab:ketahanan-hash}
+    \begin{tabularx}{\linewidth}{@{}l
+                                   >{\raggedright\arraybackslash}X
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Properti} & \textbf{Pertanyaan penyerang} &
+    \textbf{Biaya} \\
+    \midrule
+    Pre-image & Diberikan digest $h$, temukan pesan apa pun yang berhash $h$ &
+    $2^{n}$ \\
+    \addlinespace
+    Second pre-image & Diberikan pesan $m_1$, temukan pesan lain berhash sama &
+    $2^{n}$ \\
+    \addlinespace
+    Kolisi & Temukan sebarang dua pesan berbeda yang berhash sama &
+    $2^{n/2}$ \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Pembedaan itu bukan perbedaan kecil. Untuk SHA-256 ($n = 256$), menemukan
+pre-image menuntut sekitar $2^{256}$ percobaan --- jauh di luar jangkauan
+perangkat apa pun yang dapat dibayangkan. Namun menemukan kolisi hanya menuntut
+sekitar $2^{128}$ percobaan. Angka $2^{128}$ itu tetap sangat besar, tetapi ia
+berbeda dari $2^{256}$ bukan sekadar beberapa kali, melainkan sebesar
+$2^{128}$ kali. Inilah sebabnya sebuah fungsi hash dengan digest 256 bit hanya
+menawarkan keamanan kolisi setara 128 bit, dan itulah tingkat keamanan yang
+sesungguhnya harus dibandingkan dengan panjang kunci algoritma lain.
+
+\subsection{Serangan Birthday dan Batas Nyata Ketahanan Kolisi}
+\label{subsec:birthday}
+
+Ketahanan kolisi tidak sebesar yang disarankan ukuran digest. Karena
+\textit{birthday paradox}, menemukan dua pesan berhash sama hanya membutuhkan
+sekitar $\sqrt{2^n} = 2^{n/2}$ percobaan acak, bukan $2^n$
+\citep{stallings2017,menezes1996}.
+
+Paradoks ulang tahun adalah nama bagi kenyataan bahwa dalam himpunan yang cukup
+besar, peluang dua anggota berulang jauh lebih tinggi daripada dugaan. Bila
+sebuah ruangan berisi $k$ orang dan setiap ulang tahun dianggap tersebar merata
+pada 365 hari, maka peluang ada dua orang berulang tahun sama bukanlah
+$k/365$ --- melainkan jauh lebih besar. Sebabnya, yang dihitung bukan peluang
+satu orang tertentu bertabrakan dengan orang tertentu lain, melainkan peluang
+\emph{ada sepasang} di antara seluruh anggota yang bertabrakan. Jumlah pasangan
+tumbuh kuadratik terhadap $k$, yaitu $k(k-1)/2$, sehingga peluangnya membesar
+jauh lebih cepat daripada dugaan linier.
+
+Hal yang sama berlaku pada fungsi hash. Untuk $k$ pesan acak, peluang terjadinya
+kolisi adalah
+
+\begin{equation}
+P(\text{kolisi}) \approx 1 - e^{-k(k-1)/(2\cdot 2^n)}
+   \approx 1 - e^{-k^2/2^{\,n+1}}
+   \approx \frac{k^2}{2^{\,n+1}} ,
+\label{eq:birthday-peluang}
+\end{equation}
+
+dengan pendekatan terakhir berlaku selama peluangnya masih kecil. Bentuk kedua
+itulah yang menarik untuk dibalik: berapa banyak pesan harus dicoba agar peluang
+kolisi mencapai setengah? Substitusi $P = 1/2$ memberi
+
+\begin{equation}
+k \approx \sqrt{2 \ln 2 \cdot 2^{\,n}}
+  = \sqrt{2 \ln 2} \cdot 2^{\,n/2}
+  \approx 1{,}177 \cdot 2^{\,n/2} .
+\label{eq:birthday-50}
+\end{equation}
+
+Faktor $\sqrt{2\ln 2} = 1{,}1774\ldots$ berasal dari pemilihan peluang $50\%$; bila
+yang dikehendaki peluang $1\%$, faktornya tinggal $0{,}2$. Yang menentukan bukan
+faktornya, melainkan pangkat $2^{\,n/2}$: biaya selalu sebanding dengan akar
+kuadrat ukuran ruang hash.
+
+Sifat itu dapat dilihat sekaligus. Bila banyaknya pesan dinyatakan relatif
+terhadap $2^{\,n/2}$, maka Persamaan~\eqref{eq:birthday-peluang} hanya bergantung
+pada nisbah itu dan tidak lagi pada $n$. Karena itu kurva pada
+Gambar~\ref{fig:batas-birthday} berlaku untuk \emph{semua} panjang digest:
+mengganti MD5 dengan SHA-256 tidak mengubah bentuk kurvanya, melainkan hanya
+menggeser letaknya pada sumbu mendatar sejauh $2^{64}$. Inilah gambaran visual
+dari ``keamanan efektif $n/2$ bit''.
+
+\input{figures/batas-birthday}
+
+Angka konkretnya memperlihatkan akibat pembedaan itu kepada setiap algoritma:
+
+\begin{itemize}
+    \item MD5 ($n=128$): $k \approx 1{,}177 \cdot 2^{64} \approx
+          2{,}2\times10^{19}$, sebab
+          \[ 2^{64} = 18.446.744.073.709.551.616 . \]
+    \item SHA-1 ($n=160$): $k \approx 1{,}177 \cdot 2^{80} \approx
+          1{,}4\times10^{24}$.
+    \item SHA-256 ($n=256$): $k \approx 1{,}177 \cdot 2^{128} \approx
+          4{,}0\times10^{38}$.
+    \item SHA-512 ($n=512$): $k \approx 1{,}177 \cdot 2^{256} \approx
+          1{,}4\times10^{77}$.
+\end{itemize}
+
+\important{Ini berarti kekuatan efektif terhadap kolisi hanya $n/2$ bit, bukan
+$n$ bit.} SHA-256 setara 128 bit dan masih aman, sedangkan MD5 setara 64 bit dan
+sudah dapat ditembus GPU \citep{menezes1996}. Karena itu properti yang menentukan
+pilihan hash untuk tanda tangan digital adalah \textit{collision resistance},
+bukan pre-image resistance.
+
+Perlu ditegaskan bahwa angka-angka di atas adalah batas \emph{generik}, yaitu yang
+berlaku bagi fungsi hash yang berperilaku seperti fungsi acak. Sebuah fungsi hash
+yang menyimpang dari perilaku acak dapat diserang jauh lebih murah lagi, dan itulah
+yang terjadi pada MD5 dan SHA-1: serangan terhadap keduanya bekerja melalui
+kelemahan struktural pada fungsi kompresinya, bukan melalui pencarian
+menyeluruh. Serangan-serangan itu dibahas pada Subbagian~\ref{subsec:kriptanalisis-hash}.
+
+\subsection{Panjang Pesan dan Padding: Mengapa Kolisi Menular}
+\label{subsec:padding-hash}
+
+Sampai di sini fungsi hash masih dibayangkan sebagai kotak ajaib yang menerima
+pesan sepanjang apa pun. Kenyataannya tidak demikian. Fungsi kompresi bekerja
+atas blok berukuran tetap --- 512 bit pada MD5, SHA-1, dan SHA-256, serta 1024
+bit pada SHA-384 dan SHA-512 --- sehingga pesan harus lebih dahulu dipotong
+menjadi blok. Potongan terakhir hampir selalu tidak penuh, dan ketidakpenuhan itu
+harus diselesaikan dengan aturan yang tidak dapat menimbulkan kerancuan.
+
+Aturan itu disebut \textbf{padding} dan mengikuti pola yang sama pada seluruh
+keluarga SHA-2. Bit tunggal \code{1} disisipkan tepat sesudah pesan, lalu diikuti
+sebanyak mungkin bit \code{0} sehingga panjang totalnya bersisa $448$ modulo
+$512$, dan akhirnya panjang pesan semula dituliskan sebagai bilangan 64 bit.
+Dengan aturan itu, panjang pesan yang diproses selalu kelipatan bulat dari 512
+bit, dan satu blok penuh selalu tersisa untuk memuat catatan panjangnya:
+
+\begin{equation}
+\text{blok akhir} = \underbrace{m}_{\text{sisa pesan}} \,\|\, \code{1} \,\|\,
+\underbrace{\code{0}\cdots\code{0}}_{\text{hingga bit ke-}448}
+\,\|\, \underbrace{\mathrm{panjang}(m)\vphantom{\big|}}_{\text{64 bit}} .
+\label{eq:padding-sha}
+\end{equation}
+
+Dua hal perlu diperhatikan pada Persamaan~\eqref{eq:padding-sha}. Pertama, bit
+\code{1} selalu disisipkan, bahkan bila pesan sudah berakhir tepat pada batas
+blok; akibatnya pesan dengan panjang $448$ bit justru menuntut satu blok
+tambahan. Aturan itu mencegah dua pesan dengan panjang berbeda menghasilkan
+susunan blok yang sama. Kedua, panjang pesan \emph{ikut diproses sebagai bagian
+dari data}, bukan sekadar dicatat di samping. Konsekuensinya penting: perubahan
+satu bit pada panjang pesan mengubah blok akhir, sehingga menambahkan bit pada
+akhir pesan tidak dapat dipakai untuk menghasilkan hash yang sama.
+
+Setelah semua blok tersedia, fungsi kompresi diiterasi dari sebuah nilai awal
+tetap (\textit{initialization vector}, IV):
+
+\begin{equation}
+h_0 = \mathrm{IV}, \qquad h_i = f(h_{i-1}, M_i) \quad \text{untuk }
+i = 1, 2, \dots, t, \qquad H(m) = h_t .
+\label{eq:md-iterasi}
+\end{equation}
+
+Konstruksi pada Persamaan~\eqref{eq:md-iterasi} dikenal sebagai
+\textbf{konstruksi Merkle--Damgård}, dirumuskan hampir bersamaan oleh Ralph
+Merkle \citep{merkle1989} dan Ivan Damg{\aa}rd \citep{damgard1989}. Kekuatannya
+adalah sebuah teorema: bila fungsi kompresi $f$ tahan kolisi, maka hash $H$ yang
+dibangun dengan cara itu juga tahan kolisi. Argumennya sederhana. Misalkan
+ditemukan kolisi pada $H$, yaitu dua pesan dengan hasil akhir sama. Telusuri
+kedua rantai kompresi dari belakang; pada suatu titik keduanya harus bertemu
+dengan masukan $f$ yang berbeda tetapi keluaran yang sama, dan titik itu
+memberikan kolisi pada $f$. Jadi kolisi pada fungsi kompresi menular menjadi
+kolisi pada hash.
+
+Yang perlu ditekankan, teorema itu hanya menjamin arah sebaliknya tidak berlaku:
+ketahanan kolisi $H$ tidak dengan sendirinya memberi ketahanan kolisi $f$.
+Karena itu penyerangan terhadap MD5 dan SHA-1 ditempuh dengan mencari kolisi
+pada fungsi kompresinya, sebagaimana diperlihatkan pada
+Subbagian~\ref{subsec:kriptanalisis-hash}.
+
+\subsection{Serangan Panjang-Ekstensi}
+\label{subsec:length-extension}
+
+Konstruksi iteratif pada Persamaan~\eqref{eq:md-iterasi} meninggalkan satu cacat
+struktural yang halus. Karena keadaan internal $h_t$ \emph{sama} dengan nilai
+hash yang dipublikasikan, siapa pun yang mengetahui $H(m)$ sebenarnya mengetahui
+seluruh keadaan mesin sesudah pesan terakhir diproses. Orang itu dapat
+melanjutkan kompresi dari titik tersebut, seolah-olah telah memproses $m$
+beserta padding-nya sendiri.
+
+Akibatnya, diberikan $H(m)$ dan panjang $m$, penyerang dapat menghitung
+
+\begin{equation}
+H\big(m \,\|\, \mathrm{pad}(m) \,\|\, m'\big)
+\label{eq:length-extension}
+\end{equation}
+
+untuk pesan tambahan $m'$ pilihannya sendiri, \emph{tanpa mengetahui isi $m$}.
+Yang dibutuhkan hanyalah melanjutkan proses dari digest yang sudah diketahui.
+Serangan ini disebut \textbf{panjang-ekstensi} (\textit{length extension}) dan
+tidak menuntut perhitungan yang mahal sedikit pun: biayanya sama dengan biaya
+menghitung hash pesan tambahan itu secara biasa.
+
+Serangan panjang-ekstensi berbahaya pada skema integritas yang dibangun dengan
+menggabungkan kunci dan pesan secara sederhana. Bila tag dihitung sebagai
+$H(K \| m)$ dengan kunci rahasia $K$ yang dirahasiakan kedua pihak, penyerang
+yang menyaksikan sebuah pesan beserta tag-nya dapat menghasilkan tag yang sah
+untuk pesan yang diperpanjang --- tanpa pernah mengetahui $K$. Sisi praktis
+serangan ini, lengkap dengan angka-angka nyata, diperlihatkan pada
+Contoh~\ref{ex:length-extension}, sedangkan cara menutupnya dibahas pada
+Subbagian~\ref{subsec:hmac}.
+
+\subsection{Aplikasi Fungsi Hash}
+\label{subsec:aplikasi-hash}
+
+Fungsi hash muncul di banyak tempat, dan pada setiap tempat properti yang
+dibutuhkan berbeda. Enam pemakaian berikut memperlihatkan rentangnya.
+
+\begin{enumerate}
+    \item \textbf{Pemeriksaan integritas berkas.} Nilai hash sebuah berkas
+          diumumkan pada saluran yang tepercaya, misalnya situs resmi pengunduh.
+          Pengguna yang selesai mengunduh menghitung ulang hash-nya dan
+          membandingkan. Bila berbeda, berkas itu rusak atau disisipi. Properti
+          yang dipakai di sini adalah second pre-image resistance: penyerang
+          tidak boleh mampu menyiapkan berkas lain dengan hash yang sama.
+    \item \textbf{Penyimpanan kata sandi.} Kata sandi tidak disimpan apa adanya,
+          melainkan sebagai hash-nya. Bila basis data bocor, penyerang hanya
+          memperoleh hash, dan untuk memulihkan kata sandi ia harus menempuh
+          persoalan pre-image. Karena $2^{n}$ terlalu besar untuk ditelusuri,
+          ia beralih ke serangan kamus: menghitung hash ribuan kata sandi yang
+          lazim dipakai dan membandingkan hasilnya. Pertahanannya adalah
+          \textbf{salt}, yaitu nilai acak yang disisipkan sebelum hashing,
+          sehingga dua pengguna dengan kata sandi sama tetap menghasilkan hash
+          berbeda dan serangan kamus harus diulang per pengguna.
+    \item \textbf{Bukti kerja} (\textit{proof of work}). Mata uang kripto
+          mensyaratkan penambang menemukan nilai acak sehingga hash sebuah blok
+          berada di bawah ambang tertentu. Karena hash tidak dapat diarahkan,
+          penambang harus mencoba berulang kali; biaya pencarian itulah yang
+          menjadi bukti kerja.
+    \item \textbf{Pohon Merkle} (\textit{Merkle tree}). Nilai hash dapat
+          disusun berlapis: hash dari hash, sampai terbentuk satu akar tunggal.
+          Struktur itu memungkinkan pembuktian keanggotaan satu potong data
+          dengan hanya menelusuri satu lintasan, dan inilah dasar verifikasi
+          ringan pada rantai blok.
+    \item \textbf{Pembangkitan kunci dari kata sandi.} Fungsi hash dapat dipakai
+          berulang untuk menurunkan kunci kriptografi dari kata sandi, sehingga
+          menebak kata sandi menjadi mahal.
+    \item \textbf{Dasar MAC dan tanda tangan digital.} Sebagaimana diperlihatkan
+          pada Bagian~\ref{sec:mac} dan pada Bab~\ref{chap:tanda-tangan-pki},
+          tanda
+          tangan digital tidak dituliskan atas pesan utuh, melainkan atas
+          hash-nya. Alasannya dua: pesan berukuran besar cukup diringkas menjadi
+          $n$ bit, dan skema tanda tangan untuk pesan panjang menjadi sederhana.
+          Justru karena peran itulah ketahanan kolisi menjadi syarat mutlak:
+          bila penyerang dapat menyiapkan dua pesan berhash sama, tanda tangan
+          untuk pesan yang tidak berbahaya dapat dipakai untuk mengesahkan pesan
+          yang lain sama sekali.
+\end{enumerate}
+
+Pemakaian terakhir itu menjelaskan mengapa ketahanan kolisi, bukan pre-image
+resistance, yang biasanya menentukan pilihan algoritma. Pada tanda tangan
+digital, penyerang memiliki kebebasan memilih kedua pesan, sehingga biaya
+$2^{n/2}$ --- bukan $2^{n}$ --- yang harus dilampauinya.
+
+\subsection{Fungsi Hash Bukan Enkripsi}
+\label{subsec:hash-bukan-enkripsi}
+
+Karena sama-sama mengubah pesan menjadi untai bit yang tampak acak, fungsi hash
+sering disalahpahami sebagai bentuk enkripsi. Tabel~\ref{tab:hash-vs-enkripsi}
+memperlihatkan perbedaan yang menentukan.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Perbandingan fungsi hash dan enkripsi}
+    \label{tab:hash-vs-enkripsi}
+    \begin{tabularx}{\linewidth}{@{}l
+                                   >{\raggedright\arraybackslash}X
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Aspek} & \textbf{Fungsi hash} & \textbf{Enkripsi} \\
+    \midrule
+    Arah & satu arah; tidak ada dekripsi & dua arah; ada dekripsi \\
+    \addlinespace
+    Kunci & tidak memakai kunci & selalu memakai kunci \\
+    \addlinespace
+    Panjang keluaran & tetap, misalnya 256 bit & mengikuti panjang masukan \\
+    \addlinespace
+    Sifat keluaran & menyingkat; banyak masukan, satu keluaran &
+    dapat dipulihkan utuh \\
+    \addlinespace
+    Jaminan & integritas, bukan kerahasiaan &
+    kerahasiaan \\
+    \addlinespace
+    Bila kunci bocor & tidak berlaku: hash tidak berkunci &
+    seluruh pesan terbuka \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Dua baris terakhir Tabel~\ref{tab:hash-vs-enkripsi} menjelaskan mengapa kedua
+perkakas itu tidak dapat saling menggantikan. Fungsi hash tidak menyembunyikan
+apa pun: nilainya memang disiarkan terbuka, dan justru keterbukaan itu yang
+membuatnya berguna sebagai pembanding. Sebaliknya enkripsi tidak memberikan
+jaminan integritas: cipherteks dapat diubah oleh siapa saja yang menyadapnya,
+dan perubahan itu hanya akan ketahuan sesudah didekripsi --- bila memang
+ketahuan. Karena itulah pesan yang harus dirahasiakan \emph{dan} dilindungi
+integritasnya memerlukan keduanya sekaligus, suatu pola yang menjadi tema
+Subbagian~\ref{subsec:aead}.

@@ -1,28 +1,461 @@
 \section{Algoritma Fungsi Hash Populer}
+\label{sec:algoritma-hash}
+
+Bagian sebelumnya menetapkan apa yang harus dipenuhi sebuah fungsi hash, tetapi
+belum mengatakan bagaimana sifat-sifat itu dicapai. Bagian ini membuka tutup
+mesinnya: memperlihatkan bagaimana blok pesan dijadwalkan, bagaimana register
+kerja diaduk, dan bagaimana pengadukan itu dirancang agar setiap bit masukan
+menyebar ke seluruh keluaran.
+
+Urutan pembahasannya mengikuti sejarah. MD5 dibahas lebih dahulu karena paling
+sederhana dan paling mudah dipahami; sesudah itu keluarga SHA-2, yang strukturnya
+merupakan penyempurnaan langsung dari gagasan yang sama; lalu SHA-3, yang justru
+meninggalkan struktur itu untuk menghindari kelemahan warisannya. Bagian ini
+ditutup dengan catatan kriptanalisis: bagaimana setiap algoritma itu, satu demi
+satu, akhirnya runtuh atau bertahan.
+
 \subsection{MD5 (Message Digest 5)}
-MD5 dirancang oleh Ronald Rivest pada tahun 1991 dan menghasilkan output sebesar 128 bit \citep{stallings2017}. Meskipun sempat menjadi standar, MD5 kini dianggap tidak aman karena ditemukan berbagai metode untuk menghasilkan kolisi dengan cepat.
+
+MD5 dirancang oleh Ronald Rivest pada tahun 1991 sebagai penyempurnaan MD4 dan
+diterbitkan sebagai RFC 1321 \citep{rivest1992md5}. Keluarannya 128 bit, dan
+pesan diproses dalam blok 512 bit yang dibagi menjadi enam belas kata 32 bit
+berurutan. Karena MD5 bekerja pada kata 32 bit dan menuliskan panjang pesan dalam
+urutan \emph{little-endian}, ia dipandang ringan dan cepat pada arsitektur
+mikroprosesor yang lazim pada masa itu --- dan itulah sebabnya ia menyebar begitu
+luas, dari basis data kata sandi sampai pemeriksaan berkas.
+
+Kerangka MD5 mengikuti Persamaan~\eqref{eq:md-iterasi}. Mula-mula pesan ditambah
+padding menurut aturan pada Persamaan~\eqref{eq:padding-sha}, lalu setiap blok
+512 bit diproses oleh fungsi kompresi yang bekerja atas empat register 32 bit
+(umumnya diberi nama $A$, $B$, $C$, $D$) yang dimulai dari nilai tetap
+\code{67452301}, \code{efcdab89}, \code{98badcfe}, dan \code{10325476}. Fungsi
+kompresinya sendiri berjalan dalam $4 \times 16 = 64$ langkah. Pada setiap
+langkah, satu kata pesan $M[k]$, satu konstanta $T[i]$, dan pergeseran bit $s_i$
+dipakai untuk mengubah register:
+
+\begin{equation}
+\begin{aligned}
+A &\leftarrow D, \qquad D \leftarrow C, \qquad C \leftarrow B, \\
+B &\leftarrow B + \mathrm{ROTL}_{s_i}\!\big(A + F_i(B, C, D) + M[k] + T[i]\big) ,
+\end{aligned}
+\label{eq:md5-putaran}
+\end{equation}
+
+dengan $\mathrm{ROTL}_s$ adalah pergeseran berputar ke kiri sebanyak $s$ bit.
+Empat fungsi nonlinier $F_1, \dots, F_4$ dipakai bergantian setiap enam belas
+langkah, dan itulah yang memberi MD5 sifat \emph{diffusion}: perubahan satu bit
+pada pesan tidak bertahan di satu tempat, melainkan menyebar melalui operasi
+penjumlahan modulo $2^{32}$, XOR, dan pergeseran berputar pada putaran-putaran
+berikutnya.
+
+Konstanta $T[i]$ bukan bilangan sembarang. Nilainya ditetapkan sebagai
+$T[i] = \lfloor 2^{32} \cdot |\sin i| \rfloor$ untuk $i = 1, \ldots, 64$, yaitu
+bagian pecahan dari sinus bilangan bulat $i$ dikalikan $2^{32}$. Sebagian nilai
+awalnya adalah $T[1] = \code{d76aa478}$ dan $T[2] = \code{e8c7b756}$, sedangkan
+nilai terakhirnya adalah $T[64] = \code{eb86d391}$. Cara membangkitkan konstanta
+seperti itu --- dari fungsi matematis yang tidak berkaitan dengan kriptografi ---
+sengaja dipilih agar tidak ada pihak yang dapat menyisipkan pintu belakang
+melalui pilihan konstantanya. Konstanta yang ``dapat dijelaskan asalnya'' dapat
+diperiksa siapa saja.
+
+Meskipun sempat menjadi standar, MD5 kini dianggap tidak aman karena ditemukan
+berbagai metode untuk menghasilkan kolisi dengan cepat. Rincian penyerangannya
+ada pada Subbagian~\ref{subsec:kriptanalisis-hash}.
 
 \subsection{Keluarga SHA (Secure Hash Algorithm)}
+
 SHA dikembangkan oleh NSA dan diterbitkan oleh NIST \citep{stallings2017}.
+Riwayatnya bergerak seiring riwayat penyerangannya. SHA-0 diterbitkan pada tahun
+1993 dan ditarik tak lama kemudian karena satu kekeliruan kecil pada jadwal
+pesannya. SHA-1 terbit pada tahun 1995 dengan kekeliruan itu diperbaiki, dan
+selama hampir dua dasawarsa ia menjadi tulang punggung integritas di internet.
+SHA-2 menyusul pada tahun 2001 sebagai keluarga yang lebih luas dan lebih kuat;
+karena ia muncul sebelum serangan terhadap SHA-1 menjadi nyata, penerimaannya
+berjalan lambat, dan SHA-2 baru benar-benar menggantikan SHA-1 setelah tahun
+2017. SHA-3 kemudian dipilih melalui sayembara terbuka dan diterbitkan pada tahun
+2015, bukan karena SHA-2 telah runtuh, melainkan agar tersedia alternatif yang
+tidak bergantung pada konstruksi yang sama.
+
 \begin{itemize}
-    \item \textbf{SHA-1}: Menghasilkan digest 160 bit. Saat ini sudah tidak direkomendasikan karena rentan terhadap serangan kolisi.
-    \item \textbf{SHA-2}: Keluarga algoritma yang mencakup SHA-224, SHA-256, SHA-384, dan SHA-512. SHA-256 adalah yang paling umum digunakan (misalnya dalam Bitcoin).
-    \item \textbf{SHA-3}: Standar terbaru yang menggunakan struktur berbeda (\textit{Sponge Construction}), memberikan alternatif jika SHA-2 ditemukan memiliki kelemahan.
+    \item \textbf{SHA-1}: Menghasilkan digest 160 bit dan dibakukan pada RFC 3174
+          \citep{rfc3174}. Saat ini sudah tidak
+          direkomendasikan karena rentan terhadap serangan kolisi.
+    \item \textbf{SHA-2}: Keluarga algoritma yang mencakup SHA-224, SHA-256,
+          SHA-384, dan SHA-512. SHA-256 adalah yang paling umum digunakan
+          (misalnya dalam Bitcoin).
+    \item \textbf{SHA-3}: Standar terbaru yang menggunakan struktur berbeda
+          (\textit{Sponge Construction}), memberikan alternatif jika SHA-2
+          ditemukan memiliki kelemahan.
 \end{itemize}
 
-\subsection{Parameter Konkret Algoritma Hash}
-\begin{itemize}
-    \item \textbf{MD5}: digest 128 bit, blok 512 bit, 64 langkah (4 putaran $\times$ 16 operasi). Kolisi praktis ditemukan Wang dkk.\ (2004); MD5 kini dianggap benar-benar rusak \citep{menezes1996}.
-    \item \textbf{SHA-1}: digest 160 bit, blok 512 bit, 80 putaran. Kolisi praktis ``SHAttered'' (2017) hanya dengan usaha $\approx 2^{63{,}1} \approx 9{,}9\times10^{18}$ operasi \citep{stallings2017}.
-    \item \textbf{SHA-256}: digest 256 bit, blok 512 bit, 64 putaran, beroperasi pada kata 32 bit.
-    \item \textbf{SHA-512}: digest 512 bit, blok 1024 bit, 80 putaran, beroperasi pada kata 64 bit. SHA-384 adalah varian SHA-512 yang dipotong ke 384 bit.
-    \item \textbf{SHA-3}: keluarga Keccak, digest 224/256/384/512 bit, dengan kapasitas \textit{state} dua kali ukuran digest.
-\end{itemize}
+Perlu diperhatikan bahwa penamaan SHA-224 dan SHA-384 bukan sekadar pemotongan
+keluaran. Keduanya memakai nilai awal (\textit{initialization vector}) yang
+berbeda dari SHA-256 dan SHA-512, sehingga hasil pemotongannya tidak dapat
+disamakan dengan potongan hash tetangganya. Nilai awal itu ditetapkan sedemikian
+rupa agar penyerang tidak dapat memakai kembali perhitungan yang sudah ia
+lakukan untuk varian yang lebih panjang.
 
 \subsection{Merkle--Damgård vs Sponge}
-MD5, SHA-1, dan SHA-2 memakai konstruksi \textbf{Merkle--Damgård}: pesan di-\textit{padding}, dipecah menjadi blok berukuran tetap, lalu fungsi kompresi $f$ diiterasi
-\[ h_i = f(h_{i-1}, M_i), \qquad h_0 = IV . \]
-Skema ini rawan \textit{length extension}, dan kolisi pada fungsi kompresi langsung merambat menjadi kolisi pada hash \citep{stallings2017}.
+\label{subsec:konstruksi-hash}
 
-SHA-3 tidak memakai iterasi kompresi, melainkan \textbf{konstruksi sponge} di atas permutasi Keccak-f[1600] dengan 24 putaran. Pesan diserap (\textit{absorbing}) ke dalam \textit{state}, kemudian hasilnya diperas (\textit{squeezing}). Keunggulannya: tahan \textit{length extension} dan keamanannya tidak bergantung pada ketahanan kolisi sebuah fungsi kompresi \citep{menezes1996}.
+MD5, SHA-1, dan SHA-2 memakai konstruksi \textbf{Merkle--Damgård}: pesan
+di-\textit{padding}, dipecah menjadi blok berukuran tetap, lalu fungsi kompresi
+$f$ diiterasi
+\[
+h_i = f(h_{i-1}, M_i), \qquad h_0 = \mathrm{IV} .
+\]
+Skema ini rawan \textit{length extension}, dan kolisi pada fungsi kompresi
+langsung merambat menjadi kolisi pada hash \citep{stallings2017}. Seperti
+diterangkan pada Subbagian~\ref{subsec:length-extension}, masalahnya bukan pada
+fungsi kompresi itu sendiri, melainkan pada cara keadaan internal yang sama
+dengan digest yang dipublikasikan. Selama bertahun-tahun, keadaan itu dinilai
+sebagai harga yang pantas dibayar: konstruksi Merkle--Damgård terbukti aman bila
+fungsi kompresinya aman, dan fungsi kompresinya dapat dirancang dengan cepat.
 
+Kelemahan kedua lebih halus. Ketahanan kolisi memang menular dari $f$ ke $H$,
+tetapi ketahanan \emph{second pre-image} tidak. Kelsey dan Schneier
+\citep{kelsey2005second} memperlihatkan bahwa untuk pesan yang panjang, second
+pre-image pada konstruksi iteratif dapat ditemukan dengan usaha jauh di bawah
+$2^{n}$ --- kira-kira $2^{n/2}$ untuk pesan berukuran sekitar $2^{n/2}$ blok.
+Sebabnya, penyerang dapat menyusun rantai kompresi sendiri sampai mencapai
+keadaan internal yang diinginkannya, lalu menyambungkannya ke rantai korban pada
+titik pertemuan. Untuk pesan sepanjang lazimnya, serangan itu belum praktis,
+tetapi ia menunjukkan bahwa ``pembuktian keamanan'' konstruksi iteratif
+sesungguhnya lebih sempit daripada yang biasa dikutip.
+
+SHA-3 tidak memakai iterasi kompresi, melainkan \textbf{konstruksi sponge} di
+atas permutasi Keccak-f[1600] dengan 24 putaran; rancangan aslinya diuraikan oleh
+Bertoni dan kawan-kawan \citep{bertoni2011keccak}. Pesan diserap
+(\textit{absorbing}) ke dalam \textit{state}, kemudian hasilnya diperas
+(\textit{squeezing}). Keunggulannya: tahan \textit{length extension} dan
+keamanannya tidak bergantung pada ketahanan kolisi sebuah fungsi kompresi
+\citep{menezes1996}. Perbedaan penting itu terletak pada sifat permutasi yang
+dipakai: permutasi selalu dapat dibalik, sehingga keadaan internal tidak pernah
+menjadi bagian dari keluaran, dan penyerang tidak memiliki titik pijakan untuk
+melanjutkan perhitungan dari digest.
+
+Gambar~\ref{fig:konstruksi-sponge} memperlihatkan susunannya. Keadaan berukuran
+1600 bit dibagi menjadi dua wilayah: bagian \textbf{rate} $r$ bit yang menjadi
+tempat pesan masuk dan hasil keluar, serta bagian \textbf{kapasitas} $c$ bit yang
+sama sekali tidak tersentuh oleh keduanya. Pesan dipotong menjadi blok sepanjang
+$r$ bit, masing-masing di-XOR ke bagian rate, dan di antara dua blok yang
+berurutan dijalankan permutasi $f$. Sesudah seluruh pesan habis, fase itu
+berbalik: bagian rate dibaca keluar sebagai potongan digest $Z_0$, permutasi
+dijalankan lagi, dibaca lagi, dan seterusnya sampai digest mencapai panjang yang
+dikehendaki, dengan $f$ disisipkan di antara dua pembacaan.
+
+Perhatikan mengapa kapasitas itu menentukan keamanan. Penyerang yang ingin
+mencari kolisi harus menemukan dua keadaan berbeda yang menghasilkan keluaran
+rate yang sama; bagian kapasitas yang tersembunyi membuat keadaan internal tidak
+dapat ditentukan dari keluaran. Aturan yang berlaku kira-kira: ketahanan kolisi
+sekitar $2^{c/2}$ dan ketahanan pre-image sekitar $2^{\min(n, c/2)}$. Bagi SHA3-256
+dengan $r = 1088$ dan $c = 512$, angka itu memberi keamanan kolisi $2^{256}$
+secara internal, yang dibatasi oleh panjang digest menjadi $2^{128}$ --- setara
+SHA-256, tetapi melalui pertimbangan yang sama sekali berbeda \citep{fips202}.
+Karena alasan itu, jika suatu hari ditemukan kelemahan mendasar pada konstruksi
+Merkle--Damgård, keluarga SHA-3 akan tetap berdiri; dan sebaliknya, keduanya
+dapat dipakai berdampingan sebagai pertahanan berlapis.
+
+\input{figures/konstruksi-sponge}
+
+\subsection{Anatomi SHA-256: Jadwal Pesan dan Register Kerja}
+\label{subsec:anatomi-sha256}
+
+SHA-256 adalah anggota keluarga SHA-2 yang paling banyak dipakai
+\citep{fips1804}. Ia bekerja atas blok 512 bit dan delapan register 32 bit, dan
+seluruh prosesnya dapat dituliskan dengan lengkap. Bagian ini memperlihatkannya,
+sebab tanpa pemahaman pada tingkat ini, pembahasan kriptanalisis pada
+Subbagian~\ref{subsec:kriptanalisis-hash} akan terasa seperti daftar kabar buruk
+tanpa sebab.
+
+Setiap blok 512 bit diuraikan menjadi enam belas kata
+$M_0, M_1, \dots, M_{15}$. Dari keenam belas kata itu dibangkitkan enam puluh
+empat kata melalui \textbf{jadwal pesan} (\textit{message schedule}):
+
+\begin{equation}
+W_t =
+\begin{cases}
+M_t, & 0 \le t \le 15, \\[4pt]
+\sigma_1(W_{t-2}) + W_{t-7} + \sigma_0(W_{t-15}) + W_{t-16}, & 16 \le t \le 63,
+\end{cases}
+\label{eq:sha256-jadwal}
+\end{equation}
+
+dengan $\sigma_0(x) = \mathrm{ROTR}^{7}(x) \oplus \mathrm{ROTR}^{18}(x) \oplus
+\mathrm{SHR}^{3}(x)$ dan $\sigma_1(x) = \mathrm{ROTR}^{17}(x) \oplus
+\mathrm{ROTR}^{19}(x) \oplus \mathrm{SHR}^{10}(x)$. Di sini $\mathrm{ROTR}^{k}$
+adalah pergeseran berputar ke kanan dan $\mathrm{SHR}^{k}$ adalah pergeseran
+biasa yang mengisi kekosongan dengan nol. Perhatikan pergantian keduanya: operasi
+berputar memindahkan bit yang tergeser ke ujung yang lain, sedangkan pergeseran
+biasa membuangnya. Kombinasi itu membuat setiap kata jadwal bergantung pada
+keenam belas kata masukan, sehingga satu bit pada blok pesan akhirnya menyentuh
+seluruh enam puluh empat kata jadwal --- inilah \emph{diffusion} pada tingkat
+jadwal.
+
+Selanjutnya delapan register kerja $a, b, \dots, h$ dimulai dari nilai awal tetap
+
+\[
+\begin{aligned}
+&\code{6a09e667}\ \ \code{bb67ae85}\ \ \code{3c6ef372}\ \ \code{a54ff53a} \\
+&\code{510e527f}\ \ \code{9b05688c}\ \ \code{1f83d9ab}\ \ \code{5be0cd19},
+\end{aligned}
+\]
+
+yang tidak lain adalah bagian pecahan dari akar kuadrat delapan bilangan prima
+pertama. Pada setiap putaran $t$, enam fungsi pembantu dihitung:
+
+\begin{equation}
+\begin{aligned}
+\mathrm{Ch}(x, y, z) &= (x \wedge y) \oplus (\lnot x \wedge z), \\
+\mathrm{Maj}(x, y, z) &= (x \wedge y) \oplus (x \wedge z) \oplus (y \wedge z), \\
+\Sigma_0(x) &= \mathrm{ROTR}^{2}(x) \oplus \mathrm{ROTR}^{13}(x) \oplus
+   \mathrm{ROTR}^{22}(x), \\
+\Sigma_1(x) &= \mathrm{ROTR}^{6}(x) \oplus \mathrm{ROTR}^{11}(x) \oplus
+   \mathrm{ROTR}^{25}(x),
+\end{aligned}
+\label{eq:sha256-fungsi}
+\end{equation}
+
+lalu register diperbarui menurut
+
+\begin{equation}
+T_1 = h + \Sigma_1(e) + \mathrm{Ch}(e, f, g) + K_t + W_t, \qquad
+T_2 = \Sigma_0(a) + \mathrm{Maj}(a, b, c),
+\label{eq:sha256-kompresi}
+\end{equation}
+
+dengan penggeseran $h \leftarrow g$, $g \leftarrow f$, $f \leftarrow e$,
+$e \leftarrow d + T_1$, $d \leftarrow c$, $c \leftarrow b$, $b \leftarrow a$, dan
+$a \leftarrow T_1 + T_2$. Konstanta $K_t$ dibangkitkan dengan cara yang sama
+seperti nilai awal, tetapi dari akar pangkat tiga enam puluh empat bilangan prima
+pertama: $K_0 = \code{428a2f98}$ sampai $K_{63} = \code{c67178f2}$. Sesudah enam
+puluh empat putaran, kedelapan register dijumlahkan kembali ke keadaan sebelumnya,
+dan hasilnya menjadi keadaan awal bagi blok berikutnya.
+
+Agar gambaran itu menjadi konkret, perhatikan pesan tiga huruf \code{abc}, yang
+panjangnya 24 bit. Menurut Persamaan~\eqref{eq:padding-sha}, panjang pesan
+menuntut $24 + 1 + k + 64 \equiv 0 \pmod{512}$, sehingga $k = 423$ dan satu blok
+512 bit sudah cukup untuk menampungnya. Blok itu berbentuk
+
+\[
+\code{61626380}\
+\underbrace{\code{00}\cdots\code{00}}_{52 \text{ byte}}\
+\code{0000000000000018} ,
+\]
+
+yakni tiga huruf \code{a}, \code{b}, \code{c} dalam ASCII (tiga byte pertama),
+diikuti bit \code{1} yang menempati bit teratas byte keempat, lalu $423$ bit
+nol --- tujuh bit sisanya pada byte \code{80} ditambah $416$ bit dari lima puluh
+dua byte bernilai nol --- dan akhirnya panjang pesan, yaitu $24$ atau
+\code{18} dalam heksadesimal, yang dituliskan sebagai bilangan 64 bit.
+Tabel~\ref{tab:trace-sha256}
+memperlihatkan keadaan register pada beberapa putaran terpilih untuk blok
+tersebut, sedangkan Gambar~\ref{fig:alur-fungsi-hash} memperlihatkan alur
+keluaran dari seluruh bab ini.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Jejak kompresi SHA-256 untuk blok \code{abc} pada beberapa putaran
+    terpilih (nilai heksadesimal 32 bit)}
+    \label{tab:trace-sha256}
+    \begin{tabularx}{\linewidth}{@{}r
+                                   >{\raggedright\arraybackslash}X
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Putaran} & \textbf{Register $a$} & \textbf{Register $e$} \\
+    \midrule
+    $0$ (nilai awal) & \code{6a09e667} & \code{510e527f} \\
+    \addlinespace
+    $1$ & \code{5d6aebcd} & \code{fa2a4622} \\
+    \addlinespace
+    $2$ & \code{5a6ad9ad} & \code{78ce7989} \\
+    \addlinespace
+    $16$ & \code{b0fa238e} & \code{07590dcd} \\
+    \addlinespace
+    $32$ & \code{73b33bf5} & \code{ba591112} \\
+    \addlinespace
+    $48$ & \code{4172328d} & \code{fecf0bc6} \\
+    \addlinespace
+    $64$ & \code{506e3058} & \code{5ef50f24} \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Sesudah nilai awal ditambahkan kembali, diperoleh digest
+
+\[
+\code{ba7816bf}\ \code{8f01cfea}\ \code{414140de}\ \code{5dae2223}\
+\code{b00361a3}\ \code{96177a9c}\ \code{b410ff61}\ \code{f20015ad} ,
+\]
+
+yang memang merupakan nilai baku SHA-256 bagi pesan \code{abc}. Rangkaian
+perhitungan itu, dengan seluruh 64 putarannya, diperlihatkan pada
+Aktivitas~\ref{act:hash-sha256} dan dapat dijalankan sendiri oleh mahasiswa.
+
+Dua hal menarik dari Tabel~\ref{tab:trace-sha256}. Pertama, sesudah satu putaran
+saja seluruh register sudah berubah tidak beraturan; tidak ada jejak yang tinggal
+dari kesederhanaan masukan \code{abc}. Kedua, perubahan itu dicapai tanpa satu
+pun operasi aritmetika yang mahal --- hanya penjumlahan modulo $2^{32}$, XOR,
+pergeseran, dan pergeseran berputar. Itulah sebabnya SHA-256 dapat dihitung
+miliaran bit per detik pada pemroses biasa, dan sekaligus sebabnya ia sulit
+dibalik: setiap langkah mudah dihitung ke depan, tetapi tidak ada cara mudah
+untuk menelusurinya ke belakang.
+
+Sifat itu paling jelas terlihat bila dua pesan yang hampir sama dibandingkan.
+Gambar~\ref{fig:longsoran-sha256} memperlihatkan digest bagi dua kalimat yang
+berbeda hanya pada satu huruf besar-kecilnya: \code{Kriptografi itu Menyenangkan}
+dan \code{Kriptografi itu menyenangkan}. Dari 256 bit, $115$ di antaranya ---
+yakni $44{,}92\%$ --- berubah, dan hanya satu byte dari tiga puluh dua yang
+kebetulan masih sama nilainya. Tidak satu pun bit itu dapat diramalkan dari letak
+huruf yang diubah: bit-bit yang berubah tersebar merata pada seluruh digest, tanpa
+memusat pada bagian mana pun yang bersesuaian dengan posisi huruf tersebut.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/longsoran-sha256.png}
+    \caption{Efek longsoran SHA-256. Setiap petak adalah satu bit digest, dibaca
+    dari bit paling berarti sampai bit paling rendah, enam belas bit per baris.
+    Kiri: digest \code{Kriptografi itu Menyenangkan}. Tengah: digest
+    \code{Kriptografi itu menyenangkan}, berbeda satu huruf. Kanan: bit yang
+    berubah disorot merah --- $115$ dari $256$ bit, hampir setengahnya, padahal
+    kedua pesan hanya berbeda satu huruf}
+    \label{fig:longsoran-sha256}
+    \sumber{Keluaran \code{hashlib.sha256}; gambar dibangkitkan oleh skrip
+    \code{scripts/refactor/figures/avalanche\_hash.py} pada repositori ini.}
+\end{figure}
+
+Angka $44{,}92\%$ itu dekat sekali dengan setengah, dan kedekatan itu bukan
+kebetulan. Bagi fungsi hash yang berperilaku seperti fungsi acak, setiap bit
+keluaran seharusnya berubah dengan peluang $1/2$ bila masukan diubah, sehingga
+banyaknya bit yang berubah menyebar di sekitar $n/2$. Uji ini --- mengubah satu
+bit masukan dan menghitung berapa bit keluaran yang berubah --- dikenal sebagai
+\emph{uji longsoran} (\textit{avalanche test}), dan bagi SHA-256 nilai harapannya
+adalah $128$ bit dengan simpangan baku sekitar $\sqrt{256 \cdot (1/2) \cdot
+(1/2)} = 8$. Nilai $115$ berada pada jarak $1{,}6$ simpangan baku dari harapan
+itu, yaitu rentang yang sepenuhnya wajar bagi fungsi yang sehat.
+
+Yang penting bukan angkanya, melainkan apa yang gagal bila angka itu menyimpang.
+Fungsi hash yang bit keluarannya berubah jauh lebih sedikit daripada setengah
+--- atau yang perubahannya terpusat pada wilayah tertentu --- memberi penyerang
+petunjuk tentang struktur dalamnya. Petunjuk itu, yang disebut \emph{distinguisher},
+adalah langkah pertama menuju serangan yang sungguh meruntuhkan. Karena itu uji
+longsoran dipakai sebagai saringan awal bagi setiap kandidat algoritma hash, dan
+kegagalannya menjadi alasan cukup untuk menolak sebuah rancangan tanpa perlu
+menemukan kolisi lebih dahulu \citep{stallings2017}.
+
+\subsection{Parameter Konkret Algoritma Hash}
+
+Untuk perbandingan yang cepat, parameter utama setiap algoritma dihimpun pada
+Tabel~\ref{tab:parameter-hash}. Kolom terakhir menyatakan status keamanan pada
+hari ini, mengikuti hasil-hasil yang dibahas pada
+Subbagian~\ref{subsec:kriptanalisis-hash}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Parameter dan status keamanan algoritma fungsi hash}
+    \label{tab:parameter-hash}
+    \begin{tabularx}{\linewidth}{@{}l c c c c
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Algoritma} & \textbf{Digest} & \textbf{Blok} & \textbf{Kata} &
+    \textbf{Putaran} & \textbf{Status} \\
+    \midrule
+    MD5      & $128$  & $512$  & $32$ & $64$ & rusak; kolisi praktis \\
+    \addlinespace
+    SHA-1    & $160$  & $512$  & $32$ & $80$ & rusak; kolisi praktis \\
+    \addlinespace
+    SHA-224  & $224$  & $512$  & $32$ & $64$ & aman \\
+    \addlinespace
+    SHA-256  & $256$  & $512$  & $32$ & $64$ & aman \\
+    \addlinespace
+    SHA-384  & $384$  & $1024$ & $64$ & $80$ & aman \\
+    \addlinespace
+    SHA-512  & $512$  & $1024$ & $64$ & $80$ & aman \\
+    \addlinespace
+    SHA3-224 & $224$  & $1152$ & $64$ & $24$ & aman \\
+    \addlinespace
+    SHA3-256 & $256$  & $1088$ & $64$ & $24$ & aman \\
+    \addlinespace
+    SHA3-512 & $512$  & $576$  & $64$ & $24$ & aman \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Pada Tabel~\ref{tab:parameter-hash}, kolom ``Blok'' bagi SHA-3 bukan ukuran blok
+pesan melainkan \textbf{rate} permutasi, yaitu banyaknya bit yang diserap pada
+setiap putaran sponge. Angka itu berbeda-beda untuk setiap varian karena
+permutasi Keccak-f[1600] selalu berukuran sama: yang berubah hanyalah pembagian
+antara rate $r$ dan kapasitas $c$, dengan $r + c = 1600$. Untuk SHA3-256,
+$r = 1088$ dan $c = 512$; untuk SHA3-512, $r = 576$ dan $c = 1024$.
+
+Pembagian itu menentukan tingkat keamanan. Ketahanan kolisi sponge kira-kira
+$2^{c/2}$ dan ketahanan pre-image kira-kira $2^{n}$, sehingga untuk SHA3-256
+keduanya berturut-turut menjadi $2^{256}$ dan $2^{256}$; digabung dengan panjang
+digest $n = 256$, keamanan kolisi efektifnya $2^{128}$. Artinya SHA3-256
+menawarkan tingkat keamanan yang setara SHA-256, tetapi melalui jalan yang sama
+sekali berbeda. Itulah nilai praktisnya: bila suatu hari ditemukan kelemahan
+mendasar pada konstruksi Merkle--Damgård, keluarga SHA-3 tetap berdiri.
+
+\subsection{Kriptanalisis Fungsi Hash}
+\label{subsec:kriptanalisis-hash}
+
+Perancangan fungsi hash adalah perlombaan yang berlangsung puluhan tahun, dan
+sejarahnya penuh kekalahan yang datang lebih cepat daripada dugaan. Yang khas
+dari kekalahan itu adalah jalannya: hampir tidak pernah melalui penelusuran
+menyeluruh, selalu melalui pemanfaatan struktur internal fungsi kompresi.
+
+Tonggak pertama adalah MD5. Pada tahun 2004, Xiaoyun Wang dan kawan-kawan
+\citep{wang2004md5} memperlihatkan bahwa kolisi MD5 dapat dihitung dalam waktu
+kurang dari satu jam pada sebuah kluster, yaitu sekitar $2^{39}$ operasi hash
+--- jauh di bawah batas ulang tahun $2^{64}$. Serangan itu disusul oleh
+perbaikan yang membuat kolisi MD5 dapat dihitung dalam hitungan detik pada
+komputer pribadi. Yang membuatnya berbahaya bukan kecepatannya, melainkan
+sifatnya: karena penyerang dapat memilih \emph{kedua} pesan, ia dapat menyiapkan
+sepasang pesan yang berbeda isinya tetapi berhash sama, dan membuat tanda tangan
+atas naskah yang tidak berbahaya, lalu memasangkannya dengan naskah yang
+merugikan. Kemungkinan itu tidak tinggal teori: pada tahun 2008, Stevens dan
+kawan-kawan \citep{stevens2009rogue} memakainya untuk menerbitkan sertifikat
+otoritas sertifikasi palsu yang diterima peramban.
+
+Tonggak kedua adalah SHA-1. Pada tahun 2005, Wang, Yin, dan Yu
+\citep{wang2005sha1} memperlihatkan kolisi SHA-1 dalam sekitar $2^{69}$ operasi,
+turun dari $2^{80}$ yang diharapkan dari batas ulang tahun. Serangan itu masih
+di luar jangkauan perangkat biasa, sampai pada tahun 2017 tim Stevens, Bursztein,
+Karpman, Albertini, dan Markov \citep{stevens2017shattered} mengumumkannya secara
+nyata melalui proyek \textit{SHAttered}: kolisi pertama untuk SHA-1 utuh,
+ditemukan dengan sekitar $2^{63{,}1}$ operasi kompresi. Biayanya dilaporkan
+sepadan dengan sekitar 6.500 tahun pemrosesan CPU dan 110 tahun pemrosesan GPU.
+Tiga tahun kemudian, Leurent dan Peyrin \citep{leurent2020sha1} memperlihatkan
+kolisi \emph{chosen-prefix} pertama untuk SHA-1, yaitu kemampuan menyiapkan dua
+dokumen dengan awalan berbeda yang berhash sama, dan mendemonstrasikannya dengan
+memalsukan tanda tangan pada jaringan kepercayaan PGP. Serangan itu menutup
+perdebatan: SHA-1 tidak lagi layak untuk tanda tangan digital.
+
+Perlu ditarik perbedaan yang sering dikaburkan, yaitu antara serangan
+\emph{kolisi} dan serangan \emph{chosen-prefix}. Serangan kolisi generik
+menghasilkan dua pesan yang sama-sama tampak acak dan tidak bermakna; penyerang
+tidak dapat mengarahkan isinya. Serangan chosen-prefix lebih kuat: penyerang
+memilih dua awalan yang bermakna --- misalnya dua naskah kontrak yang berbeda
+pasal --- lalu melengkapinya dengan bit-bit sedemikian rupa sehingga kedua
+dokumen berhash sama. Inilah bentuk yang benar-benar berbahaya bagi tanda tangan
+digital, dan itulah yang dicapai pada MD5 tahun 2008 dan pada SHA-1 tahun 2020.
+
+Dari kekelaman itu ada pula pelajaran yang menenangkan. Keluarga SHA-2 bertahan
+lebih dari dua dasawarsa tanpa serangan kolisi yang praktis, meskipun strukturnya
+sama dengan SHA-1 dan jumlah putarannya bertambah. Yang membedakan keduanya
+adalah kekuatan margin perancangannya: SHA-256 memakai 64 putaran, sedangkan
+serangan-serangan terbaik yang diketahui masih tertahan puluhan putaran sebelum
+mencapai putaran penuh. Pengalaman itulah yang memunculkan nasihat yang kini
+menjadi kebiasaan dalam perancangan kriptografi: pilih jumlah putaran yang
+\emph{cukup} agar tidak ada serangan yang mendekati --- bukan sekadar jumlah
+minimum yang tampak perlu.
+
+Satu catatan penutup tentang apa yang harus dilakukan terhadap algoritma yang
+sudah runtuh. Menghapusnya dari sistem lama sering lebih sulit daripada
+memperkenalkannya dahulu, karena hash terpakai di mana-mana: pada tanda tangan
+dokumen, sidik jari kunci, nilai pemeriksa berkas, dan basis data kata sandi.
+Karena itu rancangan baru sebaiknya memisahkan \emph{kapan} algoritma hash dipilih
+dari \emph{tempat} ia dipakai, sehingga penggantian algoritma dapat dilakukan
+tanpa menyentuh seluruh sistem. Keperluan itu jugalah yang mendorong lahirnya
+fungsi hash yang panjang keluarannya dapat diatur, sehingga satu fungsi dapat
+melayani beberapa tingkat keamanan sekaligus.

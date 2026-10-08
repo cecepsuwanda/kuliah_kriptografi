@@ -1,0 +1,73 @@
+% Konstruksi sponge pada SHA-3: fase serap (absorbing) lalu fase peras (squeezing).
+% Keadaan dibagi menjadi bagian rate r dan bagian kapasitas c, dengan r + c = 1600.
+% Dirujuk dari section-02.tex dengan \input{figures/konstruksi-sponge}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        bagi/.style={draw, minimum height=0.78cm, font=\small, align=center, inner sep=2pt},
+        bagiR/.style={bagi, minimum width=2.0cm},
+        bagiC/.style={bagi, minimum width=1.7cm, fill=gray!12},
+        blok/.style={draw, rounded corners, minimum width=1.05cm, minimum height=0.6cm,
+                     font=\scriptsize, fill=blue!6, align=center, inner sep=3pt},
+        xr/.style={draw, circle, minimum size=0.42cm, inner sep=0pt, font=\scriptsize,
+                   fill=white},
+        panah/.style={-{Latex[length=2.2mm]}, thick},
+    ]
+        % --- keadaan awal
+        \node[bagiR] (r1) at (0.9, 0) {$r$ bit};
+        \node[bagiC, right=0pt of r1] (c1) {$c$ bit};
+
+        \node[bagiR] (r2) at (0.9, -1.9) {$r$ bit};
+        \node[bagiC, right=0pt of r2] (c2) {$c$ bit};
+
+        \node[bagiR] (r3) at (0.9, -4.0) {$r$ bit};
+        \node[bagiC, right=0pt of r3] (c3) {$c$ bit};
+
+        \node[bagiR] (r4) at (0.9, -5.9) {$r$ bit};
+        \node[bagiC, right=0pt of r4] (c4) {$c$ bit};
+
+        % --- masukan pesan
+        \node[blok] (m0) at (-2.9, 0) {$M_0$};
+        \node[xr] (x0) at (-1.35, 0) {$\oplus$};
+        \draw[panah] (m0) -- (x0);
+        \draw[panah] (x0) -- (r1.west);
+
+        \node[blok] (m1) at (-2.9, -1.9) {$M_1$};
+        \node[xr] (x1) at (-1.35, -1.9) {$\oplus$};
+        \draw[panah] (m1) -- (x1);
+        \draw[panah] (x1) -- (r2.west);
+
+        % --- permutasi
+        \draw[panah] (r1.south) -- (r2.north)
+            node[midway, right, font=\scriptsize, align=left]
+            {$f$: Keccak-f[1600]\\ 24 putaran};
+        \draw[panah] (r2.south) -- (r3.north)
+            node[midway, right, font=\scriptsize] {$f$};
+
+        % --- keluaran
+        \draw[panah] (r3.east) -- ++(1.5, 0)
+            node[right, font=\scriptsize] {$Z_0$};
+
+        \draw[panah] (r3.south) -- (r4.north)
+            node[midway, right, font=\scriptsize] {$f$};
+
+        \draw[panah] (r4.east) -- ++(1.5, 0)
+            node[right, font=\scriptsize] {$Z_1$};
+
+        % --- keterangan fase
+        \node[left=0.35cm of r1, font=\scriptsize, align=right, text=blue!55!black]
+            {serap};
+        \node[left=0.35cm of r2, font=\scriptsize, align=right, text=blue!55!black]
+            {(absorb)};
+
+        \node[left=0.35cm of r3, font=\scriptsize, align=right, text=green!45!black]
+            {peras};
+        \node[left=0.35cm of r4, font=\scriptsize, align=right, text=green!45!black]
+            {(squeeze)};
+    \end{tikzpicture}
+    \caption{Konstruksi sponge pada SHA-3. Pesan diserap ke bagian $r$ bit dari
+    keadaan, lalu hasilnya diperas keluar. Bagian kapasitas $c$ bit tidak pernah
+    menerima pesan maupun mengeluarkan hasil, dan justru dari sanalah keamanan
+    sponge berasal}
+    \label{fig:konstruksi-sponge}
+\end{figure}

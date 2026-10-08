@@ -1,10 +1,15 @@
 \section{Rangkuman}
 \begin{itemize}
-    \item Fungsi hash memetakan pesan berukuran variabel menjadi \textit{digest} berukuran tetap dan bersifat satu arah; ia menjamin integritas, bukan kerahasiaan.
-    \item Properti kriptografisnya: tahan \textit{pre-image}, tahan \textit{second pre-image}, dan tahan kolisi; ketahanan kolisi hanya sebesar $2^{n/2}$ karena \textit{birthday paradox}.
+    \item Fungsi hash memetakan pesan berukuran variabel menjadi \textit{digest} berukuran tetap dan bersifat satu arah; ia menjamin integritas, bukan kerahasiaan. Ia dibangun dari fungsi kompresi yang bekerja atas blok berukuran tetap.
+    \item Properti kriptografisnya: tahan \textit{pre-image}, tahan \textit{second pre-image}, dan tahan kolisi; ketahanan kolisi hanya sebesar $2^{n/2}$ karena \textit{birthday paradox} --- pada $k = 1{,}177 \cdot 2^{n/2}$ peluang kolisi mencapai $50\%$, dan pada $k = 2^{n/2}$ mencapai $39{,}3\%$.
+    \item Padding Merkle--Damgård menyisipkan bit \code{1}, lalu bit \code{0} sampai panjang bersisa 448 modulo 512, lalu panjang pesan sebagai 64 bit. Karena panjang ikut diproses sebagai data, menambahkan bit pada akhir pesan tidak dapat menghasilkan hash yang sama.
     \item Parameter konkret: MD5 128 bit/512 bit (rusak), SHA-1 160 bit/512 bit (kolisi praktis 2017), SHA-256 256 bit/512 bit/64 putaran, SHA-512 512 bit/1024 bit/80 putaran, SHA-3 berbasis sponge Keccak.
-    \item MD5, SHA-1, dan SHA-2 memakai konstruksi Merkle--Damgård yang rawan \textit{length extension}; SHA-3 memakai konstruksi sponge.
-    \item MAC menambahkan kunci simetris pada fungsi hash sehingga menjamin integritas sekaligus otentikasi pesan; HMAC memakai dua lapis hash dengan $\mathrm{ipad} = \code{0x36}$ dan $\mathrm{opad} = \code{0x5C}$.
-    \item HMAC lebih kuat daripada $H(K\|m)$ karena menutup serangan \textit{length extension}, namun keduanya tidak memberikan \textit{non-repudiation}.
+    \item MD5, SHA-1, dan SHA-2 memakai konstruksi Merkle--Damgård yang rawan \textit{length extension}; SHA-3 memakai konstruksi sponge dengan pemisahan \textit{rate} dan kapasitas, sehingga tahan terhadap serangan itu dan keamanannya tidak bergantung pada ketahanan kolisi sebuah fungsi kompresi.
+    \item Konstanta SHA-2 dapat diperiksa asalnya: $K_t$ dari bagian pecahan akar pangkat tiga 64 bilangan prima pertama, dan nilai awalnya dari akar kuadrat 8 bilangan prima pertama. Cara itu mencegah penyisipan pintu belakang melalui pilihan konstanta.
+    \item Serangan kolisi nyata telah menjatuhkan MD5 (Wang, 2004) dan SHA-1 (\textit{SHAttered}, 2017, sekitar $2^{63{,}1}$ operasi kompresi), serta mencapai bentuk \textit{chosen-prefix} pada keduanya. Serangan-serangan itu menempuh kelemahan struktur kompresi, bukan penelusuran menyeluruh.
+    \item MAC menambahkan kunci simetris pada fungsi hash sehingga menjamin integritas sekaligus otentikasi pesan; HMAC memakai dua lapis hash dengan $\mathrm{ipad} = \code{0x36}$ dan $\mathrm{opad} = \code{0x5C}$, dan keamanannya bersandar pada sifat pseudorandom, bukan pada ketahanan kolisi.
+    \item HMAC lebih kuat daripada $H(K\|m)$ karena menutup serangan \textit{length extension}, namun keduanya tidak memberikan \textit{non-repudiation}. Selain HMAC, tersedia CMAC (dua subkunci $K_1$ dan $K_2$), GMAC, dan Poly1305.
+    \item AEAD seperti GCM, CCM, dan ChaCha20-Poly1305 menghasilkan cipherteks dan tag sekaligus, tetapi semuanya menuntut nonce yang unik untuk setiap pesan; pengulangan nonce pada GCM meruntuhkan kerahasiaan sekaligus memungkinkan pemalsuan.
     \item Checksum hanya mendeteksi galat acak, MAC menjamin otentikasi dengan kunci bersama, dan tanda tangan digital menjamin integritas, otentikasi, serta \textit{non-repudiation}.
+    \item Pemeriksaan tag harus dilakukan secara waktu-konstan. Perbandingan yang berhenti pada byte pertama yang berbeda membocorkan panjang awalan tag yang benar, dan menurunkan biaya pemalsuan dari $2^{t}$ menjadi sekitar $t \cdot 256$.
 \end{itemize}

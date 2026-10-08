@@ -4,6 +4,13 @@
 1. Jelaskan apa yang dimaksud dengan \textit{One-Way Function} dan berikan contoh penerapannya.
 2. Bandingkan antara SHA-256 dan MD5 dari sisi panjang output dan tingkat keamanan.
 3. Bagaimana mekanisme kerja HMAC dalam menjamin integritas sekaligus otentikasi pesan?
+4. Tuliskan aturan padding Merkle--Damgård dan hitung berapa bit nol yang disisipkan untuk pesan sepanjang 1000 bit. Berapa blok yang terbentuk?
+5. Mengapa ketahanan kolisi sebuah fungsi hash hanya sebesar $2^{n/2}$? Turunkan hubungan itu dari paradoks ulang tahun.
+6. Sebutkan nilai awal (IV) SHA-256 dan jelaskan dari mana kedelapan nilai itu diperoleh.
+7. Jelaskan mengapa skema $H(K \| m)$ tidak aman, sedangkan $H(m \| K)$ gagal karena alasan yang berbeda. Serangan apa yang menjatuhkan masing-masing?
+8. Bandingkan HMAC, CMAC, dan Poly1305 dari sisi bahan dasar, kecepatan, dan lingkungan pemakaian yang cocok.
+9. Apa yang dimaksud dengan AEAD? Mengapa ketiga skema AEAD yang dibahas menuntut nonce yang unik, dan apa akibat pelanggaran syarat itu pada GCM?
+10. Jelaskan mengapa perbandingan tag yang berhenti pada byte pertama yang berbeda membahayakan, dan tuliskan bentuk pemeriksaan yang aman.
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -14,11 +21,25 @@ Saya dapat membedakan fungsi hash dengan enkripsi & [ ] \\
 \hline
 Saya dapat menjelaskan tiga properti utama hash kriptografis & [ ] \\
 \hline
-Saya dapat membandingkan algoritma MD5, SHA-1, dan SHA-2 & [ ] \\
+Saya dapat menurunkan batas ulang tahun dan menerapkannya pada MD5 dan SHA-256 & [ ] \\
+\hline
+Saya dapat menjelaskan aturan padding Merkle--Damgård beserta akibatnya & [ ] \\
+\hline
+Saya dapat membandingkan algoritma MD5, SHA-1, SHA-2, dan SHA-3 & [ ] \\
+\hline
+Saya dapat menelusuri jejak kompresi SHA-256 dan memeriksanya dengan Python & [ ] \\
+\hline
+Saya dapat menjelaskan serangan panjang-ekstensi dan cara menutupnya & [ ] \\
 \hline
 Saya dapat menguraikan cara kerja MAC dan HMAC & [ ] \\
 \hline
+Saya dapat membandingkan HMAC, CMAC, GMAC, dan Poly1305 & [ ] \\
+\hline
+Saya dapat menjelaskan prinsip AEAD dan syarat keunikan nonce & [ ] \\
+\hline
 Saya dapat menganalisis risiko serangan kolisi pada fungsi hash & [ ] \\
+\hline
+Saya dapat menuliskan pemeriksaan tag yang tahan terhadap serangan waktu & [ ] \\
 \hline
 \end{tabularx}
 \end{competencychecklist}

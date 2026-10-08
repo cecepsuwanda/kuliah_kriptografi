@@ -1,0 +1,66 @@
+% Batas ulang tahun: peluang kolisi sebagai fungsi banyaknya pesan.
+% Sumbu-x dinyatakan relatif terhadap 2^{n/2}, sehingga kurvanya berlaku untuk
+% semua panjang digest n. Koordinat dihitung dengan Python dari
+% P(u) = 1 - exp(-2^{2u-1}), u = log2(k / 2^{n/2}).
+% Dirujuk dari section-01.tex dengan \input{figures/batas-birthday}.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        sumbu/.style={-{Latex[length=2.2mm]}, thick},
+        kisi/.style={gray!35, very thin},
+        tanda/.style={red!70!black, dashed, thick},
+    ]
+        % kisi mendatar
+        \foreach \y in {0.8, 1.6, 2.4} {
+            \draw[kisi] (-4.6, \y) -- (2.5, \y);
+        }
+        % sumbu
+        \draw[sumbu] (-4.6, 0) -- (2.7, 0) node[right, font=\small] {$k / 2^{\,n/2}$};
+        \draw[sumbu] (0, 0) -- (0, 3.45) node[above, font=\small] {$P(\text{kolisi})$};
+
+        % penanda skala pada sumbu-x
+        \foreach \x/\lab in {-2.88/{$2^{-4}$}, -1.44/{$2^{-2}$}, 0/{$2^{0}$}, 1.44/{$2^{2}$}} {
+            \draw[kisi] (\x, 0) -- (\x, -0.08);
+            \node[below, font=\scriptsize] at (\x, -0.08) {\lab};
+        }
+        % penanda skala pada sumbu-y
+        \foreach \y/\lab in {0.8/{$0{,}25$}, 1.6/{$0{,}50$}, 2.4/{$0{,}75$}} {
+            \draw[kisi] (0, \y) -- (-0.08, \y);
+            \node[left, font=\scriptsize] at (-0.08, \y) {\lab};
+        }
+
+        % kurva peluang kolisi
+        \draw[very thick, blue!65!black]
+            plot coordinates {
+            (-5.760,0.0000) (-5.580,0.0000) (-5.400,0.0000) (-5.220,0.0001)
+            (-5.040,0.0001) (-4.860,0.0001) (-4.680,0.0002) (-4.500,0.0003)
+            (-4.320,0.0004) (-4.140,0.0006) (-3.960,0.0008) (-3.780,0.0011)
+            (-3.600,0.0016) (-3.420,0.0022) (-3.240,0.0031) (-3.060,0.0044)
+            (-2.880,0.0062) (-2.700,0.0088) (-2.520,0.0125) (-2.340,0.0176)
+            (-2.160,0.0249) (-1.980,0.0352) (-1.800,0.0496) (-1.620,0.0699)
+            (-1.440,0.0985) (-1.260,0.1383) (-1.080,0.1939) (-0.900,0.2707)
+            (-0.720,0.3760) (-0.540,0.5185) (-0.360,0.7078) (-0.180,0.9530)
+            (0.000,1.2591) (0.180,1.6222) (0.360,2.0228) (0.540,2.4220)
+            (0.720,2.7669) (0.900,3.0109) (1.080,3.1414) (1.260,3.1888)
+            (1.440,3.1989) (1.620,3.2000) (1.800,3.2000) (1.980,3.2000)
+            (2.160,3.2000) (2.340,3.2000) (2.520,3.2000) (2.700,3.2000)
+            (2.880,3.2000)
+            };
+
+        % penanda $k = 2^{n/2}$
+        \draw[tanda] (0, 0) -- (0, 1.2591);
+        \node[fill=white, draw=red!70!black, font=\scriptsize, align=left,
+              inner sep=2.5pt, right] at (0.06, 0.62)
+            {$k = 2^{\,n/2}$:\\ $P \approx 39{,}3\%$};
+
+        % penanda peluang 50%
+        \draw[tanda] (0.169, 1.6) -- (1.44, 1.6);
+        \node[font=\scriptsize, align=left, anchor=west] at (1.48, 1.42)
+            {$P = 50\%$\\ pada\\ $k = 1{,}177 \cdot 2^{\,n/2}$};
+        \draw[red!70!black, thick] (0.169, 1.585) -- (0.169, 1.615);
+    \end{tikzpicture}
+    \caption{Peluang terjadinya kolisi sebagai fungsi banyaknya pesan yang dicoba,
+    dinyatakan relatif terhadap $2^{\,n/2}$. Kurva ini berlaku untuk semua panjang
+    digest $n$ --- perubahan $n$ hanya menggeser letaknya pada sumbu mendatar}
+    \label{fig:batas-birthday}
+\end{figure}

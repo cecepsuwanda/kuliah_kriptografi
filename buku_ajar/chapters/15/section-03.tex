@@ -1,32 +1,486 @@
 \section{Message Authentication Code (MAC)}
-Fungsi hash standar menjamin integritas (bahwa pesan tidak berubah), tetapi tidak menjamin otentikasi (siapa yang mengirim pesan). Untuk itu, digunakan \textbf{MAC}.
+\label{sec:mac}
 
-\subsection{Konsep MAC}
-MAC adalah fungsi hash yang menggunakan kunci rahasia bersama ($K$).
-\[ \text{Tag} = \text{MAC}(K, m) \]
-Hanya pihak yang memiliki kunci $K$ yang dapat membangkitkan atau memverifikasi tag tersebut. Hal ini memastikan bahwa pesan benar-benar berasal dari pihak yang memegang kunci.
+Fungsi hash pada dua bagian sebelumnya menyelesaikan separuh persoalan integritas:
+ia mampu mendeteksi perubahan isi pesan. Tetapi ia tidak dapat menjawab pertanyaan
+kedua --- \emph{siapa} yang mengirim pesan itu. Siapa pun yang menyadap sebuah pesan
+dapat mengubahnya dan menghitung ulang hash-nya, sebab perhitungan hash tidak
+menuntut rahasia apa pun. Yang dibutuhkan adalah sesuatu yang hanya diketahui oleh
+pihak-pihak yang berhak, dan itulah kunci. Perkakas yang menggabungkan fungsi hash
+dengan kunci rahasia disebut \textbf{Message Authentication Code} (MAC).
+
+\subsection{Konsep Message Authentication Code}
+
+Sebuah MAC adalah sekumpulan tiga algoritma \citep{menezes1996,katz2020}:
+pembangkit kunci yang memilih kunci rahasia $K$ dari ruang kunci, algoritma
+penandaan $\mathrm{Mac}(K, m)$ yang memetakan pesan $m$ menjadi tag berukuran tetap,
+dan algoritma verifikasi $\mathrm{Vrfy}(K, m, \tau)$ yang menerima atau menolak
+pasangan pesan dan tag. Bentuknya sekilas menyerupai fungsi hash:
+
+\begin{equation}
+\mathrm{Mac} : \mathcal{K} \times \{0, 1\}^{*} \longrightarrow \{0, 1\}^{t},
+\label{eq:mac-definisi}
+\end{equation}
+
+dengan $\mathcal{K}$ ruang kunci dan $t$ panjang tag --- umumnya $128$ sampai
+$256$ bit. Perbedaan yang menentukan terletak pada kunci: tanpa mengetahui $K$,
+pesan tidak dapat ditandai, dan tag tidak dapat dipalsukan.
+
+Karena keamanan MAC adalah persoalan keamanan kunci, ia dirumuskan melalui
+permainan antara penyerang dan penantang. Dalam permainan \textbf{EUF-CMA}
+(\textit{Existential Unforgeability under Chosen-Message Attack}), penantang
+memilih $K$ secara acak; penyerang kemudian boleh meminta tag untuk pesan apa pun
+pilihannya, sebanyak apa pun ia mau, dan melihat tag-tag itu. Pada akhirnya
+penyerang harus menyerahkan sepasang $(m^{*}, \tau^{*})$ dengan $m^{*}$ belum pernah
+ia mintakan tag. Ia menang bila $\mathrm{Vrfy}(K, m^{*}, \tau^{*})$ menerima.
+Sebuah MAC disebut aman bila peluang menang itu tidak lebih baik daripada menebak
+tag secara acak, yaitu sekitar $2^{-t}$ \citep{katz2020}.
+
+Rumusan itu lebih kuat daripada yang tampak sekilas, dan dua kata di dalamnya layak
+digarisbawahi. \emph{Chosen-message} berarti penyerang diberi keleluasaan penuh
+memilih pesan yang ingin ditandai --- jauh lebih longgar daripada sekadar
+mengumpulkan pasangan pesan-tag yang kebetulan disadap. \emph{Existential} berarti
+cukup satu pemalsuan pada satu pesan saja untuk mengalahkan skema itu; penyerang
+tidak dituntut memalsukan pesan yang bermakna. Inilah sebabnya MAC yang aman harus
+tahan terhadap upaya penggabungan tag yang sudah diperoleh, dan mengapa keamanan
+tersebut tidak dapat disimpulkan hanya dari sifat fungsi hash yang menjadi
+dasarnya.
+
+MAC menjawab tiga hal sekaligus. Pertama, \textbf{otentikasi pesan}: penerima yakin
+pesan datang dari pemegang kunci. Kedua, \textbf{integritas data}: setiap perubahan
+satu bit pun membuat tag tidak lagi cocok. Ketiga, \textbf{kesegaran}
+(\textit{freshness}), jika disertai nomor urut atau cap waktu, sehingga pesan lama
+tidak dapat diulang begitu saja. Yang tidak dijawabnya adalah \textbf{ketidak-sangkalan}
+(\textit{non-repudiation}): karena kedua pihak memegang kunci yang sama, pengirim
+dapat menyangkal telah mengirim pesan dan menuduh penerima yang membuatnya sendiri.
+Sifat itu hanya dapat diperoleh melalui tanda tangan digital, sebagaimana dibahas
+pada Bab~\ref{chap:tanda-tangan-pki}.
+
+\subsection{Mengapa Bukan Sekadar \texorpdfstring{$H(K \| m)$}{H(K||m)}?}
+
+Goda pertama ketika berhadapan dengan fungsi hash adalah menggabungkannya begitu
+saja dengan kunci. Tiga bentuk sederhana berikut semuanya gagal, masing-masing
+karena alasan yang berbeda, dan memahami mengapa merupakan cara terbaik memahami
+apa yang sesungguhnya dituntut dari sebuah MAC.
+
+Bentuk $H(K \| m)$, yaitu kunci diletakkan di depan pesan, tampak paling wajar.
+Namun bila $H$ memakai konstruksi Merkle--Damgård, ia langsung tumbang oleh serangan
+panjang-ekstensi: penyerang yang menyaksikan satu pesan beserta tag-nya dapat
+melanjutkan kompresi dari tag itu dan menghasilkan tag yang sah untuk pesan yang
+diperpanjang, tanpa mengetahui $K$ sama sekali \citep{kelsey2005second}. Rincian
+serangan itu, lengkap dengan angka-angka nyata, diperlihatkan pada
+Contoh~\ref{ex:length-extension}.
+
+Bentuk $H(m \| K)$, kunci di belakang pesan, menutup celah panjang-ekstensi. Namun
+ia gagal karena alasan lain: ketahanan kolisi. Bila penyerang dapat menemukan dua
+pesan $m_1 \neq m_2$ dengan $H(m_1) = H(m_2)$ --- dan untuk MD5 serta SHA-1 hal itu
+kini dapat dilakukan --- maka karena hashnya sama, penggabungan apa pun di
+belakangnya juga menghasilkan nilai sama, termasuk penggabungan dengan kunci yang
+tidak ia ketahui. Tag yang sah untuk $m_1$ otomatis sah untuk $m_2$. Inilah tepatnya
+mengapa serangan kolisi pada fungsi hash berbahaya bagi skema otentikasi, bukan
+hanya bagi tanda tangan digital.
+
+Bentuk ketiga adalah \emph{envelope} $H(K \| m \| K)$, dengan kunci di kedua ujung.
+Ia menutup kedua celah di atas dan tidak pernah mengalami serangan praktis, tetapi
+tidak memiliki pembuktian keamanan yang mapan dan memerlukan dua kali pemrosesan
+awalan kunci. Karena kekurangan itulah HMAC dirancang.
 
 \subsection{HMAC (Hash-based MAC)}
-HMAC adalah konstruksi MAC yang menggunakan fungsi hash kriptografis (seperti SHA-256) dengan menambahkan kunci rahasia melalui proses \textit{padding} dan \textit{hashing} dua lapis untuk mencegah serangan \textit{length-extension}.
+\label{subsec:hmac}
+
+HMAC diperkenalkan oleh Bellare, Canetti, dan Krawczyk pada tahun 1996
+\citep{bellare1996hmac} dan dibakukan sebagai RFC 2104 \citep{rfc2104} serta FIPS
+198-1 \citep{fips1981}. Ia tetap menjadi MAC berbasis hash yang paling luas dipakai
+sampai hari ini, mulai dari TLS sampai kotak pasir perangkat lunak. Gagasannya
+sederhana tetapi tepat: kunci dipakai dua kali, dan pemrosesan hash dilakukan dua
+lapis.
 
 \input{figures/skema-hmac}
 
-\subsection{Rumus Lengkap HMAC}
-HMAC didefinisikan secara eksplisit sebagai
-\[ \mathrm{HMAC}(K,m) = H\big((K^{+}\oplus \mathrm{opad}) \,\|\, H((K^{+}\oplus \mathrm{ipad}) \,\|\, m)\big), \]
-dengan $K^{+}$ adalah kunci $K$ yang dipad nol hingga sepanjang satu blok hash ($B$ byte: 64 untuk SHA-256, 128 untuk SHA-512), atau di-hash lebih dulu bila $|K| > B$. Konstanta $\mathrm{ipad} = \code{0x36}$ dan $\mathrm{opad} = \code{0x5C}$ diulang $B$ kali, sehingga $H$ dipanggil dua kali melalui dua jalur kunci efektif yang berbeda \citep{stallings2017,menezes1996}.
+Kunci $K$ terlebih dahulu disesuaikan panjangnya menjadi seukuran blok fungsi hash
+($b = 512$ bit untuk SHA-256) dengan aturan
 
-\subsection{Mengapa Bukan \texorpdfstring{$H(K\|m)$}{H(K||m)}?}
-Menempelkan kunci di depan pesan, $H(K\|m)$, rentan \textbf{length extension}: karena sifat Merkle--Damgård, penyerang yang mengetahui $H(K\|m)$ dan panjang $K$ dapat menghitung $H(K\|m\|\mathit{pad}\|m')$ tanpa mengetahui $K$. HMAC menutup celah ini sebab $h_1 = H((K\oplus\mathrm{ipad})\|m)$ belum menjadi tag; tag baru terbentuk setelah hash lapis kedua dengan opad. HMAC tetap aman selama fungsi kompresi dianggap tahan \textit{pseudorandom} \citep{katz2020}.
+\begin{equation}
+K^{+} =
+\begin{cases}
+K \,\|\, \code{00}\cdots\code{00}, & |K| < b, \\[3pt]
+H(K), & |K| > b, \\[3pt]
+K, & |K| = b .
+\end{cases}
+\label{eq:hmac-panjang-kunci}
+\end{equation}
 
-\subsection{MAC vs Tanda Tangan Digital vs Checksum}
-\begin{itemize}
-    \item \textbf{Checksum/CRC}: mendeteksi galat acak, tanpa kunci. Penyerang bebas menghitung ulang nilainya, jadi integritas terhadap manipulasi tidak terjamin.
-    \item \textbf{MAC/HMAC}: memakai kunci simetris bersama. Menjamin integritas dan otentikasi pesan, tetapi \emph{tidak} menjamin \textit{non-repudiation} karena kedua pihak memegang kunci yang sama.
-    \item \textbf{Tanda tangan digital}: memakai kunci privat/publik. Menjamin integritas, otentikasi, dan \textit{non-repudiation}, tetapi biaya komputasinya jauh lebih tinggi daripada MAC.
-\end{itemize}
+Perhatikan baris kedua: kunci yang terlalu panjang tidak dipotong, melainkan
+di-hash lebih dahulu. Pemotongan akan membuang entropi dan membuat dua kunci
+berbeda yang berbagi awalan sama menjadi setara efektifnya. Sesudah itu dua bantalan
+tetap dipakai:
 
+\begin{equation}
+\mathrm{HMAC}(K, m) = H\big((K^{+} \oplus \mathrm{opad}) \,\|\,
+H\big((K^{+} \oplus \mathrm{ipad}) \,\|\, m\big)\big),
+\label{eq:hmac-rumus}
+\end{equation}
 
+dengan $\mathrm{ipad}$ terdiri atas $b/8$ byte bernilai \code{0x36} dan
+$\mathrm{opad}$ terdiri atas $b/8$ byte bernilai \code{0x5C} \citep{rfc2104}.
+Kedua konstanta itu dipilih hanya karena berbeda satu sama lain setengah bitnya
+--- nilai persisnya tidak penting bagi keamanan, yang penting keduanya berbeda.
 
+Mengapa struktur dua lapis itu berhasil? Perhatikan bahwa kunci tidak pernah
+berdampingan langsung dengan pesan di dalam satu blok. Blok pertama fungsi hash
+selalu berisi $K^{+} \oplus \mathrm{ipad}$, dan pesan baru menyusul pada blok
+kedua. Dengan pemisahan itu, struktur iteratif fungsi hash tidak lagi dapat
+diperpanjang oleh penyerang: untuk melanjutkan, ia harus memulai dari keadaan
+internal yang dihasilkan blok kunci, dan keadaan itu tidak pernah dipublikasikan
+--- berbeda dengan tag akhir, yang justru merupakan keluaran dari lapis kedua.
+Lapis luarnya menutup pintu itu.
 
+Bukti keamanan HMAC menempuh jalan yang elegan. Bellare, Canetti, dan Krawczyk
+\citep{bellare1996hmac} memperlihatkan bahwa bila fungsi kompresi dari $H$ berperilaku
+sebagai fungsi acak dengan sifat tertentu, maka HMAC merupakan fungsi
+pseudorandom (PRF) yang aman, dan selanjutnya PRF yang aman dengan sendirinya
+merupakan MAC yang aman terhadap EUF-CMA \citep{katz2020}. Perhatikan bahwa
+keamanan itu \emph{tidak} diturunkan dari ketahanan kolisi $H$. HMAC-SHA-1 tetap
+dianggap aman meskipun SHA-1 telah runtuh sebagai fungsi hash, karena serangan
+kolisi tidak menyentuh sifat PRF yang menjadi tumpuannya. Pembedaan halus itu
+penting dalam praktik: ia menjelaskan mengapa mengganti SHA-1 dengan SHA-256 di
+dalam HMAC lebih mendesak pada tanda tangan digital daripada pada MAC.
 
+Nilai-nilai nyata berikut diambil dari RFC 4231 \citep{rfc4231} dan memakai
+HMAC-SHA-256. Tabel~\ref{tab:hmac-vektor} memperlihatkan parameternya, sedangkan
+tag lengkapnya dituliskan sesudah tabel.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Vektor uji HMAC-SHA-256 menurut RFC 4231}
+    \label{tab:hmac-vektor}
+    \begin{tabularx}{\linewidth}{@{}l
+                                   >{\raggedright\arraybackslash}X
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Kasus} & \textbf{Kunci} & \textbf{Pesan} \\
+    \midrule
+    TC1 & 20 byte bernilai \code{0x0b} & \code{Hi There} \\
+    \addlinespace
+    TC2 & \code{Jefe} (4 byte) & \code{what do ya want for nothing?} \\
+    \addlinespace
+    TC3 & 20 byte bernilai \code{0xaa} & 50 byte bernilai \code{0xdd} \\
+    \addlinespace
+    TC4 & \code{01} sampai \code{19} & 50 byte bernilai \code{0xcd} \\
+    \addlinespace
+    TC6 & 131 byte bernilai \code{0xaa} & \code{Test Using Larger Than Block-Size Key}\\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\code{TC1: b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7}\\[2pt]
+\code{TC2: 5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843}\\[2pt]
+\code{TC3: 773ea91e36800e46854db8ebd09181a72959098b3ef8c122d9635514ced565fe}\\[2pt]
+\code{TC4: 82558a389a443c0ea4cc819899f2083a85f0faa3e578f8077a2e3ff46729665b}\\[2pt]
+\code{TC6: 60e431591ee0b67f0d8a26aacbf5b77f8e0bc6213728c5140546040f0ee37f54}
+\end{minipage}
+\end{center}
+
+Kasus TC6 sengaja memakai kunci 131 byte, yaitu melebihi ukuran blok 64 byte,
+sehingga menempuh cabang $H(K)$ pada Persamaan~\eqref{eq:hmac-panjang-kunci}.
+Hasilnya memperlihatkan bahwa aturan panjang kunci itu memang bekerja sebagaimana
+dirancang, dan sekaligus memberi mahasiswa kasus uji untuk memeriksa implementasi
+sendiri.
+
+\subsection{CBC-MAC dan CMAC}
+
+Fungsi hash bukan satu-satunya bahan pembangun MAC. Bila sudah tersedia block
+cipher, ia justru lebih alami dipakai, sebab block cipher memang sudah memiliki
+kunci. Cara paling langsung adalah \textbf{CBC-MAC}: pesan dipotong menjadi blok
+berukuran sama dengan blok cipher, lalu dienkripsi secara berantai persis seperti
+pada mode CBC, dan blok terakhir diambil sebagai tag:
+
+\begin{equation}
+C_0 = \mathrm{IV} = \code{00}\cdots\code{00}, \qquad
+C_i = E_K(C_{i-1} \oplus M_i), \qquad
+\mathrm{Mac}(K, m) = C_{\ell} .
+\label{eq:cbc-mac}
+\end{equation}
+
+Sifat berantai itu tepat untuk keperluan otentikasi, sebab setiap blok
+memengaruhi seluruh blok sesudahnya --- mengubah satu bit di mana pun mengubah tag
+akhir. Sayangnya, CBC-MAC pada Persamaan~\eqref{eq:cbc-mac} hanya aman untuk pesan
+yang \emph{panjangnya sama}. Bila panjang boleh berbeda, penyerang dapat memalsukan
+tag dengan menyambung pesan: diketahui tag $C_1$ untuk satu blok $M_1$ dan tag $C_2$
+untuk satu blok $M_2$, maka $C_2$ juga merupakan tag yang sah untuk pesan dua blok
+$M_1 \| (M_2 \oplus C_1)$. Penyelesaiannya adalah memasukkan panjang pesan ke dalam
+perhitungan, dan itulah yang dilakukan CMAC.
+
+\textbf{CMAC} dibakukan pada NIST SP 800-38B \citep{sp80038b}. Ia menutup celah
+panjang dengan cara yang cerdik: dua kunci turunan $K_1$ dan $K_2$ dibangkitkan dari
+kunci induk, lalu salah satunya dikenakan pada blok terakhir tergantung apakah blok
+itu penuh atau tidak. Pembangkitan turunannya dilakukan dengan menggandakan dalam
+medan $GF(2^{128})$ modulo polinom $x^{128} + x^{7} + x^{2} + x + 1$:
+
+\begin{equation}
+L = E_K(0^{b}), \qquad
+K_1 = L \cdot x, \qquad
+K_2 = L \cdot x^{2} ,
+\label{eq:cmac-subkunci}
+\end{equation}
+
+dengan perkalian oleh $x$ diterapkan sebagai pergeseran satu bit ke kiri; bila bit
+teratas yang tergeser keluar bernilai $1$, hasilnya di-XOR dengan konstanta
+$\mathrm{Rb} = \code{0x87}$. Aturan pemakaiannya adalah $K_1$ untuk blok akhir
+yang penuh dan $K_2$ untuk blok akhir yang sudah diberi padding.
+
+Angka berikut dihitung untuk AES-128 dengan kunci vektor uji baku RFC 4493
+\citep{rfc4493}, sehingga dapat diperiksa siapa saja:
+
+\[
+K = \code{2b7e151628aed2a6abf7158809cf4f3c} .
+\]
+
+Blok nol yang dienkripsi memberi $L = \code{7df76b0c1ab899b33e42f047b91b546f}$,
+dan dari situ diperoleh
+
+\[
+\begin{aligned}
+K_1 &= \code{fbeed618357133667c85e08f7236a8de}, \\
+K_2 &= \code{f7ddac306ae266ccf90bc11ee46d513b} .
+\end{aligned}
+\]
+
+Perhatikan bahwa $K_1$ memang $L$ yang digeser satu bit ke kiri --- bit teratas $L$
+bernilai $0$, sehingga tidak diperlukan XOR dengan $\mathrm{Rb}$ --- sedangkan $K_2$
+diperoleh dari $K_1$ dengan cara yang sama, dan di situ bit teratas $K_1$ bernilai
+$1$ sehingga $\mathrm{Rb}$ dipakai. Beberapa tag yang dihasilkan adalah
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\code{kosong : bb1d6929e95937287fa37d129b756746}\\[2pt]
+\code{128 bit: 070a16b46b4d4144f79bdd9dd04a287c}\\[2pt]
+\code{320 bit: dfa66747de9ae63030ca32611497c827}\\[2pt]
+\code{512 bit: 51f0bebf7e3b9d92fc49741779363cfe}
+\end{minipage}
+\end{center}
+
+Keempatnya bersesuaian dengan vektor uji RFC 4493 \citep{rfc4493}, dan cakupannya
+sengaja dipilih agar kedua cabang aturan subkunci terpakai: pesan 128 bit tepat
+satu blok penuh sehingga memperoleh $K_1$, sedangkan pesan 320 bit berakhir dengan
+potongan 24 bit sehingga memperoleh $K_2$.
+
+Kasus pesan kosong menarik untuk ditelaah: karena tidak ada blok sama sekali, blok
+akhir dibentuk dari padding dan memperoleh perlakuan $K_2$; tag akhirnya adalah
+$E_K(K_2)$. Perhitungan itu memperlihatkan mengapa aturan dua subkunci perlu
+dirumuskan secara hati-hati --- kasus batas seperti ini justru yang paling sering
+menimbulkan kesalahan implementasi.
+
+\subsection{MAC Berbasis Polinomial: Poly1305 dan GMAC}
+
+Dua MAC berikut mewakili jalan yang sama sekali berbeda: alih-alih memakai
+permutasi atau fungsi hash, keduanya menghitung polinomial atas medan hingga. Cara
+itu memberi kecepatan yang sangat tinggi pada perangkat lunak, sebab operasinya
+hanya penjumlahan dan perkalian pada bilangan berukuran mesin.
+
+\textbf{Poly1305} dirancang oleh Daniel J. Bernstein \citep{bernstein2005poly1305}.
+Ia memandang pesan sebagai deretan koefisien polinomial dan mengevaluasinya pada
+sebuah titik $r$ yang berasal dari kunci:
+
+\begin{equation}
+\mathrm{Poly1305}(r, m) =
+\left(\sum_{i=1}^{q} m_i r^{q-i+1} \bmod \left(2^{130}-5\right)\right) + s
+\bmod 2^{128} ,
+\label{eq:poly1305}
+\end{equation}
+
+dengan $r$ dan $s$ adalah dua bagian kunci, dan $q$ banyaknya blok 16 byte.
+Keamanannya bersandar pada kenyataan bahwa dua polinomial berderajat berbeda hanya
+dapat bersesuaian di titik $r$ yang terbatas banyaknya; karena $r$ dipilih acak
+dan dirahasiakan, peluang penyerang menebaknya benar sangat kecil. Bilangan
+$2^{130}-5$ dipilih karena prima dan memungkinkan reduksi modular yang murah.
+Poly1305 hampir selalu dipakai berdampingan dengan cipher alir ChaCha20, membentuk
+AEAD yang dibahas pada Subbagian~\ref{subsec:aead}.
+
+\textbf{GMAC} adalah pasangan GCM yang hanya melakukan otentikasi. Ia juga bekerja
+atas medan $GF(2^{128})$, tetapi dengan polinom yang sama seperti CMAC, dan
+memproses blok-blok melalui mode penghitung yang dikalikan secara terpisah. Karena
+dibangun di atas AES, GMAC dapat memanfaatkan percepatan perangkat keras AES yang
+tersedia pada hampir semua pemroses modern. Dua MAC polinomial itu diperbandingkan
+bersama yang lain pada Tabel~\ref{tab:perbandingan-mac}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Perbandingan keluarga MAC}
+    \label{tab:perbandingan-mac}
+    \begin{tabularx}{\linewidth}{@{}l l
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{MAC} & \textbf{Dasar} & \textbf{Catatan} \\
+    \midrule
+    HMAC  & fungsi hash & dipakai luas; aman meski hash-nya kolaps \\
+    \addlinespace
+    CBC-MAC & block cipher & hanya aman untuk panjang pesan tetap \\
+    \addlinespace
+    CMAC & block cipher & memperbaiki CBC-MAC lewat dua subkunci; baku NIST \\
+    \addlinespace
+    GMAC & AES dalam mode penghitung & sangat cepat bila AES dipercepat perangkat keras \\
+    \addlinespace
+    Poly1305 & aritmetika modulo $2^{130}-5$ & sangat cepat di perangkat lunak; berpasangan dengan ChaCha20 \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Enkripsi Terotentikasi (AEAD)}
+\label{subsec:aead}
+
+Sampai di sini enkripsi dan otentikasi masih dibahas terpisah, dan pemisahan itu
+justru sumber kesalahan yang paling mahal dalam praktik. Bila pengembang mengenkripsi
+pesan lebih dahulu lalu menandatanganinya --- atau sebaliknya --- dengan urutan
+yang keliru, hasilnya dapat tetap rentan. Karena itu muncullah gagasan
+\textbf{AEAD} (\textit{Authenticated Encryption with Associated Data}): satu
+antarmuka yang menghasilkan cipherteks \emph{dan} tag sekaligus, dengan jaminan
+bahwa keduanya tidak dapat dipisahkan.
+
+AEAD menerima tiga masukan: pesan yang dirahasiakan, data terkait
+(\textit{associated data}) yang diotentikasi tetapi tidak dirahasiakan --- misalnya
+header paket, nomor versi, atau alamat --- dan nonce yang harus unik. Keluarannya
+adalah pasangan cipherteks dan tag. Yang penting, tag melindungi keduanya sekaligus,
+sehingga penyerang tidak dapat mengubah header tanpa diketahui, meskipun header itu
+tidak dirahasiakan.
+
+Tiga skema AEAD yang paling banyak dipakai adalah GCM, CCM, dan
+ChaCha20-Poly1305. \textbf{GCM} dibakukan pada NIST SP 800-38D \citep{sp80038d} dan
+menggabungkan mode penghitung AES untuk kerahasiaan dengan GMAC untuk otentikasi.
+Ia sangat cepat bila pemroses memiliki percepatan AES, dan karena itu menjadi
+pilihan utama TLS 1.3. Kelemahannya halus tetapi serius: GCM sangat rapuh terhadap
+pengulangan nonce. Bila nonce yang sama dipakai dua kali dengan kunci yang sama,
+kerahasiaan runtuh dan penyerang dapat memulihkan pesan. Batas itu tertulis pada
+SP 800-38D, termasuk batas jumlah blok yang boleh diproses dengan satu kunci.
+
+\textbf{CCM} (\textit{Counter with CBC-MAC}) juga dibakukan oleh NIST, dan menyusun
+CBC-MAC untuk otentikasi bersama mode penghitung untuk kerahasiaan. Ia lebih
+konservatif daripada GCM dan tidak memerlukan perkalian di medan hingga, tetapi
+tidak dapat diparalelkan pada tahap otentikasinya. \textbf{ChaCha20-Poly1305}
+\citep{rfc8439} menyusun cipher alir ChaCha20 dengan MAC polinomial Poly1305, dan
+unggul justru pada perangkat yang tidak memiliki percepatan AES --- telepon
+genggam lama, perangkat tertanam, dan pemroses tanpa instruksi khusus. Karena
+keduanya dihitung dari bahan yang sama, implementasinya dapat dibuat efisien dan
+--- yang lebih penting untuk keamanan --- mudah dituliskan tanpa kesalahan.
+
+Tabel~\ref{tab:aead} menghimpun perbandingannya.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Perbandingan skema AEAD}
+    \label{tab:aead}
+    \begin{tabularx}{\linewidth}{@{}l
+                                   >{\raggedright\arraybackslash}X
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Skema} & \textbf{Keunggulan} & \textbf{Kelemahan} \\
+    \midrule
+    GCM & sangat cepat dengan percepatan AES; paralel &
+    rapuh bila nonce terulang; ada batas jumlah blok per kunci \\
+    \addlinespace
+    CCM & konservatif; tidak perlu perkalian medan hingga &
+    otentikasi tidak dapat diparalelkan; hanya untuk panjang tertentu \\
+    \addlinespace
+    ChaCha20-Poly1305 & cepat tanpa percepatan AES; sederhana &
+    belum seluas GCM dukungannya \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Salah satu pelajaran penting dari AEAD adalah bahwa ketiga skema itu menuntut
+\textbf{nonce yang unik} untuk setiap pesan. Nonce bukan rahasia, tetapi
+kesegarannya mutlak. Pengulangan nonce pada GCM bukan sekadar melemahkan keamanan,
+melainkan membocorkan XOR dari dua pesan dan sekaligus memungkinkan pemalsuan tag.
+Karena itu baku masing-masing menetapkan batas tegas: berapa banyak pesan boleh
+dienkripsi dengan satu kunci, dan bagaimana nonce harus dibentuk --- misalnya dari
+penghitung yang tidak pernah mundur atau dari nilai acak yang cukup panjang.
+
+\subsection{MAC, Tanda Tangan Digital, dan Checksum}
+
+MAC sering tertukar dengan dua hal lain yang juga memberi nilai pemeriksa. Ketiga
+perkakas itu memiliki kegunaan yang berbeda, dan memilih yang salah dapat melumpuhkan
+keamanan sebuah sistem. Perbedaannya dirangkum pada Tabel~\ref{tab:mac-vs-lain}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{MAC dibandingkan dengan tanda tangan digital dan checksum}
+    \label{tab:mac-vs-lain}
+    \begin{tabularx}{\linewidth}{@{}l
+                                   >{\raggedright\arraybackslash}X
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Aspek} & \textbf{MAC} & \textbf{Tanda tangan digital} \\
+    \midrule
+    Kunci & satu kunci bersama & kunci pribadi untuk menandatangani, kunci publik untuk memeriksa \\
+    \addlinespace
+    Kecepatan & sangat cepat; cocok untuk data besar & lambat; karena itu ditulis atas nilai hash \\
+    \addlinespace
+    Ketidak-sangkalan & tidak ada; kedua pihak memegang kunci &
+    ada; hanya pemegang kunci pribadi dapat menandatangani \\
+    \addlinespace
+    Kelemahan utama & tidak melindungi dari penerima yang berkhianat &
+    bergantung pada keaslian kunci publik (lihat Bab~\ref{chap:tanda-tangan-pki}) \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Perbandingan dengan \emph{checksum} bahkan lebih tajam, sebab keduanya sama-sama
+berupa nilai pemeriksa berukuran tetap. Namun checksum seperti CRC dirancang untuk
+mendeteksi \emph{galat tak sengaja} --- bit yang terbalik akibat gangguan saluran,
+cakram yang rusak, atau paket yang terpotong. Ia sama sekali tidak memiliki kunci,
+dan karena itu tidak memiliki pertahanan terhadap pihak yang berniat jahat:
+penyerang dapat menghitung ulang CRC mana pun dengan mudah. Kesalahan yang sering
+terjadi adalah memakai checksum sebagai pengganti MAC dan merasa terlindungi.
+Melindungi dari galat dan melindungi dari manusia adalah dua persoalan yang
+berbeda.
+
+\subsection{Perbandingan Tag secara Waktu-Konstan}
+\label{subsec:tag-waktu-konstan}
+
+Satu hal terakhir menyangkut cara memeriksa tag, dan justru di sinilah banyak
+implementasi yang benar secara teori menjadi rapuh secara praktik. Pemeriksaan
+yang naif menuliskan perbandingan seperti ini:
+
+\begin{center}
+\begin{minipage}{0.86\linewidth}
+\begin{verbatim}
+for i in range(len(tag_diterima)):
+    if tag_diterima[i] != tag_dihitung[i]:
+        return False
+return True
+\end{verbatim}
+\end{minipage}
+\end{center}
+
+Kode itu benar secara logika, tetapi bocor melalui waktu. Ia berhenti pada byte
+pertama yang berbeda, sehingga lama pemeriksaan memberi tahu penyerang berapa byte
+awal tag yang sudah benar. Dengan menebak tag satu byte demi satu dan mengukur
+waktu tanggapan, penyerang dapat memulihkan tag yang sah byte demi byte, sehingga
+jumlah percobaan turun dari $2^{t}$ menjadi sekitar $t \cdot 256$. Serangan
+\emph{timing} semacam itu pernah terbukti nyata pada sistem di lapangan, dan
+panjang tag tidak menolong sama sekali karena serangannya tidak menebak seluruh
+tag sekaligus.
+
+Pertahanannya adalah membandingkan seluruh tag tanpa jalan pintas, dan
+mengumpulkan hasilnya dalam satu variabel yang baru diperiksa di akhir:
+
+\begin{center}
+\begin{minipage}{0.86\linewidth}
+\begin{verbatim}
+beda = 0
+for i in range(len(tag_diterima)):
+    beda |= tag_diterima[i] ^ tag_dihitung[i]
+return beda == 0
+\end{verbatim}
+\end{minipage}
+\end{center}
+
+Perhatikan bahwa variabel \code{beda} selalu diperbarui tanpa syarat, sehingga lama
+perulangan tidak bergantung pada isi tag. Cara berpikir itulah --- bahwa waktu
+eksekusi dan penggunaan memori adalah saluran yang juga harus dijaga --- yang akan
+muncul kembali pada pembahasan tanda tangan digital dan sertifikat pada
+Bab~\ref{chap:tanda-tangan-pki} \citep{sp800107}.
