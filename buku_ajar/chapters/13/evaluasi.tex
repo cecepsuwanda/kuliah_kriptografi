@@ -4,6 +4,21 @@
 1. Apa perbedaan antara \textit{NP-complete problem} dan persoalan yang dapat diselesaikan dalam waktu polinomial?
 2. Jelaskan langkah-langkah transformasi dari kunci privat ke kunci publik pada sistem Merkle-Hellman.
 3. Mengapa penemuan Adi Shamir membuat algoritma Knapsack tidak lagi aman?
+4. Jelaskan mengapa algoritma \textit{greedy} selalu berhasil pada barisan
+   superincreasing, dan tunjukkan dengan angka mengapa ia gagal pada barisan
+   $\{1, 5, 6, 11, 14, 20\}$ untuk $M = 32$.
+5. Diketahui $W_{priv} = \{2, 3, 6, 13, 27, 52\}$, $m = 105$, dan $n = 31$.
+   Hitunglah $W_{pub}$ dan $n^{-1} \bmod 105$, lalu enkripsikan blok
+   \code{110101} dan periksa hasil dekripsinya.
+6. Mengapa $C = \sum_i b_i w'_i$ tidak perlu diambil modulo $m$, padahal
+   $w'_i$ sendiri dihitung modulo $m$? Kaitkan jawaban Anda dengan syarat
+   $m > \sum_i w_i$.
+7. Hitung kerapatan barisan publik pada soal nomor 5, lalu bandingkan dengan
+   kerapatan barisan Merkle--Hellman praktis (100 elemen, elemen terbesar 299
+   bit). Barisan manakah yang lebih rentan terhadap serangan kerapatan rendah?
+8. Mengapa anjuran agar modulus $m$ dipilih sepanjang 100--200 bit tidak
+   konsisten dengan anjuran bahwa barisan privat harus berisi 250 elemen
+   bernilai 200--400 bit? Berapa panjang $m$ yang sesungguhnya diperlukan?
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -14,11 +29,27 @@ Saya dapat menjelaskan konsep \textit{Knapsack Problem} & [ ] \\
 \hline
 Saya dapat membedakan barisan \textit{superincreasing} dan normal & [ ] \\
 \hline
+Saya dapat memeriksa apakah sebuah barisan bersifat superincreasing & [ ] \\
+\hline
+Saya dapat memecahkan \textit{superincreasing knapsack} dengan algoritma \textit{greedy} & [ ] \\
+\hline
+Saya dapat menghitung kunci publik dari kunci privat Merkle-Hellman & [ ] \\
+\hline
+Saya dapat menjelaskan mengapa $m > \sum_i w_i$ dan $\text{PBB}(n,m)=1$ wajib dipenuhi & [ ] \\
+\hline
+Saya dapat menghitung invers modulo $n^{-1} \bmod m$ & [ ] \\
+\hline
 Saya dapat menghitung enkripsi sistem Merkle-Hellman & [ ] \\
 \hline
 Saya dapat melakukan dekripsi dengan bantuan invers modulo & [ ] \\
 \hline
+Saya dapat membuktikan mengapa dekripsi Merkle-Hellman pasti berhasil & [ ] \\
+\hline
+Saya dapat menghitung kerapatan barisan dan menafsirkan ambang serangan & [ ] \\
+\hline
 Saya dapat menganalisis penyebab kegagalan keamanan algoritma Knapsack & [ ] \\
+\hline
+Saya dapat menjelaskan hubungan persoalan kisi dengan kriptografi pascakuantum & [ ] \\
 \hline
 \end{tabularx}
 \end{competencychecklist}

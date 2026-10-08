@@ -1,9 +1,117 @@
-
 \begin{obeactivity}
 \textbf{Aktivitas 13.1: Simulasi Merkle-Hellman}
-1. Tentukan kunci privat (barisan \textit{superincreasing}): $W_{priv} = \{2, 3, 6, 13, 27, 52\}$.
-2. Gunakan $m = 105$ dan $n = 31$. Hitung kunci publik $W_{pub}$.
-3. Enkripsi plainteks $B = (0, 1, 1, 0, 0, 0)$ menggunakan $W_{pub}$.
-4. Hitung $n^{-1} \bmod 105$.
-5. Dekripsi hasil kriptogram tersebut menggunakan $n^{-1}$ dan $W_{priv}$.
+1. Tentukan kunci privat (barisan \textit{superincreasing}): $W_{priv} = \{2, 3,
+   6, 13, 27, 52\}$.
+2. Gunakan $m = 105$ dan $n = 31$. Periksa lebih dahulu bahwa $m > \sum_i w_i$
+   dan bahwa $\text{PBB}(n, m) = 1$. Mengapa kedua syarat itu wajib?
+3. Hitung kunci publik $W_{pub}$ menurut Persamaan~\eqref{eq:mh-kunci}.
+4. Bandingkan $W_{priv}$ dengan $W_{pub}$. Tunjukkan dengan memeriksa setiap
+   elemennya bahwa $W_{pub}$ bukan lagi barisan superincreasing.
+5. Hitung $n^{-1} \bmod 105$.
 \end{obeactivity}
+
+Dua perkakas pada Listing~\ref{lst:knapsack-kunci} menjalankan langkah 3 dan 5
+di atas: memotong rangkaian bit menjadi blok sepanjang $n$ bit, dan menghitung
+barisan publik dari barisan privat.
+
+\lstinputlisting[
+    language=Python,
+    caption={Pemotongan blok dan pembangkitan barisan publik Merkle-Hellman},
+    label={lst:knapsack-kunci},
+    firstline=113,
+    lastline=123
+]{\codefile{python/knapsack_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 13.2: Dekripsi \textit{Greedy} pada Barisan Superincreasing}
+1. Periksa bahwa barisan $\{2, 3, 6, 13, 27, 52\}$ memenuhi
+   Persamaan~\eqref{eq:superincreasing} untuk setiap elemennya.
+2. Jalankan fungsi pada Listing~\ref{lst:knapsack-greedy} untuk memecahkan
+   $M = 70$.
+3. Tuliskan langkah demi langkahnya seperti pada
+   Tabel~\ref{tab:greedy-70}, dan bandingkan hasilnya dengan
+   Contoh~\ref{ex:greedy-superincreasing}.
+4. Ubah $M$ menjadi $71$ dan jalankan kembali fungsinya. Mengapa fungsi itu
+   mengembalikan \emph{tidak ada solusi}, dan apa artinya bagi keamanan pesan?
+5. Ulangi untuk $M = 103$ (jumlah seluruh elemen). Bit apa yang dihasilkan?
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Pemeriksaan barisan superincreasing dan dekripsi \textit{greedy}},
+    label={lst:knapsack-greedy},
+    firstline=64,
+    lastline=82
+]{\codefile{python/knapsack_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 13.3: Enkripsi dan Dekripsi Tiga Blok}
+1. Jalankan program pada Listing~\ref{lst:knapsack-enkripsi}, yang mengenkripsi
+   \code{011000110101101110} dengan $W_{pub} = \{62, 93, 81, 88, 102, 37\}$.
+2. Periksa bahwa kriptogramnya $(174, 280, 333)$.
+3. Perhatikan bahwa $280$ dan $333$ melampaui $m = 105$. Jelaskan mengapa hal
+   itu tidak merusak dekripsi.
+4. Hitung $C' = (C \cdot n^{-1}) \bmod 105$ untuk ketiga kriptogram, lalu
+   pecahkan hasilnya dengan algoritma \textit{greedy} pada $W_{priv}$.
+5. Bandingkan hasilnya dengan Tabel~\ref{tab:mh-105-dekripsi}. Apakah ketiga
+   blok pulih tepat seperti semula?
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Enkripsi dan dekripsi tiga blok dengan $m = 105$ dan $n = 31$},
+    label={lst:knapsack-enkripsi},
+    firstline=186,
+    lastline=207
+]{\codefile{python/knapsack_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 13.4: Mengukur Kerapatan dan Memeriksa Parameter}
+1. Hitung kerapatan barisan $\{62, 93, 81, 88, 102, 37\}$ dengan
+   Persamaan~\eqref{eq:densitas-knapsack}.
+2. Hitung kerapatan barisan Merkle--Hellman yang dianjurkan sumber: 100 elemen
+   dengan elemen terbesar sekitar 299 bit.
+3. Bandingkan kedua nilai itu dengan ambang $d < 0{,}645$
+   (Lagarias--Odlyzko) dan $d < 0{,}9408$ (Coster dan kawan-kawan).
+   Barisan manakah yang justru dapat diserang?
+4. Periksa anjuran modulus pada sumber: bisakah $m$ sepanjang 100--200 bit
+   melampaui jumlah 250 elemen yang masing-masing bernilai 200 bit ke atas?
+5. Bangkitkan barisan superincreasing sebanyak 100 elemen mulai dari sekitar
+   $2^{200}$ dan hitung panjang bit jumlahnya. Berapa panjang $m$ yang
+   sesungguhnya diperlukan?
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Kerapatan barisan, biaya penelusuran, dan pemeriksaan parameter},
+    label={lst:knapsack-kerapatan},
+    firstline=242,
+    lastline=289
+]{\codefile{python/knapsack_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 13.5: Membalik Kunci Publik Menjadi Kunci Privat}
+1. Jalankan program pada Listing~\ref{lst:knapsack-balik}.
+2. Perhatikan bahwa mengalikan $W_{pub}$ dengan $n^{-1}$ modulo $m$
+   mengembalikan $W_{priv}$ secara tepat.
+3. Jelaskan mengapa langkah itu sama persis dengan langkah kedua pada prosedur
+   dekripsi (Subbagian~\ref{subsec:bukti-knapsack}).
+4. Sekarang pikirkan posisi penyerang. Bila ia mengetahui barisan publik tetapi
+   bukan $(n, m)$, persoalan apa yang harus ia pecahkan? Berapa banyak pasangan
+   $(n, m)$ yang mungkin, dan mengapa menelusuri seluruhnya tidak praktis?
+5. Uraikan secara ringkas mengapa Shamir dapat menemukan $(n, m)$ itu dalam
+   waktu polinomial, sedangkan penelusuran menyeluruh tidak mungkin
+   (Subbagian~\ref{sec:kriptanalisis-knapsack}).
+\end{obeactivity}
+
+\lstinputlisting[
+    language=Python,
+    caption={Pemulihan kunci privat dari kunci publik},
+    label={lst:knapsack-balik},
+    firstline=292,
+    lastline=303
+]{\codefile{python/knapsack_uji.py}}
+
+Seluruh sepuluh pengujian pada program ini dapat dijalankan sekaligus dengan
+\texttt{python knapsack\_uji.py}. Bila setiap angka pada bab ini cocok, program
+akan mencetak \texttt{LULUS} pada setiap blok pengujian.

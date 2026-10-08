@@ -1,13 +1,158 @@
 \section{Kriptanalisis dan Keamanan}
-Meskipun terlihat kuat, sistem Merkle-Hellman telah terbukti tidak aman.
+\label{sec:kriptanalisis-knapsack}
+
+Sistem Merkle--Hellman adalah contoh yang jarang dijumpai dalam sejarah
+kriptografi: sebuah gagasan yang secara matematis elegan, yang gagal bukan
+karena kelalaian penerapnya, melainkan karena landasan kesulitannya salah
+diperkirakan. Bagian ini menelusuri bagaimana kegagalan itu terjadi, sebab
+pelajarannya berlaku jauh melampaui algoritma knapsack itu sendiri.
 
 \subsection{Serangan Adi Shamir}
-Pada tahun 1982, Adi Shamir mempublikasikan algoritma yang mampu merekonstruksi barisan \textit{superincreasing} dari kunci publik dalam waktu polinomial \citep{shamir1982}. Shamir menunjukkan bahwa struktur modular yang digunakan untuk menyembunyikan barisan \textit{superincreasing} dapat ditembus menggunakan teknik matematika tertentu, sehingga kunci privat dapat ditemukan dari kunci publik.
 
-\subsection{Kesimpulan Keamanan}
-Saat ini, algoritma Knapsack tidak digunakan dalam implementasi praktis karena kerentanannya terhadap serangan kriptanalisis. Namun, algoritma ini memberikan kontribusi sejarah yang penting dalam pengembangan konsep kunci-publik.
+Sistem Merkle--Hellman diusulkan pada tahun 1978 dan selama beberapa tahun
+dianggap sebagai kandidat kuat untuk kriptografi kunci-publik, sebab persoalan
+knapsack yang mendasarinya tergolong NP-complete. Pada tahun 1982, hanya empat
+tahun kemudian, Adi Shamir mempublikasikan sebuah algoritma yang merekonstruksi
+barisan superincreasing --- yaitu kunci privat --- langsung dari kunci publik,
+dalam waktu polinomial \citep{shamir1982}. Dengan kata lain, pintu jebakan yang
+menjadi seluruh sandaran sistem itu dapat dibuka tanpa memegang kuncinya.
 
+Yang menarik, Shamir tidak memecahkan persoalan knapsack secara umum. Ia
+memanfaatkan kelemahan struktural yang khas pada barisan Merkle--Hellman.
+Kunci publik $w'_i = (w_i n) \bmod m$ bukan barisan acak sembarangan: ia
+merupakan kelipatan skalar dari barisan superincreasing, yang dipotong oleh
+sebuah modulus. Keteraturan tersembunyi itu masih membekas pada kunci
+publiknya, dan bekas itu cukup untuk dipulihkan secara sistematis. Serangan ini
+kemudian disempurnakan bersama-sama dengan serangan lain menjadi serangan
+\textit{low-density} yang akan diuraikan berikutnya.
 
+\subsection{Serangan pada Knapsack Berkerapatan Rendah}
 
+Perkembangan paling penting datang dari kajian atas \textbf{kerapatan}
+(\textit{density}) sebuah barisan bobot, yaitu besaran yang mengukur seberapa
+padat nilai-nilai di dalam barisan itu mengisi ruang bilangan yang tersedia:
 
+\begin{equation}
+d = \frac{n}{\log_2 \left( \max_i a_i \right)} ,
+\label{eq:densitas-knapsack}
+\end{equation}
 
+dengan $n$ banyaknya elemen dan $\max_i a_i$ elemen terbesar. Kerapatan yang
+rendah berarti ada banyak sekali himpunan bagian yang berbeda tetapi jumlahnya
+berdekatan, sehingga jumlah-jumlah itu saling menghimpit. Keadaan yang tampak
+seperti menambah kesulitan itu justru sebaliknya: pada tahun 1985, Lagarias dan
+Odlyzko menunjukkan bahwa persoalan subset sum dengan kerapatan $d < 0{,}645$
+dapat dipecahkan dalam waktu polinomial dengan mereduksinya menjadi persoalan
+basis kisi berdimensi rendah \citep{lagarias1985subset}. Enam tahun kemudian,
+Coster, LaMacchia, Odlyzko, dan Schnorr memperbaiki teknik itu dan menaikkan
+ambang batas menjadi $d < 0{,}9408$, sehingga hampir seluruh knapsack yang
+dirancang untuk pemakaian praktis masuk ke dalam jangkauannya
+\citep{coster1991subset}.
+
+Bandingkan kedua rejim itu pada Tabel~\ref{tab:kerapatan-knapsack}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Kerapatan barisan bobot dan akibatnya bagi keamanan}
+    \label{tab:kerapatan-knapsack}
+    \begin{tabularx}{\linewidth}{@{}l
+                                   >{\raggedright\arraybackslash}X
+                                   c@{}}
+    \toprule
+    \textbf{Barisan} & \textbf{Keterangan} & \textbf{$d$} \\
+    \midrule
+    Contoh kecil buku ini & $\{62, 93, 81, 88, 102, 37\}$, $n = 6$ & $0{,}8992$ \\
+    \addlinespace
+    Merkle--Hellman praktis & $n = 100$, elemen terbesar $\approx 299$ bit &
+    $0{,}3344$ \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Tabel~\ref{tab:kerapatan-knapsack} memuat ironi yang menjadi inti kegagalan
+Merkle--Hellman. Contoh kecil di buku ini, dengan $d = 0{,}8992$, justru
+\emph{di atas} ambang Coster dan karenanya relatif aman dari serangan
+kerapatan rendah. Sebaliknya, parameter yang dianjurkan untuk pemakaian
+sesungguhnya menghasilkan $d \approx 0{,}3344$ --- jauh di bawah ambang
+$0{,}645$ sekalipun. Merkle dan Hellman memperbesar $n$ dan memperpanjang
+elemen untuk menaikkan kesulitan penelusuran menyeluruh; tindakan itu memang
+membuat penelusuran $2^n$ menjadi mustahil, tetapi pada saat yang sama
+menurunkan kerapatan ke wilayah yang justru dapat diserang. Kedua ukuran
+keamanan itu bergerak berlawanan arah, dan perancangnya hanya memperhitungkan
+yang pertama.
+
+\subsection{Parameter yang Dianjurkan dan Kelemahannya}
+
+Atas pertimbangan itu, sistem Merkle--Hellman dalam pemakaian praktis didesain
+dengan barisan publik yang jauh lebih besar daripada contoh-contoh di buku ini:
+umumnya sekitar 250 elemen atau lebih, dengan setiap elemen bernilai antara 200
+dan 400 bit. Angka-angka itu masuk akal sebagai tanggapan atas serangan
+menyeluruh, sebab jumlah kandidat solusi menjadi $2^{250}$ --- jauh di luar
+jangkauan komputasi apa pun. Namun sebagaimana diperlihatkan
+Tabel~\ref{tab:kerapatan-knapsack}, ukuran sebesar itu justru tempat
+serangan kerapatan rendah bekerja paling baik.
+
+Ada pula ketidakcocokan yang perlu dicatat pada anjuran parameter yang beredar.
+Sering disebutkan bahwa modulus $m$ dipilih sepanjang 100 sampai 200 bit,
+padahal $m$ harus lebih besar daripada jumlah seluruh elemen barisan privat
+(Subbagian~\ref{subsec:bukti-knapsack}). Bila barisan itu berisi ratusan elemen
+yang masing-masing bernilai 200 bit ke atas, jumlahnya pasti melampaui
+$2^{200}$; nilai $m$ sepanjang 100--200 bit tidak mungkin melebihinya. Angka
+yang sesungguhnya konsisten sederhana untuk diturunkan. Pada barisan
+superincreasing dengan 100 elemen yang dimulai dari sekitar 200 bit, jumlah
+seluruh elemen kurang lebih $2^{300}$, dan karena
+Persamaan~\eqref{eq:superincreasing} menuntut elemen terbesar melampaui jumlah
+seluruh elemen sebelumnya, elemen terbesar itu sendiri berada di sekitar
+$2^{299}$. Karena itu modulus $m$ harus dipilih \emph{lebih panjang} daripada
+elemen terbesar, yaitu sekitar 300 bit atau lebih. Memilih $m$ sependek 100--200
+bit bukan pengerasan, melainkan kesalahan yang membuat dekripsi gagal.
+
+\subsection{Mengapa Angka Brute Force Menyesatkan}
+
+Perhitungan biaya penelusuran menyeluruh juga sering dikutip untuk memperkuat
+kesan bahwa sistem ini aman. Dengan 250 elemen, ada $2^{250} \approx
+1{,}8 \times 10^{75}$ vektor biner yang harus diperiksa; pada laju satu juta
+percobaan per detik, seluruhnya baru selesai dalam waktu sekitar
+$5{,}7 \times 10^{61}$ tahun --- jauh melampaui usia alam semesta, yang baru
+sekitar $1{,}4 \times 10^{10}$ tahun. (Angka $10^{46}$ tahun yang beredar
+dalam bahan rujukan ternyata sepadan dengan sekitar $2^{198}$ percobaan, yaitu
+barisan yang hanya berisi dua ratus elemen, sehingga justru \emph{meremehkan}
+biaya penelusuran bagi barisan 250 elemen yang dianjurkannya sendiri.)
+
+Angka-angka itu benar secara aritmetika, tetapi mengukur hal yang salah. Tidak ada
+penyerang yang akan mencoba $2^{250}$ kemungkinan satu per satu, sebagaimana
+tidak ada penyerang RSA yang akan mencoba seluruh kandidat faktor secara
+berurutan. Serangan Shamir maupun serangan kerapatan rendah sama sekali tidak
+menyentuh penelusuran menyeluruh; keduanya bekerja dengan memanfaatkan
+keteraturan struktur. Ukuran keamanan yang sesungguhnya bukanlah banyaknya
+kandidat solusi, melainkan seberapa mahal cara terbaik yang diketahui untuk
+menemukannya.
+
+\subsection{Pelajaran dan Warisan}
+
+Kegagalan Merkle--Hellman mengajarkan satu hal yang kemudian menjadi kebiasaan
+baku dalam perancangan kriptografi kunci-publik: sebuah sistem tidak boleh
+diterima hanya karena persoalan yang mendasarinya terkenal sulit. Yang harus
+dibuktikan bukan bahwa persoalan \emph{umumnya} sukar, melainkan bahwa
+persoalan \emph{khusus} yang benar-benar muncul dalam sistem itu --- dengan
+seluruh struktur tambahan yang dibawa kuncinya --- juga sukar. Merkle--Hellman
+runtuh tepat pada celah itu: knapsack umum memang NP-complete, tetapi knapsack
+yang lahir dari barisan $w'_i = (w_i n) \bmod m$ membawa keteraturan yang dapat
+dipulihkan.
+
+Ada pula pelajaran yang lebih halus mengenai pengerasan parameter. Perancang
+Merkle--Hellman memperbesar $n$ dan memanjangkan elemen untuk menaikkan
+keamanan, tanpa menyadari bahwa kedua tindakan itu sekaligus menurunkan
+kerapatan ke wilayah yang paling mudah diserang. Sebuah parameter yang
+memperkuat satu aspek dapat melemahkan aspek lain, dan karenanya pengerasan
+tidak boleh dilakukan tanpa memahami seluruh ukuran keamanan yang berlaku.
+
+Warisan terakhirnya bersifat ironis. Meskipun knapsack sebagai \emph{sistem
+kriptografi} telah lama ditinggalkan, persoalan kisi (\textit{lattice}) yang
+dipakai untuk menyerangnya justru berkembang menjadi landasan sistem
+pascakuantum yang paling menjanjikan. Standar FIPS~203 \citep{fips203}, yang
+menetapkan ML-KEM sebagai mekanisme pembungkus kunci tahan kuantum, berdiri di
+atas persoalan kisi yang sama. Jadi teknik yang meruntuhkan Merkle--Hellman
+dan teknik yang sekarang dipakai untuk membangun sistem yang tahan terhadap
+komputer kuantum berakar pada matematika yang sama; yang berbeda hanyalah pihak
+yang memanfaatkannya.

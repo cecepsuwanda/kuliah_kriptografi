@@ -4,4 +4,46 @@
 1. Mengapa jumlah elemen di dalam barisan \textit{superincreasing} harus cukup besar untuk keamanan praktis?
 2. Apa yang terjadi jika $\text{PBB}(n, m) \neq 1$ dalam proses pembangkitan kunci?
 3. Jelaskan mengapa algoritma \textit{greedy} hanya bekerja pada barisan \textit{superincreasing} dan gagal pada barisan normal.
+4. Diberikan barisan $W = \{3, 7, 14, 29, 60, 118\}$ dan $M = 96$. Tentukan
+   apakah barisan itu superincreasing, lalu pecahkan $M$ dengan algoritma
+   \textit{greedy}. Bandingkan dengan Contoh~\ref{ex:greedy-superincreasing}.
+5. Pada Contoh~\ref{ex:knapsack-dasar}, kriptogram $M = 32$ ternyata dapat
+   dibentuk oleh tiga himpunan bagian yang berbeda. Mengapa keadaan seperti itu
+   tidak mungkin terjadi pada barisan superincreasing? Kaitkan jawaban Anda
+   dengan Lemma~\ref{lem:greedy-superincreasing}.
+6. Diketahui $W_{priv} = \{1, 3, 7, 15, 31\}$ dengan $m = 71$ dan $n = 23$.
+   Hitung $W_{pub}$ dan $n^{-1} \bmod 71$, lalu enkripsikan blok
+   \code{10110}. Periksa bahwa dekripsinya mengembalikan blok yang sama.
+7. Bila $m$ dipilih \emph{lebih kecil} daripada jumlah seluruh elemen
+   $W_{priv}$, langkah mana pada Subbagian~\ref{subsec:bukti-knapsack} yang
+   gugur? Tunjukkan dengan contoh angka kecil.
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 13.2}
+1. Hitung kerapatan barisan $\{2, 3, 6, 13, 27, 52\}$ dengan
+   Persamaan~\eqref{eq:densitas-knapsack}. Bandingkan dengan kerapatan barisan
+   publik $\{62, 93, 81, 88, 102, 37\}$. Mengapa keduanya berbeda, padahal
+   barisan itu saling terkait?
+2. Jelaskan mengapa memperbesar $n$ dan memperpanjang elemen --- dua tindakan
+   yang tampak memperkuat keamanan --- justru menurunkan kerapatan ke wilayah
+   yang dapat diserang (Tabel~\ref{tab:kerapatan-knapsack}).
+3. Periksa anjuran parameter pada sumber yang menyebutkan modulus $m$ sepanjang
+   100--200 bit. Tunjukkan dengan perhitungan mengapa angka itu tidak mungkin
+   benar, dan berapa panjang $m$ yang sesungguhnya diperlukan.
+4. Hitung berapa tahun penelusuran menyeluruh atas $2^{250}$ kandidat pada laju
+   satu juta percobaan per detik. Bandingkan dengan angka $10^{46}$ tahun yang
+   beredar pada bahan rujukan, dan jelaskan mengapa angka itu tidak sepadan
+   dengan barisan 250 elemen.
+5. Mengapa ukuran seperti ``banyaknya kandidat solusi'' bukan ukuran keamanan
+   yang tepat? Bandingkan dengan RSA, yang juga tidak pernah diserang dengan
+   mencoba seluruh kandidat faktor secara berurutan.
+6. Shamir memanfaatkan struktur \emph{khas} barisan Merkle--Hellman, bukan
+   memecahkan persoalan knapsack secara umum. Jelaskan perbedaan kedua
+   pendekatan itu, dan mengapa perbedaan tersebut penting bagi perancang sistem
+   kriptografi.
+7. Persoalan kisi yang dipakai untuk menyerang Merkle--Hellman kini menjadi
+   landasan ML-KEM pada FIPS~203. Jelaskan bagaimana teknik yang sama dapat
+   berperan sebagai senjata pada satu sistem dan sebagai fondasi pada sistem
+   lain.
 \end{obereflection}

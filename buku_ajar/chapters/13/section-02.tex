@@ -1,13 +1,106 @@
 \section{Superincreasing Knapsack}
-Untuk memungkinkan proses dekripsi yang efisien, sistem ini menggunakan variasi khusus yang disebut \textit{Superincreasing Knapsack}.
+\label{sec:superincreasing}
+
+Untuk memungkinkan proses dekripsi yang efisien, sistem Merkle--Hellman tidak
+memakai barisan bobot sembarangan. Ia memakai barisan yang punya sifat khusus
+sehingga persoalan knapsack yang tadinya sulit berubah menjadi pekerjaan yang
+dapat diselesaikan sekali jalan, tanpa perlu mencoba-coba. Sifat khusus itu
+disebut \emph{superincreasing}, dan barisan yang memilikinya adalah bahan baku
+seluruh sistem.
 
 \subsection{Barisan \textit{Superincreasing}}
-Sebuah barisan bobot $\{w_1, w_2, \dots, w_n\}$ disebut \textbf{barisan \textit{superincreasing}} jika setiap elemen di dalam barisan lebih besar daripada jumlah semua elemen sebelumnya:
-\[ w_i > \sum_{j=1}^{i-1} w_j \quad \text{untuk semua } i = 2, \dots, n \]
-Contoh: $\{2, 3, 6, 13, 27, 52\}$ adalah barisan \textit{superincreasing} karena $52 > (2+3+6+13+27) = 51$.
+
+Sebuah barisan bobot $\{w_1, w_2, \dots, w_n\}$ disebut \textbf{barisan
+\textit{superincreasing}} jika setiap elemen di dalam barisan lebih besar
+daripada jumlah semua elemen sebelumnya:
+
+\begin{equation}
+w_i > \sum_{j=1}^{i-1} w_j \quad \text{untuk semua } i = 2, \dots, n .
+\label{eq:superincreasing}
+\end{equation}
+
+Syarat itu jauh lebih kuat daripada sekadar ``barisan menaik''. Sebagai
+contoh, barisan $\{1, 2, 4, 9, 18, 36, 72, 144\}$ menaik sekaligus
+superincreasing, sebab $9 > 1+2+4$, $18 > 1+2+4+9$, dan seterusnya. Sebaliknya
+$\{1, 3, 4, 9, 15, 25\}$ menaik tetapi \emph{bukan} superincreasing, sebab
+$4$ tidak lebih besar daripada $1 + 3 = 4$. Perbedaan itu tampak sepele, tetapi
+justru dari situlah seluruh kemudahan dekripsi berasal.
+
+Akibat langsung dari Persamaan~\eqref{eq:superincreasing} adalah bahwa elemen
+terbesar selalu menguasai seluruh elemen di belakangnya. Jumlah semua elemen
+selain $w_n$ paling banyak $w_n - 1$, sehingga tidak ada kombinasi elemen yang
+lebih kecil yang dapat menandingi atau melampaui $w_n$. Kenyataan itu dipakai
+oleh algoritma \textit{greedy} pada Subbagian~\ref{subsec:greedy-knapsack}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Pemeriksaan dua barisan: satu superincreasing, satu bukan}
+    \label{tab:barisan-superincreasing}
+    \begin{tabularx}{\linewidth}{@{}c
+                                   >{\raggedright\arraybackslash}X
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Elemen} & \textbf{$\{1, 3, 6, 13, 27, 52\}$} &
+    \textbf{$\{1, 3, 4, 9, 15, 25\}$} \\
+    \midrule
+    $w_1$ & $1$, elemen pertama & $1$, elemen pertama \\
+    \addlinespace
+    $w_2$ & $3 > 1$ \checkmark & $3 > 1$ \checkmark \\
+    \addlinespace
+    $w_3$ & $6 > 1 + 3 = 4$ \checkmark & $4 > 1 + 3 = 4$ \textbf{gagal} \\
+    \addlinespace
+    $w_4$ & $13 > 1 + 3 + 6 = 10$ \checkmark & tidak perlu diperiksa lagi \\
+    \addlinespace
+    $w_5$ & $27 > 1 + 3 + 6 + 13 = 23$ \checkmark & --- \\
+    \addlinespace
+    $w_6$ & $52 > 1 + 3 + 6 + 13 + 27 = 50$ \checkmark & --- \\
+    \addlinespace
+    Kesimpulan & \textbf{superincreasing} & \textbf{bukan} \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Satu kekeliruan yang sering terjadi adalah memeriksa hanya elemen terakhirnya.
+Tabel~\ref{tab:barisan-superincreasing} memperlihatkan bahwa syarat itu harus
+dipenuhi oleh \emph{setiap} elemen, dan pada barisan kedua pelanggaran terjadi
+sudah pada elemen ketiga. Pada barisan $\{1, 3, 4, 9, 15, 25\}$ misalnya,
+$25 > 1+3+4+9+15 = 32$ juga gagal --- jadi barisan itu melanggar syarat dua
+kali, bukan sekali.
+
+\subsection{Mengapa Algoritma \textit{Greedy} Selalu Berhasil}
+\label{subsec:greedy-knapsack}
+
+Kemudahan dekripsi superincreasing knapsack bertumpu pada satu pengamatan
+sederhana, yang dapat dinyatakan sebagai lema berikut.
+
+\begin{lemma}[Keunikan pilihan elemen terbesar]
+\label{lem:greedy-superincreasing}
+Misalkan $W = \{w_1, \dots, w_n\}$ barisan superincreasing dan $M$ adalah
+sebuah bilangan dengan $0 \le M \le \sum_{i=1}^{n} w_i$. Bila
+$M = \sum_{i=1}^{n} b_i w_i$ untuk suatu vektor biner, maka $b_n = 1$ jika dan
+hanya jika $M \ge w_n$.
+\end{lemma}
+
+Alasannya sebagai berikut. Andaikan $b_n = 0$. Maka seluruh bobot yang
+terpilih berasal dari $\{w_1, \dots, w_{n-1}\}$, sehingga
+$M \le \sum_{j=1}^{n-1} w_j < w_n$ menurut
+Persamaan~\eqref{eq:superincreasing}. Jadi $M < w_n$, yang berarti
+$M \ge w_n$ mustahil terjadi bila $b_n = 0$. Sebaliknya, bila $b_n = 1$, maka
+$M \ge w_n$ jelas terpenuhi karena seluruh $w_i$ positif.
+
+Lema~\ref{lem:greedy-superincreasing} itulah yang membuat dekripsi menjadi
+pekerjaan sekali jalan. Setelah $b_n$ ditentukan, sisa bobot
+$M - b_n w_n$ harus dibentuk oleh $\{w_1, \dots, w_{n-1}\}$ yang juga
+superincreasing, sehingga lema yang sama dapat diterapkan lagi. Dengan begitu
+seluruh bit dapat ditentukan dari belakang ke depan tanpa pernah menebak dan
+tanpa pernah kembali memperbaiki keputusan yang sudah diambil --- itulah yang
+dimaksud dengan algoritma \emph{greedy}.
 
 \subsection{Prosedur Dekripsi Mudah}
-Berbeda dengan \textit{knapsack} umum, \textit{superincreasing knapsack} dapat dipecahkan dalam waktu linier $O(n)$ dengan algoritma \textit{greedy}:
+
+Berbeda dengan \textit{knapsack} umum, \textit{superincreasing knapsack} dapat
+dipecahkan dalam waktu linier $O(n)$ dengan algoritma \textit{greedy}:
+
 \begin{enumerate}
     \item Bandingkan bobot total $M$ dengan bobot terbesar $w_n$.
     \item Jika $w_n \le M$, maka $b_n = 1$ dan kurangi $M$ dengan $w_n$ ($M = M - w_n$). Jika tidak, $b_n = 0$.
@@ -15,3 +108,28 @@ Berbeda dengan \textit{knapsack} umum, \textit{superincreasing knapsack} dapat d
     \item Jika pada akhir proses $M = 0$, maka solusi ditemukan.
 \end{enumerate}
 
+Perhatikan langkah 4. Ia bukan sekadar pengaman, melainkan penentu: bila setelah
+seluruh bobot diperiksa sisanya belum nol, maka $M$ tadi memang tidak dapat
+dibentuk oleh barisan itu, dan jawaban yang diperoleh bukan solusi yang sah.
+Pada pemakaian kriptografis hal ini tidak boleh terjadi, sebab kriptogram selalu
+dihasilkan dari sebuah blok pesan yang sah.
+
+Contoh lengkap penerapan keempat langkah itu disajikan pada
+Contoh~\ref{ex:greedy-superincreasing}.
+
+\subsection{Mengapa Kemudahan Itu Menjadi Kelemahan}
+
+Sifat yang membuat dekripsi mudah justru membuat barisan superincreasing tidak
+layak dipakai langsung sebagai kunci. Persoalannya bukan pada kecepatannya,
+melainkan pada kenyataan bahwa siapa pun --- termasuk penyadap --- dapat
+menjalankan algoritma yang sama. Bila barisan bobot dirahasiakan sekalipun,
+penyerang tidak perlu mengetahuinya: ia cukup menebak, dan tebakannya dapat
+diperiksa seketika, sebab nilai $M$ tersedia di tangannya.
+
+Karena itu Merkle dan Hellman menempuh jalan lain. Barisan superincreasing
+dipertahankan sebagai kunci privat --- tetap mudah untuk pemiliknya --- tetapi
+tidak pernah dikirimkan atau disiarkan. Yang disiarkan adalah wujud lain dari
+barisan yang sama, yang telah diubah sedemikian rupa sehingga sifat
+superincreasing-nya tidak lagi terlihat. Cara mengubahnya, dan mengapa
+perubahan itu tidak benar-benar menyembunyikan apa pun, dibahas pada bagian
+berikutnya.

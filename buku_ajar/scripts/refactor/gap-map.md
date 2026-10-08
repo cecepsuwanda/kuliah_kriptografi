@@ -6,9 +6,9 @@ Sasaran: ±4.000–6.000 kata/bab (prosa naratif), tabel, contoh terhitung, gamb
 
 Legenda status: `[ ]` belum · `[~]` sedang dikerjakan · `[x]` selesai.
 
-**Kemajuan:** Tahap 1–12 (Bab 01–12) selesai. Buku **437 halaman**, gerbang
-kebersihan `output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 13
-(Bab 13 — Knapsack).
+**Kemajuan:** Tahap 1–13 (Bab 01–13) selesai. Buku **456 halaman**, gerbang
+kebersihan `output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 14
+(Bab 14 — Kriptografi Kurva Eliptik).
 
 ---
 
@@ -850,14 +850,154 @@ sebelum ditata huruf:
    menegaskan statusnya, dan seluruh Subbagian~\ref{subsec:k-ulang} menjelaskan
    akibat kelalaiannya.
 
-## Bab 13 — Algoritma Knapsack
+## Bab 13 — Algoritma Knapsack  `[x]` SELESAI
 Sumber: `referensi/16-*` (2.499 kata, 7 topik, 3 gambar). Target: ±4.000 kata.
+**Menyitasi 3 entri baru** (`merkle1978`, `lagarias1985subset`,
+`coster1991subset`) dan **memperkaya satu entri lama** (`shamir1982` kini
+lengkap: `@inproceedings`, halaman 145–152, DOI 10.1109/SFCS.1982.5, plus
+catatan versi jurnal IEEE Trans. Inf. Theory 30(5):699–704, 1984).
+`references.bib` 59 → **62 entri**.
 
-- [ ] Contoh knapsack dasar (non-superincreasing)
-- [ ] Contoh greedy superincreasing $\{2,3,6,13,27,52\}$
-- [ ] Himpunan parameter Merkle–Hellman alternatif
-- [ ] Parameter penerapan + estimasi brute force + serangan Shamir
-- [ ] `contoh.tex` → environment `example`
+Hasil: **7.774 kata** pada sembilan berkas (empat section 3.925, contoh 1.978,
+praktikum 562, latihan 374, rangkuman 460, evaluasi 373), **25 halaman
+mandiri**, 9 tabel bernomor, 6 contoh terhitung, **8 persamaan bernomor**,
+**18 subbagian baru (0 → 18)**, 1 diagram TikZ + 3 gambar raster (1 di antaranya
+baru disalin dari referensi), dan satu program verifikasi baru
+(`code/python/knapsack_uji.py`, 347 baris, sepuluh blok pengujian yang
+seluruhnya **lulus**). Bab semula 1.367 kata dan **tanpa satu pun subbagian
+bernama**, tanpa persamaan bernomor, tanpa tabel apa pun di `contoh.tex`, dan
+tanpa program pengujian.
+
+- [x] **Contoh knapsack dasar non-superincreasing** — Contoh~\ref{ex:knapsack-dasar}:
+  $W = \{1, 5, 6, 11, 14, 20\}$ dengan kriptogram $(32, 30, 0, 11)$ pada
+  Tabel~\ref{tab:knapsack-dasar}, sekaligus menunjukkan bahwa $M = 32$
+  sesungguhnya punya **tiga** solusi berbeda sehingga \textit{greedy} justru
+  memilih yang salah
+- [x] **Contoh \textit{greedy} superincreasing** — Contoh~\ref{ex:greedy-superincreasing}
+  dan Tabel~\ref{tab:greedy-70}: barisan $\{2,3,6,13,27,52\}$ dengan $M = 70$
+  menghasilkan \code{110101} langkah demi langkah
+- [x] **Himpunan parameter Merkle--Hellman alternatif** —
+  Contoh~\ref{ex:mh-kunci-105} (pembangkitan kunci: $m = 105$, $n = 31$,
+  Tabel~\ref{tab:mh-kunci-105}) dan Contoh~\ref{ex:mh-105} (enkripsi dan
+  dekripsi tiga blok: \code{011000110101101110} $\to (174, 280, 333) \to$
+  pulih, Tabel~\ref{tab:mh-105-dekripsi})
+- [x] **Contoh prosedur lengkap dari ujung ke ujung** — Contoh~\ref{ex:mh-lengkap}:
+  $W_{priv} = \{1,2,4,9,18,36,72,144\}$, $m = 293$, $n = 37$, $n^{-1} = 198$,
+  blok \code{10110010} dan \code{01101001} menjadi $252$ dan $356$
+- [x] **\textbf{Bukti dekripsi yang semula absen total}** — baru, dan justru
+  inilah kekuatan bab ini. Subbagian~\ref{subsec:bukti-knapsack} menurunkan
+  Persamaan~\eqref{eq:mh-bukti} ($n^{-1} n \equiv 1$ menghapus faktor pengali)
+  lalu **menaikkan kesamaan modulo menjadi kesamaan eksak** lewat
+  $0 \le \sum_i b_i w_i \le \sum_i w_i < m$ pada
+  Persamaan~\eqref{eq:mh-bukti-eksak}. Baik buku lama maupun dek tidak pernah
+  menjelaskan mengapa syarat $m > \sum_i w_i$ menjamin \textit{greedy} menerima
+  sisa yang benar
+- [x] **Koreksi rumus enkripsi yang bertentangan dengan contohnya sendiri** —
+  `section-03.tex` lama menulis $C = \sum_i b_i w'_i \pmod m$, padahal
+  `contoh.tex` yang lama menghitung $C_2 = 74 + 148 + 80 + 54 = 356 > m = 105$.
+  Rumus kini ditulis **tanpa** modulus (Persamaan~\eqref{eq:mh-enkripsi})
+  disertai catatan bahwa pengurangan modulo $m$ di sisi pengirim bersifat
+  opsional, sebab dekripsi hanya memakai $C \bmod m$
+- [x] **\textbf{Analisis kerapatan yang sama sekali baru}** —
+  Persamaan~\eqref{eq:densitas-knapsack} dan Tabel~\ref{tab:kerapatan-knapsack}:
+  barisan contoh buku ini $d = 0{,}8992$ (di atas ambang, relatif aman),
+  sedangkan parameter Merkle--Hellman praktis $d \approx 0{,}3344$ (jauh di
+  bawah ambang). Ambang Lagarias--Odlyzko $d < 0{,}645$ dan perbaikan
+  Coster--LaMacchia--Odlyzko--Schnorr menjadi $d < 0{,}9408$
+- [x] **Parameter anjuran sumber dibongkar ketidakcocokannya** —
+  Subbagian *Parameter yang Dianjurkan dan Kelemahannya*: sumber menganjurkan
+  $\ge 250$ elemen bernilai 200–400 bit **dan** modulus hanya 100–200 bit;
+  keduanya mustahil berdampingan. Diturunkan angka yang self-konsisten: 100
+  elemen dimulai dari $2^{200}$ memberi jumlah $\approx 2^{300}$, sehingga $m$
+  perlu **sekitar 300 bit atau lebih**
+- [x] **Angka \textit{brute force} $10^{46}$ tahun dinilai ulang** —
+  $2^{250}$ vektor pada $10^6$ percobaan/detik sesungguhnya memerlukan
+  $5{,}7 \times 10^{61}$ tahun; angka $10^{46}$ tahun yang beredar sepadan
+  dengan hanya $2^{198}$ percobaan, yaitu barisan $\pm 200$ elemen. Lebih
+  penting lagi, angka itu **mengukur hal yang salah**
+- [x] **Warisan ke kriptografi pascakuantum** — Subbagian *Pelajaran dan
+  Warisan*: persoalan kisi yang dipakai Shamir dan tim Lagarias untuk
+  meruntuhkan Merkle--Hellman kini menjadi landasan **ML-KEM pada FIPS~203**
+  \citep{fips203}
+- [x] **Verifikasi silang dengan perkakas daring** — Contoh~\ref{ex:demo-online}
+  dan Tabel~\ref{tab:demo-online}: perkakas daring dengan
+  $W_{priv} = \{3,5,15,25,54,110,225\}$, $m = 439$, $n = 10$, $n^{-1} = 44$,
+  pesan \code{1001000110010111011001101111} $\to (280,236,431,708)$ $\to$
+  \code{H}, \code{e}, \code{l}, \code{o}. Gambar raster baru
+  Gambar~\ref{fig:demo-knapsack-online} (`demo-knapsack-online.png`, disalin
+  dari `referensi/16-*/images/llm/page_022_img_01.png`)
+- [x] **Delapan persamaan bernomor** — \eqref{eq:knapsack-dasar},
+  \eqref{eq:superincreasing}, \eqref{eq:mh-kunci}, \eqref{eq:mh-enkripsi},
+  \eqref{eq:mh-dekripsi}, \eqref{eq:mh-bukti}, \eqref{eq:mh-bukti-eksak},
+  \eqref{eq:densitas-knapsack}. Semula **nol**.
+- [x] **Lemma dan pembuktiannya** — Lemma~\ref{lem:greedy-superincreasing}
+  (keunikan pilihan elemen terbesar) beserta bukti bahwa $B_n = 0$ berakibat
+  $M \le \sum_{j<n} w_j < w_n$
+- [x] **Program verifikasi** `code/python/knapsack_uji.py` — 347 baris, ASCII +
+  LF, empat banner komentar tepat 68 karakter. Memuat `pbb`, `invers`,
+  `prima`, `superincreasing`, `greedy`, `semua_solusi`, `bits_dari`,
+  `ke_string`, `jumlah_bobot`, `urai`, `bangkitkan_kunci`, lalu sepuluh blok
+  `uji_*` yang **seluruhnya lulus** (baris terakhir: `Seluruh pengujian
+  LULUS`). Lima blok disisipkan ke `praktikum.tex` sebagai
+  Listing~\ref{lst:knapsack-kunci}, \ref{lst:knapsack-greedy},
+  \ref{lst:knapsack-enkripsi}, \ref{lst:knapsack-kerapatan}, dan
+  \ref{lst:knapsack-balik}
+- [x] **Pertumbuhan komponen OBE** — `praktikum.tex` 1 → 5 `obeactivity`
+  (1 → 25 butir), `latihan.tex` 1 → 2 `obereflection` (3 → 14 butir),
+  `rangkuman.tex` 7 → 17 butir, `evaluasi.tex` 3 → 8 butir kuis dan
+  **`competencychecklist` 5 → 13 baris**
+
+### Koreksi terhadap sumber (wajib dicatat)
+
+Dek `16-*` mengandung **tiga salah cetak teks dan satu anjuran parameter yang
+tidak konsisten dengan dirinya sendiri.** Semua angka telah diperiksa ulang
+dengan `code/python/knapsack_uji.py` sebelum ditata huruf:
+
+| Klaim dek | Verifikasi |
+|---|---|
+| $w = \{1,5,6,11,14,20\}$: blok $\to 32, 30, 0, 11$ | lulus (UJI 1) |
+| $M = 70$ pada $\{2,3,6,13,27,52\}$ $\to$ \code{110101} | lulus (UJI 2) |
+| $m = 105$, $n = 31$: $\text{PBB} = 1$ dan $31^{-1} = 61$ | lulus (UJI 3) |
+| $w'_i = 31 w_i \bmod 105 \to \{62,93,81,88,102,37\}$ | lulus (UJI 3) |
+| $174, 280, 333$; $174 \cdot 61 \equiv 9$, $280 \cdot 61 \equiv 70$, $333 \cdot 61 \equiv 48$ | lulus (UJI 4) |
+| $m = 293$, $n = 37$: $37 \cdot 198 = 25 \cdot 293 + 1$ | lulus (UJI 5) |
+| $C = 252, 356 \Rightarrow C' = 86, 168$ | lulus (UJI 5) |
+| Perkakas daring: $m = 439$, $n = 10$, $n^{-1} = 44$ | lulus (UJI 10 / Contoh~\ref{ex:demo-online}) |
+| Perkakas daring: $(280, 236, 431, 708) \to (28, 287, 87, 422)$ | lulus (Contoh~\ref{ex:demo-online}) |
+| Shamir: $n \approx 100$, $a_i \approx 200$ bit | sesuai kutipan abstrak dek sendiri |
+
+1. **Panjang plainteks tidak konsisten (dua kali).** Dek menuliskan plainteks
+   Contoh 1 sebagai \code{1110010101100000000011000} (25 bit) padahal keempat
+   bloknya jelas 24 bit, dan plainteks Contoh 4 sebagai
+   \code{01100011010101101110} (20 bit) yang bahkan tidak habis dibagi enam
+   padahal ketiga kriptogramnya sepadan dengan 18 bit. Buku memakai rangkaian
+   yang benar dan **mencatat kekeliruan itu apa adanya** pada
+   Contoh~\ref{ex:knapsack-dasar} dan Contoh~\ref{ex:mh-105}.
+2. **Bit terakhir terbalik pada Contoh 2.** Dek menuliskan langkah terakhir
+   sebagai ``$2 - 2 = 0 \Rightarrow b_1 = 0$''. Bila $b_1 = 0$ maka sisanya tetap
+   $2$, bukan $0$. Nilai yang benar adalah $b_1 = 1$, sebagaimana ditegaskan
+   oleh jawaban \code{110101} pada dek yang sama. Catatan itu ada di
+   Contoh~\ref{ex:greedy-superincreasing}.
+3. **Anjuran parameter bertentangan dengan dirinya sendiri.** Dek menuntut
+   ``paling sedikit 250 elemen, nilai setiap elemen antara 200 sampai 400 bit''
+   sekaligus ``nilai modulus antara 100 sampai 200 bit''. Karena $m$ wajib
+   melampaui jumlah seluruh elemen barisan privat, dan 250 elemen bernilai
+   200 bit ke atas sudah berjumlah lebih dari $2^{201}$, modulus sependek itu
+   mustahil sah. Derivasi yang self-konsisten ($m$ sekitar 300 bit) ada di
+   Subbagian *Parameter yang Dianjurkan dan Kelemahannya*.
+4. **Estimasi \textit{brute force} $10^{46}$ tahun.** Angka itu tidak sepadan
+   dengan 250 elemen yang dianjurkan (yang seharusnya $\pm 5{,}7 \times
+   10^{61}$ tahun); ia hanya cocok untuk $\pm 200$ elemen. Di luar soal
+   aritmetika, buku menegaskan bahwa ukuran semacam itu **bukan ukuran
+   keamanan yang tepat**, sebab tidak ada penyerang yang menelusuri $2^n$
+   kandidat.
+5. **Serangan kerapatan rendah tidak disebut dek sama sekali.** Dek hanya
+   memuat serangan Shamir. Buku menambahkan ambang kerapatan
+   Lagarias--Odlyzko ($d < 0{,}645$) dan Coster--LaMacchia--Odlyzko--Schnorr
+   ($d < 0{,}9408$) beserta perhitungan $d$ untuk kedua rejim parameter.
+   **Koreksi atas asumsi awal saya sendiri:** ambang $0{,}9408$ **bukan** milik
+   Lagarias--Odlyzko, melainkan milik Coster dan kawan-kawan (EUROCRYPT '91);
+   ambang Lagarias--Odlyzko sendiri adalah $0{,}645$.
 
 ## Bab 14 — Kriptografi Kurva Eliptik
 Sumber: `referensi/17-*` (2.883) + `18-*` (5.706). Target: ±5.500 kata.
@@ -937,9 +1077,12 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   `eq:mitm-k1`, `eq:mitm-k2`); Bab 12 menambah 10 (`eq:dlp-elgamal`,
   `eq:elgamal-kunci`, `eq:elgamal-a`, `eq:elgamal-b`, `eq:elgamal-invers`,
   `eq:elgamal-dekripsi`, `eq:elgamal-bukti`, `eq:elgamal-homomorfik`,
-  `eq:elgamal-k-ulang`, `eq:elgamal-k-ulang-m2`).
+  `eq:elgamal-k-ulang`, `eq:elgamal-k-ulang-m2`); Bab 13 menambah 8
+  (`eq:knapsack-dasar`, `eq:superincreasing`, `eq:mh-kunci`, `eq:mh-enkripsi`,
+  `eq:mh-dekripsi`, `eq:mh-bukti`, `eq:mh-bukti-eksak`, `eq:densitas-knapsack`).
   Lanjutkan untuk ECDLP, hash.
-- [ ] **`contoh.tex` tidak konsisten** — bab 13–16 nol `\begin{example}`.
+- [x] **`contoh.tex` tidak konsisten** — bab 13 kini memakai `\begin{example}`
+  (6 buah, semula **nol**); tersisa bab 14–16.
 - [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 dan 04 sudah punya.)
   Skrip pembuat gambar raster: `scripts/refactor/figures/entropi_ternate.py`.
 - [ ] **Bab tanpa sitasi: 14.** (02, 03, 04, 05, 06, dan 07 sudah selesai; Bab 06

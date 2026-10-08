@@ -1,10 +1,20 @@
 \section{Rangkuman}
 \begin{itemize}
-    \item Persoalan \textit{knapsack} mencari bit $b_i \in \{0,1\}$ dengan $\sum_i b_i w_i = M$; versi umumnya tergolong \textbf{NP-complete} sehingga menjadi dasar awal keamanan sistem Merkle--Hellman.
-    \item Barisan \textit{superincreasing} memenuhi $w_i > \sum_{j<i} w_j$, sehingga solusinya dapat ditemukan secara \textit{greedy} dalam waktu linier $O(n)$.
-    \item Merkle--Hellman menyembunyikan barisan \textit{superincreasing} $W_{priv}$ menjadi kunci publik $w'_i = (w_i \cdot n) \bmod m$, dengan syarat $m > \sum_i w_i$ dan $\text{PBB}(n,m)=1$.
-    \item Enkripsi menjumlahkan elemen publik yang bitnya $1$, $C = \sum_i b_i w'_i$, dan menghasilkan satu kriptogram bilangan bulat per blok.
-    \item Dekripsi menghitung $C' = (C \cdot n^{-1}) \bmod m$ lalu memecahkan $C'$ dengan algoritma \textit{greedy} atas $W_{priv}$.
-    \item Keamanannya patah: Shamir (1982) merekonstruksi barisan \textit{superincreasing} dari kunci publik dalam waktu polinomial, sehingga algoritma ini tidak dipakai secara praktis.
-    \item Meski demikian, Knapsack berperan penting secara historis sebagai salah satu sistem kunci-publik pertama dan pendorong lahirnya konsep kriptografi kunci-publik.
+    \item Persoalan \textit{knapsack} mencari bit $b_i \in \{0,1\}$ dengan $\sum_i b_i w_i = M$; versi umumnya tergolong \textbf{NP-complete}, sehingga memeriksa sebuah calon solusi mudah sedangkan menemukannya diyakini sukar (Persamaan~\eqref{eq:knapsack-dasar} dan Definisi~\ref{def:knapsack}).
+    \item Barisan \textit{superincreasing} memenuhi $w_i > \sum_{j<i} w_j$, sehingga setiap elemen terbesar menguasai seluruh elemen di belakangnya (Persamaan~\eqref{eq:superincreasing}).
+    \item Akibatnya solusi bagi barisan superincreasing selalu tunggal dan dapat ditemukan secara \textit{greedy} dalam waktu linier $O(n)$: bila $M \ge w_n$ maka $b_n = 1$, dan seterusnya dari belakang ke depan (Lemma~\ref{lem:greedy-superincreasing}).
+    \item Kemudahan itu justru menjadi kelemahan, sebab siapa pun --- termasuk penyadap --- dapat menjalankan algoritma yang sama. Karena itu barisan superincreasing tidak boleh dipakai langsung sebagai kunci.
+    \item Merkle--Hellman menyembunyikan barisan superincreasing $W_{priv}$ menjadi kunci publik $w'_i = (w_i \cdot n) \bmod m$, dengan syarat $m > \sum_i w_i$ dan $\text{PBB}(n,m)=1$ (Persamaan~\eqref{eq:mh-kunci}).
+    \item Kedua syarat itu wajib: $m > \sum_i w_i$ menjamin tidak ada pemutaran modulo pada saat dekripsi, sedangkan $\text{PBB}(n,m)=1$ menjamin $n$ punya invers.
+    \item Enkripsi menjumlahkan elemen publik yang bitnya $1$, $C = \sum_i b_i w'_i$; penjumlahan itu \emph{tidak} diambil modulo $m$, dan hasilnya sering melampaui $m$ tanpa merusak apa pun (Persamaan~\eqref{eq:mh-enkripsi}).
+    \item Dekripsi menghitung $C' = (C \cdot n^{-1}) \bmod m$ (Persamaan~\eqref{eq:mh-dekripsi}), lalu memecahkan $C'$ dengan algoritma \textit{greedy} atas $W_{priv}$.
+    \item Kebenaran dekripsi bersandar pada identitas $C' \equiv \sum_i b_i w_i \pmod m$, yang menghapus faktor $n$ karena $n \cdot n^{-1} \equiv 1$ (Persamaan~\eqref{eq:mh-bukti}).
+    \item Identitas modulo itu dapat ditingkatkan menjadi kesamaan yang sesungguhnya justru karena $0 \le \sum_i b_i w_i \le \sum_i w_i < m$, sehingga jumlah tersebut tidak pernah memutar melewati modulus (Persamaan~\eqref{eq:mh-bukti-eksak}).
+    \item Contoh lengkap: dengan $W_{priv} = \{2,3,6,13,27,52\}$, $m = 105$, dan $n = 31$ diperoleh $W_{pub} = \{62,93,81,88,102,37\}$ dan $n^{-1} = 61$; pesan \code{011000110101101110} menjadi $(174, 280, 333)$ dan pulih tepat seperti semula.
+    \item Keamanan Merkle--Hellman patah: Shamir (1982) merekonstruksi barisan superincreasing dari kunci publik dalam waktu polinomial, dan serangan kerapatan rendah menyempurnakannya (Subbagian~\ref{sec:kriptanalisis-knapsack}).
+    \item Kerapatan barisan $d = n / \log_2(\max_i a_i)$ menentukan kerawanannya: Lagarias--Odlyzko menyerang $d < 0{,}645$, dan Coster beserta kawan-kawan menaikkan ambang itu menjadi $d < 0{,}9408$ (Persamaan~\eqref{eq:densitas-knapsack}).
+    \item Parameter yang dianjurkan untuk pemakaian praktis (sekitar 100--250 elemen, elemen 200--400 bit) justru menghasilkan $d \approx 0{,}334$, yaitu jauh di bawah ambang serangan --- memperbesar $n$ ternyata melemahkan sistem, bukan memperkuatnya.
+    \item Angka biaya penelusuran menyeluruh yang sering dikutip ($10^{46}$ tahun) mengukur hal yang salah: penyerang tidak pernah menelusuri $2^n$ kandidat, melainkan memanfaatkan keteraturan struktur barisan.
+    \item Pelajarannya: yang harus dibuktikan bukan bahwa persoalan \emph{umumnya} sukar, melainkan bahwa persoalan \emph{khusus} yang benar-benar muncul dalam sistem juga sukar.
+    \item Meskipun sebagai sistem kriptografi knapsack telah ditinggalkan, persoalan kisi yang dipakai untuk menyerangnya kini menjadi landasan ML-KEM pada FIPS~203 \citep{fips203} --- teknik yang sama berperan sebagai senjata pada satu sistem dan sebagai fondasi pada sistem lain.
 \end{itemize}
