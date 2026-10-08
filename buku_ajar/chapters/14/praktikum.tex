@@ -1,22 +1,242 @@
-
 \begin{obeactivity}
-\textbf{Aktivitas 14.1: Simulasi Penjumlahan Titik}
-1. Gunakan kurva $y^2 = x^3 + 2x + 4$ di $\mathbb{R}$.
-2. Diberikan titik $P(2, 4)$ dan $Q(0, 2)$, hitunglah koordinat titik $R = P + Q$.
-3. Lakukan penggandaan titik untuk menghitung $2P$ pada kurva yang sama.
-4. Bandingkan hasil perhitungan manual Anda dengan kalkulator ECC online.
+\textbf{Aktivitas 14.1: Invers Modulo dan Pencarian Akar Kuadrat}
+1. Jalankan fungsi pada Listing~\ref{lst:ecc-invers} untuk menghitung
+   $3^{-1} \bmod 11$, $8^{-1} \bmod 11$, dan $20^{-1} \bmod 23$.
+2. Bandingkan hasil ketiganya dengan perhitungan manual pada
+   Contoh~\ref{ex:gf11}.
+3. Gunakan fungsi pencari akar untuk memecahkan $x^2 \equiv 5 \pmod{11}$
+   (Persamaan~\eqref{eq:akar-gf11}). Berapa banyak akar yang ditemukan, dan
+   apa hubungannya dengan Subbagian~\ref{subsec:medan-berhingga}?
+4. Sekarang coba pecahkan $x^2 \equiv 3 \pmod{11}$. Apa yang dikembalikan
+   fungsi itu, dan apa artinya bagi penyelesaian persamaan kurva?
+5. Uraikan mengapa pencarian akar kuadrat memeriksa seluruh $p$ nilai $x$.
+   Berapa biayanya untuk $p$ sepanjang $256$ bit, dan mengapa cara itu tidak
+   dapat dipakai pada kurva sungguhan?
 \end{obeactivity}
 
-Langkah-langkah pada Aktivitas 14.1 dapat dijalankan langsung melalui program
-pada Listing~\ref{lst:ecc}. Program itu menghitung penjumlahan dan penggandaan
-titik, baik pada kurva atas bilangan real (termasuk kurva aktivitas ini) maupun
-pada kurva modulo prima, lalu memakainya untuk pertukaran kunci ECDH.
+Seluruh operasi pada medan berhingga bertumpu pada dua perkakas pada
+Listing~\ref{lst:ecc-invers}: invers modulo dengan algoritma Euclidean yang
+diperluas, dan pencarian akar kuadrat dengan penelusuran langsung. Yang kedua
+memang lambat, tetapi pada kurva mainan bab ini biayanya tidak terasa.
 
 \lstinputlisting[
     language=Python,
-    caption={Aritmetika kurva eliptik: penjumlahan, penggandaan, dan ECDH},
-    label={lst:ecc}
-]{\codefile{python/ecc.py}}
+    caption={Invers modulo dan pencarian akar kuadrat di dalam $GF(p)$},
+    label={lst:ecc-invers},
+    firstline=27,
+    lastline=44
+]{\codefile{python/ecc_uji.py}}
 
-Program yang sama tersedia dalam C++ (\texttt{code/cpp/ecc.cpp}) dan MATLAB
-(\texttt{code/matlab/ecc.m}).
+\begin{obeactivity}
+\textbf{Aktivitas 14.2: Aritmetika Polinomial di dalam $GF(2^m)$}
+1. Jalankan fungsi penjumlahan pada Listing~\ref{lst:ecc-gf2m} untuk
+   $\code{0D} + \code{06}$ dan $\code{57} + \code{83}$.
+2. Jalankan fungsi perkalian untuk $\code{57} \cdot \code{83}$ dengan polinom
+   reduksi $\code{11B}$. Periksa bahwa hasilnya $\code{C1}$, seperti pada
+   Contoh~\ref{ex:gf2m}.
+3. Ulangi untuk $\code{0D} \cdot \code{06}$ dan bandingkan hasilnya dengan
+   penjumlahan kedua byte itu. Mengapa hasil kalinya tidak sama dengan
+   jumlahnya, padahal pada $GF(2)$ keduanya sering tertukar?
+4. Jalankan fungsi pembagian panjang untuk membagi hasil kali mentah
+   $x^{13} + x^{11} + x^9 + x^8 + x^6 + x^5 + x^4 + x^3 + 1$ dengan
+   $\code{11B}$. Berapa hasil bagi dan sisanya? Bandingkan dengan
+   Tabel~\ref{tab:gf2m-kali}.
+5. Gunakan fungsi pemeriksa ketereduksian untuk menguji $x^4 + x + 1$ dan
+   $x^2 + 1$. Mengapa jawabannya berbeda, dan apa akibatnya bagi pemilihan
+   polinom reduksi? Lihat pula Gambar~\ref{fig:pembagian-polinom}.
+\end{obeactivity}
+
+Listing~\ref{lst:ecc-gf2m} memuat keempat perkakas aritmetika polinomial:
+penjumlahan sebagai XOR, perkalian dengan reduksi berjalan, pembagian panjang,
+dan pemeriksa ketereduksian. Fungsi terakhir itulah yang memutuskan apakah
+sebuah polinom layak dipakai sebagai polinom reduksi.
+
+\lstinputlisting[
+    language=Python,
+    caption={Penjumlahan, perkalian, pembagian, dan pemeriksaan ketereduksian
+    polinom di dalam $GF(2^m)$},
+    label={lst:ecc-gf2m},
+    firstline=47,
+    lastline=87
+]{\codefile{python/ecc_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 14.3: Enumerasi dan Pelelaran Titik pada Kurva $GF(p)$}
+1. Jalankan fungsi enumerasi pada Listing~\ref{lst:ecc-kurva} untuk kurva
+   $y^2 \equiv x^3 + x + 6 \pmod{11}$. Bandingkan daftar titik yang dihasilkan
+   dengan Tabel~\ref{tab:enumerasi-gf11} dan sebaran titik pada
+   Gambar~\ref{fig:sebaran-titik-gf11}.
+2. Ulangi untuk $y^2 \equiv x^3 + x + 1 \pmod{23}$. Berapa banyak titik
+   berhingga yang ditemukan, dan titik mana yang biasanya terlewat bila
+   pencacahan dilakukan dengan tangan? Lihat
+   Gambar~\ref{fig:titik-kurva-mod-23}.
+3. Hitung $P(2,4) + Q(5,9)$ dan $2P$ dengan fungsi penjumlahan dan penggandaan.
+   Bandingkan hasilnya dengan Contoh~\ref{ex:gf11}.
+4. Jalankan fungsi orde untuk titik $P(2,4)$ dan untuk $B(3,10)$ pada kurva
+   mod 23. Apakah keduanya membangkitkan seluruh grup? Bandingkan dengan
+   orde grup pada Tabel~\ref{tab:pelelaran-gf11} dan dengan catatan koreksi
+   pada Subbagian~\ref{subsec:enumerasi-gf-p}.
+5. Amati fungsi perkalian skalar: hitung $23P$ dan hitung berapa kali fungsi
+   penjumlahan dan penggandaan dipanggil. Bandingkan dengan $22$ penjumlahan
+   yang diperlukan bila pelelaran dilakukan satu per satu
+   (Subbagian~\ref{subsec:pelelaran-titik}).
+\end{obeactivity}
+
+Listing~\ref{lst:ecc-kurva} memuat seluruh aritmetika kurva di atas medan
+berhingga: pemeriksaan keanggotaan titik, pencarian lawan, penjumlahan,
+penggandaan, perkalian skalar dengan \textit{double-and-add}, enumerasi,
+dan pencarian orde titik. Perhatikan bahwa titik $\mathcal{O}$ diwakili oleh
+\texttt{None}, sehingga keadaan khusus pada Persamaan~\eqref{eq:titik-o}
+tertangani tanpa percabangan tambahan.
+
+\lstinputlisting[
+    language=Python,
+    caption={Penjumlahan, penggandaan, enumerasi, dan orde titik pada kurva
+    di atas $GF(p)$},
+    label={lst:ecc-kurva},
+    firstline=91,
+    lastline=172
+]{\codefile{python/ecc_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 14.4: Penjumlahan Titik pada Kurva di Atas Bilangan Riil}
+1. Gunakan kurva $y^2 = x^3 + 2x + 4$ (Persamaan~\eqref{eq:weierstrass} dengan
+   $a = 2$, $b = 4$). Periksa lebih dahulu bahwa
+   $4a^3 + 27b^2 \neq 0$ menurut Persamaan~\eqref{eq:diskriminan}.
+2. Diberikan titik $P(2, 4)$ dan $Q(0, 2)$, hitunglah $R = P + Q$ dengan
+   fungsi pada Listing~\ref{lst:ecc-real}, lalu hitung pula $2P$.
+3. Bandingkan hasilnya dengan Contoh~\ref{ex:real}. Mengapa hasil
+   penggandaannya menjadi pecahan, sedangkan hasil penjumlahannya tetap
+   bilangan bulat?
+4. Ulangi untuk kurva $y^2 = x^3 - 3x + 3$ dengan $P(1,1)$ dan $Q(-2,1)$
+   (kurva yang sama dengan Gambar~\ref{fig:penjumlahan-titik}). Periksa
+   bahwa $P + Q = (1,-1)$ dan $2P = (-2,-1)$.
+5. Gambarkan sendiri langkah geometrisnya mengikuti
+   Gambar~\ref{fig:penjumlahan-titik} dan
+   Gambar~\ref{fig:penggandaan-titik}. Mengapa kurva seperti ini tidak
+   dipakai untuk kriptografi, sedangkan bentuknya paling mudah dipahami?
+\end{obeactivity}
+
+Program pada Listing~\ref{lst:ecc-real} memakai pecahan eksak, bukan bilangan
+pecahan mengambang. Dengan cara itu hasilnya tidak terpengaruh pembulatan,
+sehingga kesalahan pada rumus
+Persamaan~\eqref{eq:koordinat-pq} dan
+Persamaan~\eqref{eq:koordinat-penggandaan} dapat dibedakan dari kesalahan
+pembulatan.
+
+\lstinputlisting[
+    language=Python,
+    caption={Penjumlahan dan penggandaan titik pada kurva di atas bilangan
+    riil dengan pecahan eksak},
+    label={lst:ecc-real},
+    firstline=197,
+    lastline=217
+]{\codefile{python/ecc_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 14.5: Pengkodean Pesan dengan Metode Koblitz}
+1. Jalankan fungsi pengkode pada Listing~\ref{lst:ecc-koblitz} untuk huruf
+   \texttt{B} ($m = 11$) pada kurva $y^2 \equiv x^3 - x + 188 \pmod{751}$
+   dengan parameter basis $k = 20$.
+2. Periksa bahwa nilai $x$ yang dicoba berturut-turut adalah $221$, $222$,
+   $223$, dan $224$, dan bahwa hanya yang terakhir memberi titik. Bandingkan
+   dengan Tabel~\ref{tab:koblitz-b}.
+3. Tuliskan titik yang diperoleh dan kedua nilai ordinatnya. Periksa bahwa
+   titik itu benar-benar memenuhi kurva.
+4. Jalankan fungsi pendekode untuk memulihkan $m$ dari absis titik itu
+   (Persamaan~\eqref{eq:koblitz-dekode}). Apakah hasilnya kembali menjadi
+   $11$?
+5. Ulangi seluruh langkah untuk huruf \texttt{K} dan \texttt{R}. Berapa
+   percobaan yang diperlukan masing-masing? Apakah jumlahnya masih sejalan
+   dengan dugaan peluang sekitar setengah?
+\end{obeactivity}
+
+Listing~\ref{lst:ecc-koblitz} memuat kedua sisi pemetaan: pencarian nilai $x$
+yang menghasilkan titik, dan pemulihan nilai $m$ dari absis titik. Keduanya
+memerlukan parameter basis $k$ yang sama, dan parameter itu tidak perlu
+dirahasiakan (Subbagian~\ref{subsec:koblitz}).
+
+\lstinputlisting[
+    language=Python,
+    caption={Pengkodean pesan menjadi titik dan pendekodeannya dengan metode
+    Koblitz},
+    label={lst:ecc-koblitz},
+    firstline=221,
+    lastline=239
+]{\codefile{python/ecc_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 14.6: Menyerang Logaritma Diskrit pada Kurva Mainan}
+1. Jalankan program pada Listing~\ref{lst:ecc-bsgs} untuk kurva
+   $y^2 \equiv x^3 + x + 6 \pmod{11}$ dengan titik basis $P(2,4)$ yang
+   berorde $13$.
+2. Untuk setiap $k$ pada himpunan $\{1, 5, 9, 12\}$, hitung $Q = kP$ lebih
+   dahulu, lalu jalankan penyerang untuk memulihkan $k$ dari $P$ dan $Q$.
+   Apakah seluruh nilai $k$ berhasil dipulihkan?
+3. Hitung $\lceil \sqrt{13}\, \rceil$ dan bandingkan dengan banyaknya langkah
+   yang diperlukan penyerang. Mengapa biayanya sebanding dengan akar orde,
+   bukan dengan orde itu sendiri?
+4. Sekarang bayangkan orde grupnya $2^{256}$, seperti pada kurva 256 bit.
+   Berapa langkah yang dituntut penyerang menurut
+   Tabel~\ref{tab:ecdlp-vs-faktorisasi}, dan mengapa panjang kunci kurva
+   cukup $256$ bit sedangkan modulus RSA menuntut $3072$ bit?
+5. Bandingkan cara kerja penyerang ini dengan alasan pada
+   Subbagian~\ref{subsec:mengapa-ecdlp-sukar} mengapa \textit{index calculus}
+   tidak dapat dipindahkan ke kurva eliptik.
+\end{obeactivity}
+
+Listing~\ref{lst:ecc-bsgs} memakai strategi \emph{langkah bayi--langkah
+raksasa} (\textit{baby-step giant-step}). Strategi itu menyimpan seluruh
+kelipatan kecil $P$ di dalam sebuah tabel, lalu melangkah mundur dari $Q$
+dengan loncatan besar. Walaupun berbeda dari algoritma rho Pollard, biaya
+keduanya sama-sama sebanding dengan akar orde grup --- dan itulah batas yang
+menentukan panjang kunci ECC.
+
+\lstinputlisting[
+    language=Python,
+    caption={Penyerangan logaritma diskrit kurva eliptik dengan
+    \textit{baby-step giant-step}},
+    label={lst:ecc-bsgs},
+    firstline=174,
+    lastline=193
+]{\codefile{python/ecc_uji.py}}
+
+\begin{obeactivity}
+\textbf{Aktivitas 14.7: Pertukaran Kunci ECDH dan Enkripsi ECEG}
+1. Jalankan program pada Listing~\ref{lst:ecc-protokol} untuk kurva
+   $y^2 \equiv x^3 + 2x + 1 \pmod{5}$ dengan titik basis $B(0,1)$, kunci
+   privat Alice $a = 2$, dan kunci privat Bob $b = 3$. Periksa hasilnya
+   terhadap Tabel~\ref{tab:ecdh-gf5}.
+2. Ulangi untuk kurva $y^2 \equiv x^3 + x + 1 \pmod{23}$ dengan $B(3,10)$.
+   Periksa bahwa kedua arah menghitung kunci bersama yang sama, sesuai
+   Persamaan~\eqref{eq:ecdh-kunci} dan Contoh~\ref{ex:ecdh}.
+3. Jalankan bagian ECEG dengan kunci privat penerima $b = 3$, plainteks
+   $P_M(7,12)$, dan kunci sesaat $k = 5$. Periksa bahwa cipherteksnya adalah
+   $\bigl((9,16), (18,3)\bigr)$ seperti pada Contoh~\ref{ex:eceg}.
+4. Pulihkan plainteksnya mengikuti Persamaan~\eqref{eq:eceg-dekripsi}. Apakah
+   hasilnya kembali menjadi $P_M(7,12)$?
+5. Ulangi enkripsi dengan kunci sesaat $k = 9$ dan bandingkan cipherteksnya
+   dengan yang pertama. Plainteksnya sama, tetapi mengapa cipherteksnya
+   berbeda? Kaitkan jawabannya dengan Tabel~\ref{tab:elgamal-vs-eceg}.
+\end{obeactivity}
+
+Listing~\ref{lst:ecc-protokol} menjalankan kedua protokol pada dua kurva yang
+berbeda. Perhatikan bahwa kurva mod 5 sengaja dipilih kecil agar seluruh
+langkah dapat diperiksa dengan tangan, sedangkan kurva mod 23 memberi angka
+yang cukup besar untuk memperlihatkan bahwa kedua pihak memang memperoleh
+titik yang sama tanpa pernah saling mengirim kunci privat.
+
+\lstinputlisting[
+    language=Python,
+    caption={Pertukaran kunci ECDH dan enkripsi--dekripsi ECEG},
+    label={lst:ecc-protokol},
+    firstline=364,
+    lastline=411
+]{\codefile{python/ecc_uji.py}}
+
+Seluruh sebelas blok pengujian pada program ini dapat dijalankan sekaligus
+dengan \texttt{python ecc\_uji.py}. Bila setiap angka pada bab ini cocok,
+program akan mencetak \texttt{LULUS} pada setiap blok pengujian. Program
+kalkulator kurva eliptik yang lebih lengkap tersedia di
+\texttt{code/python/ecc.py}, dengan padanan dalam C++
+(\texttt{code/cpp/ecc.cpp}) dan MATLAB (\texttt{code/matlab/ecc.m}).

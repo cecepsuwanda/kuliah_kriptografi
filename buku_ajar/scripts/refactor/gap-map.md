@@ -6,9 +6,9 @@ Sasaran: ±4.000–6.000 kata/bab (prosa naratif), tabel, contoh terhitung, gamb
 
 Legenda status: `[ ]` belum · `[~]` sedang dikerjakan · `[x]` selesai.
 
-**Kemajuan:** Tahap 1–13 (Bab 01–13) selesai. Buku **456 halaman**, gerbang
-kebersihan `output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 14
-(Bab 14 — Kriptografi Kurva Eliptik).
+**Kemajuan:** Tahap 1–14 (Bab 01–14) selesai. Buku **494 halaman**, gerbang
+kebersihan `output/main_build.log` = 0 pada ketujuh pola. Berikutnya: Tahap 15
+(Bab 15 — Fungsi Hash dan MAC).
 
 ---
 
@@ -999,17 +999,133 @@ dengan `code/python/knapsack_uji.py` sebelum ditata huruf:
    Lagarias--Odlyzko, melainkan milik Coster dan kawan-kawan (EUROCRYPT '91);
    ambang Lagarias--Odlyzko sendiri adalah $0{,}645$.
 
-## Bab 14 — Kriptografi Kurva Eliptik
-Sumber: `referensi/17-*` (2.883) + `18-*` (5.706). Target: ±5.500 kata.
-**Belum punya sitasi.**
+## Bab 14 — Kriptografi Kurva Eliptik (ECC)  `[x]` SELESAI
+Sumber: `referensi/17-ECC-Bagian1-2026` (2.883 kata) + `18-ECC-Bagian2-2026`
+(5.706 kata) — total 8.589 kata, 32 topik, 31 gambar; sumber terkaya di
+kelompok asimetris. Target: ±5.500 kata. **Bab ini semula tanpa satu pun
+sitasi** — kini menyitasi 9 kunci, dengan **6 entri baru** di `references.bib`
+(`miller1986`, `koblitz1987`, `hankerson2004`, `washington2008`,
+`bernstein2006curve25519`, `pollard1978`); `references.bib` 62 → **68 entri**.
 
-- [ ] ECEG lengkap + tabel perbandingan ElGamal vs EC-ElGamal
-- [ ] Metode Koblitz *encoding* pada $y^2\equiv x^3-x+188 \pmod{751}$
-- [ ] Aritmetika $GF(2^m)$
-- [ ] Kedalaman aljabar abstrak (grup/medan, $F_{23}$)
-- [ ] Geometri kurva + penurunan analitik rumus $P+Q$ dan $2P$
-- [ ] Enumerasi penuh EC atas $GF(11)$
-- [ ] `contoh.tex` → `example`; tambah sitasi
+Hasil: **15.727 kata** pada sembilan berkas (empat section 9.966, contoh 2.513,
+praktikum 1.334, latihan 751, rangkuman 728, evaluasi 435) — semula 1.737 kata,
+jadi **9,1 kali** — **47 halaman mandiri**, **12 tabel bernomor** (semula 1),
+**7 gambar bernomor** (4 di antaranya raster baru disalin dari referensi),
+**6 contoh terhitung** di dalam environment `example` (semula **nol**),
+**20 persamaan bernomor** (semula **nol**), dan **24 subbagian** (10 → 24).
+Bab semula 1.737 kata dengan 10 subbagian bernama, **nol** persamaan bernomor,
+**nol** environment `example`, dan hanya satu tabel.
+
+- [x] **Aritmetika medan berhingga $GF(p)$ dan $GF(2^m)$** — representasi
+  polinom (Persamaan~\eqref{eq:gf2m-polinom}, \eqref{eq:gf2m-tambah}),
+  penjumlahan = XOR (Gambar~\ref{fig:tabel-gf11}),
+  perkalian `'57'·'83'` mod $x^8+x^4+x^3+x+1$ → `'C1'` dengan pembagian
+  panjang (Gambar~\ref{fig:pembagian-polinom}, Tabel~\ref{tab:gf2m-kali}),
+  dan Contoh~\ref{ex:gf2m} (`0D`+`06` = `0B`, `57`+`83` = `D4`)
+- [x] **Kedalaman aljabar abstrak** — aksioma grup, $\langle\Z_n,\oplus\rangle$
+  vs $\langle\Z_p^*,\otimes\rangle$ (Tabel~\ref{tab:contoh-grup}), medan
+  berhingga $F_{23}$ ($12+20=9$, $8 \cdot 9 = 3$) dan $GF(11)$
+  (Tabel~\ref{tab:contoh-medan}), penyelesaian $x^2 \equiv 5 \pmod{11}$
+  (Persamaan~\eqref{eq:akar-gf11}), serta penjelasan mengapa $\Z$ **bukan**
+  medan
+- [x] **Geometri kurva + penurunan analitik** — bentuk Weierstrass dan syarat
+  ketak-singularan (Persamaan~\eqref{eq:weierstrass}, \eqref{eq:diskriminan}),
+  galeri lima kurva (Gambar~\ref{fig:galeri-kurva}), titik di ketakhinggaan
+  (Persamaan~\eqref{eq:titik-o}), penjumlahan geometris
+  (Gambar~\ref{fig:penjumlahan-titik}), penurunan $P+Q$ dari hubungan Vieta
+  (Persamaan~\eqref{eq:koordinat-pq}), penggandaan titik
+  (Persamaan~\eqref{eq:koordinat-penggandaan}, Gambar~\ref{fig:penggandaan-titik}),
+  kasus khusus $y_p = 0$, pelelaran dan \textit{double-and-add} pada $23P$,
+  lalu pemeriksaan kelima aksioma grup (Tabel~\ref{tab:aksioma-grup-eliptik})
+- [x] **Enumerasi penuh EC atas $GF(11)$** — Tabel~\ref{tab:enumerasi-gf11}
+  (12 titik + $\mathcal{O}$, orde 13), Gambar~\ref{fig:sebaran-titik-gf11},
+  dan Tabel~\ref{tab:pelelaran-gf11} (tiga belas kelipatan $P$); Contoh~\ref{ex:gf11}
+  menghitung $P(2,4)+Q(5,9) = (8,8)$ sekaligus menemukan $2P = (5,9) = Q$
+- [x] **ECDLP dan biaya penyerangan** — Subbagian~\ref{subsec:ecdlp}
+  dengan Persamaan~\eqref{eq:ecdlp}, mengapa \textit{index calculus} tidak
+  dapat dipindahkan ke kurva, serangan transfer, dan
+  Tabel~\ref{tab:ecdlp-vs-faktorisasi} ($2^{40}$ / $2^{64}$ / $2^{128}$ langkah
+  vs kunci RSA 1024 / 3072 / 15360 bit)
+- [x] **ECDH lengkap** — Persamaan~\eqref{eq:ecdh-kunci},
+  Tabel~\ref{tab:ecdh-gf5} dan Contoh~\ref{ex:ecdh}: variasi mod 5
+  ($a=2$, $b=3$ → $K=(0,4)$) dan mod 23 ($a=2$, $b=3$ → $K=(12,4)$)
+- [x] **ECEG (EC-ElGamal) lengkap + tabel perbandingan** —
+  Persamaan~\eqref{eq:eceg-cipher} dan Persamaan~\eqref{eq:eceg-dekripsi},
+  Contoh~\ref{ex:eceg} (mod 23, $b=3$, $k=5$: $C_1 = 5B = (9,16)$,
+  $C_2 = (18,3)$, dekripsi memulihkan $P_M = (7,12)$), ditutup argumen
+  enkripsi probabilistik; Tabel~\ref{tab:elgamal-vs-eceg}
+  (`tab:ecc-vs-rsa` untuk sisi efisiensinya)
+- [x] **Metode Koblitz \textit{encoding} pesan → titik** —
+  Subbagian~\ref{subsec:koblitz}, Persamaan~\eqref{eq:koblitz-x} dan
+  Persamaan~\eqref{eq:koblitz-dekode}, Tabel~\ref{tab:koblitz-b}, dan
+  Contoh~\ref{ex:koblitz}: karakter \texttt{B} ($m = 11$, $k = 20$) menjadi
+  $(224, 248)$ pada $y^2 \equiv x^3 - x + 188 \pmod{751}$ dengan $N = 727$
+  dalam empat percobaan, lalu dekode $\lfloor 223/20 \rfloor = 11$
+- [x] **Pemetaan langsung vs metode Koblitz** —
+  Subbagian~\ref{subsec:pemetaan-langsung}: pemetaan tetap mengulang kelemahan
+  buku kode (dua plainteks sama → titik $P_M$ sama), dan syarat $N \ge 36k$
+  agar ruang $x$ tiap karakter tidak tumpang tindih
+- [x] **Efisiensi dan kurva baku** — Tabel~\ref{tab:kurva-standar} (secp256k1,
+  NIST P-256, Curve25519, NIST P-384) beserta alasan Curve25519 dirancang
+  untuk \emph{menghilangkan} pilihan parameter, lalu rasionalisasi mengapa
+  ECDLP lebih sukar daripada faktorisasi (serangan transfer vs rho Pollard,
+  Tabel~\ref{tab:ecdlp-vs-faktorisasi})
+- [x] **Pertumbuhan komponen OBE** — `praktikum.tex` 1 → 7 `obeactivity`
+  (4 → 35 butir bernomor; Listing~\ref{lst:ecc-invers}, \ref{lst:ecc-gf2m},
+  \ref{lst:ecc-kurva}, \ref{lst:ecc-real}, \ref{lst:ecc-koblitz},
+  \ref{lst:ecc-bsgs}, \ref{lst:ecc-protokol}), `latihan.tex` 1 → 3
+  `obereflection` (3 → 27 butir: Latihan 14.1 medan & struktur aljabar,
+  14.2 geometri & aritmetika titik, 14.3 protokol/pemetaan/efisiensi),
+  `rangkuman.tex` 7 → 22 butir, `evaluasi.tex` 3 → 10 butir kuis dan
+  **`competencychecklist` 5 → 15 baris**
+- [x] **Program verifikasi** `code/python/ecc_uji.py` — 494 baris, ASCII + LF,
+  enam banner komentar tepat 68 karakter. Memuat `pbb`, `invers`,
+  `akar_kuadrat`, `polinom_tambah/kali/bagi`, `tak_tereduksi`, `pada_kurva`,
+  `lawan`, `tambah`, `gandakan`, `kali`, `enumerasi`, `orde`, `bsgs`,
+  `tambah_real`, `gandakan_real`, `koblitz_kode`, `koblitz_dekode`, lalu
+  **sebelas blok `uji_*`** (`uji_gf2m`, `uji_polinom`, `uji_medan`,
+  `uji_geometri_real`, `uji_enumerasi`, `uji_penjumlahan`, `uji_ecdh`,
+  `uji_eceg`, `uji_koblitz`, `uji_penyerangan`, `uji_latihan`) yang
+  **seluruhnya lulus** (baris terakhir: `Hasil: 11 dari 11 blok pengujian
+  LULUS`)
+- [x] **Contoh terhitung baru** — enam `example`: Contoh~\ref{ex:gf2m}
+  (aritmetika $GF(2^8)$ dan $GF(2^4)$), Contoh~\ref{ex:gf11} (kurva mod 11),
+  Contoh~\ref{ex:real} (dua kurva riil), Contoh~\ref{ex:ecdh} (dua variasi
+  ECDH), Contoh~\ref{ex:eceg} (ECEG + dekripsi), Contoh~\ref{ex:koblitz}
+  (Koblitz mod 751); semuanya diverifikasi dengan `ecc_uji.py` sebelum
+  ditata huruf
+
+### Koreksi terhadap sumber (wajib dicatat)
+
+Dek `17-*` dan `18-*` mengandung **lima kekeliruan** — satu salah kaprah
+struktur aljabar, dua salah faktorisasi polinom, satu daftar titik yang tidak
+lengkap sehingga orderya salah, dan satu salah penulisan bit. Semua angka pada
+bab ini sudah diperiksa ulang dengan `code/python/ecc_uji.py`:
+
+| Klaim dek | Verifikasi |
+|---|---|
+| Penjumlahan $GF(2^8)$: `0D`+`06` = `0B`, `57`+`83` = `D4` | lulus (`uji_gf2m`) |
+| Perkalian `57`·`83` = `C1` mod $x^8+x^4+x^3+x+1$ | lulus (`uji_gf2m`) |
+| $F_{23}$: $12 + 20 = 9$, $8 \cdot 9 = 3$ | lulus (`uji_medan`) |
+| $x^2 \equiv 5 \pmod{11} \Rightarrow x = 4$ atau $7$ | lulus (`uji_medan`) |
+| Kurva $y^2 \equiv x^3+x+6 \pmod{11}$: 12 titik + $\mathcal{O}$, orde 13 | lulus (`uji_enumerasi`) |
+| $P(2,4) + Q(5,9) = (8,8)$ dan $2P = (5,9)$, sehingga $Q = 2P$ | lulus (`uji_penjumlahan`) |
+| Koblitz mod 751: `B` → $(224, 248)$ dalam 4 percobaan | lulus (`uji_koblitz`) |
+| ECEG mod 23, $k = 5$: $C_1 = (9,16)$, $C_2 = (18,3) \to P_M = (7,12)$ | lulus (`uji_eceg`) |
+| Kurva mod 23: 27 titik berhingga, **orde grup 28**; $(3,10)$ pembangkit | lulus (`uji_enumerasi`) |
+| $(4,0)$ berorde 2, $(13,16)$ berorde 7, $(0,1)$ berorde 28 | lulus (`uji_enumerasi`) |
+| Dek: "mod 23 punya 26 titik, orde 26" | **salah** — 27 titik berhingga; dengan $\mathcal{O}$ ordenya **28** |
+| Dek: "$x^2+1$ tereduksi di $GF(2)$" | **salah** — $(x+1)^2 = x^2+1$, jadi ia dapat direduksi |
+| Dek: $x^5+x^2+x+1 = (x^3+x^2+1)(x^2+1)$ | **salah** — hasil kali itu $x^5+x^4+x^3+1$; yang benar $(x^2+1)(x^3+x+1)$ |
+| Dek: $\langle \Z, +, \cdot \rangle$ adalah medan | **salah** — $\Z$ bukan medan ($2$ tidak punya invers di $\Z$) |
+| Dek: hasil kali $GF(2^4)$ ditulis `10110` | **salah** — seharusnya `101110` (derajat $x^5$) |
+
+Catatan tambahan: dek juga menuliskan "`0101010111` di dalam $GF(2^8)$",
+padahal `57` heksadesimal adalah `01010111` — dua bit depan itu berlebih dan
+tidak tertampung $m = 8$. Kelima kekeliruan itu **disebutkan apa adanya** di
+dalam bab (Contoh~\ref{ex:gf2m}, Contoh~\ref{ex:gf11}, dan catatan koreksi pada
+Subbagian~\ref{subsec:enumerasi-gf-p}) supaya pembaca yang membandingkan dengan
+berkas sumber tidak mengira buku ini yang salah hitung.
 
 ## Bab 15 — Fungsi Hash dan MAC (tanpa sumber referensi)
 Sumber: `menezes1996` (HAC Bab 9), `stallings2017`, `katz2020`, FIPS 180-4, FIPS 202,
@@ -1079,16 +1195,25 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   `eq:elgamal-dekripsi`, `eq:elgamal-bukti`, `eq:elgamal-homomorfik`,
   `eq:elgamal-k-ulang`, `eq:elgamal-k-ulang-m2`); Bab 13 menambah 8
   (`eq:knapsack-dasar`, `eq:superincreasing`, `eq:mh-kunci`, `eq:mh-enkripsi`,
-  `eq:mh-dekripsi`, `eq:mh-bukti`, `eq:mh-bukti-eksak`, `eq:densitas-knapsack`).
-  Lanjutkan untuk ECDLP, hash.
-- [x] **`contoh.tex` tidak konsisten** — bab 13 kini memakai `\begin{example}`
-  (6 buah, semula **nol**); tersisa bab 14–16.
-- [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03 dan 04 sudah punya.)
+  `eq:mh-dekripsi`, `eq:mh-bukti`, `eq:mh-bukti-eksak`, `eq:densitas-knapsack`);
+  **Bab 14 menambah 20** (`eq:gf2m-polinom`, `eq:gf2m-tambah`, `eq:gf2m-kali`,
+  `eq:akar-gf11`, `eq:weierstrass`, `eq:diskriminan`, `eq:titik-o`,
+  `eq:gradien-pq`, `eq:koordinat-pq`, `eq:gradien-mod-p`,
+  `eq:gradien-penggandaan`, `eq:koordinat-penggandaan`, `eq:pelelaran`,
+  `eq:ecdlp`, `eq:ecc-kunci-publik`, `eq:ecdh-kunci`, `eq:eceg-cipher`,
+  `eq:eceg-dekripsi`, `eq:koblitz-x`, `eq:koblitz-dekode`).
+  Lanjutkan untuk hash.
+- [x] **`contoh.tex` tidak konsisten** — bab 13 (6 `example`, semula **nol**)
+  dan bab 14 (6 `example`, semula **nol**) sudah beres; tersisa bab 15–16.
+- [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03, 04, dan 14 sudah punya.)
   Skrip pembuat gambar raster: `scripts/refactor/figures/entropi_ternate.py`.
-- [ ] **Bab tanpa sitasi: 14.** (02, 03, 04, 05, 06, dan 07 sudah selesai; Bab 06
-  kini menyitasi `shannon1949`, `stallings2017`, dan `menezes1996`, sedangkan
-  Bab 07 menyitasi `fips46`, `biham1991`, `matsui1994`, `eff1998`,
-  `stallings2017`, dan `menezes1996`.)
+- [x] **Bab tanpa sitasi: 14.** (02, 03, 04, 05, 06, 07, dan 14 sudah selesai;
+  Bab 14 semula **nol** sitasi, kini menyitasi `stallings2017`, `menezes1996`,
+  `fips1865`, dan enam entri baru — `miller1986`, `koblitz1987`,
+  `hankerson2004`, `washington2008`, `bernstein2006curve25519`,
+  `pollard1978`. Bab 07 menyitasi `fips46`, `biham1991`, `matsui1994`,
+  `eff1998`, `stallings2017`, dan `menezes1996`; Bab 06 menyitasi
+  `shannon1949`, `stallings2017`, dan `menezes1996`.)
 
 ## Catatan lintas bab: tabel lebar & panjang baris
 

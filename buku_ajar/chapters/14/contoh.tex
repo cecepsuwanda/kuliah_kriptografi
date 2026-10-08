@@ -1,35 +1,368 @@
 \section{Contoh Terhitung}
-Setiap langkah berikut diverifikasi secara numerik dengan Python.
+\label{sec:contoh-ecc}
 
-\subsection{Penjumlahan dan Penggandaan Titik pada Kurva Real}
-Gunakan kurva $y^2 = x^3 - 3x + 3$ (jadi $a = -3$, $b = 3$; cek $4a^3 + 27b^2 = -108 + 243 = 135 \neq 0$).
-Titik $P(1,1)$ memenuhi kurva karena $1^2 = 1^3 - 3(1) + 3 = 1$; titik $Q(-2,1)$ juga karena $1^2 = -8 + 6 + 3 = 1$.
+Contoh-contoh pada bagian ini disusun mengikuti alur bab, dari aritmetika
+medan sampai protokol yang lengkap. Contoh pertama bekerja di dalam
+$GF(2^8)$, tempat seluruh aturan medan berhingga terlihat paling jelas.
+Contoh kedua dan ketiga menjalankan penjumlahan serta penggandaan titik pada
+kurva, masing-masing di atas medan berhingga dan di atas bilangan riil.
+Tiga contoh terakhir merangkai seluruh perkakas itu menjadi protokol
+pertukaran kunci, enkripsi, dan pengkodean pesan. Setiap angka di bawah ini
+telah diverifikasi dengan program pada bagian praktikum di akhir bab ini.
 
-\textbf{(a) Penjumlahan $P + Q$} (dengan $P \neq Q$, rumus $m = (y_q - y_p)/(x_q - x_p)$):
-\[ m = \frac{1 - 1}{-2 - 1} = \frac{0}{-3} = 0, \]
-\[ x_r = m^2 - x_p - x_q = 0 - 1 - (-2) = 1, \qquad y_r = m(x_p - x_r) - y_p = 0 - 1 = -1 . \]
-Jadi $R(1, -1)$, dan titik ini benar pada kurva karena $(-1)^2 = 1 = 1^3 - 3(1) + 3$.
+\begin{example}[Aritmetika polinomial di dalam medan $GF(2^8)$]
+\label{ex:gf2m}
+Setiap \textit{byte} dipandang sebagai polinom berderajat paling tinggi tujuh,
+dengan setiap bit menjadi koefisien. Dengan kesepakatan itu,
+\[
+\code{0D} = x^3 + x^2 + 1,
+\qquad
+\code{06} = x^2 + x .
+\]
 
-\textbf{(b) Penggandaan $2P$} (rumus $m = (3x_p^2 + a)/(2y_p)$):
-\[ m = \frac{3(1)^2 - 3}{2(1)} = \frac{0}{2} = 0, \]
-\[ x_r = m^2 - 2x_p = 0 - 2 = -2, \qquad y_r = m(x_p - x_r) - y_p = 0 - 1 = -1 . \]
-Diperoleh $2P(-2, -1)$, yang juga memenuhi kurva karena $(-1)^2 = (-2)^3 - 3(-2) + 3 = 1$.
+\textbf{(a) Penjumlahan.} Penjumlahan di dalam $GF(2)$ dilakukan modulo dua,
+sehingga $1 + 1 = 0$; koefisien yang sama pada kedua polinom saling
+menghapus. Karena itu penjumlahan dua polinom tidak lain adalah operasi XOR
+bit demi bit. Untuk polinom di atas,
+\[
+(x^3 + x^2 + 1) \oplus (x^2 + x) = x^3 + (x^2 \oplus x^2) + x + 1
+= x^3 + x + 1 = \code{0B} .
+\]
+Suku $x^2$ lenyap karena muncul pada kedua polinom. Dengan cara yang sama,
+\[
+\code{57} \oplus \code{83} = \code{D4} ,
+\]
+sebab dalam biner $\code{57} = 01010111$, $\code{83} = 10000011$, dan
+XOR keduanya adalah $11010100 = \code{D4}$.
 
-\subsection{Penjumlahan Titik pada Kurva \texorpdfstring{$y^2 \equiv x^3 + x + 1 \pmod{23}$}{y\^{}2 = x\^{}3 + x + 1 (mod 23)}}
-Titik $P(3,10)$ terletak pada kurva sebab $10^2 = 100 \equiv 8 \pmod{23}$ dan $3^3 + 3 + 1 = 31 \equiv 8 \pmod{23}$.
+\textbf{(b) Perkalian.} Perkalian dilakukan dalam dua tahap: kalikan dahulu
+seperti polinom biasa, lalu reduksi hasilnya dengan polinom reduksi
+$x^8 + x^4 + x^3 + x + 1$ (yaitu $\code{11B}$, polinom yang dipakai AES).
+Tulis kedua faktor dalam bentuk polinom,
+\[
+\code{57} = x^6 + x^4 + x^2 + x + 1,
+\qquad
+\code{83} = x^7 + x + 1 .
+\]
+Karena $\code{83}$ memiliki bit pada posisi $7$, $1$, dan $0$, perkaliannya
+adalah XOR dari tiga salinan $\code{57}$ yang digeser sejauh posisi bit
+tersebut. Tabel~\ref{tab:gf2m-kali} memperlihatkan langkah itu.
 
-\textbf{Penggandaan $2P$.} Dengan $a = 1$,
-\[ m \equiv \frac{3x_p^2 + a}{2y_p} \equiv \frac{3(3)^2 + 1}{2(10)} \equiv \frac{28}{20} \equiv 28 \cdot 20^{-1} \pmod{23} . \]
-Karena $20 \cdot 15 = 300 = 13 \cdot 23 + 1$, maka $20^{-1} \equiv 15$, sehingga $m \equiv 28 \cdot 15 = 420 \equiv 6 \pmod{23}$. Koordinatnya:
-\[ x_r \equiv m^2 - 2x_p \equiv 36 - 6 = 30 \equiv 7, \qquad y_r \equiv m(x_p - x_r) - y_p \equiv 6(3 - 7) - 10 = -34 \equiv 12 . \]
-Jadi $2P = (7, 12)$; periksa: $12^2 = 144 \equiv 6$ dan $7^3 + 7 + 1 = 351 \equiv 6 \pmod{23}$.
+\begin{table}[htbp]
+    \centering
+    \caption{Perkalian dua polinom di dalam $GF(2^8)$: menghasilkan polinom
+    mentah berderajat $13$, lalu direduksi menjadi berderajat $7$}
+    \label{tab:gf2m-kali}
+    \begin{tabular}{@{}l l l@{}}
+    \toprule
+    \textbf{Langkah} & \textbf{Biner} & \textbf{Bentuk polinom} \\
+    \midrule
+    $\code{57} \ll 0$        & $01010111$          & $x^6 + x^4 + x^2 + x + 1$ \\
+    \addlinespace
+    $\code{57} \ll 1$        & $10101110$          & $x^7 + x^5 + x^3 + x^2 + x$ \\
+    \addlinespace
+    $\code{57} \ll 7$        & $10101110000000$    & $x^{13} + x^{11} + x^9 + x^8 + x^7$ \\
+    \midrule
+    XOR ketiganya            & $10101101111001$    & $x^{13} + x^{11} + x^9 + x^8 + x^6
+                             + x^5 + x^4 + x^3 + 1$ \\
+    \midrule
+    $\oplus\,(\code{11B} \ll 5)$ & $0000100000011001$ & $x^{11} + x^4 + x^3 + 1$ \\
+    \addlinespace
+    $\oplus\,(\code{11B} \ll 3)$ & $11000001$         & $x^7 + x^6 + 1 = \code{C1}$ \\
+    \bottomrule
+    \end{tabular}
+\end{table}
 
-\textbf{Penjumlahan $3P = 2P + P$.} Dengan $2P(7,12)$ dan $P(3,10)$:
-\[ m \equiv \frac{10 - 12}{3 - 7} = \frac{-2}{-4} = \frac{1}{2} \equiv 12 \pmod{23}, \]
-\[ x_r \equiv m^2 - 7 - 3 \equiv 144 - 10 = 134 \equiv 19, \qquad y_r \equiv 12(7 - 19) - 12 = -156 \equiv 5 . \]
-Jadi $3P = (19, 5)$.
+Baris keempat Tabel~\ref{tab:gf2m-kali} adalah hasil kali mentah, yang
+berderajat $13$ sehingga masih di luar medan. Dua baris terakhir
+memperlihatkannya direduksi: selama derajatnya paling sedikit delapan,
+polinom reduksi digeser ke posisi bit terdepan lalu di-XOR-kan. Hasil
+akhirnya adalah $x^7 + x^6 + 1$, yaitu $\code{C1}$. Jadi
+\[
+\code{57} \cdot \code{83} = \code{C1} .
+\]
 
-\subsection{Pertukaran Kunci ECDH pada Kurva yang Sama}
-Titik basis $B(3,10)$; Alice memilih $a = 2$ dan Bob $b = 3$. Kunci publik keduanya adalah $P_A = 2B = (7,12)$ dan $P_B = 3B = (19,5)$. Kunci bersama $K = abB = 6B$ dihitung dari dua arah:
-\[ K = a \cdot P_B = 2(19,5) = (12,4), \qquad K = b \cdot P_A = 3(7,12) = (12,4) . \]
-Kedua pihak memperoleh titik rahasia yang sama, yaitu $(12,4)$; penyerang yang hanya melihat $B$, $P_A$, dan $P_B$ harus memecahkan ECDLP untuk menemukan $a$ atau $b$.
+\textbf{(c) Pemeriksaan pada medan yang lebih kecil.} Dengan cara yang sama,
+di dalam $GF(2^4)$ yang memakai polinom reduksi $x^4 + x + 1$,
+\[
+(x^3 + x^2 + 1)(x^2 + x) = x^5 + x^3 + x^2 + x ,
+\]
+sebab koefisien $x^4$ dan $x^3$ yang muncul dua kali saling menghapus. Hasil
+kali itu berderajat lima, sehingga direduksi satu langkah:
+\[
+(x^5 + x^3 + x^2 + x) \oplus \bigl(x \cdot (x^4 + x + 1)\bigr)
+= (x^5 + x^3 + x^2 + x) \oplus (x^5 + x^2 + x) = x^3 .
+\]
+Sisanya berderajat tiga, jadi hasil akhirnya adalah $x^3 = \code{1000}$.
+
+\par\vspace{2pt}{\footnotesize\itshape Catatan: dua angka pada berkas sumber
+perlu dikoreksi. Pertama, berkas sumber menuliskan hasil kali mentah di atas
+sebagai $\code{10110}$, padahal bentuk binernya adalah $\code{101110}$; dua
+bit terdepan $\code{10}$ hilang. Kedua, berkas sumber menyebut $x^2 + 1$
+tidak dapat direduksi, padahal di dalam $GF(2)$ polinom itu sama dengan
+$(x+1)^2$, sebab $(x+1)^2 = x^2 + 2x + 1 = x^2 + 1$. Karena itu berkas
+sumber juga salah ketika memfaktorkan $x^5 + x^2 + x + 1$ menjadi
+$(x^3 + x^2 + 1)(x^2 + 1)$; hasil kali kedua faktor itu adalah
+$x^5 + x^4 + x^3 + 1$, bukan $x^5 + x^2 + x + 1$. Faktorisasi yang benar
+adalah $x^5 + x^2 + x + 1 = (x^2 + 1)(x^3 + x + 1)$. Kedua koreksi itu
+diperiksa oleh program pada bagian praktikum.\par}
+\end{example}
+
+\begin{example}[Penjumlahan titik pada kurva di atas $GF(11)$]
+\label{ex:gf11}
+Ambil kurva
+\[
+y^2 \equiv x^3 + x + 6 \pmod{11},
+\]
+yang ordonya $13$ dan telah dienumerasi pada Subbagian~\ref{subsec:enumerasi-gf-p}.
+Dua di antara titiknya adalah $P(2, 4)$ dan $Q(5, 9)$; keduanya memenuhi
+kurva, sebab $4^2 = 16 \equiv 5$ dan $2^3 + 2 + 6 = 16 \equiv 5$ untuk $P$,
+serta $9^2 = 81 \equiv 4$ dan $5^3 + 5 + 6 = 136 \equiv 4$ untuk $Q$.
+
+\textbf{(a) Penjumlahan $P + Q$.} Dengan $a = 1$ dan $p = 11$, gradiennya
+menurut Persamaan~\eqref{eq:gradien-mod-p} adalah
+\[
+m \equiv (9 - 4)(5 - 2)^{-1} \equiv 5 \cdot 3^{-1} \pmod{11} .
+\]
+Karena $3 \cdot 4 = 12 \equiv 1$, invers dari $3$ adalah $4$, sehingga
+$m \equiv 5 \cdot 4 = 20 \equiv 9$. Selanjutnya
+\[
+x_r \equiv m^2 - x_p - x_q \equiv 81 - 2 - 5 = 74 \equiv 8 \pmod{11},
+\]
+\[
+y_r \equiv m(x_p - x_r) - y_p \equiv 9(2 - 8) - 4 = -58 \equiv 8 \pmod{11},
+\]
+sebab $-58 + 6 \cdot 11 = 8$. Jadi $P + Q = (8, 8)$, dan pemeriksaannya:
+$8^2 = 64 \equiv 9$ sedangkan $8^3 + 8 + 6 = 526 = 47 \cdot 11 + 9$. Cocok.
+
+\textbf{(b) Penggandaan $2P$.} Rumusnya sama, hanya gradiennya diganti
+menurut Persamaan~\eqref{eq:gradien-penggandaan}:
+\[
+m \equiv (3 \cdot 2^2 + 1)(2 \cdot 4)^{-1} \equiv 13 \cdot 8^{-1}
+\pmod{11} .
+\]
+Karena $8 \cdot 7 = 56 \equiv 1$, invers dari $8$ adalah $7$, sehingga
+$m \equiv 13 \cdot 7 = 91 \equiv 3$. Koordinat hasilnya
+\[
+x_r \equiv m^2 - 2x_p \equiv 9 - 4 = 5, \qquad
+y_r \equiv m(x_p - x_r) - y_p \equiv 3(2 - 5) - 4 = -13 \equiv 9 ,
+\]
+jadi $2P = (5, 9)$.
+
+Perhatikan hasil yang menarik: $2P$ ternyata sama dengan $Q$. Artinya $Q$
+bukan titik yang bebas, melainkan kelipatan dari $P$, dan karena itu
+$P + Q = 3P = (8, 8)$. Kebetulan semacam ini lazim pada kurva kecil dan
+menjadi alasan mengapa pada kurva yang dipakai sungguhan orderya harus
+diperiksa lebih dahulu. Bila titik basis berorde kecil, hubungan seperti ini
+memberi petunjuk kepada penyerang. Tabel pelelaran $kP$ untuk
+$k = 1, 2, \dots, 13$ pada kurva ini, yang berakhir di $13P = \mathcal{O}$,
+diperlihatkan pada Tabel~\ref{tab:pelelaran-gf11}.
+\end{example}
+
+\begin{example}[Penjumlahan dan penggandaan titik di atas bilangan riil]
+\label{ex:real}
+Kurva di atas bilangan riil dipakai untuk memahami geometrinya, bukan untuk
+kriptografi. Dua kurva berikut memperlihatkan kedua operasi itu.
+
+\textbf{(a) Kurva $y^2 = x^3 - 3x + 3$.} Di sini $a = -3$ dan $b = 3$,
+sehingga $4(-3)^3 + 27(3)^2 = -108 + 243 = 135 \neq 0$ menurut
+Persamaan~\eqref{eq:diskriminan}: kurva itu licin. Titik $P(1, 1)$ memenuhi
+kurva karena $1^2 = 1 - 3 + 3 = 1$, dan titik $Q(-2, 1)$ juga karena
+$1^2 = -8 + 6 + 3 = 1$.
+
+Untuk $P + Q$ dengan $P \neq Q$,
+\[
+m = \frac{1 - 1}{-2 - 1} = \frac{0}{-3} = 0 ,
+\]
+sehingga garis yang melalui $P$ dan $Q$ mendatar. Akibatnya
+\[
+x_r = 0 - 1 - (-2) = 1, \qquad y_r = 0 \cdot (1 - 1) - 1 = -1 ,
+\]
+dan $P + Q = (1, -1)$. Titik itu benar pada kurva sebab
+$(-1)^2 = 1 = 1 - 3 + 3$.
+
+Untuk $2P$,
+\[
+m = \frac{3(1)^2 - 3}{2(1)} = \frac{0}{2} = 0 ,
+\]
+sehingga garis singgungnya pun mendatar. Maka $x_r = 0 - 2 = -2$ dan
+$y_r = 0 \cdot (1 + 2) - 1 = -1$, jadi $2P = (-2, -1)$. Periksa:
+$(-1)^2 = (-2)^3 - 3(-2) + 3 = -8 + 6 + 3 = 1$. Cocok.
+
+\textbf{(b) Kurva $y^2 = x^3 + 2x + 4$.} Di sini $a = 2$ dan $b = 4$.
+Titik $P(2, 4)$ memenuhi kurva karena $4^2 = 8 + 4 + 4 = 16$, dan
+$Q(0, 2)$ juga karena $2^2 = 0 + 0 + 4 = 4$. Gradien garis $PQ$ adalah
+\[
+m = \frac{2 - 4}{0 - 2} = \frac{-2}{-2} = 1 ,
+\]
+sehingga $x_r = 1 - 2 - 0 = -1$ dan $y_r = 1 \cdot (2 + 1) - 4 = -1$.
+Jadi $P + Q = (-1, -1)$, dan titik itu benar pada kurva sebab
+$(-1)^2 = 1 = -1 - 2 + 4$.
+
+Penggandaannya menghasilkan pecahan:
+\[
+m = \frac{3(2)^2 + 2}{2(4)} = \frac{14}{8} = \frac{7}{4},
+\]
+\[
+x_r = \left(\frac{7}{4}\right)^2 - 2(2) = \frac{49}{16} - 4 = -\frac{15}{16},
+\]
+\[
+y_r = \frac{7}{4}\left(2 + \frac{15}{16}\right) - 4
+    = \frac{7 \cdot 47}{64} - 4 = \frac{329 - 256}{64} = \frac{73}{64} .
+\]
+Jadi $2P = \left(-\frac{15}{16}, \frac{73}{64}\right)$, atau dalam pecahan
+desimal $(-0{,}9375;\ 1{,}140625)$. Bandingkan dengan kurva di atas
+$GF(11)$: di sana koordinat hasilnya tetap bilangan bulat, sedangkan di sini
+koordinatnya langsung menjadi pecahan. Itulah sebabnya kriptografi memakai
+kurva di atas medan berhingga.
+\end{example}
+
+\begin{example}[Pertukaran kunci ECDH]
+\label{ex:ecdh}
+\textbf{(a) Pada kurva di atas $GF(5)$.} Ambil kurva
+\[
+y^2 \equiv x^3 + 2x + 1 \pmod{5},
+\]
+yang memiliki $6$ titik berhingga ditambah $\mathcal{O}$, sehingga orderya
+$7$. Titik basis yang disepakati adalah $B(0, 1)$, yang memenuhi kurva sebab
+$1^2 = 0 + 0 + 1$. Alice memilih kunci privat $a = 2$ dan Bob $b = 3$.
+Kunci publik masing-masing adalah
+\[
+P_A = 2B = (1, 3),
+\qquad
+P_B = 3B = (3, 3).
+\]
+Setiap pihak menghitung kunci bersama dari kunci publik pihak lain:
+\[
+K = a \cdot P_B = 2(3, 3) = (0, 4),
+\qquad
+K = b \cdot P_A = 3(1, 3) = (0, 4) .
+\]
+Keduanya memperoleh titik $(0, 4)$ --- perhatikan bahwa titik itu sama dengan
+$-B$, sebab $B$ berorde $7$ sehingga $6B = -B$.
+
+\textbf{(b) Pada kurva di atas $GF(23)$.} Kurva $y^2 \equiv x^3 + x + 1
+\pmod{23}$ dengan titik basis $B(3, 10)$ memberi angka yang lebih besar.
+Dengan $a = 2$ dan $b = 3$,
+\[
+P_A = 2B = (7, 12),
+\qquad
+P_B = 3B = (19, 5),
+\]
+\[
+K = 2P_B = (12, 4),
+\qquad
+K = 3P_A = (12, 4) .
+\]
+Penyerang yang menyadap pertukaran itu hanya melihat kurva, titik basis
+$B(3,10)$, dan kedua kunci publik $(7,12)$ serta $(19,5)$. Untuk menemukan
+$K$ ia harus memulihkan $a$ atau $b$ dari $P_A = aB$, yaitu memecahkan
+persoalan logaritma diskrit kurva eliptik pada Persamaan~\eqref{eq:ecdlp}.
+Pada kurva mainan ini penyerangan itu sepele --- program pada bagian
+praktikum melakukannya dengan penelusuran langkah bayi-langkah raksasa ---
+tetapi pada kurva 256 bit usaha yang sama menuntut sekitar $2^{128}$ langkah.
+\end{example}
+
+\begin{example}[Enkripsi dan dekripsi ECEG]
+\label{ex:eceg}
+Enkripsi kurva eliptik memakai kurva yang sama dengan contoh sebelumnya, yaitu
+$y^2 \equiv x^3 + x + 1 \pmod{23}$ dengan titik basis $B(3, 10)$. Kunci
+privat penerima adalah $b = 3$, sehingga kunci publiknya
+\[
+P_B = 3B = (19, 5) .
+\]
+Pesan yang hendak dikirim telah dikodekan lebih dahulu menjadi sebuah titik
+pada kurva (caranya diperlihatkan pada contoh berikutnya); di sini misalkan
+$P_M = (7, 12)$.
+
+Pengirim memilih kunci sesaat $k = 5$ --- bilangan acak yang baru untuk
+setiap pesan --- lalu menghitung dua titik menurut
+Persamaan~\eqref{eq:eceg-cipher}:
+\[
+C_1 = kB = 5B = (9, 16),
+\]
+\[
+C_2 = P_M + k P_B = (7, 12) + 5(19, 5) = (7, 12) + (1, 16) = (18, 3) .
+\]
+Jadi cipherteksnya adalah pasangan titik $\bigl((9, 16),\ (18, 3)\bigr)$.
+
+Penerima memegang $b = 3$ dan memulihkan pesannya dengan mengurangi titik
+kedua dengan hasil kali kunci privatnya dan titik pertama:
+\[
+P_M = C_2 - b\,C_1 = (18, 3) - 3(9, 16) .
+\]
+Karena $C_1 = 5B$, maka $3C_1 = 15B$, dan $15B = (1, 16)$ menurut kenyataan
+bahwa $B$ berorde $28$. Lawan titik itu adalah $(1, 7)$, sebab
+$-16 \equiv 7 \pmod{23}$, sehingga
+\[
+P_M = (18, 3) + (1, 7) = (7, 12) .
+\]
+Plainteksnya pulih tepat seperti semula.
+
+Perhatikan mengapa langkah itu selalu berhasil. Penerima tidak perlu mengetahui
+$k$; ia hanya perlu bahwa $kP_B = kbB = bkB = bC_1$, sehingga suku acak pada
+$C_2$ terhapus oleh suku yang ia hitung sendiri --- persis seperti penurunan
+pada Persamaan~\eqref{eq:eceg-dekripsi}. Sekalipun penyerang menyadap kedua
+titik cipherteks, ia tidak dapat melakukan hal yang sama karena tidak memegang
+$b$.
+
+Satu hal terakhir: karena $k$ dipilih baru untuk setiap pesan, titik
+$C_1 = kB$ juga berubah setiap kali. Pesan $P_M$ yang sama karena itu
+menghasilkan cipherteks yang berbeda pada setiap pengiriman. Sifat itu,
+yang disebut enkripsi probabilistik, membuat penyerang tidak dapat mengenali
+pesan yang berulang --- keunggulan yang tidak dimiliki buku kode maupun
+pemetaan karakter langsung pada Subbagian~\ref{subsec:pemetaan-langsung}.
+\end{example}
+
+\begin{example}[Pengkodean pesan dengan metode Koblitz]
+\label{ex:koblitz}
+Agar pesan dapat dienkripsi dengan ECEG, rangkaian bitnya harus diubah
+terlebih dahulu menjadi titik pada kurva. Metode Koblitz melakukan itu dengan
+memanfaatkan peluang: ruas kanan kurva hanya punya peluang sekitar setengah
+untuk menjadi kuadrat modulo $p$ pada nilai $x$ yang dipilih acak.
+
+Ambil kurva
+\[
+y^2 \equiv x^3 - x + 188 \pmod{751},
+\]
+yang memiliki $N = 727$ titik. Menurut kesepakatan pengkodean pada
+Subbagian~\ref{subsec:koblitz}, huruf \texttt{A} sampai \texttt{Z} bernilai
+$10$ sampai $35$, sehingga huruf \texttt{B} bernilai $m = 11$. Ambil
+parameter basis $k = 20$, sehingga nilai $x$ pertama yang dicoba adalah
+\[
+x = mk + 1 = (11)(20) + 1 = 221
+\]
+menurut Persamaan~\eqref{eq:koblitz-x}. Sulihkan ke dalam kurva:
+\[
+221^3 - 221 + 188 = 10\,793\,861 - 33 = 10\,793\,828
+\equiv 456 \pmod{751} .
+\]
+Apakah $456$ kuadrat modulo $751$? Pemeriksaan pada program menunjukkan tidak,
+sehingga $x = 221$ tidak memberi titik. Pencarian berlanjut seperti pada
+Tabel~\ref{tab:koblitz-b}: $x = 222$ memberi $446$ dan $x = 223$ memberi
+$266$, keduanya juga bukan kuadrat. Baru pada percobaan keempat berhasil.
+Untuk $x = 224$ diperoleh
+\[
+224^3 - 224 + 188 = 11\,239\,424 - 36 = 11\,239\,388
+\equiv 673 \pmod{751} ,
+\]
+dan $673$ adalah kuadrat modulo $751$: dua akarnya adalah $y = 248$ dan
+$y = 503$, sebab $248^2 = 61\,504 = 81 \cdot 751 + 673$ dan
+$503^2 = 253\,009 = 336 \cdot 751 + 673$. Jadi huruf \texttt{B} dikodekan
+menjadi titik $(224, 248)$ pada kurva tersebut.
+
+Penerima memulihkan pesannya dengan Persamaan~\eqref{eq:koblitz-dekode},
+\[
+m = \left\lfloor \frac{224 - 1}{20} \right\rfloor
+  = \left\lfloor \frac{223}{20} \right\rfloor
+  = \lfloor 11{,}15 \rfloor = 11 ,
+\]
+yang memang nilai untuk huruf \texttt{B}.
+
+Empat percobaan pada contoh ini sejalan dengan dugaan peluangnya. Setiap
+percobaan berpeluang sekitar setengah untuk berhasil, sehingga rata-rata
+dibutuhkan dua percobaan, dan peluang menuntut lebih dari sepuluh percobaan
+lebih kecil dari $10^{-3}$. Agar pemetaan itu tetap satu-satu, kurva harus
+memiliki paling sedikit $36k$ titik, sebab setiap nilai $m$ memakai wilayah
+$x$ selebar $k$ dan ada $36$ nilai $m$ yang mungkin.
+\end{example}

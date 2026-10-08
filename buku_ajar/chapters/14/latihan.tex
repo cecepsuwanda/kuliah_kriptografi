@@ -1,7 +1,91 @@
 
 \begin{obereflection}
-\textbf{Latihan 14.1}
+\textbf{Latihan 14.1: Aritmetika Medan dan Struktur Aljabar}
 1. Mengapa titik tak hingga $\mathcal{O}$ diperlukan dalam definisi grup kurva eliptik?
 2. Jelaskan mengapa ECDLP dianggap lebih sulit dipecahkan daripada masalah pemfaktoran bilangan bulat pada RSA.
 3. Apa dampak penggunaan Medan Galois $\text{GF}(p)$ dibandingkan bilangan riil dalam implementasi praktis ECC?
+4. Perhatikan himpunan bilangan bulat $\Z$ dengan operasi perkalian. Menurut
+   Tabel~\ref{tab:contoh-grup}, susunan itu bukan grup. Sebutkan aksioma mana
+   yang gagal dan berikan satu contoh penyangkalnya.
+5. Tentukan invers perkalian dari $3$, $8$, dan $20$ modulo $11$. Tuliskan pula
+   seluruh pasangan $(a, a^{-1})$ untuk $a = 1, 2, \dots, 10$ modulo $11$, lalu
+   jelaskan mengapa setiap barisnya pasti ada
+   (Subbagian~\ref{subsec:medan-berhingga}).
+6. Selesaikan $x^2 \equiv 5 \pmod{11}$ dan $x^2 \equiv 7 \pmod{11}$. Persamaan
+   mana yang tidak punya penyelesaian, dan bagaimana kenyataan itu dipakai
+   oleh metode Koblitz?
+7. Hitung hasil ketiga operasi berikut di dalam $GF(2^8)$ dengan polinom
+   reduksi $\code{11B}$: $\code{0D} + \code{06}$, $\code{57} + \code{83}$, dan
+   $\code{57} \cdot \code{83}$. Periksa jawaban Anda terhadap
+   Tabel~\ref{tab:gf2m-kali}.
+8. Hitung $\code{57} \cdot \code{02}$ di dalam medan yang sama. Mengapa
+   hasilnya cukup diperoleh dengan menggeser satu bit, tanpa perlu reduksi?
+9. Periksa apakah $x^4 + x + 1$ dan $x^2 + 1$ dapat direduksi di dalam $GF(2)$.
+   Mengapa hanya polinom yang tidak dapat direduksi yang boleh dipakai
+   sebagai polinom reduksi?
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 14.2: Geometri dan Aritmetika Titik}
+1. Pada kurva $y^2 \equiv x^3 + x + 6 \pmod{11}$, hitunglah $(2,4) + (8,8)$ dan
+   $2(8,8)$. Periksa hasil Anda dengan Tabel~\ref{tab:pelelaran-gf11}.
+2. Tunjukkan bahwa titik $(10, 9)$ \emph{tidak} terletak pada kurva
+   $y^2 \equiv x^3 + x + 1 \pmod{23}$. Mana yang gagal, ruas kiri atau ruas
+   kanan, dan berapa selisihnya?
+3. Untuk titik basis $B(3,10)$ pada kurva mod 23, hitunglah $2B$, $3B$, $6B$,
+   dan $14B$. Titik manakah yang berordinat nol, dan berapa ordenya?
+4. Lanjutkan latihan sebelumnya: hitung $2 \cdot (14B)$, yaitu $28B$. Mengapa
+   hasilnya $\mathcal{O}$, dan apa kaitannya dengan orde titik $(4,0)$?
+5. Diketahui orde grup kurva mod 23 adalah $28$. Tentukan orde titik
+   $(0,1)$ dan $(13,16)$ dengan menghitung kelipatan $kP$ sampai diperoleh
+   $\mathcal{O}$. Apakah kedua titik itu dapat dipakai sebagai titik basis?
+6. Pada kurva riil $y^2 = x^3 + 2x + 4$, hitunglah $2Q$ untuk $Q(0,2)$. Nyatakan
+   hasilnya sebagai pecahan, lalu jelaskan mengapa koordinatnya tidak lagi
+   berupa bilangan bulat (Subbagian~\ref{subsec:mengapa-medan}).
+7. Tentukan gradien garis singgung kurva $y^2 = x^3 - 4x$ di titik $(-2, 0)$.
+   Mengapa nilainya tidak terdefinisi, dan apa artinya bagi hasil $P + P$
+   (Subbagian~\ref{subsec:penggandaan-titik})?
+8. Periksa syarat ketak-singularan pada
+   Persamaan~\eqref{eq:diskriminan} bagi pasangan $(a,b) = (-4, 0)$,
+   $(0, 0)$, dan $(-3, 3)$. Kurva mana yang licin?
+\end{obereflection}
+
+\begin{obereflection}
+\textbf{Latihan 14.3: Protokol, Pemetaan Pesan, dan Efisiensi}
+1. Jalankan pertukaran kunci ECDH pada kurva $y^2 \equiv x^3 + x + 1 \pmod{23}$
+   dengan titik basis $B(3,10)$, kunci privat Alice $a = 4$, dan kunci privat
+   Bob $b = 9$. Tentukan kedua kunci publik dan kunci bersamanya, lalu
+   periksa hasilnya dari kedua arah menurut Persamaan~\eqref{eq:ecdh-kunci}.
+2. Ulangi pertukaran itu dengan $a = 5$ dan $b = 7$. Mengapa kunci bersamanya
+   kebetulan sama dengan salah satu kunci publik? Jelaskan dengan menghitung
+   $ab$ modulo orde grup.
+3. Lakukan enkripsi ECEG pada kurva yang sama dengan kunci publik penerima
+   $P_B(19,5)$, plainteks $P_M(7,12)$, dan kunci sesaat $k = 6$. Tuliskan
+   cipherteksnya, lalu pulihkan plainteksnya mengikuti
+   Persamaan~\eqref{eq:eceg-dekripsi}.
+4. Seandainya penyerang menyadap cipherteks pada latihan sebelumnya. Informasi
+   apa yang harus ia temukan lebih dahulu agar dapat memulihkan $P_M$, dan
+   berapa biaya penyerangan itu pada kurva 256 bit?
+5. Kodekan huruf \texttt{K} (bernilai $m = 20$) pada kurva
+   $y^2 \equiv x^3 - x + 188 \pmod{751}$ dengan parameter basis $k = 20$.
+   Berapa nilai $x$ yang diperoleh, dan berapa percobaan yang diperlukan?
+   Periksa hasilnya dengan menjalankannya pada program.
+6. Ulangi untuk huruf \texttt{R} (bernilai $m = 27$). Berapa percobaan yang
+   diperlukan kali ini? Bandingkan dengan hasil pada latihan sebelumnya, lalu
+   jelaskan mengapa jumlah percobaan berbeda walaupun nilai $m$-nya hanya
+   berselisih tujuh.
+7. Pulihkan nilai $m$ dari absis titik yang diperoleh pada kedua latihan di
+   atas dengan Persamaan~\eqref{eq:koblitz-dekode}. Apakah hasilnya kembali
+   menjadi $20$ dan $27$?
+8. Untuk menyalurkan kunci sesi AES-128, RSA memerlukan modulus $3072$ bit
+   sedangkan ECC cukup $256$ bit. Hitung perbandingan keduanya, lalu jelaskan
+   dengan Tabel~\ref{tab:ecdlp-vs-faktorisasi} mengapa selisih selama itu
+   terjadi.
+9. Sebuah kurva memiliki orde grup sekitar $2^{256}$. Berapa langkah yang
+   dituntut algoritma rho Pollard untuk memecahkan ECDLP pada kurva itu?
+   Nyatakan jawaban Anda dalam bentuk pangkat dua, lalu bandingkan dengan
+   jumlah kunci AES-128 yang mungkin.
+10. Bandingkan tiga kurva baku pada Tabel~\ref{tab:kurva-standar}. Mengapa
+    Curve25519 tidak menuntut pemilihan titik basis seperti kurva NIST, dan
+    mengapa hal itu justru dianggap keunggulan (Subbagian~\ref{subsec:efisiensi-ecc})?
 \end{obereflection}

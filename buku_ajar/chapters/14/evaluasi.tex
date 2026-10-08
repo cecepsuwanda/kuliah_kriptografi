@@ -4,6 +4,24 @@
 1. Uraikan aksioma grup yang harus dipenuhi oleh titik-titik pada kurva eliptik.
 2. Bagaimana cara menghitung gradien $m$ untuk operasi penggandaan titik $2P$?
 3. Mengapa ECC lebih cocok untuk perangkat mobile dibandingkan RSA?
+4. Jelaskan mengapa himpunan bilangan bulat $\Z$ dengan operasi perkalian bukan
+   grup, sedangkan $\Z_p$ dengan $p$ prima merupakan medan.
+5. Hitung $3^{-1} \bmod 11$ dan $20^{-1} \bmod 23$. Mengapa invers semacam itu
+   selalu ada, dan apa perannya pada rumus penjumlahan titik di atas $GF(p)$?
+6. Pada kurva $y^2 \equiv x^3 + x + 6 \pmod{11}$, hitunglah $P(2,4) + Q(5,9)$
+   beserta $2P$. Tuliskan setiap langkah perhitungannya.
+7. Jelaskan perbedaan peran titik di ketakhinggaan pada $P + \mathcal{O} = P$
+   dan pada $P + (-P) = \mathcal{O}$. Mengapa himpunan titik pada kurva tidak
+   akan membentuk grup tanpa titik itu?
+8. Bandingkan ECDH dan ECEG. Pesan apa yang dipertukarkan masing-masing pihak
+   pada kedua protokol itu, dan bagian mana yang menjadi kunci rahasia?
+9. Uraikan langkah metode Koblitz dari karakter sampai menjadi titik kurva.
+   Mengapa langkah itu hanya memerlukan beberapa percobaan, dan apa yang
+   menentukan banyaknya percobaan?
+10. Jelaskan mengapa serangan \textit{index calculus} yang berhasil pada
+    Diffie--Hellman di atas bilangan bulat tidak dapat dipindahkan ke kurva
+    eliptik. Ketentuan apa yang harus dipenuhi sebuah kurva agar keunggulan
+    panjang kunci ECC tetap berlaku?
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -12,13 +30,33 @@ Indikator Kompetensi & Tercapai \\
 \hline
 Saya dapat menjelaskan konsep grup dan medan dalam ECC & [ ] \\
 \hline
+Saya dapat menjelaskan mengapa $\Z$ dengan perkalian bukan grup & [ ] \\
+\hline
+Saya dapat menjelaskan peran titik tak hingga sebagai elemen netral & [ ] \\
+\hline
 Saya dapat menghitung penjumlahan dan penggandaan titik pada kurva & [ ] \\
+\hline
+Saya dapat menurunkan rumus $x_r$ dan $y_r$ dari hubungan Vieta & [ ] \\
+\hline
+Saya dapat melakukan aritmetika polinomial di dalam $GF(2^m)$ & [ ] \\
+\hline
+Saya dapat menghitung invers modulo dan akar kuadrat di dalam $GF(p)$ & [ ] \\
+\hline
+Saya dapat mengenumerasi titik kurva di atas $GF(p)$ dan menentukan orderya & [ ] \\
 \hline
 Saya dapat menguraikan mekanisme ECDLP & [ ] \\
 \hline
+Saya dapat menjelaskan mengapa orde titik basis menentukan keamanan & [ ] \\
+\hline
 Saya dapat membedakan ECDH dan ECEG & [ ] \\
 \hline
+Saya dapat menjalankan enkripsi ECEG dan memulihkan plainteksnya & [ ] \\
+\hline
+Saya dapat mengodekan pesan menjadi titik dengan metode Koblitz & [ ] \\
+\hline
 Saya dapat menganalisis trade-off panjang kunci RSA vs ECC & [ ] \\
+\hline
+Saya dapat menjelaskan mengapa serangan \textit{index calculus} gagal pada kurva eliptik & [ ] \\
 \hline
 \end{tabularx}
 \end{competencychecklist}

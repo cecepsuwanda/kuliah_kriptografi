@@ -2,9 +2,78 @@
 \begin{itemize}
     \item Kurva eliptik $y^2 = x^3 + ax + b$ dengan $4a^3 + 27b^2 \neq 0$; himpunan titiknya bersama titik tak hingga $\mathcal{O}$ membentuk grup abelian $\langle G, + \rangle$.
     \item Penjumlahan titik $P + Q = R$ memakai gradien $m = (y_q - y_p)/(x_q - x_p)$, sedangkan penggandaan $2P$ memakai gradien garis singgung $m = (3x_p^2 + a)/(2y_p)$, dengan $x_r = m^2 - x_p - x_q$ dan $y_r = m(x_p - x_r) - y_p$.
-    \item Pada medan berhingga $\text{GF}(p)$ semua operasi dilakukan modulo prima $p$, dan pembagian diganti perkalian dengan invers modulo, misalnya $m \equiv (3x_p^2 + a)(2y_p)^{-1} \bmod p$.
+    \item Pada medan berhingga $GF(p)$ semua operasi dilakukan modulo prima $p$, dan pembagian diganti perkalian dengan invers modulo, misalnya $m \equiv (3x_p^2 + a)(2y_p)^{-1} \bmod p$.
     \item Keamanan ECC bersandar pada \textbf{ECDLP}: diberikan $P$ dan $Q = kP$, sangat sukar menemukan skalar $k$ jika $k$ sangat besar.
     \item Kunci privat berupa integer $k \in [1, p-1]$ dan kunci publik berupa titik $Q = kP$; ECDH menghasilkan kunci bersama $K = abB$, sedangkan ECEG mengenkripsi pesan sebagai pasangan titik $[(kB), (P_M + kP_B)]$.
     \item ECC jauh lebih efisien daripada RSA: kunci 256 bit memberi keamanan setara RSA 3072 bit, sehingga cocok untuk \textit{smart card} dan perangkat IoT.
     \item Pesan teks harus dikodekan lebih dulu menjadi titik kurva, misalnya dengan metode Koblitz $x = mk + \text{offset}$ sampai diperoleh $y$ yang valid.
+    \item Aritmetika kurva eliptik bertumpu pada aljabar abstrak. Himpunan
+          titik pada kurva dengan aturan penjumlahan di atasnya memenuhi kelima
+          aksioma grup (Tabel~\ref{tab:aksioma-grup-eliptik}), dan medan
+          berhingga menyediakan invers bagi setiap unsur bukan nol
+          (Tabel~\ref{tab:contoh-medan}).
+    \item Penjumlahan $\Z$ bukan grup karena hanya $1$ dan $-1$ yang memiliki
+          invers perkalian, sedangkan $\Z_n$ menjadi medan hanya bila $n$
+          prima. Kenyataan itu menentukan modulus mana yang boleh dipakai.
+    \item Di dalam $GF(2^m)$ penjumlahan dua polinom tidak lain adalah operasi
+          XOR, sedangkan perkalian menuntut reduksi oleh polinom tak
+          tereduksi berderajat $m$; sebagai contoh,
+          $\code{57} \cdot \code{83} = \code{C1}$ di dalam $GF(2^8)$
+          (Tabel~\ref{tab:gf2m-kali}).
+    \item Titik di ketakhinggaan $\mathcal{O}$ memainkan dua peran sekaligus:
+          elemen netral dan hasil penjumlahan dua titik berlawanan, sehingga
+          $P + \mathcal{O} = P$ dan $P + (-P) = \mathcal{O}$
+          (Persamaan~\eqref{eq:titik-o}).
+    \item Rumus penjumlahan diturunkan dengan menyulihkan persamaan garis ke
+          persamaan kurva. Hubungan Vieta memberi $x_p + x_q + x_r = m^2$,
+          sehingga $x_r = m^2 - x_p - x_q$
+          (Persamaan~\eqref{eq:koordinat-pq}); pada penggandaan akar $x_p$
+          muncul dua kali dan $x_r = m^2 - 2x_p$
+          (Persamaan~\eqref{eq:koordinat-penggandaan}).
+    \item Bila ordinat sebuah titik nol, gradien garis singgungnya tidak
+          terdefinisi dan $2P = \mathcal{O}$. Titik semacam itu berorde dua
+          dan justru adalah akar-akar polinom kubik kurva.
+    \item Perkalian skalar dihitung dengan \textit{double-and-add}, sehingga
+          biaya menghitung $kP$ hanya sebanding dengan $\log_2 k$, bukan
+          dengan $k$ (Persamaan~\eqref{eq:pelelaran}). Asimetri inilah yang
+          membuat ECC praktis sekaligus aman.
+    \item Banyaknya titik pada kurva tidak dapat ditentukan hanya dari nilai
+          $p$; dalil Hasse hanya membatasinya pada selang
+          $p + 1 \pm 2\sqrt{p}$. Karena itu orde grup dan orde titik basis
+          harus diperiksa lebih dahulu, dan titik basis harus dipilih yang
+          ordonya sama dengan orde grup.
+    \item Enumerasi penuh memperlihatkan hal itu secara konkret. Kurva
+          $y^2 \equiv x^3 + x + 6 \pmod{11}$ memiliki $12$ titik berhingga
+          ditambah $\mathcal{O}$, sehingga orderya $13$
+          (Tabel~\ref{tab:enumerasi-gf11} dan Tabel~\ref{tab:pelelaran-gf11}).
+    \item Kunci publik ECC adalah sebuah titik, $Q = x \cdot B$
+          (Persamaan~\eqref{eq:ecc-kunci-publik}). Dalam ECDH kedua pihak
+          menghitung $K = a \cdot P_B = b \cdot P_A = abB$ tanpa pernah
+          mengirim kunci privatnya (Persamaan~\eqref{eq:ecdh-kunci}).
+    \item ECEG mengenkripsi plainteks $P_M$ menjadi pasangan titik
+          $\bigl(kB,\ P_M + kP_B\bigr)$
+          (Persamaan~\eqref{eq:eceg-cipher}). Dekripsinya berhasil karena
+          $b(kB) = k(bB) = kP_B$, sehingga suku acak pada titik kedua
+          terhapus (Persamaan~\eqref{eq:eceg-dekripsi}).
+    \item Karena kunci sesaat $k$ dipilih baru untuk setiap pesan, enkripsi
+          ECEG bersifat probabilistik: plainteks yang sama menghasilkan
+          cipherteks yang berbeda pada setiap pengiriman. Sifat itu tidak
+          dimiliki pemetaan karakter langsung, yang selalu memberi titik
+          $P_M$ yang sama (Subbagian~\ref{subsec:pemetaan-langsung}).
+    \item Metode Koblitz mengubah pesan menjadi titik dengan mencoba
+          $x = mk + 1$, lalu $mk + 2$, dan seterusnya sampai ruas kanan kurva
+          menjadi kuadrat modulo $p$ (Persamaan~\eqref{eq:koblitz-x});
+          pendekodeannya memakai pembulatan ke bawah
+          $m = \lfloor (x-1)/k \rfloor$
+          (Persamaan~\eqref{eq:koblitz-dekode}).
+    \item Algoritma \textit{index calculus} yang menyerang Diffie--Hellman
+          dan ElGamal di atas bilangan bulat tidak dapat dipindahkan ke kurva
+          eliptik. Serangan terbaik yang diketahui hanyalah rho Pollard, yang
+          biayanya sebanding dengan akar orde grup
+          (Tabel~\ref{tab:ecdlp-vs-faktorisasi}).
+    \item Keunggulan panjang kunci itu hanya berlaku bagi kurva yang dipilih
+          dengan benar. Kurva dengan orde yang habis dibagi bilangan kecil
+          atau kurva yang dapat ditransfer ke medan berhingga biasa runtuh
+          jauh lebih cepat, sehingga kurva baku seperti pada
+          Tabel~\ref{tab:kurva-standar} harus dipakai bila memungkinkan.
 \end{itemize}

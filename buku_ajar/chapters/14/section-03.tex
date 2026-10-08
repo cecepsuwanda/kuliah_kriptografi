@@ -1,52 +1,501 @@
 \section{Kriptografi Berbasis Kurva Eliptik}
-Inti dari keamanan ECC adalah \textbf{Elliptic Curve Discrete Logarithm Problem (ECDLP)}.
+\label{sec:kriptografi-ec}
 
-\subsection{ECDLP}
-Diberikan titik basis $P$ dan titik $Q$ pada kurva eliptik, sangat sulit untuk menemukan integer $k$ sedemikian sehingga:
-\[ Q = kP = \underbrace{P + P + \dots + P}_{k \text{ kali}} \]
-Jika $k$ adalah bilangan yang sangat besar, mencari $k$ dari $P$ dan $Q$ secara komputasi tidak praktis.
+Bagian sebelumnya berhenti pada satu kenyataan: himpunan titik pada kurva
+eliptik beserta aturan penjumlahannya membentuk grup abelian. Kenyataan itu
+sendiri belum menghasilkan kriptografi. Yang menjadikannya kriptografi adalah
+sebuah kesenjangan biaya: menghitung $kP$ dari $k$ dan $P$ berjalan dalam waktu
+logaritmik, sedangkan memulihkan $k$ dari $P$ dan $kP$ tidak diketahui cara
+efisiennya. Kesenjangan itulah yang menjadi tempat bersandar seluruh sistem
+kunci-publik berbasis kurva eliptik.
 
-\subsection{Mekanisme Kunci}
-\begin{itemize}
-    \item \textbf{Kunci Privat}: Integer acak $k \in [1, p-1]$.
-    \item \textbf{Kunci Publik}: Titik $Q = kP$ pada kurva eliptik.
-\end{itemize}
+\subsection{Perkalian Titik dan Arah Baliknya}
+\label{subsec:ecdlp}
 
-\subsection{Protokol Utama}
+Persoalan yang menjadi dasar keamanan ECC ini pertama kali dirumuskan bersama
+usulan pemakaian kurva eliptik untuk kriptografi, dan sampai sekarang belum ada
+serangan yang menembusnya secara umum \citep{hankerson2004}.
+
+Misalkan $P$ dan $Q$ adalah dua titik pada sebuah kurva eliptik. Persoalan
+\textbf{logaritma diskrit kurva eliptik} (\textit{Elliptic Curve Discrete
+Logarithm Problem}, ECDLP) dirumuskan sebagai berikut: diberikan $P$ dan $Q$,
+carilah bilangan bulat $k$ sedemikian sehingga
+
+\begin{equation}
+Q = kP .
+\label{eq:ecdlp}
+\end{equation}
+
+Bilangan $k$ itu disebut \emph{logaritma diskrit} dari $Q$ dengan basis $P$.
+Istilah ``logaritma'' dipinjam dari kemiripan bentuknya dengan logaritma biasa:
+sebagaimana $\log_b x$ adalah pangkat yang harus diberikan kepada $b$ untuk
+memperoleh $x$, di sini $k$ adalah ``pangkat'' --- yakni banyaknya penjumlahan
+$P$ terhadap dirinya sendiri --- yang diperlukan untuk memperoleh $Q$. Berkas
+sumber menuliskannya pula sebagai $kP = P^k$, sehingga $Q = P^k$; kedua notasi
+itu menunjuk hal yang sama.
+
+Perhatikan asimetri yang tajam antara kedua arah persoalan itu. Arah maju
+mudah: dengan metode \textit{double-and-add} pada
+Subbagian~\ref{subsec:pelelaran-titik}, menghitung $kP$ untuk $k$ sepanjang 256
+bit hanya menuntut sekitar 384 operasi titik. Arah balik sukar: bila $k$
+berukuran 256 bit, $k$ dapat bernilai sekitar $1{,}16 \times 10^{77}$; tidak ada
+algoritma yang diketahui dapat menemukannya jauh lebih cepat daripada
+menelusuri akar kuadrat dari banyaknya titik --- dan akar kuadrat dari
+$2^{256}$ masih sekitar $2^{128}$, jumlah yang sama sekali tidak terjangkau.
+
+\subsection{Enumerasi Titik pada Kurva di Atas \texorpdfstring{$GF(p)$}{GF(p)}}
+\label{subsec:enumerasi-gf-p}
+
+Bentuk umum kurva eliptik di atas medan berhingga $GF(p)$ adalah
+
+\[
+y^2 \equiv x^3 + ax + b \pmod{p},
+\]
+
+dengan $p$ prima dan $x, y$ diambil dari himpunan $\{0, 1, \dots, p-1\}$.
+Karena himpunan itu berhingga, seluruh anggotanya dapat diperiksa satu per
+satu. Cara itu memang tidak berguna untuk $p$ yang besar, tetapi untuk $p$
+kecil ia memperlihatkan dengan terang bagaimana sebuah kurva eliptik
+terbentuk, dan berapa banyak titik yang dimilikinya.
+
+Ambil kurva
+
+\[
+y^2 \equiv x^3 + x + 6 \pmod{11} .
+\]
+
+Untuk setiap nilai $x \in \{0, 1, \dots, 10\}$ dihitung $x^3 + x + 6 \bmod 11$,
+lalu diperiksa apakah hasilnya termasuk himpunan kuadrat modulo 11, yaitu
+$\{0, 1, 3, 4, 5, 9\}$. Bila ya, ada dua nilai $y$ yang memenuhi (kecuali untuk
+hasil $0$, yang hanya memberi satu); bila tidak, tidak ada titik pada absis
+itu. Hasilnya diperlihatkan pada Tabel~\ref{tab:enumerasi-gf11}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Enumerasi titik pada kurva $y^2 \equiv x^3 + x + 6 \pmod{11}$}
+    \label{tab:enumerasi-gf11}
+    \begin{tabularx}{\linewidth}{@{}c c c
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    $x$ & $x^3 + x + 6 \bmod 11$ & \textbf{Kuadrat?} & \textbf{Titik yang
+    diperoleh} \\
+    \midrule
+    $0$  & $6$  & tidak & --- \\
+    \addlinespace
+    $1$  & $8$  & tidak & --- \\
+    \addlinespace
+    $2$  & $5$  & ya    & $(2, 4)$ dan $(2, 7)$ \\
+    \addlinespace
+    $3$  & $3$  & ya    & $(3, 5)$ dan $(3, 6)$ \\
+    \addlinespace
+    $4$  & $8$  & tidak & --- \\
+    \addlinespace
+    $5$  & $4$  & ya    & $(5, 2)$ dan $(5, 9)$ \\
+    \addlinespace
+    $6$  & $8$  & tidak & --- \\
+    \addlinespace
+    $7$  & $4$  & ya    & $(7, 2)$ dan $(7, 9)$ \\
+    \addlinespace
+    $8$  & $9$  & ya    & $(8, 3)$ dan $(8, 8)$ \\
+    \addlinespace
+    $9$  & $7$  & tidak & --- \\
+    \addlinespace
+    $10$ & $4$  & ya    & $(10, 2)$ dan $(10, 9)$ \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Jadi kurva itu memiliki dua belas titik:
+\[
+(2,4),\ (2,7),\ (3,5),\ (3,6),\ (5,2),\ (5,9),\ (7,2),\ (7,9),\ (8,3),\ (8,8),\
+(10,2),\ (10,9) .
+\]
+Dengan menambahkan titik di ketakhinggaan $\mathcal{O}$, himpunan titik itu
+membentuk grup dengan $n = 13$ elemen. Perhatikan bahwa $13$ adalah bilangan
+prima, sehingga grupnya siklik dan setiap titik selain $\mathcal{O}$ berperan
+sebagai pembangkit seluruh grup. Sebaran kedua belas titik itu pada bidang
+berhingga diperlihatkan pada Gambar~\ref{fig:sebaran-titik-gf11}; pola yang
+tampak acak itu justru yang diharapkan, sebab kurva dengan sebaran titik yang
+terlalu teratur mudah diserang.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\linewidth, height=0.55\textheight, keepaspectratio]{figures/sebaran-titik-gf11.png}
+    \caption{Sebaran titik kurva eliptik $y^2 \equiv x^3 + x + 6 \pmod{11}$ pada
+    $GF(11)$. Kedua belas titik pada Tabel~\ref{tab:enumerasi-gf11} tampak
+    tersebar tanpa pola yang mudah ditebak}
+    \label{fig:sebaran-titik-gf11}
+    \sumber{Andreas Steffen, \textit{Elliptic Curve Cryptography}, melalui
+    Munir, \textit{IF4020 Kriptografi}, ITB.}
+\end{figure}
+
+Sekarang aturan penjumlahan dari Bagian~\ref{sec:geometri-ec} diuji pada kurva
+ini. Ambil $P(2, 4)$ dan $Q(5, 9)$, keduanya terdaftar pada
+Tabel~\ref{tab:enumerasi-gf11}. Gradiennya dihitung menurut
+Persamaan~\eqref{eq:gradien-mod-p}:
+\[
+m \equiv (9 - 4)(5 - 2)^{-1} \equiv 5 \cdot 3^{-1} \equiv 5 \cdot 4
+\equiv 20 \equiv 9 \pmod{11},
+\]
+sebab $3 \cdot 4 = 12 \equiv 1 \pmod{11}$. Koordinatnya lalu dihitung menurut
+Persamaan~\eqref{eq:koordinat-pq}:
+\[
+\begin{aligned}
+x_r &\equiv m^2 - x_p - x_q \equiv 81 - 2 - 5 = 74 \equiv 8 \pmod{11}, \\
+y_r &\equiv m(x_p - x_r) - y_p \equiv 9(2 - 8) - 4 = -58 \equiv 8 \pmod{11} .
+\end{aligned}
+\]
+Jadi $P + Q = (8, 8)$, dan titik itu memang terdaftar pada
+Tabel~\ref{tab:enumerasi-gf11}.
+
+Untuk penggandaan, dipakai Persamaan~\eqref{eq:gradien-penggandaan} dan
+Persamaan~\eqref{eq:koordinat-penggandaan}:
+\[
+m \equiv \frac{3(2)^2 + 1}{2(4)} \equiv \frac{13}{8} \equiv 13 \cdot 8^{-1}
+\equiv 13 \cdot 7 \equiv 91 \equiv 3 \pmod{11},
+\]
+karena $8 \cdot 7 = 56 \equiv 1 \pmod{11}$. Selanjutnya
+\[
+x_r \equiv 3^2 - 2(2) = 5, \qquad y_r \equiv 3(2 - 5) - 4 = -13 \equiv 9 .
+\]
+Jadi $2P = (5, 9)$ --- tepat sama dengan titik $Q$ tadi. Kebetulan itu bukan
+kekeliruan hitung: ia berarti $Q = 2P$ pada kurva ini, sehingga sekaligus
+$P + Q = 3P = (8, 8)$.
+
+Karena grupnya berorde 13, pelelaran titik $P$ akan menutup kembali setelah
+tiga belas langkah. Tabel~\ref{tab:pelelaran-gf11} memperlihatkan seluruhnya.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Pelelaran titik $kP$ untuk $k = 1, \dots, 13$ pada kurva
+    $y^2 \equiv x^3 + x + 6 \pmod{11}$ dengan $P(2, 4)$}
+    \label{tab:pelelaran-gf11}
+    \begin{tabular}{@{}c l @{\hspace{6mm}} c l @{\hspace{6mm}} c l@{}}
+    \toprule
+    $k$ & $kP$ & $k$ & $kP$ & $k$ & $kP$ \\
+    \midrule
+    $1$  & $(2, 4)$  & $6$  & $(7, 2)$  & $11$ & $(5, 2)$ \\
+    \addlinespace
+    $2$  & $(5, 9)$  & $7$  & $(7, 9)$  & $12$ & $(2, 7)$ \\
+    \addlinespace
+    $3$  & $(8, 8)$  & $8$  & $(3, 6)$  & $13$ & $\mathcal{O}$ \\
+    \addlinespace
+    $4$  & $(10, 9)$ & $9$  & $(10, 2)$ &      & \\
+    \addlinespace
+    $5$  & $(3, 5)$  & $10$ & $(8, 3)$  &      & \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+Perhatikan kolom terakhir: $13P = \mathcal{O}$. Keadaan itu menandakan bahwa
+orde titik $P$ adalah tepat 13, yaitu seluruh orde grup. Titik yang ordonya
+sama dengan orde grup disebut \textbf{pembangkit} (\textit{generator}), dan
+hanya titik semacam itu yang layak dipakai sebagai titik basis. Bila titik
+basis dipilih sembarangan dan ternyata berorde kecil, penyerang hanya perlu
+mencoba segelintir skalar sebelum menemukan kuncinya.
+
+\par\vspace{2pt}{\footnotesize\itshape Catatan: berkas sumber memuat daftar
+titik untuk kurva $y^2 \equiv x^3 + x + 1 \pmod{23}$ yang berisi 26 titik.
+Daftar itu kurang satu: titik $(4, 0)$ juga memenuhi kurva, sebab
+$0^2 = 64 + 4 + 1 = 69 \equiv 0 \pmod{23}$. Dengan demikian kurva tersebut
+memiliki 27 titik berhingga (26 titik berordinat bukan nol ditambah $(4,0)$),
+sehingga orde grupnya --- setelah titik $\mathcal{O}$ ikut dihitung --- adalah
+$n = 28$, bukan 26. Titik $(3, 10)$ membangkitkan seluruh grup itu. Seluruh
+angka tersebut dapat diperiksa langsung dengan program pada bagian
+praktikum.\par}
+
+\subsection{Membangkitkan Pasangan Kunci}
+\label{subsec:kunci-ecc}
+
+Sebelum pesan dapat dipertukarkan, kedua pihak yang berkomunikasi harus
+menyepakati sejumlah parameter yang bersifat umum, bukan rahasia:
+
 \begin{enumerate}
-    \item \textbf{ECDH (Elliptic Curve Diffie-Hellman)}: Pertukaran kunci rahasia bersama menggunakan operasi perkalian titik.
-    \item \textbf{ECEG (Elliptic Curve ElGamal)}: Enkripsi pesan dengan mengkodekan pesan menjadi titik $P_M$ dan menghasilkan cipherteks berupa pasangan titik $[(kB), (P_M + kP_B)]$.
+    \item persamaan kurva eliptik $y^2 \equiv x^3 + ax + b \pmod{p}$, yang
+          berarti kesepakatan atas nilai $a$, $b$, dan bilangan prima $p$;
+    \item grup eliptik yang dihitung dari persamaan itu, beserta ordenya;
+    \item sebuah \textbf{titik basis} $B(x_B, y_B)$ yang dipilih dari grup
+          tersebut dan berorde besar.
 \end{enumerate}
 
+Setelah parameter itu tetap, setiap pengguna membangkitkan pasangan kuncinya
+sendiri. Kunci privat adalah bilangan bulat $x$ yang dipilih acak dari selang
+$[1, n-1]$, dengan $n$ adalah orde titik basis. Kunci publiknya adalah titik
+
+\begin{equation}
+Q = x \cdot B ,
+\label{eq:ecc-kunci-publik}
+\end{equation}
+
+yakni hasil perkalian skalar antara kunci privat dan titik basis. Keduanya
+dihubungkan oleh Persamaan~\eqref{eq:ecdlp}: dari $Q$ dan $B$, memulihkan $x$
+berarti memecahkan ECDLP.
+
+Pilihan selang $[1, n-1]$ penting. Nilai $x = 0$ akan menghasilkan
+$Q = \mathcal{O}$, yang tidak dapat dipakai karena setiap pesan akan
+terenkripsi dengan cara yang sama. Nilai $x = n$ menghasilkan $Q =
+\mathcal{O}$ pula, sebab $nB = \mathcal{O}$. Dan bila $x$ bernilai di luar
+selang itu, hasilnya hanya mengulang titik yang sudah diperoleh dari nilai
+kecilnya, karena pelelaran titik bersifat periodik dengan periode $n$.
+
+\subsection{Pertukaran Kunci ECDH}
+\label{subsec:ecdh}
+
+Versi kurva eliptik dari protokol Diffie--Hellman --- dinamai \textit{Elliptic
+Curve Diffie--Hellman} (ECDH) --- berjalan dalam tiga langkah.
+
+\begin{enumerate}
+    \item Alice dan Bob menyepakati kurva eliptik $y^2 \equiv x^3 + ax + b
+          \pmod{p}$ dan titik basis $B$ pada kurva itu.
+    \item Masing-masing membangkitkan kunci privat dan menghitung kunci
+          publiknya:
+          \[
+          \text{Alice: } a \text{ dan } P_A = a \cdot B, \qquad
+          \text{Bob: } b \text{ dan } P_B = b \cdot B .
+          \]
+    \item Keduanya saling mengirimkan kunci publik, lalu mengalikan kunci
+          publik mitranya dengan kunci privatnya sendiri:
+          \begin{equation}
+          \begin{aligned}
+          \text{Alice:}\quad K &= a \cdot P_B = a \cdot (b \cdot B) = abB, \\
+          \text{Bob:}\quad   K &= b \cdot P_A = b \cdot (a \cdot B) = abB .
+          \end{aligned}
+          \label{eq:ecdh-kunci}
+          \end{equation}
+\end{enumerate}
+
+Kedua hasil pada Persamaan~\eqref{eq:ecdh-kunci} sama justru karena grup kurva
+eliptik bersifat komutatif: $ab = ba$, dan asosiatif, sehingga pengelompokan
+faktornya boleh ditukar. Inilah tempat sifat abelian yang dibahas pada
+Subbagian~\ref{subsec:grup-abelian} benar-benar dipakai.
+
+Sebagai contoh, ambil kurva $y^2 \equiv x^3 + 2x + 1 \pmod{5}$. Enumerasi
+sederhana memperlihatkan bahwa kurva itu memiliki enam titik, yaitu
+$(0,1)$, $(0,4)$, $(1,2)$, $(1,3)$, $(3,2)$, dan $(3,3)$; dengan menambahkan
+$\mathcal{O}$ orderya menjadi tujuh. Titik basis yang disepakati adalah
+$B(0, 1)$. Alice memilih $a = 2$ dan Bob memilih $b = 3$, sehingga
+\[
+P_A = 2B = B + B = (1, 3), \qquad
+P_B = 3B = 2B + B = (3, 3) .
+\]
+Setelah bertukar kunci publik, Alice menghitung
+$K = a \cdot P_B = 2 \cdot (3, 3)$, sedangkan Bob menghitung
+$K = b \cdot P_A = 3 \cdot (1, 3)$. Keduanya menghasilkan titik yang sama,
+yaitu $(0, 4)$. Langkah demi langkah pelelaran $B$ diperlihatkan pada
+Tabel~\ref{tab:ecdh-gf5}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Pelelaran titik basis $B(0,1)$ pada kurva
+    $y^2 \equiv x^3 + 2x + 1 \pmod{5}$; orderya tujuh}
+    \label{tab:ecdh-gf5}
+    \begin{tabularx}{\linewidth}{@{}c l
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    $k$ & $kB$ & \textbf{Peran} \\
+    \midrule
+    $1$ & $(0, 1)$ & titik basis yang disepakati \\
+    \addlinespace
+    $2$ & $(1, 3)$ & kunci publik Alice $P_A = 2B$ \\
+    \addlinespace
+    $3$ & $(3, 3)$ & kunci publik Bob $P_B = 3B$ \\
+    \addlinespace
+    $4$ & $(3, 2)$ & --- \\
+    \addlinespace
+    $5$ & $(1, 2)$ & --- \\
+    \addlinespace
+    $6$ & $(0, 4)$ & kunci bersama $K = abB = 6B$ \\
+    \addlinespace
+    $7$ & $\mathcal{O}$ & orde titik basis tercapai \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Perhatikan bahwa orde $B$ adalah tujuh, sehingga selang pemilihan kunci privat
+adalah $[1, 6]$. Pada kurva mainan ini penyerang dapat menemukan $a$ atau $b$
+hanya dengan mencoba enam kemungkinan; keamanannya baru muncul ketika orde
+titik basis berukuran ratusan bit.
+
+Sebagai contoh kedua yang memakai modulus lebih besar, ambil kembali kurva
+$y^2 \equiv x^3 + x + 1 \pmod{23}$ dengan titik basis $B(3, 10)$. Misalkan
+Alice memilih $a = 2$ dan Bob memilih $b = 3$. Kunci publik keduanya adalah
+$P_A = 2B = (7, 12)$ dan $P_B = 3B = (19, 5)$. Dari dua arah,
+\[
+K = a \cdot P_B = 2 \cdot (19, 5) = (12, 4),
+\qquad
+K = b \cdot P_A = 3 \cdot (7, 12) = (12, 4) .
+\]
+Kedua pihak memperoleh titik rahasia yang sama. Penyerang yang menyaksikan
+$B$, $P_A$, dan $P_B$ di saluran terbuka harus memecahkan ECDLP untuk
+memperoleh $a$ atau $b$; dengan modulus 23 persoalan itu tentu saja dapat
+diselesaikan dengan mencoba seluruh kemungkinan, tetapi pada kurva nyata
+modulusnya berukuran 256 bit atau lebih.
+
+\subsection{Enkripsi Kurva Eliptik: ECEG}
+\label{subsec:eceg}
+
+Pertukaran kunci hanya menghasilkan kunci rahasia bersama; untuk mengirim pesan
+diperlukan algoritma enkripsi. Versi kurva eliptik dari algoritma ElGamal ---
+disebut \textit{Elliptic Curve ElGamal} (ECEG) --- dibangun dengan pola yang
+sama seperti ElGamal biasa, tetapi setiap nilai digantikan oleh sebuah titik.
+
+Misalkan Alice hendak mengirim pesan $M$ kepada Bob. Keduanya telah
+menyepakati kurva, titik basis $B$, dan kunci publik masing-masing seperti pada
+ECDH. Langkah pertama Alice adalah mengubah pesan $M$ menjadi sebuah titik
+$P_M$ pada kurva; caranya dibahas pada Bagian~\ref{sec:implementasi-ecc}.
+Setelah itu Alice memilih bilangan acak $k$ dari selang $[1, p-1]$, lalu
+membentuk cipherteks berupa \emph{pasangan titik}
+
+\begin{equation}
+P_C = \left[\, (kB),\ (P_M + kP_B) \,\right] ,
+\label{eq:eceg-cipher}
+\end{equation}
+
+dengan $P_B = bB$ adalah kunci publik Bob. Perhatikan perbedaan penting dari
+ElGamal klasik: di sana cipherteksnya adalah pasangan \emph{bilangan}
+$(g^k \bmod p,\ m y_B^k \bmod p)$, sedangkan di sini cipherteksnya adalah
+pasangan \emph{titik}.
+
+Untuk mendekripsinya, Bob mula-mula menghitung hasil kali titik pertama
+cipherteks dengan kunci privatnya sendiri, yaitu $b \cdot (kB)$. Ia kemudian
+mengurangkan titik kedua cipherteks dengan hasil kali itu:
+
+\begin{equation}
+\begin{split}
+(P_M + kP_B) - \left[ b \cdot (kB) \right]
+  &= P_M + k(bB) - b(kB) \\
+  &= P_M + kbB - kbB \\
+  &= P_M .
+\end{split}
+\label{eq:eceg-dekripsi}
+\end{equation}
+
+Operasi pengurangan di sini tidak lain adalah penjumlahan dengan lawan titik:
+$A - C = A + (-C)$, dengan $-C = (x_C, (-y_C) \bmod p)$. Dari
+Persamaan~\eqref{eq:eceg-dekripsi} terlihat mengapa dekripsi pasti berhasil.
+Bob dapat menghitung $kbB$ dari dua arah berbeda --- sebagai
+$k \cdot (bB) = kP_B$ dan sebagai $b \cdot (kB)$ --- semata-mata karena
+perkalian skalar bersifat asosiatif dan komutatif. Kedua hasilnya sama persis,
+sehingga keduanya saling menghapus dan menyisakan $P_M$. Langkah terakhir Bob
+adalah \emph{decoding}: mengubah titik $P_M$ kembali menjadi pesan $M$.
+
+Nilai $k$ pada Persamaan~\eqref{eq:eceg-cipher} disebut \textbf{kunci sesaat}
+(\textit{ephemeral key}) dan harus dipilih baru untuk setiap pesan. Bila $k$
+dipakai ulang untuk dua pesan berbeda, penyerang dapat mengurangkan kedua titik
+kedua cipherteksnya sehingga suku $kP_B$ hilang dan tinggal selisih kedua pesan
+--- persoalan yang sama persis dengan pemakaian ulang kunci pada ElGamal klasik
+(Bab~\ref{chap:elgamal}). Inilah alasan enkripsi kurva eliptik bersifat
+probabilistik: pesan yang sama, dienkripsi dua kali, menghasilkan cipherteks
+yang berbeda.
+
+Tabel~\ref{tab:elgamal-vs-eceg} membandingkan kedua algoritma itu baris demi
+baris.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Perbandingan ElGamal klasik dengan ElGamal kurva eliptik (ECEG)}
+    \label{tab:elgamal-vs-eceg}
+    \begin{tabularx}{\linewidth}{@{}l
+                                   >{\raggedright\arraybackslash}X
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Aspek} & \textbf{ElGamal klasik} & \textbf{ECEG} \\
+    \midrule
+    Medan kerja & Bilangan bulat modulo $p$ & Titik pada kurva eliptik di atas
+    $GF(p)$ \\
+    \addlinespace
+    Operasi dasar & Perpangkatan modular $g^k \bmod p$ & Perkalian skalar titik
+    $kB$ \\
+    \addlinespace
+    Kunci publik & $y_B = g^b \bmod p$ & $P_B = bB$ \\
+    \addlinespace
+    Cipherteks & Pasangan bilangan $(a, b) = (g^k, m y_B^k)$ & Pasangan titik
+    $\bigl[(kB),\ (P_M + kP_B)\bigr]$ \\
+    \addlinespace
+    Dekripsi & Bagi nilai kedua dengan $a^b$: $m y_B^k / (g^k)^b = m$ &
+    Kurangkan titik kedua dengan $b(kB)$: $P_M + kP_B - b(kB) = P_M$ \\
+    \addlinespace
+    Muatan cipherteks & Dua bilangan, masing-masing sepanjang modulus &
+    Dua titik, yaitu empat koordinat \\
+    \addlinespace
+    Landasan keamanan & Logaritma diskrit biasa & ECDLP \\
+    \addlinespace
+    Panjang kunci setara & $3072$ bit untuk keamanan $128$ bit & $256$ bit
+    untuk keamanan $128$ bit \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Dua baris terakhir Tabel~\ref{tab:elgamal-vs-eceg} memerlukan penjelasan.
+Pada ECEG, satu cipherteks membawa dua titik, dan setiap titik memuat dua
+koordinat; jadi totalnya empat bilangan sepanjang modulus. Jumlah itu
+\emph{lebih banyak} daripada ElGamal klasik yang hanya membawa dua bilangan.
+Namun karena modulus ECC jauh lebih pendek, hasil akhirnya tetap lebih ringkas:
+empat koordinat 256 bit sama dengan 1024 bit, sedangkan dua bilangan 3072 bit
+sama dengan 6144 bit. Di samping itu, panjang cipherteks bukan satu-satunya
+ukuran; yang lebih penting adalah panjang kunci yang harus disimpan dan biaya
+perhitungan yang harus dibayar.
+
 \subsection{Perbandingan dengan RSA}
-Keunggulan utama ECC adalah ukuran kunci yang jauh lebih pendek untuk tingkat keamanan yang setara, seperti ditunjukkan pada Tabel~\ref{tab:ecc-vs-rsa}.
+\label{subsec:ecc-vs-rsa}
+
+Keunggulan utama ECC adalah ukuran kunci yang jauh lebih pendek untuk tingkat
+keamanan yang setara. Tabel~\ref{tab:ecc-vs-rsa} memperlihatkan perbandingan
+itu sepanjang lima tingkat keamanan.
 
 \begin{table}[htbp]
     \centering
     \caption{Ukuran kunci ECC dan RSA untuk tingkat keamanan yang setara}
     \label{tab:ecc-vs-rsa}
-    \begin{tabular}{|c|c|c|}
-    \hline
+    \begin{tabular}{@{}c c c@{}}
+    \toprule
     \textbf{Keamanan (bit)} & \textbf{Kunci ECC (bit)} & \textbf{Kunci RSA (bit)} \\
-    \hline
-    80 & 160 & 1024 \\
-    \hline
-    112 & 224 & 2048 \\
-    \hline
-    128 & 256 & 3072 \\
-    \hline
-    192 & 384 & 7680 \\
-    \hline
-    256 & 512 & 15360 \\
-    \hline
+    \midrule
+    $80$  & $160$  & $1024$  \\
+    \addlinespace
+    $112$ & $224$  & $2048$  \\
+    \addlinespace
+    $128$ & $256$  & $3072$  \\
+    \addlinespace
+    $192$ & $384$  & $7680$  \\
+    \addlinespace
+    $256$ & $512$  & $15360$ \\
+    \bottomrule
     \end{tabular}
 \end{table}
 
+Angka-angka itu menunjukkan pola yang mencolok. Setiap kali tingkat keamanan
+naik satu tingkat, panjang kunci RSA harus ditambah jauh lebih banyak daripada
+panjang kunci ECC. Perbandingan itu bahkan tidak tetap: pada tingkat keamanan
+80 bit, kunci RSA sekitar $6{,}4$ kali kunci ECC; pada tingkat 256 bit, menjadi
+$30$ kali. Sebabnya terletak pada algoritma penyerang terbaik yang diketahui
+bagi masing-masing.
+
+Untuk RSA, penyerang terbaik adalah \textbf{saringan medan bilangan}
+(\textit{General Number Field Sieve}), yang biayanya tumbuh secara
+subeksponensial terhadap panjang kunci. Untuk ECC, penyerang terbaik adalah
+\textbf{algoritma rho Pollard} (atau \textit{baby-step giant-step}), yang
+biayanya hanya sebanding dengan akar kuadrat dari orde grup. Karena biaya itu
+tumbuh jauh lebih cepat, penambahan beberapa bit pada kunci ECC memberi
+tambahan keamanan yang jauh lebih besar daripada penambahan bit yang sama pada
+kunci RSA. Gambar~\ref{fig:titik-kurva-mod-23} memperlihatkan himpunan titik
+berhingga tempat persoalan itu bekerja.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.6\linewidth, height=0.65\textheight, keepaspectratio]{figures/titik-kurva-mod-23.png}
-    \caption{Sebaran titik kurva eliptik $y^2 \equiv x^3 + x + 1 \pmod{23}$; himpunan titik berhingga inilah yang membentuk grup tempat persoalan logaritma diskrit kurva eliptik bekerja}
+    \includegraphics[width=0.6\linewidth, height=0.5\textheight, keepaspectratio]{figures/titik-kurva-mod-23.png}
+    \caption{Sebaran titik kurva eliptik $y^2 \equiv x^3 + x + 1 \pmod{23}$;
+    himpunan titik berhingga inilah yang membentuk grup tempat persoalan
+    logaritma diskrit kurva eliptik bekerja}
     \label{fig:titik-kurva-mod-23}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
+
+Satu catatan penyeimbang perlu disampaikan sebelum bagian ini ditutup.
+Keunggulan ECC bukan berarti kurva eliptik selalu lebih baik. ECC lebih rumit
+diimplementasikan, dan kerumitan itu sendiri adalah permukaan serangan:
+kesalahan memilih kurva, kesalahan menangani titik di ketakhinggaan, dan
+kesalahan pada aritmetika medan pernah menghasilkan kerentanan yang nyata.
+RSA lebih sederhana, lebih tua, dan lebih banyak diperiksa. Karena itu pemilihan
+antara keduanya bukan soal mana yang secara teoretis lebih kuat, melainkan soal
+mana yang lebih kecil kemungkinan salah diterapkan pada lingkungan tertentu.

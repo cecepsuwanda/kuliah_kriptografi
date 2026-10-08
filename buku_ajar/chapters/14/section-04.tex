@@ -1,17 +1,245 @@
 \section{Implementasi dan Efisiensi}
-\subsection{Encoding Pesan}
-Karena ECC beroperasi pada titik-titik kurva, pesan teks harus diubah menjadi koordinat $(x, y)$. Salah satu metodenya adalah menggunakan parameter basis $k$:
-\[ x = mk + \text{offset} \]
-Kemudian mencari nilai $y$ yang memenuhi persamaan kurva. Jika tidak ditemukan, offset ditambah hingga ditemukan titik yang valid.
+\label{sec:implementasi-ecc}
 
-\subsection{Perbandingan Keamanan: ECC vs RSA}
-Kelebihan utama ECC adalah efisiensi panjang kunci. Untuk tingkat keamanan yang sama, ECC membutuhkan kunci yang jauh lebih pendek daripada RSA:
-\begin{itemize}
-    \item \textbf{Kunci AES-128} $\approx$ \textbf{Kunci RSA 3072-bit} $\approx$ \textbf{Kunci ECC 256-bit}.
-\end{itemize}
-Hal ini membuat ECC sangat ideal untuk perangkat dengan sumber daya terbatas seperti \textit{smart cards} dan perangkat IoT.
+Dua persoalan praktis tersisa sebelum ECC dapat dipakai. Yang pertama bersifat
+mendasar: kurva eliptik bekerja dengan titik, sedangkan pesan adalah rangkaian
+bit. Harus ada cara yang dapat diandalkan untuk mengubah pesan menjadi titik
+dan mengembalikannya tanpa kehilangan satu bit pun. Yang kedua bersifat
+perancangan: karena ECC menawarkan keamanan yang sama dengan kunci yang jauh
+lebih pendek, di mana keunggulan itu paling berharga?
 
+\subsection{Pemetaan Langsung Karakter ke Titik}
+\label{subsec:pemetaan-langsung}
 
+Cara paling langsung untuk mengubah pesan menjadi titik adalah memetakan setiap
+karakter ke sebuah titik pada kurva. Karena ASCII memuat 256 karakter, kurva
+yang dipakai harus memiliki paling sedikit 256 titik agar setiap karakter
+mendapat titiknya sendiri. Setelah pemetaan itu disepakati, pesan $M =
+\text{'ENCRYPT'}$ --- yang nilai ASCII-nya $69$, $78$, $67$, $82$, $89$, $80$,
+dan $84$ --- cukup dipecah menjadi tujuh karakter dan setiap nilainya
+dipetakan ke titik yang bersesuaian.
 
+Metode itu sederhana, tetapi kurang aman. Pemetaannya tetap untuk setiap
+pemakaian, sehingga dua pesan yang sama selalu menghasilkan titik $P_M$ yang
+sama. Akibatnya, penyerang yang tidak mampu memecahkan ECDLP sekalipun masih
+dapat mengenali pengulangan: bila dua cipherteks memuat titik kedua yang sama,
+ia langsung mengetahui bahwa plainteksnya sama. Kelemahan itu sama dengan
+kelemahan buku kode, dan alasan yang sama pula yang membuatnya ditinggalkan.
 
+\subsection{Metode Koblitz}
+\label{subsec:koblitz}
 
+Cara yang lebih baik diperkenalkan oleh Neal Koblitz
+\citep{koblitz1987}. Gagasannya adalah memanfaatkan sifat residu kuadratik yang
+sudah dibahas pada Subbagian~\ref{subsec:medan-berhingga}: untuk nilai $x$ yang
+dipilih acak, ruas kanan kurva hanya punya peluang sekitar setengah untuk
+menjadi kuadrat modulo $p$. Karena itu penyandi dapat mencoba beberapa nilai
+$x$ berurutan sampai menemukan satu yang berhasil. Langkah-langkahnya sebagai
+berikut.
+
+\begin{enumerate}
+    \item Pilih kurva eliptik $y^2 \equiv x^3 + ax + b \pmod{p}$ yang mengandung
+          $N$ buah titik, dengan $N$ yang cukup besar.
+    \item Kesepakati pengkodean karakter: angka $0, 1, \dots, 9$ menjadi
+          $0, 1, \dots, 9$, dan huruf $A, B, \dots, Z$ menjadi $10, 11, \dots,
+          35$.
+    \item Kodekan setiap karakter pesan menjadi nilai $m$ di antara $0$ dan
+          $35$.
+    \item Pilih sebuah bilangan bulat $k$ sebagai parameter basis; nilai ini
+          disepakati kedua pihak dan tidak perlu dirahasiakan.
+    \item Untuk nilai $m$ tertentu, hitung $x = mk + 1$, lalu sulihkan ke dalam
+          persamaan kurva dan tentukan nilai $y$ yang memenuhi.
+    \item Bila tidak ada nilai $y$ yang memenuhi, ulangi untuk $x = mk + 2$,
+          $x = mk + 3$, dan seterusnya, sampai persamaan itu dapat dipecahkan.
+\end{enumerate}
+
+Sebagai contoh, ambil kurva
+
+\[
+y^2 \equiv x^3 - x + 188 \pmod{751},
+\]
+
+yang memiliki $N = 727$ titik. Karakter yang hendak dikodekan adalah huruf
+\texttt{B}, yang menurut langkah 2 bernilai $m = 11$. Ambil parameter basis
+$k = 20$. Nilai $x$ pertama yang dicoba adalah
+
+\begin{equation}
+x = mk + 1 = (11)(20) + 1 = 221 ,
+\label{eq:koblitz-x}
+\end{equation}
+
+dan hasilnya diperlihatkan pada Tabel~\ref{tab:koblitz-b}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Pencarian titik untuk karakter \texttt{B} ($m = 11$, $k = 20$)
+    pada kurva $y^2 \equiv x^3 - x + 188 \pmod{751}$}
+    \label{tab:koblitz-b}
+    \begin{tabularx}{\linewidth}{@{}c c c
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    $x$ & $x^3 - x + 188 \bmod 751$ & \textbf{Kuadrat?} & \textbf{Hasil} \\
+    \midrule
+    $221$ & $456$ & tidak & tidak ada nilai $y$ yang memenuhi \\
+    \addlinespace
+    $222$ & $446$ & tidak & tidak ada nilai $y$ yang memenuhi \\
+    \addlinespace
+    $223$ & $266$ & tidak & tidak ada nilai $y$ yang memenuhi \\
+    \addlinespace
+    $224$ & $673$ & ya    & $y = 248$ (dan $y = 503$) \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Jadi karakter \texttt{B} dikodekan menjadi titik $(224, 248)$ pada kurva
+eliptik. Pencarian itu hanya memerlukan empat percobaan, sesuai dengan dugaan
+peluang: setiap percobaan berpeluang sekitar setengah untuk berhasil,
+sehingga rata-rata dibutuhkan dua percobaan, dan peluang memerlukan lebih dari
+sepuluh percobaan sangat kecil.
+
+Pada proses \emph{decoding}, penerima memegang titik $(x, y)$ dan harus
+memulihkan nilai $m$. Karena penyandian memakai $x = mk + 1$ dan pencariannya
+hanya menambah paling banyak $k - 1$, nilai $m$ dapat dihitung dengan
+
+\begin{equation}
+m = \left\lfloor \frac{x - 1}{k} \right\rfloor .
+\label{eq:koblitz-dekode}
+\end{equation}
+
+Untuk titik $(224, 248)$ dengan $k = 20$ diperoleh
+\[
+m = \left\lfloor \frac{224 - 1}{20} \right\rfloor
+  = \lfloor 11{,}15 \rfloor = 11 ,
+\]
+sehingga pesan semula memang huruf \texttt{B}.
+
+Perhatikan mengapa pembulatan ke bawah selalu memberi jawaban yang benar.
+Nilai $x$ yang diperoleh berada di dalam selang $mk + 1$ sampai $mk + k$, sebab
+pencarian berhenti sebelum penambahan mencapai $k$. Karena itu
+$(x - 1)/k$ selalu berada di antara $m$ dan $m + 1$, dan pembulatan ke bawahnya
+tepat sama dengan $m$. Satu catatan penting: agar pemetaan itu tetap satu-satu,
+kurva harus memiliki paling sedikit $36k$ titik, sehingga setiap nilai $m$
+memperoleh wilayah $x$ sendiri yang tidak tumpang tindih dengan nilai $m$
+berikutnya.
+
+\subsection{Efisiensi dan Aplikasi ECC}
+\label{subsec:efisiensi-ecc}
+
+Sekarang perhatikan sisi efisiensinya. Untuk menyalurkan kunci AES-128 melalui
+algoritma kunci-publik, RSA memerlukan kunci 3072 bit sedangkan ECC cukup 256
+bit. Selisih sebesar $12$ kali itu berdampak pada tiga hal sekaligus:
+penyimpanan, lebar pita, dan waktu komputasi. Pada perangkat yang menyimpan
+ribuan kunci sesi, selisih penyimpanan itu menumpuk; pada jaringan nirkabel
+yang lambat, selisih lebar pita terasa langsung; dan pada pemroses kecil,
+perkalian titik yang lebih pendek jauh lebih cepat diselesaikan.
+
+Kurva yang dipakai dalam praktik tidak dipilih sembarangan. Sejumlah
+parameter baku telah ditetapkan oleh lembaga standardisasi dan diperiksa
+keamanannya secara terbuka \citep{fips1865}; Tabel~\ref{tab:kurva-standar}
+memuat sebagian di antaranya.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Beberapa kurva eliptik baku yang dipakai secara luas}
+    \label{tab:kurva-standar}
+    \begin{tabularx}{\linewidth}{@{}l c
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Kurva} & \textbf{Kunci} & \textbf{Pemakaian utama} \\
+    \midrule
+    secp256k1 & $256$ bit & Mata uang kripto dan rantai blok; parameternya
+    dinyatakan dengan cara yang efisien, tetapi titik basisnya berstruktur
+    khusus sehingga penanganannya harus hati-hati \\
+    \addlinespace
+    NIST P-256 & $256$ bit & Sertifikat digital dan TLS; paling banyak
+    diperiksa karena paling banyak dipakai \\
+    \addlinespace
+    Curve25519 & $255$ bit & Pertukaran kunci X25519 dan tanda tangan Ed25519;
+    dirancang agar bebas dari pilihan parameter yang membahayakan dan tahan
+    terhadap saluran samping \\
+    \addlinespace
+    NIST P-384 & $384$ bit & Dokumen tingkat keamanan $192$ bit; dipakai bila
+    umur data diperkirakan sangat panjang \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Baris ketiga Tabel~\ref{tab:kurva-standar} layak diperhatikan. Kurva
+Curve25519 dirancang oleh Daniel Bernstein \citep{bernstein2006curve25519}
+dengan tujuan yang berbeda dari kurva lainnya: bukan untuk kecepatan semata,
+melainkan untuk \emph{menghilangkan pilihan}. Pada kurva NIST, pemakai harus
+memilih titik basis dari grup yang cukup besar, dan pilihan yang keliru dapat
+melemahkan sistem tanpa disadari. Pada Curve25519, titik basisnya ditetapkan
+oleh rancangan, dan setiap pemakaian memakai titik yang sama. Sejumlah
+pemeriksaan juga tidak diperlukan lagi karena telah terbukti selalu terpenuhi,
+sehingga implementasinya lebih sederhana dan lebih kecil peluangnya mengandung
+kesalahan.
+
+\subsection{Mengapa ECDLP Lebih Sukar daripada Faktorisasi}
+\label{subsec:mengapa-ecdlp-sukar}
+
+Pertanyaan yang wajar muncul pada titik ini adalah mengapa kunci ECC dapat
+lebih pendek. Jawabannya terletak pada perbedaan algoritma penyerang terbaik
+yang diketahui bagi masing-masing persoalan.
+
+Untuk logaritma diskrit \emph{biasa} --- persoalan yang mendasari
+Diffie--Hellman dan ElGamal --- terdapat algoritma \textbf{index calculus}.
+Algoritma itu memanfaatkan kenyataan bahwa bilangan bulat dapat difaktorkan
+dan disusun kembali, sehingga memungkinkan pencarian yang jauh lebih cerdas
+daripada penelusuran menyeluruh \citep{menezes1996}. Versi terbaiknya, yaitu
+saringan medan bilangan, berjalan dalam waktu subeksponensial terhadap panjang
+kunci. Inilah alasan mengapa Diffie--Hellman dan ElGamal di atas bilangan bulat
+memerlukan modulus 3072 bit untuk memperoleh keamanan setara 128 bit.
+
+Algoritma index calculus tidak dapat dipindahkan ke kurva eliptik. Tidak ada
+padanan gagasan ``memfaktorkan'' sebuah titik, sebab titik pada kurva bukan
+bilangan yang dapat dipecah, melainkan pasangan koordinat yang ditentukan oleh
+persamaan kurva. Memang ada usaha memindahkan gagasan itu melalui apa yang
+disebut \emph{serangan transfer} --- yaitu memetakan kurva eliptik ke kurva
+berorde lebih kecil atau ke medan berhingga biasa --- tetapi serangan semacam
+itu hanya berhasil pada kelas kurva yang sempit, dan justru itulah alasan
+sejumlah kurva dilarang dipakai. Untuk kurva yang dipilih dengan benar,
+penyerang terbaik yang diketahui hanyalah algoritma rho Pollard
+\citep{pollard1978}, yang biayanya sebanding dengan akar kuadrat orde grup.
+Tabel~\ref{tab:ecdlp-vs-faktorisasi} membandingkan keduanya.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Biaya penyerangan terbaik yang diketahui pada berbagai panjang
+    kunci}
+    \label{tab:ecdlp-vs-faktorisasi}
+    \begin{tabularx}{\linewidth}{@{}c
+                                   >{\raggedright\arraybackslash}X
+                                   >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    \textbf{Keamanan} & \textbf{Kurva eliptik (rho Pollard)} &
+    \textbf{RSA (saringan medan bilangan)} \\
+    \midrule
+    $80$ bit  & $2^{40}$ langkah; kunci $160$ bit  & kunci $1024$ bit \\
+    \addlinespace
+    $128$ bit & $2^{64}$ langkah; kunci $256$ bit  & kunci $3072$ bit \\
+    \addlinespace
+    $256$ bit & $2^{128}$ langkah; kunci $512$ bit & kunci $15360$ bit \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+
+Perhatikan pola pada Tabel~\ref{tab:ecdlp-vs-faktorisasi}. Untuk memperoleh
+keamanan $128$ bit pada ECC, penyerang harus menempuh $2^{64}$ langkah, dan
+itu berarti panjang kunci cukup dua kali lipatnya, yaitu $256$ bit. Untuk
+memperoleh keamanan yang sama pada RSA, penyerang hanya perlu menjalankan
+saringan medan bilangan yang biayanya tumbuh jauh lebih lambat terhadap
+panjang kunci --- sehingga panjang kunci RSA harus dua belas kali lipat.
+Ringkasnya, ECC memperoleh keamanannya ``lebih murah'' karena persoalan yang
+mendasarinya lebih merata: tidak ada struktur tersembunyi pada titik-titik
+kurva yang dapat dimanfaatkan penyerang.
+
+Yang perlu dicatat adalah bahwa keunggulan itu hanya berlaku bagi kurva yang
+dipilih dengan benar. Kurva yang orderya dapat dihitung dengan mudah, kurva
+dengan orde yang habis dibagi bilangan kecil, dan kurva yang dapat ditransfer
+ke medan berhingga biasa semuanya runtuh jauh lebih cepat daripada dugaan
+umum. Karena itu perkakas verifikasi pada bagian praktikum di akhir bab ini
+tidak hanya menjalankan aritmetika kurva, tetapi juga memeriksa orde titik dan
+menjalankan penyerangan logaritma diskrit berbiaya akar orde pada kurva mainan
+--- untuk memperlihatkan kepada pembaca seberapa cepat keamanan itu hilang
+ketika orderya menyusut.
