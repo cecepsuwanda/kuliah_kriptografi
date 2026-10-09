@@ -1234,18 +1234,85 @@ vektor uji RFC 4493 \citep{rfc4493} (0, 128, 320, dan 512 bit), dan keempatnya
 sudah diverifikasi ulang dengan OpenSSL. Nilai $L$, $K_1$, $K_2$, dan $E_K(K_2)$
 yang semula benar tetap dipertahankan.
 
-## Bab 16 — Otentikasi dan Tanda Tangan Digital (tanpa sumber referensi)
+## Bab 16 — Otentikasi dan Tanda Tangan Digital (tanpa sumber referensi)  `[x]` SELESAI
 Sumber: `stallings2017`, `menezes1996`, `rsa1978`, `katz2020`, FIPS 186-5, RFC 5280,
-RFC 8032, RFC 8446. Target: ±5.000 kata.
+RFC 8032, RFC 8446, RFC 8017, Bleichenbacher 1998, ROCA 2017. Target: ±5.000 kata.
+Bab ini juga tidak punya berkas di `referensi/`, sehingga seluruh materi disusun dari
+sumber silabus tersebut. **Empat entri baru** di `references.bib` (`rfc5280`,
+`rfc8032`, `nemec2017roca`, `bernstein2012ed25519`); `references.bib` 90 → **94 entri**.
 
-- [ ] X.509 v3 penuh (ASN.1) + contoh sertifikat nyata
-- [ ] TLS 1.2 vs 1.3: urutan pesan handshake + key schedule
-- [ ] Validasi sertifikat: jalur, name constraints, CRL vs OCSP
-- [ ] Schnorr, EdDSA/Ed25519, RSA-PSS + tabel perbandingan DSA/ECDSA/EdDSA
-- [ ] Permukaan serangan padding: PKCS#1 v1.5 vs PSS, Bleichenbacher, ROCA
-- [ ] Vektor uji nyata (RFC 8032 / NIST CAVP)
-- [ ] Otentikasi timbal balik, signcryption, certificate transparency
-- [ ] Gambar + entri `.bib`
+Hasil: **10.658 kata** pada sembilan berkas (empat section 7.321, contoh 1.602,
+praktikum 543, latihan 350, rangkuman 343, evaluasi 402) — semula 2.177 kata, jadi
+**4,9 kali** — **10 persamaan bernomor** (semula **nol**), **5 tabel bernomor**
+(semula **nol**), **5 gambar bernomor** (semula tiga diagram TikZ:
+`alur-tanda-tangan`, `alur-tls`, `rantai-sertifikat`; kini ditambah diagram
+`jabat-tangan-tls` dan satu gambar raster `ukuran-tanda-tangan`), **6 contoh terhitung**
+di dalam environment `example` (semula **nol**), **25 subbagian** (16 → 25), dan
+**31 sitasi** (semula 12).
+
+- [x] **X.509 v3 penuh (ASN.1) + contoh sertifikat nyata** — Subbagian
+  `Sertifikat X.509` (Tabel~\ref{tab:x509-v3}, sembilan bidang, kolom `p{4.6cm}`) dan
+  `Isi dan Tanda Tangan Sertifikat X.509` dengan **angka hasil pengukuran sendiri**:
+  berkas DER **831 byte** = kunci publik 294 + tanda tangan 256 + sisa 281, dibangkitkan dengan
+  perintah `openssl` yang benar-benar ditampilkan utuh pada bab
+  \citep{rfc5280} — disertai catatan bahwa perintah pendek itu **tidak** memasang
+  ekstensi *Key Usage* maupun *Subject Alternative Name*
+- [x] **TLS 1.2 vs 1.3: urutan pesan + key schedule** — Subbagian `Jabat Tangan TLS
+  1.2` (diagram `figures/alur-tls`) dan `Jabat Tangan TLS 1.3 dan Jadwal Kunci`
+  (diagram baru `figures/jabat-tangan-tls`, TLS 1.2 dan TLS 1.3 berdampingan),
+  termasuk *key transport* RSA vs (EC)DHE, *forward secrecy*, dan jadwal kunci HKDF
+  (*early secret* → *handshake secret* → *master secret*) \citep{rfc8446}
+- [x] **Validasi sertifikat: jalur, name constraints, CRL vs OCSP** — Subbagian
+  `Validasi Sertifikat dan Status Pencabutan` (`subsec:validasi-sertifikat`):
+  pembangunan jalur, pemeriksaan tanda tangan tiap tautan, masa berlaku, pencocokan
+  nama, batasan nama, lalu CRL vs OCSP vs *OCSP stapling* beserta *Certificate
+  Transparency*
+- [x] **Schnorr, EdDSA/Ed25519, RSA-PSS + tabel perbandingan** — Subbagian `Tanda
+  Tangan Schnorr dan EdDSA` (`subsec:eddsa`) dan `Perbandingan Algoritma Tanda
+  Tangan` (Tabel~\ref{tab:perbandingan-tanda-tangan} + Gambar~\ref{fig:ukuran-tanda-tangan}),
+  berikut subbagian `Tanda Tangan RSA` yang membahas PKCS\#1 v1.5 vs PSS
+  \citep{rsa1978,rfc8017,stallings2017}
+- [x] **Permukaan serangan padding + Bleichenbacher + ROCA** — pemalsuan
+  eksistensial multiplikatif (Persamaan~\eqref{eq:rsa-multiplikatif} dan
+  \eqref{eq:rsa-pemalsuan}), subbagian `Kesalahan Fatal: Pemakaian Ulang k`
+  (`subsec:pemakaian-ulang-k`), dan paragraf `Verifikasi padding yang longgar`
+  \citep{bleichenbacher1998}, `Serangan galat pada penandatanganan dengan CRT`, serta
+  ROCA \citep{nemec2017roca}
+- [x] **Vektor uji nyata (RFC 8032)** — Contoh~\ref{ex:ed25519-rfc8032} memakai
+  **vektor uji kedua** RFC 8032 (pesan satu byte `72`), dengan tanda tangan yang
+  direproduksi **byte demi byte** lewat `openssl pkeyutl -sign -rawin`; vektor uji
+  pertama (pesan kosong) tetap ditampilkan pada Subbagian~\ref{subsec:eddsa}
+  \citep{rfc8032}
+- [x] **Otentikasi timbal balik, signcryption, certificate transparency** — Subbagian
+  `Otentikasi Entitas dengan Tantangan dan Respons` (`subsec:tantangan-respons`,
+  dengan contoh XOR `0x3C` $\oplus$ `0x5A` = `0x66` dan pengulangan *nonce*),
+  `Otentikasi Entitas vs Otentikasi Pesan` (`subsec:entitas-vs-pesan` +
+  Tabel~\ref{tab:entitas-vs-pesan}), catatan *signcryption* pada penutup
+  section-01, dan *Certificate Transparency* pada Subbagian~\ref{subsec:validasi-sertifikat}
+- [x] **Gambar + entri `.bib`** — satu gambar raster baru
+  `figures/ukuran-tanda-tangan.png` (632 kali 274 piksel, dibangkitkan oleh
+  `scripts/refactor/figures/ukuran_tanda_tangan.py` dengan pustaka standar saja
+  karena matplotlib tidak tersedia) dan satu diagram TikZ baru
+  `figures/jabat-tangan-tls.tex`; empat entri `.bib` baru
+- [x] **Persamaan bernomor** — sepuluh `equation` berlabel pada section-02:
+  `eq:rsa-tanda-tangan`, `eq:rsa-multiplikatif`, `eq:rsa-pemalsuan`,
+  `eq:dsa-tanda-tangan`, `eq:dsa-verifikasi`, `eq:dsa-bukti-1`, `eq:dsa-bukti-2`,
+  `eq:dsa-ulang-s`, `eq:dsa-pulih-k`, `eq:dsa-pulih-x`
+- [x] **Pertumbuhan komponen OBE** — `praktikum.tex` 1 → 4 `obeactivity`
+  (Aktivitas 16.1 sertifikat browser, 16.2 rantai sertifikat dengan OpenSSL,
+  16.3 vektor uji Ed25519, 16.4 pemulihan kunci dari pemakaian ulang $k$),
+  `latihan.tex` 1 → 4 `obereflection` (3 → 12 butir), `rangkuman.tex` 7 → 13 butir,
+  `evaluasi.tex` 3 → 10 butir kuis + studi kasus dan `competencychecklist`
+  5 → 12 baris
+
+### Koreksi angka (temuan verifikasi sendiri)
+
+| Klaim semula | Verifikasi |
+|---|---|
+| Pemulihan kunci privat $x$ dari pemakaian ulang $k$ pada DSA | **salah** — rumus yang tercetak semula, $x = \frac{s_1 - s_2}{r} \cdot \frac{1}{h_1 - h_2} \bmod q$, tidak menurunkan hasil yang benar (memberi $x = 6$, bukan $5$). Bentuk yang benar adalah dua langkah pada Persamaan~\eqref{eq:dsa-pulih-k} dan \eqref{eq:dsa-pulih-x}: $k \equiv (h_1-h_2)(s_1-s_2)^{-1} \pmod q$, lalu $x \equiv (s_1 k - h_1) r^{-1} \pmod q$. Diuji dengan Python pada $p=23$, $q=11$, $g=2$, $x=5$, $h_1=10$, $h_2=7$, $k=3$ → $k=3$ dan $x=5$ **tepat** |
+| `praktikum.tex` menjanjikan padanan C++ dan MATLAB yang tidak ada | **salah** — berkas `code/cpp/tanda_tangan.cpp` dan `code/matlab/tanda_tangan.m`. Keduanya **dibuat** (bukan janji dihapus), mengikuti pola `hash_avalanche.{cpp,m}` dengan SHA-256 satu blok. Logikanya disimulasikan di Python (karena `g++`/`cl` tidak tersedia): hash `696`, $d=1019$, tanda tangan `644`, pemalsuan ditolak, dan $n^2 = 11.135.569 < 2^{32}$ sehingga seluruh hasil antara `uint64` aman |
+| RFC 8032 vektor uji 1 (pesan kosong) dapat direproduksi lokal | **tidak dapat** — OpenSSL 3.2.4 menolak dengan `pkeyutl: Could not allocate 0 bytes for oneshot sign/verify buffer`. Contoh terhitung karena itu dipindahkan ke **vektor uji 2** (pesan `72`) yang berhasil direproduksi tepat; keterbatasan itu dicatat jujur di akhir Contoh~\ref{ex:ed25519-rfc8032} |
+| Ukuran sertifikat X.509 | **diukur ulang** — percobaan pertama memakai perintah `-addext` (1.071 byte DER), sedangkan perintah yang ditampilkan pada bab lebih pendek. Perintah pada bab dijalankan **persis seperti tertulis** → **831 byte** DER; prose disesuaikan dan ditambah catatan bahwa perintah itu tidak memasang *Key Usage*/*SAN* |
 
 ---
 
@@ -1297,12 +1364,24 @@ RFC 8032, RFC 8446. Target: ±5.000 kata.
   `eq:gradien-penggandaan`, `eq:koordinat-penggandaan`, `eq:pelelaran`,
   `eq:ecdlp`, `eq:ecc-kunci-publik`, `eq:ecdh-kunci`, `eq:eceg-cipher`,
   `eq:eceg-dekripsi`, `eq:koblitz-x`, `eq:koblitz-dekode`).
-  Lanjutkan untuk hash.
-- [x] **`contoh.tex` tidak konsisten** — bab 13 (6 `example`, semula **nol**)
-  dan bab 14 (6 `example`, semula **nol**) sudah beres; tersisa bab 15–16.
-- [ ] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03, 04, dan 14 sudah punya.)
-  Skrip pembuat gambar raster: `scripts/refactor/figures/entropi_ternate.py`.
-- [x] **Bab tanpa sitasi: 14.** (02, 03, 04, 05, 06, 07, dan 14 sudah selesai;
+  **Bab 15 menambah 16** (`eq:sha256-jadwal`, `eq:sha256-fungsi`,
+  `eq:sha256-kompresi`, `eq:md5-putaran`, `eq:md-iterasi`, `eq:birthday-peluang`,
+  `eq:birthday-50`, `eq:hmac-panjang-kunci`, `eq:hmac-rumus`, `eq:cbc-mac`,
+  `eq:cmac-subkunci`, `eq:poly1305`, dan empat persamaan penunjang), dan
+  **Bab 16 menambah 10** (`eq:rsa-tanda-tangan`, `eq:rsa-multiplikatif`,
+  `eq:rsa-pemalsuan`, `eq:dsa-tanda-tangan`, `eq:dsa-verifikasi`, `eq:dsa-bukti-1`,
+  `eq:dsa-bukti-2`, `eq:dsa-ulang-s`, `eq:dsa-pulih-k`, `eq:dsa-pulih-x`).
+  **Cacat ini selesai untuk seluruh 16 bab.**
+- [x] **`contoh.tex` tidak konsisten** — bab 13 (6 `example`, semula **nol**),
+  bab 14 (6, semula **nol**), bab 15 (7, semula **nol**), dan bab 16 (6, semula
+  **nol**) sudah beres. **Seluruh 16 bab kini konsisten memakai environment
+  `example`.**
+- [x] **Bab 15 dan 16 tanpa gambar raster.** (Bab 03, 04, dan 14 sudah punya.)
+  Bab 15 mendapat `longsoran-sha256.png` dan bab 16 `ukuran-tanda-tangan.png`,
+  keduanya dibangkitkan dengan pustaka standar saja oleh skrip di
+  `scripts/refactor/figures/` (`avalanche_hash.py`, `ukuran_tanda_tangan.py`).
+  Skrip pembuat gambar raster yang lebih lama: `entropi_ternate.py`.
+- [x] **Bab tanpa sitasi: 14.** (02, 03, 04, 05, 06, 07, 14, 15, dan 16 sudah selesai;
   Bab 14 semula **nol** sitasi, kini menyitasi `stallings2017`, `menezes1996`,
   `fips1865`, dan enam entri baru — `miller1986`, `koblitz1987`,
   `hankerson2004`, `washington2008`, `bernstein2006curve25519`,

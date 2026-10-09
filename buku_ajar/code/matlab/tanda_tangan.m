@@ -1,24 +1,28 @@
 % Tanda tangan digital RSA: penandatanganan, verifikasi, dan uji pemalsuan.
-% Bab 16, melengkapi Aktivitas 16.1.
+% Bab 16, Aktivitas 16.1.
 %
-% Alur yang dipakai sama seperti pada Bab 16: pesan di-hash lebih dulu, nilai
-% hash ditandatangani dengan kunci privat pengirim, dan penerima
-% memverifikasinya dengan kunci publik pengirim. Pasangan kunci diambil dari
+% Padanan MATLAB dari code/python/tanda_tangan.py. Pasangan kunci diambil dari
 % Contoh Terhitung Bab 10 (p = 47, q = 71, e = 79, d = 1019) supaya hasilnya
 % dapat diperiksa dengan angka yang sudah dikenal.
 %
-% Fungsi hash SHA-256 di sini dibatasi pada pesan yang muat dalam satu blok
-% (lebih pendek dari 56 byte); salinannya lengkap dengan penjelasan ada pada
-% hash_avalanche.m.
+% SHA-256 tidak tersedia sebagai fungsi bawaan MATLAB tanpa toolbox tambahan,
+% jadi fungsi kompresinya diimplementasikan sendiri. Versi ini sengaja
+% dibatasi pada pesan yang muat dalam satu blok 512 bit, yaitu pesan yang
+% lebih pendek dari 56 byte; pesan yang lebih panjang memerlukan pemrosesan
+% blok demi blok. Kedua kalimat uji pada bab ini hanya 43 byte, sehingga
+% hasilnya sama dengan SHA-256 yang dihitung Python.
+%
+% Catatan: MATLAB menjenuhkan (saturasi) bilangan bulat pada operasi
+% aritmetika, bukan membiarkannya berputar seperti pada C. Karena itu setiap
+% penjumlahan 32 bit dilewatkan fungsi add32 agar perilakunya sama dengan
+% standar SHA-256.
 %
 % Jalankan: tanda_tangan   (atau buka berkas ini lalu tekan Run)
 % Berkas ini berupa skrip dengan fungsi lokal, sehingga memerlukan MATLAB
 % R2016b atau lebih baru.
 
 % Kunci Bob: publik untuk memverifikasi, privat untuk menandatangani.
-p = 47;
-q = 71;
-e = 79;
+p = 47; q = 71; e = 79;
 n = p * q;
 d = invers_modulo(e, (p - 1) * (q - 1));
 
@@ -26,19 +30,20 @@ fprintf('Kunci publik  (e, n) = (%d, %d)\n', e, n);
 fprintf('Kunci privat  (d, n) = (%d, %d)\n\n', d, n);
 
 pesan = 'Transfer Rp5.000.000 ke rekening 1234567890';
-tt = pangkat_mod(hash_pesan(pesan, n), d, n);   % tanda tangan
+tanda_tangan = tanda_tangani(pesan, d, n);
 
 fprintf('Pesan        : %s\n', pesan);
 fprintf('Hash (mod n) : %d\n', hash_pesan(pesan, n));
-fprintf('Tanda tangan : %d\n\n', tt);
-fprintf('Verifikasi pesan asli        : %d\n\n', verifikasi(pesan, tt, e, n));
+fprintf('Tanda tangan : %d\n\n', tanda_tangan);
+fprintf('Verifikasi pesan asli        : %d\n\n', ...
+        verifikasi(pesan, tanda_tangan, e, n));
 
 % Penyerang mengubah isi pesan, tetapi tanda tangannya tetap yang lama.
 pesan_palsu = 'Transfer Rp5.000.000 ke rekening 9999999999';
 fprintf('Pesan diubah : %s\n', pesan_palsu);
 fprintf('Hash (mod n) : %d\n', hash_pesan(pesan_palsu, n));
 fprintf('Verifikasi pesan yang diubah : %d\n\n', ...
-        verifikasi(pesan_palsu, tt, e, n));
+        verifikasi(pesan_palsu, tanda_tangan, e, n));
 
 fprintf('Tanda tangan tidak lagi cocok karena hash pesan yang diubah berbeda\n');
 fprintf('dari nilai hash yang dipulihkan dengan kunci publik. Penyerang yang\n');
@@ -49,41 +54,14 @@ fprintf('kunci privat yang dapat membuat tanda tangan yang sah.\n');
 
 % --- Fungsi lokal -----------------------------------------------------------
 
-% Verifikasi: nilai hash yang dipulihkan dengan kunci publik dibandingkan
-% dengan hash pesan yang diterima.
-function benar = verifikasi(pesan, tanda_tangan, e, n)
-hash_dipulihkan = pangkat_mod(tanda_tangan, e, n);
-benar = (hash_dipulihkan == hash_pesan(pesan, n));
-end
-
-% Nilai hash sebagai bilangan bulat modulo n.
-% Pada RSA nyata n berukuran 2048 bit atau lebih sehingga digest 256 bit muat
-% tanpa pemangkasan; di sini modulusnya kecil, jadi pemangkasan diperlukan.
-% Perhitungan dilakukan kata demi kata (metode Horner) agar tetap tepat dalam
-% bilangan berpresisi ganda.
-function nilai = hash_pesan(pesan, n)
-hash = sha256(pesan);
-basis = mod(4294967296, n);  % 2^32 mod n
-nilai = 0;
-for i = 1:8
-    nilai = mod(nilai * basis + mod(double(hash(i)), n), n);
-end
-end
-
-% Cari d sehingga e * d = 1 (mod phi) dengan Algoritma Euclidean diperluas.
+% Cari d sehingga e * d = 1 (mod phi), memakai Algoritma Euclidean lanjar.
 function d = invers_modulo(e, phi)
-lama_d = 0;
-d = 1;
-lama_phi = phi;
-sisa = e;
+lama_d = 0; d = 1;
+lama_phi = phi; sisa = e;
 while sisa ~= 0
     hasil_bagi = floor(lama_phi / sisa);
-    d_baru = lama_d - hasil_bagi * d;
-    sisa_baru = lama_phi - hasil_bagi * sisa;
-    lama_d = d;
-    d = d_baru;
-    lama_phi = sisa;
-    sisa = sisa_baru;
+    [lama_d, d] = deal(d, lama_d - hasil_bagi * d);
+    [lama_phi, sisa] = deal(sisa, lama_phi - hasil_bagi * sisa);
 end
 if lama_phi ~= 1
     error('e tidak relatif prima terhadap phi(n)');
@@ -91,29 +69,50 @@ end
 d = mod(lama_d, phi);
 end
 
-% Hitung basis^pangkat mod modulus dengan kuadrat berulang.
-% Hasil kali terbesar adalah (modulus-1)^2, sehingga modulus harus lebih kecil
-% dari akar 2^53 (sekitar 9,4 x 10^7) agar tetap tepat dalam bilangan
-% berpresisi ganda.
-function hasil = pangkat_mod(basis, pangkat, modulus)
-hasil = 1;
-basis = mod(basis, modulus);
-while pangkat > 0
-    if mod(pangkat, 2) == 1
+% Hash pesan sebagai bilangan bulat modulo n. Digest 256 bit direduksi kata
+% demi kata dengan basis 2^32; cara ini sama dengan menghitung
+% int(hexdigest, 16) % n seperti pada Python.
+function nilai = hash_pesan(pesan, n)
+digest = sha256(pesan);
+nilai = uint64(0);
+for i = 1:8
+    nilai = mod(nilai * uint64(4294967296) + uint64(digest(i)), uint64(n));
+end
+nilai = double(nilai);
+end
+
+% Buat tanda tangan: S = hash(pesan)^d mod n, memakai kunci privat.
+function s = tanda_tangani(pesan, d, n)
+s = pangkat_mod(hash_pesan(pesan, n), d, n);
+end
+
+% Verifikasi tanda tangan dengan kunci publik.
+function sah = verifikasi(pesan, tanda_tangan, e, n)
+sah = pangkat_mod(tanda_tangan, e, n) == hash_pesan(pesan, n);
+end
+
+% Perpangkatan modular: basis^eksponen mod modulus.
+function hasil = pangkat_mod(basis, eksponen, modulus)
+modulus = uint64(modulus);
+hasil = uint64(1);
+basis = mod(uint64(basis), modulus);
+while eksponen > 0
+    if mod(eksponen, 2) == 1
         hasil = mod(hasil * basis, modulus);
     end
     basis = mod(basis * basis, modulus);
-    pangkat = floor(pangkat / 2);
+    eksponen = floor(eksponen / 2);
 end
+hasil = double(hasil);
 end
 
-% --- SHA-256 satu blok (sama seperti pada hash_avalanche.m) -------------------
-
+% Hitung SHA-256 untuk pesan yang muat dalam satu blok 512 bit.
 function hash = sha256(pesan)
 if numel(pesan) >= 56
     error('Versi ini hanya menangani pesan yang lebih pendek dari 56 byte');
 end
 
+% Konstanta putaran SHA-256 dan nilai awal hash.
 K = uint32([0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, ...
     0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, ...
     0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, ...
@@ -129,6 +128,7 @@ K = uint32([0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, ...
 hash = uint32([0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, ...
     0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19]);
 
+% Padding: bit 1, lalu nol secukupnya, lalu panjang pesan dalam bit.
 blok = zeros(1, 64, 'uint8');
 for i = 1:numel(pesan)
     blok(i) = uint8(pesan(i));
@@ -140,6 +140,7 @@ for i = 0:7
     panjang_bit = floor(panjang_bit / 256);
 end
 
+% Jadwal pesan: 16 kata pertama dari blok, sisanya diperluas.
 w = zeros(1, 64, 'uint32');
 for t = 1:16
     w(t) = bitshift(uint32(blok(4 * t - 3)), 24) + ...

@@ -1,28 +1,186 @@
 \section{Protokol SSL/TLS}
-Secure Sockets Layer (SSL) dan penerusnya, Transport Layer Security (TLS), adalah protokol yang mengimplementasikan semua konsep di atas untuk mengamankan komunikasi HTTPS.
+Secure Sockets Layer (SSL) dan penerusnya, Transport Layer Security (TLS),
+adalah protokol yang mengimplementasikan semua konsep di atas untuk
+mengamankan komunikasi HTTPS. Bila bab-bab sebelumnya membahas algoritma satu
+per satu, bab ini memperlihatkan bagaimana semuanya dirangkai menjadi satu
+protokol yang berjalan pada setiap permintaan halaman web \citep{rfc8446}.
+TLS adalah tempat seluruh isi buku ini bertemu: fungsi hash dari Bab~15,
+block cipher dan mode operasinya dari Bab~6--8, pertukaran kunci
+Diffie--Hellman dari Bab~11, kurva eliptik dari Bab~14, serta tanda tangan
+dan sertifikat dari bab ini.
 
-\textbf{Alur Kerja (Simplified Handshake):}
+\subsection{Mengapa HTTPS Memerlukan Kedua Jenis Kriptografi}
+TLS tidak memilih antara kriptografi simetris dan asimetris; ia memakai
+keduanya, masing-masing pada tempat yang tepat. Kriptografi asimetris mahal
+tetapi menyelesaikan masalah yang tidak dapat dipecahkan kriptografi simetris:
+menyepakati kunci rahasia dengan pihak yang belum pernah ditemui, tanpa
+pertemuan rahasia sebelumnya. Kriptografi simetris murah tetapi menuntut
+kunci yang sudah dibagi terlebih dahulu. Rangkaian keduanya adalah sebagai
+berikut: pada awal koneksi, tanda tangan digital dan sertifikat X.509
+memastikan identitas server dan menyepakati sebuah kunci sesi; setelah itu
+seluruh data mengalir dengan enkripsi simetris, misalnya AES-GCM atau
+ChaCha20-Poly1305.
+
+Perbandingan biayanya menjelaskan mengapa pembagian itu penting. Operasi
+tanda tangan RSA-2048 memerlukan waktu pada orde milidetik, sedangkan
+enkripsi AES-GCM atas satu kilobita data memerlukan waktu pada orde
+mikrodetik --- tiga tingkat besaran lebih cepat. Bila seluruh isi halaman web
+harus ditandatangani dan diverifikasi, kecepatannya akan jatuh ke tingkat yang
+tidak dapat dipakai. Karena itu jabat tangan asimetris hanya terjadi sekali di
+awal, dan selebihnya adalah kriptografi simetris yang murah.
+
+\subsection{Jabat Tangan TLS 1.2}
+Pada TLS 1.2, koneksi dibangun melalui empat pertukaran pesan pokok
+(\textit{dua putaran penuh}, 2-RTT), sehingga diperlukan dua kali perjalanan
+bolak-balik jaringan sebelum byte pertama data dapat dikirim.
+
 \begin{enumerate}
-    \item \textbf{Hello}: Client dan server menyepakati versi protokol dan algoritma cipher.
-    \item \textbf{Sertifikat}: Server mengirimkan sertifikat X.509 yang berisi kunci publik server.
-    \item \textbf{Key Exchange}: Client memverifikasi sertifikat, lalu membangkitkan kunci sesi simetris, mengenkripsinya dengan kunci publik server, dan mengirimkannya kembali.
-    \item \textbf{Secure Session}: Kedua pihak menggunakan kunci sesi simetris tersebut untuk mengenkripsi seluruh data yang dikirimkan.
+    \item \textbf{Hello}: Client dan server menyepakati versi protokol dan
+          algoritma cipher. Klien mengirim \textit{ClientHello} berisi versi
+          yang didukung, daftar \textit{cipher suite} yang disukainya, dan
+          sebuah nilai acak. Server menjawab dengan \textit{ServerHello}
+          berisi pilihannya, disusul sertifikat X.509 dan rantainya.
+    \item \textbf{Sertifikat}: Server mengirimkan sertifikat X.509 yang berisi
+          kunci publik server. Pada suite berbasis \textit{(EC)DHE}, server
+          juga mengirim \textit{ServerKeyExchange} berisi parameter
+          Diffie--Hellman sekali pakai beserta tanda tangan atas parameter
+          itu.
+    \item \textbf{Key Exchange}: Client memverifikasi sertifikat, lalu
+          membangkitkan kunci sesi simetris, mengenkripsinya dengan kunci
+          publik server, dan mengirimkannya kembali. Pada suite dengan
+          \textit{(EC)DHE}, klien justru mengirim bagian kunci
+          Diffie--Hellman-nya sendiri, dan kedua pihak menghitung kunci sesi
+          bersama tanpa pernah mengirimkannya.
+    \item \textbf{Secure Session}: Kedua pihak menggunakan kunci sesi simetris
+          tersebut untuk mengenkripsi seluruh data yang dikirimkan.
 \end{enumerate}
 
 \input{figures/alur-tls}
 
+Perbedaan antara \emph{key transport} RSA dan \emph{(EC)DHE} pada langkah
+ketiga bukan sekadar pilihan teknis, melainkan penentu sifat keamanan yang
+dihasilkan. Pada \emph{key transport} RSA, klien yang memilih kunci sesi dan
+mengirimkannya dalam bentuk terenkripsi. Bila kunci privat RSA server bocor
+suatu hari nanti, penyerang yang sebelumnya menyadap percakapan dapat
+membuka kembali kunci sesi itu dari rekaman lalu lintas dan membaca seluruh
+isi percakapan lama. Pada \emph{(EC)DHE}, kedua pihak menyumbang rahasia
+sekali pakai yang dihapus setelah sesi berakhir; merekam lalu lintas sekarang
+tidak menolong penyerang yang kemudian memperoleh kunci privat, sebab kunci
+sesi tidak pernah ada di dalam rekaman itu. Sifat inilah yang disebut
+\emph{forward secrecy}.
+
+\subsection{Jabat Tangan TLS 1.3 dan Jadwal Kunci}
+TLS 1.3 menyusun ulang urutan pesan sehingga hanya diperlukan satu putaran
+penuh (1-RTT). Perubahan pokoknya terlihat pada
+Gambar~\ref{fig:jabat-tangan-tls}: klien sudah menyertakan bagian kunci
+Diffie--Hellman-nya sendiri (\textit{key share}) pada pesan pertama, sehingga
+server tidak perlu menunggu putaran kedua untuk menghitung kunci sesi.
+Akibatnya, seluruh pesan setelah \textit{ServerHello} --- termasuk sertifikat
+dan tanda tangannya --- sudah dikirim terenkripsi.
+
+\input{figures/jabat-tangan-tls}
+
+Kunci-kunci pada TLS 1.3 diturunkan melalui \emph{jadwal kunci}
+(\textit{key schedule}) berbasis HKDF yang berlapis-lapis, bukan langsung
+dari rahasia bersama. Secara ringkas, urutannya adalah sebagai berikut.
+
+\begin{enumerate}
+    \item Sebuah \textit{early secret} dibentuk dari kunci pra-bagi bila ada
+          (\textit{resumption}), atau dari nilai nol bila tidak ada.
+    \item Dari situ dan dari rahasia (EC)DHE dibentuk \emph{handshake secret},
+          yang menurunkan kunci untuk melindungi pesan jabat tangan.
+    \item Setelah jabat tangan selesai, dibentuk \emph{master secret}, yang
+          menurunkan kunci untuk melindungi data aplikasi.
+\end{enumerate}
+
+Pemisahan bertingkat ini penting: kunci untuk pesan jabat tangan dan kunci
+untuk data aplikasi berasal dari nilai yang berbeda, sehingga kebocoran salah
+satunya tidak dengan sendirinya menggugurkan yang lain. Di samping itu,
+TLS 1.3 menghapus sejumlah fitur lama: \emph{key transport} RSA, mode CBC,
+RC4, SHA-1, kompresi, dan negosiasi ulang. Beberapa di antaranya dihapus
+bukan karena algoritmanya pasti sudah pecah, melainkan karena riwayat
+implementasinya terlalu sering salah --- dan protokol yang aman hanya dapat
+dibangun di atas primitif yang tidak menuntut ketelitian luar biasa dari
+setiap pelaksana.
+
+\subsection{CertificateVerify: Bukti Kepemilikan Kunci Privat}
+\label{subsec:certificateverify}
+Salah satu pesan yang paling sering diabaikan padahal sangat penting adalah
+\textit{CertificateVerify}. Untuk memahaminya, perlu disadari lebih dahulu
+bahwa sertifikat adalah data \emph{publik}. Siapa pun dapat mengunduh
+sertifikat milik sebuah situs web; isinya bukan rahasia. Karena itu,
+mengirimkan sertifikat tidak membuktikan apa pun tentang identitas pengirim.
+Penyerang dapat merekam sertifikat server yang sah dan mengirimkannya kembali
+--- ia hanya perlu menguasai jalur jaringan, bukan kunci privat.
+
+Jawaban TLS atas celah itu adalah menuntut server membuktikan bahwa ia
+memang memegang kunci privat yang bersesuaian dengan kunci publik di dalam
+sertifikat. Server menandatangani ringkasan seluruh transkrip jabat tangan
+dengan kunci privat jangka panjangnya, dan klien memverifikasi tanda tangan
+itu dengan kunci publik dari sertifikat. Karena transkrip memuat nilai acak
+dari kedua pihak, tanda tangan itu tidak dapat dipakai ulang pada sesi lain
+\citep{rfc8446}.
+
+Bentuk pembuktian ini berbeda antara kedua versi. Pada TLS 1.2 dengan
+\emph{key transport} RSA, kepemilikan kunci dibuktikan secara tidak langsung:
+hanya pemegang kunci privat yang dapat membuka kunci sesi kiriman klien. Pada
+TLS 1.2 dengan \emph{(EC)DHE}, bukti itu berada pada pesan
+\textit{ServerKeyExchange}. Pada TLS 1.3, mekanismenya dijadikan eksplisit
+dan diberi nama sendiri, yaitu \textit{CertificateVerify}. Perubahan itu
+sekaligus menunjukkan satu hal yang penting bagi mahasiswa: yang menjamin
+keamanan bukanlah keberadaan sertifikat, melainkan kemampuan menandatangani
+dengan kunci privat yang sertifikat itu ikat.
+
 \subsection{Jaminan pada Tiap Langkah Jabat Tangan}
 \begin{enumerate}
-    \item \textbf{ClientHello}: klien mengirim versi protokol, daftar \textit{cipher suite}, dan \textit{nonce} klien. Pada tahap ini belum ada jaminan keamanan.
-    \item \textbf{ServerHello} + sertifikat: server memilih suite dan mengirim sertifikat X.509 beserta rantainya. Sertifikat memberi otentikasi entitas dan kunci publik server.
-    \item \textbf{Verifikasi dan pertukaran kunci}: klien memverifikasi tanda tangan CA dan nama domain, lalu menyepakati kunci sesi (lewat \textit{key transport} RSA atau \textit{(EC)DHE}). Verifikasi inilah yang mencegah serangan \textit{Man-in-the-Middle}.
-    \item \textbf{Finished}: kedua pihak saling mengirim MAC atas seluruh transkrip jabat tangan, sehingga parameter yang dinegosiasikan tidak dapat diubah diam-diam (\textit{downgrade attack}). Setelah itu seluruh data dienkripsi simetris, misalnya AES-GCM atau ChaCha20-Poly1305 \citep{stallings2017}.
+    \item \textbf{ClientHello}: klien mengirim versi protokol, daftar
+          \textit{cipher suite}, dan \textit{nonce} klien. Pada tahap ini
+          belum ada jaminan keamanan.
+    \item \textbf{ServerHello} + sertifikat: server memilih suite dan
+          mengirim sertifikat X.509 beserta rantainya. Sertifikat memberi
+          otentikasi entitas dan kunci publik server.
+    \item \textbf{Verifikasi dan pertukaran kunci}: klien memverifikasi tanda
+          tangan CA dan nama domain, lalu menyepakati kunci sesi (lewat
+          \textit{key transport} RSA atau \textit{(EC)DHE}). Verifikasi
+          inilah yang mencegah serangan \textit{Man-in-the-Middle}.
+    \item \textbf{Finished}: kedua pihak saling mengirim MAC atas seluruh
+          transkrip jabat tangan, sehingga parameter yang dinegosiasikan
+          tidak dapat diubah diam-diam (\textit{downgrade attack}). Setelah
+          itu seluruh data dienkripsi simetris, misalnya AES-GCM atau
+          ChaCha20-Poly1305 \citep{stallings2017}.
 \end{enumerate}
-Kunci asimetris hanya dipakai untuk otentikasi dan menyepakati kunci; beban transfer data diserahkan ke enkripsi simetris yang jauh lebih cepat.
+Kunci asimetris hanya dipakai untuk otentikasi dan menyepakati kunci; beban
+transfer data diserahkan ke enkripsi simetris yang jauh lebih cepat.
 
-\textbf{TLS 1.3} memangkas jabat tangan menjadi satu putaran (1-RTT, bahkan 0-RTT dengan \textit{session resumption}), mewajibkan \textit{forward secrecy} melalui (EC)DHE, menghapus cipher lemah (key transport RSA, CBC, RC4), dan mengenkripsi sebagian besar pesan jabat tangan \citep{stallings2017}.
+Tabel~\ref{tab:jaminan-tls} merangkum jaminan yang diperoleh pada setiap
+tahap, sekaligus menandai apa yang \emph{belum} dijamin pada tahap itu. Kolom
+terakhir itulah yang biasanya menjadi tempat tumbuhnya serangan.
 
+\begin{table}[htbp]
+\centering
+\caption{Jaminan keamanan pada tiap tahap jabat tangan TLS}
+\label{tab:jaminan-tls}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Tahap} & \textbf{Sudah dijamin} & \textbf{Belum dijamin} \\
+\midrule
+\textit{ClientHello} & Belum ada & Kerahasiaan, keaslian, integritas \\
+\textit{ServerHello} + sertifikat & Kunci publik server diterima & Keaslian pengirim, sebab sertifikat bersifat publik \\
+\textit{CertificateVerify} & Server memegang kunci privat & Kerahasiaan data (belum ada data) \\
+\textit{Finished} & Transkrip tidak diubah, tidak ada penurunan versi & Belum apa-apa lagi \\
+Data aplikasi & Kerahasiaan, integritas, urutan & --- \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-
-
-
+\textbf{TLS 1.3} memangkas jabat tangan menjadi satu putaran (1-RTT, bahkan
+0-RTT dengan \textit{session resumption}), mewajibkan \textit{forward
+secrecy} melalui (EC)DHE, menghapus cipher lemah (key transport RSA, CBC,
+RC4), dan mengenkripsi sebagian besar pesan jabat tangan \citep{rfc8446}.
+Mode 0-RTT memungkinkan klien mengirim data pada pesan pertamanya dengan
+memakai kunci yang tersimpan dari sesi sebelumnya, sehingga menghilangkan
+penundaan putaran pertama sama sekali. Kemudahan itu ada harganya: data 0-RTT
+tidak tahan terhadap \emph{replay}, sebab ia tidak terikat pada nilai acak
+baru dari server. Karena itu mode 0-RTT sebaiknya hanya dipakai untuk
+permintaan yang aman diulang, seperti memuat berkas statis yang tidak
+mengubah keadaan di server.

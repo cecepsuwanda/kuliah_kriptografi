@@ -1,19 +1,176 @@
 \section{Otentikasi dan Non-Repudiation}
-Dalam keamanan informasi, mengetahui \textit{siapa} yang mengirimkan pesan sama pentingnya dengan menjaga kerahasiaan isi pesan tersebut.
+Dalam keamanan informasi, mengetahui \textit{siapa} yang mengirimkan pesan sama
+pentingnya dengan menjaga kerahasiaan isi pesan tersebut. Bab-bab sebelumnya
+membahas kerahasiaan secara panjang lebar: AES, RSA, ElGamal, dan ECC semuanya
+berusaha mencegah pihak yang tidak berhak membaca isi pesan. Bab ini menutup
+sisi lain yang sama pentingnya, yaitu \emph{keaslian}. Sebuah pesan yang
+isinya masih utuh dan tidak terbaca penyerang belum tentu berasal dari orang
+yang kita duga; tanpa mekanisme keaslian, penyerang dapat menyisipkan pesan
+palsu, memutar ulang pesan lama, atau menyamar sebagai pihak lain. Kriptografi
+kunci-publik, yang pada bab-bab sebelumnya dipakai untuk menyembunyikan pesan,
+di sini dipakai untuk tujuan yang berbeda sama sekali: membuktikan identitas
+dan mengikat identitas itu pada isi pesan \citep{menezes1996}.
 
 \subsection{Otentikasi}
-Otentikasi adalah proses pembuktian identitas seorang pengguna atau sistem. Terdapat tiga faktor utama otentikasi:
+Otentikasi adalah proses pembuktian identitas seorang pengguna atau sistem.
+Secara lebih tepat, otentikasi menjawab pertanyaan ``apakah pihak yang
+berkomunikasi dengan saya sekarang benar-benar pihak yang ia klaim?'', dan
+jawabannya harus diberikan tanpa mengungkap rahasia yang dipakai untuk
+membuktikan klaim itu. Dalam praktiknya, bukti identitas diambil dari salah
+satu dari tiga faktor utama berikut.
+
 \begin{enumerate}
-    \item \textbf{Something you know}: Kata sandi (\textit{password}), PIN.
-    \item \textbf{Something you have}: Token fisik, kartu pintar (\textit{smart card}), sertifikat digital.
-    \item \textbf{Something you are}: Biometrik (sidik jari, scan retina).
+    \item \textbf{Sesuatu yang diketahui} (\textit{something you know}):
+          kata sandi, PIN, frasa sandi, atau jawaban atas pertanyaan rahasia.
+    \item \textbf{Sesuatu yang dimiliki} (\textit{something you have}): token
+          perangkat keras, kartu pintar (\textit{smart card}), ponsel yang
+          menerima kode sekali pakai, atau berkas kunci privat.
+    \item \textbf{Sesuatu yang melekat pada diri} (\textit{something you are}):
+          biometrik seperti sidik jari, pola iris, geometri wajah, atau suara.
 \end{enumerate}
 
-\subsection{Non-Repudiation (Nir-Sangkalan)}
-\textit{Non-repudiation} adalah jaminan bahwa pengirim pesan tidak dapat menyangkal telah mengirimkan pesan tersebut, dan penerima tidak dapat menyangkal telah menerima pesan tersebut. Hal ini dicapai melalui penggunaan tanda tangan digital.
+Sebuah sistem disebut memakai \emph{otentikasi dua faktor} bila ia menuntut
+bukti dari dua faktor yang \emph{berbeda kategori}. Meminta kata sandi lalu
+meminta jawaban atas pertanyaan rahasia tetap satu faktor, sebab keduanya
+adalah ``sesuatu yang diketahui''; penyerang yang berhasil mencuri satu
+rahasia biasanya juga memperoleh yang lain. Sebaliknya, kata sandi ditambah
+kode sekali pakai dari ponsel menggabungkan ``yang diketahui'' dengan ``yang
+dimiliki'', dan ponsel tersebut berada di tangan pengguna yang sah, bukan di
+tangan penyerang. Faktor fisiologis lebih sukar dipalsukan, tetapi juga tidak
+dapat diganti bila bocor: kata sandi yang bocor cukup diganti, sedangkan sidik
+jari tidak.
+
+Perlu dibedakan pula antara \emph{identifikasi} dan \emph{otentikasi}.
+Identifikasi adalah pengakuan identitas (``saya Budi''), sedangkan otentikasi
+adalah pembuktiannya (``dan inilah buktinya''). Nama pengguna di layar
+masuk hanyalah klaim identifikasi; yang menentukan keamanan adalah bukti yang
+menyertainya. Sistem yang memperlakukan nama pengguna sebagai bukti identitas
+--- misalnya yang memercayai bidang ``pengirim'' pada sebuah paket jaringan
+--- sebenarnya tidak berotentikasi sama sekali.
+
+Satu lagi yang kerap tertukar adalah urutan tiga hal berikut:
+\emph{otentikasi} membuktikan siapa yang sedang berbicara,
+\emph{otorisasi} menentukan apa yang boleh ia lakukan, dan
+\emph{akuntabilitas} memastikan tindakannya dapat ditelusuri di kemudian hari.
+Ketiganya bertumpuk: otorisasi yang benar tanpa otentikasi yang benar tidak
+berarti apa pun, dan akuntabilitas tanpa keduanya hanya menghasilkan catatan
+yang tidak dapat dipercaya.
+
+\subsection{Otentikasi Entitas dengan Tantangan dan Respons}
+\label{subsec:tantangan-respons}
+Otentikasi entitas membuktikan identitas pihak yang berkomunikasi pada saat
+sesi dibangun, misalnya pada saat \textit{login} atau saat jabat tangan TLS.
+Mekanisme klasiknya bekerja dalam tiga langkah dan disebut
+\emph{tantangan--respons} (\textit{challenge--response}).
+
+\begin{enumerate}
+    \item Pihak yang memverifikasi (B) membangkitkan bilangan acak sekali
+          pakai --- disebut \textit{nonce}, dari \textit{number used once}
+          --- dan mengirimkannya sebagai tantangan kepada pihak yang
+          dibuktikan (A).
+    \item A mengolah nonce itu dengan rahasia yang hanya dimilikinya, lalu
+          mengirimkan hasilnya sebagai respons.
+    \item B mengulang pengolahan yang sama dengan rahasia yang ia pegang dan
+          membandingkan hasilnya. Bila cocok, A terbukti.
+\end{enumerate}
+
+Nonce adalah inti dari mekanisme ini. Bayangkan rahasia bersama antara A dan B
+adalah satu byte $K = \code{0x5A}$ dan fungsi responsnya adalah XOR. Bila B
+mengirim tantangan $N = \code{0x3C}$, maka A harus menjawab dengan
+\[ R = N \oplus K = \code{0x3C} \oplus \code{0x5A} = \code{0x66} . \]
+Penyerang yang menyadap pertukaran itu melihat $N$ dan $R$, tetapi tidak
+melihat $K$. Bila ia mencoba memakai ulang $R = \code{0x66}$ pada sesi
+berikutnya, B kali ini mengirim tantangan baru $N = \code{0x91}$ dan
+mengharapkan $R = \code{0x91} \oplus \code{0x5A} = \code{0xCB}$. Jawaban lama
+tidak cocok, sehingga serangan \emph{replay} gagal. Inilah sebabnya tantangan
+harus selalu berubah: bila B selalu memakai tantangan yang sama, menyalin
+respons lama sudah cukup untuk menyamar.
+
+Sebuah varian yang lebih tua memakai cap waktu (\textit{timestamp}) sebagai
+pengganti nonce: pesan dianggap sah bila waktunya masih dalam jendela
+toleransi. Cara itu lebih murah --- tidak perlu pertukaran bolak-balik ---
+tetapi menuntut jam yang tersinkronisasi pada kedua pihak dan tetap rentan
+bila penyerang dapat mengirim respons dalam jendela toleransi tersebut.
+Nonce acak tidak menuntut sinkronisasi jam sama sekali, dan karena itu menjadi
+pilihan standar pada protokol modern \citep{stallings2017}.
+
+Bila kedua pihak saling membuktikan identitasnya, bukan hanya satu pihak
+kepada pihak lain, mekanisme ini disebut \emph{otentikasi timbal balik}
+(\textit{mutual authentication}). Pada TLS, ini terjadi ketika server juga
+meminta sertifikat klien: peramban biasa tidak mengirimkannya, sehingga
+otentikasi hanya satu arah, tetapi pada aplikasi perbankan dan administrasi
+sistem kedua sisi sering kali saling menyertakan sertifikat.
 
 \subsection{Otentikasi Entitas vs Otentikasi Pesan}
-\textbf{Otentikasi entitas} membuktikan identitas pihak yang berkomunikasi pada saat sesi dibangun (misalnya \textit{login}), umumnya dengan tantangan \textit{nonce} agar tahan \textit{replay}. \textbf{Otentikasi pesan} membuktikan bahwa tiap pesan yang diterima benar-benar berasal dari entitas tersebut dan belum diubah; ini tugas MAC atau tanda tangan digital \citep{menezes1996}. Keduanya perlu: sesi yang sudah terotentikasi tetap dapat menerima pesan palsu bila tidak ada otentikasi per pesan.
+\label{subsec:entitas-vs-pesan}
+Walaupun namanya mirip, kedua hal ini menjawab pertanyaan yang berbeda dan
+mengatasi ancaman yang berbeda pula.
 
-\textit{Non-repudiation} menuntut bukti yang dapat diverifikasi pihak ketiga, sehingga hanya dapat dicapai dengan tanda tangan digital (dan infrastruktur kunci publik), bukan dengan MAC yang kuncinya simetris \citep{stallings2017}.
+\textbf{Otentikasi entitas} membuktikan identitas pihak yang berkomunikasi
+pada saat sesi dibangun, umumnya dengan tantangan \textit{nonce} agar tahan
+\textit{replay}. Ia bersifat ``satu kali'': begitu identitas terbukti, sesi
+berjalan. \textbf{Otentikasi pesan} membuktikan bahwa tiap pesan yang diterima
+benar-benar berasal dari entitas tersebut dan belum diubah; ini tugas MAC atau
+tanda tangan digital \citep{menezes1996}. Keduanya sama-sama perlu: sesi yang
+sudah terotentikasi tetap dapat menerima pesan palsu bila tidak ada otentikasi
+per pesan. Tanpa otentikasi pesan, penyerang yang berhasil menembus salah satu
+simpul jaringan dapat menyisipkan perintah ke dalam aliran data yang sudah
+terotentikasi. Sebaliknya, tanpa otentikasi entitas, otentikasi pesan saja
+tidak menjawab pertanyaan siapa lawan bicara yang sesungguhnya --- kecuali
+bila setiap pesan bertanda tangan, yang biayanya jauh lebih besar.
 
+\begin{table}[htbp]
+\centering
+\caption{Perbandingan otentikasi entitas dan otentikasi pesan}
+\label{tab:entitas-vs-pesan}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Aspek} & \textbf{Otentikasi entitas} & \textbf{Otentikasi pesan} \\
+\midrule
+Yang dibuktikan & Identitas pihak lawan bicara & Keaslian dan keutuhan satu pesan \\
+Kapan dijalankan & Sekali, saat sesi dibangun & Tiap pesan yang dikirim \\
+Alat utama & Tantangan--respons, sertifikat, kata sandi & MAC, tanda tangan digital \\
+Tahan \textit{replay}? & Ya, berkat \textit{nonce} & Ya, berkat nomor urut atau cap waktu \\
+Contoh nyata & \textit{Login} SSH, jabat tangan TLS & Tag HMAC pada paket, berkas bertanda tangan \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Non-Repudiation (Nir-Sangkalan)}
+\textit{Non-repudiation} adalah jaminan bahwa pengirim pesan tidak dapat
+menyangkal telah mengirimkan pesan tersebut, dan penerima tidak dapat
+menyangkal telah menerima pesan tersebut. Hal ini dicapai melalui penggunaan
+tanda tangan digital.
+
+Perhatikan bahwa jaminan ini lebih kuat daripada sekadar ``pesan itu asli''.
+Bukti non-repudiation harus dapat diperiksa oleh \emph{pihak ketiga} yang
+tidak memiliki rahasia apa pun --- misalnya hakim atau auditor --- dan pihak
+ketiga itu harus memperoleh kesimpulan yang sama. Di sinilah MAC gagal. MAC
+dibangkitkan dari kunci simetris yang dipegang \emph{kedua} pihak; karena
+keduanya dapat menghitung tag yang sama, penerima tidak dapat menunjukkan
+kepada hakim bahwa pesan itu datang dari pengirim dan bukan ia karang sendiri.
+Kedua pihak sama-sama mampu memalsukannya, sehingga secara prinsip tidak ada
+cara memutuskan siapa yang jujur. Tanda tangan digital, sebaliknya, hanya
+dapat dibuat dengan kunci privat satu pihak. Verifikasinya memakai kunci
+publik, dan siapa pun dapat mengulang verifikasi itu tanpa mengetahui kunci
+privat. Inilah alasan mendasar mengapa non-repudiation tidak dapat dicapai
+dengan kriptografi simetris dan menuntut infrastruktur kunci publik
+\citep{stallings2017}.
+
+Satu catatan penting yang sering terlewat: non-repudiation menuntut lebih dari
+sekadar tanda tangan yang sah secara matematis. Ia juga menuntut agar kunci
+privat benar-benar telah dijaga. Bila pemilik kunci membiarkan kunci
+privatnya diakses orang lain, ia dapat dengan jujur menyangkal tanda tangan
+yang dibuat orang itu, dan mekanisme hukumnya menjadi kabur. Karena itu
+penyimpanan kunci privat --- pada kartu pintar, modul keamanan perangkat
+keras, atau setidaknya berkas terenkripsi --- adalah bagian tak terpisahkan
+dari jaminan non-repudiation di dunia nyata.
+
+Terakhir, perlu ditegaskan bahwa tanda tangan digital tidak memberikan
+kerahasiaan. Tanda tangan mengikat identitas pada pesan, tetapi pesannya tetap
+terkirim dalam bentuk terbuka dan terbaca penyerang. Pesan yang perlu
+dirahasiakan harus ditandatangani \emph{dan} dienkripsi, dua operasi terpisah
+yang kuncinya berbeda. Menggabungkan keduanya dengan rapi sehingga sekaligus
+hemat biaya menjadi bidang kajian tersendiri yang disebut
+\emph{signcryption}; pembahasan lengkapnya berada di luar cakupan buku ini,
+tetapi perlu disadari bahwa keduanya adalah layanan yang berbeda.

@@ -1,7 +1,23 @@
 
+
 \begin{obereflection}
 \textbf{Latihan 16.1}
 1. Mengapa tanda tangan digital menggunakan hash dari pesan, bukan mengenkripsi seluruh pesan dengan kunci privat?
 2. Apa perbedaan antara otentikasi menggunakan password dibandingkan dengan otentikasi menggunakan tanda tangan digital?
 3. Bagaimana PKI mencegah serangan \textit{Man-in-the-Middle} dalam distribusi kunci publik?
+
+\textbf{Latihan 16.2}
+4. Jelaskan mengapa MAC tidak dapat dipakai untuk mencapai nirpenyangkalan, padahal MAC juga membuktikan keaslian pesan. Kaitkan jawaban Anda dengan pertanyaan ``siapa yang memegang kunci''.
+5. Sebuah protokol membuktikan identitas pengguna dengan mengirimkan nilai hash dari kata sandinya. Penyerang yang menyadap pertukaran itu tidak mengetahui kata sandinya, tetapi ia tetap dapat menyamar. Serangan apa yang ia lakukan, dan bagaimana \textit{nonce} menutupnya?
+6. Pada contoh DSA bab ini, penandatangan memakai $k = 3$ untuk dua pesan. Hitunglah sendiri $s_2$ untuk $h_2 = 7$, lalu ulangi pemulihan $k$ dan $x$. Periksa bahwa hasilnya sama dengan yang ada di bab.
+
+\textbf{Latihan 16.3}
+7. Dengan parameter mainan $n = 3233$ dan $d = 2753$ pada bab ini, tanda tangan untuk $h_1 = 65$ adalah $588$ dan untuk $h_2 = 66$ adalah $2215$. Tunjukkan bahwa $588 \cdot 2215 \bmod 3233$ adalah tanda tangan yang sah atas hash $1057$, dan jelaskan mengapa serangan ini tidak akan berhasil bila skema padding PSS dipakai.
+8. Kunci publik Ed25519 hanya 32 byte, sedangkan kunci publik ECDSA P-256 adalah 65 byte, padahal keduanya sama-sama berada di atas kurva 256 bit. Jelaskan sumber perbedaan itu.
+9. Mengapa penyerang tidak dapat menyamar hanya dengan menyalin sertifikat sebuah situs web? Sebutkan pesan dalam jabat tangan TLS yang menutup celah tersebut.
+
+\textbf{Latihan 16.4}
+10. Pada Tabel~\ref{tab:jaminan-tls}, tahap \textit{ServerHello} belum memberikan jaminan keaslian pengirim. Mengapa? Dan apa yang membuat tahap berikutnya berbeda?
+11. Rancang sebuah skenario di mana rantai sertifikat yang seluruhnya sah tetap menghasilkan koneksi yang tidak aman. Petunjuk: pikirkan tentang ekstensi \textit{Key Usage} dan tentang panjang kunci yang sudah usang.
+12. Sebuah organisasi hendak menerbitkan sertifikat untuk perangkat \textit{Internet of Things} berdaya rendah yang harus menandatangani pesan setiap detik. Algoritma mana yang Anda pilih di antara empat pada Tabel~\ref{tab:perbandingan-tanda-tangan}, dan mengapa? Sebutkan juga kerugian dari pilihan Anda.
 \end{obereflection}

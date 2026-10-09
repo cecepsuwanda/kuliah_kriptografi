@@ -4,6 +4,22 @@
 1. Jelaskan kaitan antara hash, kunci privat, dan kunci publik dalam proses tanda tangan digital.
 2. Apa peran sertifikat X.509 dalam ekosistem Public Key Infrastructure?
 3. Mengapa protokol TLS menggunakan kombinasi kriptografi asimetris (di awal) dan simetris (selama sesi)?
+4. Sebutkan tiga faktor otentikasi dan berikan satu contoh untuk masing-masing. Mengapa dua pertanyaan dari kategori yang sama tidak menjadikan sebuah sistem ``dua faktor''?
+5. Apa perbedaan pokok antara otentikasi entitas dan otentikasi pesan? Berikan satu ancaman yang dapat ditangkal oleh yang satu tetapi tidak oleh yang lain.
+6. Tuliskan rumus penandatanganan dan verifikasi DSA, lalu jelaskan mengapa verifikasi $(g^{u_1} y^{u_2} \bmod p) \bmod q = r$ selalu berhasil untuk tanda tangan yang jujur.
+7. Mengapa tanda tangan RSA tanpa padding rentan terhadap pemalsuan eksistensial? Tunjukkan dengan angka dari bab ini.
+8. Apa yang dimaksud dengan \textit{forward secrecy}, dan mengapa \textit{key transport} RSA tidak memberikannya sedangkan (EC)DHE memberikannya?
+9. Jelaskan mengapa \textit{CertificateVerify} diperlukan dalam TLS 1.3, padahal server sudah mengirimkan sertifikatnya yang sah.
+10. Bandingkan CRL, OCSP, dan OCSP stapling dari segi beban jaringan, privasi pengguna, dan kemudahan penerapan.
+
+\textbf{Studi Kasus}
+Sebuah perusahaan menerbitkan sertifikat TLS bagi seluruh server internalnya
+melalui sebuah CA internal. Suatu hari diketahui bahwa kunci privat CA
+internal tersebut telah bocor tiga bulan sebelumnya, tetapi perusahaan tidak
+memiliki mekanisme pencabutan yang berjalan. Uraikan langkah-langkah yang
+seharusnya segera diambil, serta jelaskan akibat yang mungkin sudah terjadi
+selama tiga bulan tersebut. Kaitkan jawaban Anda dengan konsep rantai
+kepercayaan dan \textit{name constraints}.
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -12,11 +28,25 @@ Indikator Kompetensi & Tercapai \\
 \hline
 Saya dapat membedakan otentikasi dan non-repudiation & [ ] \\
 \hline
+Saya dapat menjelaskan tiga faktor otentikasi dan membedakan otentikasi entitas dari otentikasi pesan & [ ] \\
+\hline
 Saya dapat menguraikan alur pembuatan dan verifikasi tanda tangan digital & [ ] \\
 \hline
-Saya dapat menjelaskan fungsi CA dan sertifikat X.509 & [ ] \\
+Saya dapat menuliskan rumus penandatanganan dan verifikasi RSA serta DSA/ECDSA & [ ] \\
+\hline
+Saya dapat menjelaskan mengapa pesan perlu di-hash lebih dahulu & [ ] \\
+\hline
+Saya dapat menghitung pemulihan kunci privat dari pemakaian ulang nilai acak $k$ & [ ] \\
+\hline
+Saya dapat membandingkan RSA, DSA, ECDSA, dan Ed25519 dari ukuran kunci dan tanda tangannya & [ ] \\
+\hline
+Saya dapat menjelaskan fungsi CA dan sertifikat X.509 beserta bidang-bidangnya & [ ] \\
+\hline
+Saya dapat menelusuri rantai kepercayaan sertifikat dan menyebut mekanisme pencabutannya & [ ] \\
 \hline
 Saya dapat menganalisis mekanisme handshake SSL/TLS & [ ] \\
+\hline
+Saya dapat menjelaskan perbedaan jabat tangan TLS 1.2 dan TLS 1.3 & [ ] \\
 \hline
 Saya dapat mengidentifikasi komponen PKI dalam aplikasi HTTPS & [ ] \\
 \hline

@@ -1,8 +1,65 @@
 \section{Public Key Infrastructure (PKI)}
-Masalah utama kriptografi asimetris adalah: \textit{Bagaimana kita tahu bahwa kunci publik yang kita gunakan benar-benar milik orang yang bersangkutan?}
+Masalah utama kriptografi asimetris adalah: \textit{Bagaimana kita tahu bahwa
+kunci publik yang kita gunakan benar-benar milik orang yang bersangkutan?}
+Pertanyaan itu terdengar sederhana, tetapi jawabannya menentukan apakah
+seluruh bab ini berguna atau tidak. Pada Bab~10--14 telah ditunjukkan bahwa
+kunci publik memungkinkan enkripsi dan tanda tangan tanpa pertemuan rahasia
+terlebih dahulu. Namun semua itu bertumpu pada satu anggapan yang belum
+pernah dibuktikan: bahwa kunci publik yang dipegang memang benar-benar milik
+pihak yang kita maksud \citep{menezes1996}.
+
+\subsection{Masalah Distribusi Kunci Publik}
+Bayangkan seorang pengguna hendak mengakses layanan perbankan. Ia memperoleh
+kunci publik bank tersebut dari suatu tempat --- halaman web, surel, atau
+aplikasi. Bagaimana ia tahu kunci itu bukan kunci yang dipasang penyerang?
+Bila ia salah, seluruh percakapan berikutnya berjalan lancar dan tampak aman:
+pesannya benar-benar terenkripsi, tanda tangannya benar-benar sah, tetapi
+semuanya terenkripsi untuk penyerang dan ditandatangani oleh penyerang. Inilah
+serangan \emph{orang di tengah} (\textit{man-in-the-middle}) dalam bentuknya
+yang paling bersih. Perhatikan bahwa kriptografi kunci-publik sendirinya
+tidak dapat menutup celah ini: menandatangani kunci publik dengan kunci
+publik lain hanya memindahkan pertanyaan satu langkah ke belakang, dan
+kembali tak berujung.
+
+Jalan keluarnya adalah menetapkan sejumlah kecil kunci publik sebagai titik
+percaya awal (\textit{trust anchor}), lalu membiarkan kunci-kunci itu
+menandatangani kunci yang lain, yang pada gilirannya menandatangani kunci
+berikutnya. Seluruh bangunan itulah yang disebut infrastruktur kunci publik
+(\textit{Public Key Infrastructure}, PKI): bukan sekadar format sertifikat,
+melainkan gabungan kebijakan, prosedur, perangkat lunak, dan lembaga yang
+membuat kunci publik dapat dipercaya.
 
 \subsection{Otoritas Sertifikat (Certificate Authority - CA)}
-CA adalah pihak ketiga terpercaya yang menerbitkan sertifikat digital. Sertifikat ini mengikat identitas seseorang (misal: nama perusahaan) dengan kunci publiknya.
+CA adalah pihak ketiga terpercaya yang menerbitkan sertifikat digital.
+Sertifikat ini mengikat identitas seseorang (misal: nama perusahaan) dengan
+kunci publiknya. Pengikatan itu dilakukan dengan cara yang telah dibahas di
+bagian sebelumnya: CA menandatangani data sertifikat memakai kunci
+privatnya sendiri, dan setiap pihak yang memegang kunci publik CA dapat
+memeriksa tanda tangan itu.
+
+Kepercayaan terhadap CA tidak dibangun oleh matematika, melainkan oleh
+kesepakatan dan tata kelola. Peramban dan sistem operasi membawa daftar
+\emph{root store} berisi kunci publik CA yang dianggap terpercaya. Untuk
+dapat masuk ke dalam daftar itu, sebuah CA harus menjalani audit, memenuhi
+syarat operasional, dan bersedia memikul tanggung jawab hukum bila
+sertifikatnya salah terbit. Karena itu PKI adalah sistem sosial-teknis:
+kekuatannya bergantung bukan hanya pada panjang kunci, tetapi juga pada
+ketelitian prosedur penerbitan.
+
+Struktur CA umumnya bertingkat. Root CA menyimpan kunci privatnya di tempat
+yang sangat terlindungi dan jarang menandatangani apa pun; kebanyakan
+sertifikat sehari-hari diterbitkan oleh Intermediate CA yang kuncinya lebih
+mudah diganti bila terjadi masalah. Pemisahan ini praktis: bila kunci
+Intermediate CA bocor, ia dapat dicabut dan diganti tanpa harus mengubah
+daftar root store di ratusan juta peramban.
+
+Babak kelam PKI juga perlu diketahui agar tidak menaruh kepercayaan yang
+berlebihan. Beberapa kali terjadi kesalahan penerbitan sertifikat untuk
+domain yang bukan milik pemohon --- umumnya karena pemeriksaan kepemilikan
+domain yang longgar. Sejak 2018, mekanisme \emph{Certificate Transparency}
+mengharuskan setiap sertifikat yang diterbitkan dicatat dalam buku besar
+publik yang hanya dapat ditambah, sehingga kesalahan semacam itu dapat
+dideteksi siapa pun, bukan hanya oleh pihak yang berkepentingan.
 
 \subsection{Sertifikat X.509}
 X.509 adalah standar format sertifikat digital yang mencakup:
@@ -16,13 +73,168 @@ X.509 adalah standar format sertifikat digital yang mencakup:
     \item Tanda tangan digital dari CA.
 \end{itemize}
 
+Butir-butir di atas adalah kerangka yang sudah ada sejak X.509 versi 1.
+Tabel~\ref{tab:x509-v3} merinci seluruh bidang sertifikat X.509 versi 3
+beserta fungsinya, termasuk blok ekstensi yang menjadi pembeda utama versi
+modern dari versi awalnya \citep{rfc5280}.
+
+\begin{table}[htbp]
+\centering
+\caption{Bidang-bidang sertifikat X.509 versi 3 menurut RFC 5280}
+\label{tab:x509-v3}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Bidang} & \textbf{Fungsi} \\
+\midrule
+\texttt{version} & Nilai 3 untuk sertifikat modern; versi 1 tidak memiliki blok ekstensi \\
+\texttt{serialNumber} & Nomor unik dari penerbit, dipakai saat mencabut sertifikat \\
+\texttt{signatureAlgorithm} & Algoritma tanda tangan CA, misalnya \texttt{sha256WithRSAEncryption} \\
+\texttt{issuer} & Nama terbedakan (\textit{distinguished name}) penerbit \\
+\texttt{validity} & Batas waktu \texttt{notBefore} dan \texttt{notAfter} \\
+\texttt{subject} & Nama terbedakan pemilik sertifikat \\
+\texttt{subjectPublicKeyInfo} & Algoritma kunci publik dan nilai kuncinya \\
+\texttt{extensions} & Blok tambahan versi 3: batasan dasar, kegunaan kunci, nama alternatif subjek, titik distribusi CRL, dan lain-lain \\
+\texttt{signatureValue} & Tanda tangan CA atas seluruh bidang di atasnya \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Karena seluruh data itu dikodekan dengan aturan ASN.1 DER, sertifikat adalah
+berkas biner yang panjangnya dapat dihitung. Untuk memperlihatkan besarnya
+bagian-bagiannya, sebuah sertifikat uji dapat dibuat dan diperiksa sendiri
+dengan perintah berikut.
+
+\begin{center}
+\begin{minipage}{0.94\linewidth}
+\begin{verbatim}
+openssl req -x509 -newkey rsa:2048 -keyout k.pem -out c.pem \
+  -days 3650 -nodes -subj "//C=ID\CN=contoh.kriptografi.id"
+openssl x509 -in c.pem -outform DER -out c.der
+wc -c < c.der
+openssl x509 -in c.pem -noout -serial -subject -dates
+openssl x509 -in c.pem -noout -text
+\end{verbatim}
+\end{minipage}
+\end{center}
+
+Sertifikat yang dihasilkan dari perintah itu berukuran $831$ byte. Isinya
+dapat diuraikan sebagai berikut. Kunci publik RSA-2048 memakan $294$ byte
+karena dibungkus pengenal algoritma, tanda tangannya tepat $256$ byte ---
+sepanjang satu modulus RSA-2048 --- dan sisanya, yaitu $281$ byte atau
+sekitar sepertiga berkas, adalah kerangka administrasi: pengenal versi, nomor
+seri, nama penerbit dan pemilik, masa berlaku, serta blok ekstensi. Angka itu
+memberi gambaran yang jujur tentang PKI: sebagian besar berkas sertifikat
+bukanlah bahan kriptografis, dan justru bagian administrasilah yang paling
+sering menjadi sumber masalah.
+
+Perlu dicatat bahwa perintah di atas menghasilkan sertifikat
+\emph{self-signed}, yaitu sertifikat yang diterbitkan oleh kuncinya sendiri;
+peramban tidak akan memercayainya, sebab ia tidak berujung pada sebuah
+\textit{trust anchor}. Sertifikat semacam itu hanya berguna untuk pengujian
+dan untuk melihat isi strukturnya. Selain itu, perintah tanpa opsi tambahan
+menghasilkan sertifikat tanpa ekstensi \emph{Key Usage} dan \emph{Subject
+Alternative Name}; menambahkan opsi \code{-addext} akan memperbesar berkas
+sekaligus membuatnya lebih menyerupai sertifikat sungguhan.
+
 \input{figures/rantai-sertifikat}
 
 \subsection{Isi dan Tanda Tangan Sertifikat X.509}
-Selain butir-butir di atas, sertifikat X.509 versi 3 memuat \textit{issuer unique ID}, \textit{subject unique ID}, dan blok \textbf{ekstensi} (misalnya \textit{Basic Constraints}, \textit{Key Usage}, \textit{Subject Alternative Name}, dan \textit{CRL Distribution Point}) \citep{stallings2017}. Seluruh data sertifikat ditandatangani CA:
+Selain butir-butir di atas, sertifikat X.509 versi 3 memuat \textit{issuer
+unique ID}, \textit{subject unique ID}, dan blok \textbf{ekstensi} (misalnya
+\textit{Basic Constraints}, \textit{Key Usage}, \textit{Subject Alternative
+Name}, dan \textit{CRL Distribution Point}) \citep{stallings2017}. Seluruh
+data sertifikat ditandatangani CA:
 \[ \mathrm{Sig} = \mathrm{Sign}_{K^{\text{CA}}_{\text{priv}}}\bigl(H(\text{data sertifikat})\bigr), \]
-sehingga perubahan satu bit pun menggugurkan verifikasi. Nomor seri dan masa berlaku dipakai untuk mencabut atau membatasi keabsahan sertifikat.
+sehingga perubahan satu bit pun menggugurkan verifikasi. Nomor seri dan masa
+berlaku dipakai untuk mencabut atau membatasi keabsahan sertifikat.
+
+Blok ekstensi adalah bagian yang paling banyak berubah sejak versi 1 dan
+paling sering menjadi sumber kesalahpahaman. Beberapa ekstensi yang paling
+penting adalah:
+
+\begin{itemize}
+    \item \textbf{Basic Constraints} menandai apakah sertifikat boleh
+          menandatangani sertifikat lain. Tanpa penanda ini, sertifikat
+          biasa dapat disalahgunakan sebagai CA.
+    \item \textbf{Key Usage} membatasi penggunaan kunci, misalnya hanya untuk
+          tanda tangan digital atau hanya untuk pertukaran kunci. Ekstensi
+          ini lazim ditandai \emph{critical}, artinya verifikator yang tidak
+          memahaminya wajib menolak sertifikat; sertifikat uji di atas tidak
+          memuatnya karena dibuat tanpa opsi tambahan.
+    \item \textbf{Subject Alternative Name} memuat daftar nama domain yang
+          sah. Peramban modern mengabaikan bidang \texttt{subject} untuk
+          keperluan pencocokan nama dan hanya membaca ekstensi ini ---
+          perubahan yang menutup celah penyalahgunaan nama perusahaan pada
+          sertifikat lama.
+    \item \textbf{CRL Distribution Point} menunjukkan tempat mengunduh daftar
+          pencabutan, yang dibahas pada subbagian berikutnya.
+\end{itemize}
+
+\subsection{Validasi Sertifikat dan Status Pencabutan}
+\label{subsec:validasi-sertifikat}
+Memeriksa satu sertifikat saja tidak cukup. Verifikator harus melakukan
+empat langkah berikut, dan kegagalan pada salah satunya cukup untuk menolak
+sertifikat \citep{rfc5280}.
+
+\begin{enumerate}
+    \item \textbf{Membangun jalur} (\textit{path building}) dari sertifikat
+          server sampai ke sebuah \textit{trust anchor} di root store.
+          Panjang jalur tidak ditetapkan, sehingga verifikator harus mencari
+          kombinasi penerbit yang masuk akal.
+    \item \textbf{Memeriksa tanda tangan pada setiap tautan} memakai kunci
+          publik penerbitnya, sekaligus memastikan nama penerbit pada satu
+          sertifikat cocok dengan nama pemilik pada sertifikat di atasnya.
+    \item \textbf{Memeriksa validitas waktu} pada setiap sertifikat dalam
+          jalur, bukan hanya pada sertifikat server.
+    \item \textbf{Memeriksa nama} yang diminta klien terhadap daftar pada
+          \textit{Subject Alternative Name}.
+\end{enumerate}
+
+Bila salah satu CA dalam jalur membatasi cakupan wewenangnya melalui
+ekstensi \emph{name constraints} --- misalnya sebuah CA kampus yang hanya
+boleh menerbitkan sertifikat untuk domain kampusnya --- maka batasan itu ikut
+diperiksa. Tanpa pemeriksaan semacam ini, CA kecil yang kuncinya bocor dapat
+dipakai untuk menerbitkan sertifikat bagi domain mana pun di dunia.
+
+Pencabutan adalah sisi PKI yang paling sulit dijalankan. Bila kunci privat
+sebuah sertifikat bocor sebelum masa berlakunya habis, sertifikat itu harus
+dapat dinonaktifkan lebih awal. Ada dua mekanisme klasik, dan keduanya
+memiliki kelemahan praktis:
+
+\begin{itemize}
+    \item \textbf{CRL} (\textit{Certificate Revocation List}) adalah daftar
+          bernomor seri sertifikat yang dicabut, ditandatangani CA dan
+          diterbitkan berkala. Masalahnya adalah ukurannya: untuk CA besar,
+          daftar itu dapat mencapai puluhan megabita, sehingga klien enggan
+          mengunduhnya dan sering memakai salinan lama.
+    \item \textbf{OCSP} (\textit{Online Certificate Status Protocol})
+          menjawab pertanyaan tentang satu sertifikat saja, sehingga jauh
+          lebih ringan. Namun protokol ini menuntut klien menghubungi server
+          CA setiap kali, yang memperlambat koneksi dan membocorkan riwayat
+          penjelajahan pengguna kepada CA.
+\end{itemize}
+
+\emph{OCSP stapling} menawarkan jalan tengahnya: server web sendiri yang
+menanyakan status sertifikatnya ke CA, lalu ``menjepitkan'' jawaban
+bertanda tangan itu ke dalam jabat tangan TLS. Klien tidak perlu menghubungi
+CA, dan CA tidak perlu tahu situs mana yang sedang dikunjungi klien. Karena
+jawabannya bertanda tangan, server tidak dapat memalsukannya. Mekanisme
+inilah yang menjadikan TLS 1.3 dapat berjalan dengan satu putaran saja.
 
 \subsection{Rantai Kepercayaan (\textit{Chain of Trust})}
-Verifikasi tidak berhenti pada satu sertifikat. Peramban mengikuti rantai: \textbf{Root CA} (sertifikat \textit{self-signed} yang tertanam di \textit{trust store}) $\to$ \textbf{Intermediate CA} (ditandatangani Root) $\to$ \textbf{sertifikat server} (ditandatangani Intermediate). Tiap tautan diverifikasi memakai kunci publik penerbitnya; rantai dinyatakan gagal bila salah satu sertifikat kedaluwarsa, dicabut (melalui CRL/OCSP), atau namanya tidak cocok dengan domain yang diakses \citep{menezes1996}.
+Verifikasi tidak berhenti pada satu sertifikat. Peramban mengikuti rantai:
+\textbf{Root CA} (sertifikat \textit{self-signed} yang tertanam di
+\textit{trust store}) $\to$ \textbf{Intermediate CA} (ditandatangani Root)
+$\to$ \textbf{sertifikat server} (ditandatangani Intermediate). Tiap tautan
+diverifikasi memakai kunci publik penerbitnya; rantai dinyatakan gagal bila
+salah satu sertifikat kedaluwarsa, dicabut (melalui CRL/OCSP), atau namanya
+tidak cocok dengan domain yang diakses \citep{menezes1996}.
 
+Sifat rantai ini menjelaskan mengapa kesalahan kecil berdampak besar. Karena
+setiap tautan memberikan kepercayaan yang sama besarnya kepada tautan di
+bawahnya, sebuah Root CA yang menerbitkan sertifikat Intermediate tanpa
+pemeriksaan ketat memberi kekuasaan kepada pihak lain untuk membuat sertifikat
+atas nama domain apa pun --- dan pada saat itu, seluruh kekuatan kriptografi
+RSA-3072 di dalamnya menjadi tidak berarti. Rantai kepercayaan bukanlah
+kepercayaan pada matematika, melainkan pada orang dan prosedur di ujung
+rantai itu.

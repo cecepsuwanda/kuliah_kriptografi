@@ -1,31 +1,231 @@
 \section{Contoh Terhitung}
 Setiap langkah berikut diverifikasi secara numerik dengan Python.
 
-\subsection{Tanda Tangan RSA dengan Bilangan Kecil}
+\begin{example}[Tanda Tangan RSA dengan Bilangan Kecil]
 Pilih $p = 61$, $q = 53$, sehingga
 \[ n = p\,q = 3233, \qquad \varphi(n) = (p-1)(q-1) = 60 \cdot 52 = 3120 . \]
-Ambil $e = 17$ (relatif prima terhadap $3120$), maka $d = e^{-1} \bmod \varphi(n) = 2753$ karena $17 \cdot 2753 = 46801 = 15 \cdot 3120 + 1$. Pasangan kunci: privat $d = 2753$, publik $(e,n) = (17, 3233)$.
+Ambil $e = 17$ (relatif prima terhadap $3120$), maka
+$d = e^{-1} \bmod \varphi(n) = 2753$ karena
+$17 \cdot 2753 = 46801 = 15 \cdot 3120 + 1$. Pasangan kunci: privat
+$d = 2753$, publik $(e,n) = (17, 3233)$.
 
-Misalkan fungsi hash mainan untuk pesan 1 karakter \code{'A'} memberi $h = H(m) = 65$ (kode ASCII-nya, dan $h < n$). Penandatanganan:
+Misalkan fungsi hash mainan untuk pesan 1 karakter \code{'A'} memberi
+$h = H(m) = 65$ (kode ASCII-nya, dan $h < n$). Penandatanganan:
 \[ s = h^{d} \bmod n = 65^{2753} \bmod 3233 = 588 . \]
 Verifikasi oleh penerima:
 \[ s^{e} \bmod n = 588^{17} \bmod 3233 = 65 = h \;\checkmark \]
-Tanda tangan valid. Sekarang uji pemalsuan: bila penyerang mengubah pesan sehingga hash mainannya menjadi $h' = 66$, penerima menghitung $h' = 66$ sedangkan dari tanda tangan lama diperoleh $s^{e} \bmod n = 65 \neq 66$, sehingga tanda tangan ditolak.
+Tanda tangan valid. Sekarang uji pemalsuan: bila penyerang mengubah pesan
+sehingga hash mainannya menjadi $h' = 66$, penerima menghitung $h' = 66$
+sedangkan dari tanda tangan lama diperoleh $s^{e} \bmod n = 65 \neq 66$,
+sehingga tanda tangan ditolak.
 
-\subsection{Tanda Tangan DSA dengan Parameter Kecil}
-Ambil prima $p = 23$ dan $q = 11$ (karena $11 \mid 22 = p-1$), generator $g = 2$; cek ordonya: $2^{11} \bmod 23 = 2048 \bmod 23 = 1$, jadi $g$ berorde $q$. Kunci privat $x = 5$ memberi kunci publik
+Perhatikan bahwa perhitungan di atas memakai pangkat yang sangat besar
+dengan modulus kecil. Dalam praktik, perpangkatan modular dihitung dengan
+algoritma \emph{square-and-multiply} yang bekerja dalam waktu sebanding
+dengan panjang eksponen, bukan besarnya nilai. Untuk eksponen 2753 yang
+panjangnya 12 bit, hanya diperlukan sekitar 12 langkah pengkuadratan dan 6
+langkah perkalian, bukan 2753 perkalian.
+\end{example}
+
+\begin{example}[Pemalsuan Eksistensial pada RSA Tanpa Padding]
+\label{ex:pemalsuan-rsa}
+Contoh ini memakai parameter yang sama dengan contoh sebelumnya:
+$n = 3233$, $d = 2753$, $e = 17$. Misalkan seorang penanda tangan telah
+mengeluarkan dua tanda tangan sah:
+\[ h_1 = 65 \longrightarrow s_1 = 588, \qquad
+   h_2 = 66 \longrightarrow s_2 = 2215 . \]
+Penyerang yang menyaksikan keduanya menghitung hasil kalinya modulo $n$:
+\[ s_1 \cdot s_2 \bmod n = 588 \cdot 2215 \bmod 3233 = 2754 . \]
+Apakah $2754$ merupakan tanda tangan yang sah? Menurut sifat
+multiplikatif, $s_1 s_2 \equiv (h_1 h_2)^d \pmod n$, dan
+\[ h_1 h_2 \bmod n = 65 \cdot 66 \bmod 3233 = 4290 - 3233 = 1057 . \]
+Benar saja,
+\[ 1057^{2753} \bmod 3233 = 2754 , \]
+jadi $2754$ adalah tanda tangan sah atas hash $1057$. Penyerang tidak pernah
+memegang kunci privat, tetapi ia berhasil membuat tanda tangan atas pesan
+yang belum pernah ditandatangani.
+
+Yang menjadikan serangan ini berbahaya adalah sifatnya yang \emph{eksistensial}:
+penyerang tidak dapat memilih pesan yang ingin dipalsukannya, sebab nilai
+$1057$ adalah hasil kali kedua hash dan bukan sesuatu yang ia kendalikan.
+Namun skema tanda tangan yang baik tetap harus menolaknya, karena kelak
+penyerang dapat mencari kombinasi pesan lain yang menghasilkan hash $1057$.
+Skema padding PKCS\#1 dan PSS merusak struktur multiplikatif ini, sehingga
+perkalian dua tanda tangan sah tidak lagi menghasilkan tanda tangan yang sah
+\citep{rfc8017}.
+\end{example}
+
+\begin{example}[Tanda Tangan DSA dengan Parameter Kecil]
+Ambil prima $p = 23$ dan $q = 11$ (karena $11 \mid 22 = p-1$), generator
+$g = 2$; cek ordonya: $2^{11} \bmod 23 = 2048 \bmod 23 = 1$, jadi $g$
+berorde $q$. Kunci privat $x = 5$ memberi kunci publik
 \[ y = g^{x} \bmod p = 2^{5} \bmod 23 = 32 \bmod 23 = 9 . \]
-Untuk hash mainan $h = 10$ dan bilangan acak sesi $k = 3$ (dengan $k^{-1} \bmod 11 = 4$):
+Untuk hash mainan $h = 10$ dan bilangan acak sesi $k = 3$ (dengan
+$k^{-1} \bmod 11 = 4$, sebab $3 \cdot 4 = 12 = 11 + 1$):
 \[ r = (g^{k} \bmod p) \bmod q = (2^{3} \bmod 23) \bmod 11 = 8 \bmod 11 = 8, \]
-\[ s = k^{-1}(h + x\,r) \bmod q = 4\,(10 + 5 \cdot 8) \bmod 11 = 4 \cdot 50 \bmod 11 = 200 \bmod 11 = 2 . \]
+\[ s = k^{-1}(h + x\,r) \bmod q = 4\,(10 + 5 \cdot 8) \bmod 11
+     = 4 \cdot 50 \bmod 11 = 200 \bmod 11 = 2 . \]
 Pasangan tanda tangan $(r, s) = (8, 2)$.
 
-Verifikasi: $w = s^{-1} \bmod 11 = 2^{-1} \bmod 11 = 6$,
-\[ u_1 = h\,w \bmod 11 = 10 \cdot 6 \bmod 11 = 5, \qquad u_2 = r\,w \bmod 11 = 8 \cdot 6 \bmod 11 = 4, \]
-\[ v = \bigl(g^{u_1} y^{u_2} \bmod p\bigr) \bmod q = \bigl(2^{5} \cdot 9^{4} \bmod 23\bigr) \bmod 11 = (9 \cdot 6 \bmod 23) \bmod 11 = 8 . \]
+Verifikasi: $w = s^{-1} \bmod 11 = 2^{-1} \bmod 11 = 6$ (sebab
+$2 \cdot 6 = 12 = 11 + 1$),
+\[ u_1 = h\,w \bmod 11 = 10 \cdot 6 \bmod 11 = 5, \qquad
+   u_2 = r\,w \bmod 11 = 8 \cdot 6 \bmod 11 = 4, \]
+\[ v = \bigl(g^{u_1} y^{u_2} \bmod p\bigr) \bmod q
+     = \bigl(2^{5} \cdot 9^{4} \bmod 23\bigr) \bmod 11
+     = (9 \cdot 6 \bmod 23) \bmod 11 = 8 . \]
 Karena $v = 8 = r$, tanda tangan \textbf{valid}.
 
-\subsection{Dampak Pemakaian Ulang \texorpdfstring{$k$}{k}}
-Jika dua pesan dengan hash berbeda $h_1, h_2$ ditandatangani memakai $k$ yang sama, maka $r$ keduanya sama dan penyerang dapat menyelesaikan
-\[ x = \frac{s_1 - s_2}{r} \cdot \frac{1}{h_1 - h_2} \pmod q, \]
-sehingga seluruh kunci privat bocor. Inilah sebabnya ECDSA/DSA menuntut $k$ acak yang unik per tanda tangan \citep{stallings2017}.
+Perhatikan bahwa nilai $u_1$ dan $u_2$ tidak pernah dipakai oleh penanda
+tangan; keduanya hanya muncul di sisi verifikator. Inilah salah satu
+perbedaan bentuk antara DSA dan RSA: pada RSA kedua pihak menjalankan operasi
+yang sama dengan eksponen berbeda, sedangkan pada DSA penanda tangan dan
+verifikator menjalankan operasi yang secara struktural berbeda.
+\end{example}
+
+\begin{example}[Pemulihan Kunci Privat DSA dari Dua Tanda Tangan yang Memakai Ulang Satu Nilai Acak]
+\label{ex:pemakaian-ulang-k}
+Contoh ini melanjutkan parameter pada contoh sebelumnya: $p = 23$, $q = 11$,
+$g = 2$, $x = 5$, $y = 9$, dengan $k^{-1} \bmod 11 = 4$. Sebuah kesalahan
+implementasi membuat penandatangan selalu memakai $k = 3$ yang sama.
+
+Tanda tangan pertama atas hash $h_1 = 10$ sudah dihitung:
+$(r_1, s_1) = (8, 2)$. Tanda tangan kedua atas hash $h_2 = 7$:
+\[ r_2 = (2^{3} \bmod 23) \bmod 11 = 8, \]
+\[ s_2 = 4\,(7 + 5 \cdot 8) \bmod 11 = 4 \cdot 47 \bmod 11
+       = 188 \bmod 11 = 1 . \]
+Penyerang melihat $(8, 2)$ dan $(8, 1)$. Kedua $r$ identik, dan itu sudah
+cukup. Pertama ia menghitung $k$:
+\[ (s_1 - s_2)^{-1} \bmod 11 = (2 - 1)^{-1} = 1^{-1} = 1, \]
+\[ k \equiv (h_1 - h_2)\,(s_1 - s_2)^{-1}
+   \equiv (10 - 7) \cdot 1 \equiv 3 \pmod{11} . \]
+Nilai $k = 3$ pulih, persis seperti yang dipakai. Kedua, ia menghitung kunci
+privat $x$; karena $8^{-1} \bmod 11 = 7$ (sebab
+$8 \cdot 7 = 56 = 5 \cdot 11 + 1$):
+\[ x \equiv (s_1\,k - h_1)\,r^{-1}
+   \equiv (2 \cdot 3 - 10) \cdot 7 \equiv (-4) \cdot 7
+   \equiv -28 \equiv 5 \pmod{11} . \]
+Kunci privat $x = 5$ terbuka, dan bersamanya seluruh sistem runtuh: penyerang
+kini dapat membuat tanda tangan yang sah atas pesan apa pun.
+
+Perhatikan bahwa serangan ini tidak memerlukan perhitungan berat sama sekali.
+Dua operasi inversi modular dan dua perkalian sudah cukup. Inilah sebabnya
+Subbagian~\ref{subsec:pemakaian-ulang-k} menyebut kesalahan ini sebagai
+kesalahan fatal alih-alih kelemahan biasa. Pada tahun 2010, kelemahan inilah
+yang dipakai untuk membongkar kunci penandatanganan konsol PlayStation 3
+\citep{fail0verflow2010}.
+\end{example}
+
+\begin{example}[Vektor Uji Ed25519 menurut RFC 8032]
+\label{ex:ed25519-rfc8032}
+Berbeda dari contoh-contoh sebelumnya yang memakai parameter mainan, contoh
+ini memakai vektor uji resmi RFC 8032 dengan kunci 256 bit sungguhan
+\citep{rfc8032}. Dokumen tersebut memuat tiga vektor; yang dipakai di sini
+adalah yang kedua, yaitu tanda tangan atas pesan satu byte
+\code{72}.
+
+Kunci privat, yaitu \emph{seed} 32 byte dari pembangkit kunci:
+\[ \code{4ccd089b28ff96da9db6c346ec114e0f5b8a319f35aba624da8cf6ed4fb8a6fb} . \]
+Kunci publik yang bersesuaian, juga 32 byte:
+\[ \code{3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c} . \]
+Tanda tangan atas pesan itu, sepanjang 64 byte:
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\code{92a009a9f0d4cab8720e820b5f642540a2b27b5416503f8fb3762223ebdb69da}\\[2pt]
+\code{085ac1e43e15996e458f3613d0f11d8c387b2eaeb4302aeeb00d291612bb0c00}
+\end{minipage}
+\end{center}
+
+Angka-angka itu dapat diperiksa ulang dengan OpenSSL. Kunci privat RFC 8032
+adalah \emph{seed} 32 byte, sehingga perlu dibungkus lebih dahulu ke dalam
+format PKCS\#8: tambahkan awalan DER
+\code{302e020100300506032b657004220420} di depannya. Perintah berikut
+menandatangani berkas berisi satu byte \code{72} dan menampilkan hasilnya.
+
+\begin{center}
+\begin{minipage}{0.94\linewidth}
+\begin{verbatim}
+printf '302e020100300506032b657004220420' > sk.hex
+printf '4ccd089b28ff96da9db6c346ec114e0f' >> sk.hex
+printf '5b8a319f35aba624da8cf6ed4fb8a6fb' >> sk.hex
+xxd -r -p sk.hex > sk.der
+printf '\x72' > m.bin
+openssl pkeyutl -sign -inkey sk.der -keyform DER \
+  -rawin -in m.bin -out sig.bin
+xxd -p -c 256 sig.bin
+\end{verbatim}
+\end{minipage}
+\end{center}
+
+Keluaran yang diperoleh memang sama persis dengan tanda tangan pada RFC 8032
+di atas. Verifikasi dijalankan dengan perintah yang sepadan, yaitu
+\code{openssl pkeyutl -verify} dengan \code{-pubin} dan berkas kunci publik
+yang diekstrak dari \code{sk.der} memakai \code{openssl pkey -pubout}.
+
+Dua hal perlu dicatat dari contoh ini. Pertama, perhatikan panjang kunci
+publiknya yang hanya 32 byte, padahal tingkat keamanannya setara dengan
+RSA-3072 yang kuncinya 384 byte. Kedua, tanda tangan Ed25519 bersifat
+deterministik: menjalankannya berulang kali atas pesan yang sama selalu
+menghasilkan 64 byte yang sama, sebab nilai acaknya diturunkan dari kunci
+privat dan hash pesan. Karena itu kesalahan pemakaian ulang $k$ pada
+Contoh~\ref{ex:pemakaian-ulang-k} tidak mungkin terjadi pada Ed25519.
+
+Satu catatan praktis yang berguna ketika mencoba sendiri: vektor
+\emph{pertama} pada RFC 8032 menandatangani pesan yang panjangnya nol byte,
+dan OpenSSL versi 3.2 tidak dapat menandatangani berkas kosong dengan opsi
+\code{-rawin} --- keluarannya berupa pesan kesalahan
+\code{Could not allocate 0 bytes for oneshot sign/verify buffer}. Karena itu
+vektor kedua dipakai di sini. Vektor pertamalah yang ditampilkan pada
+Subbagian~\ref{subsec:eddsa}, dan angkanya tetap benar; yang terbatas hanyalah
+perkakas untuk memeriksanya, bukan vektornya.
+\end{example}
+
+\begin{example}[Struktur Berkas Sertifikat X.509]
+\label{ex:struktur-x509}
+Sebuah sertifikat uji untuk domain \code{contoh.kriptografi.id} dapat dibuat
+dan diperiksa dengan
+
+\begin{center}
+\begin{minipage}{0.94\linewidth}
+\begin{verbatim}
+openssl req -x509 -newkey rsa:2048 -keyout k.pem -out c.pem \
+  -days 3650 -nodes -subj "//C=ID\CN=contoh.kriptografi.id"
+openssl x509 -in c.pem -outform DER -out c.der
+wc -c < c.der
+openssl x509 -in c.pem -noout -text
+\end{verbatim}
+\end{minipage}
+\end{center}
+
+Berkas DER yang dihasilkan berukuran $831$ byte. Bagian-bagiannya dapat
+dipisahkan sebagai berikut.
+
+\begin{itemize}
+    \item Kunci publik dalam bentuk \textit{SubjectPublicKeyInfo}:
+          $294$ byte. Angka itu lebih besar daripada modulus RSA-2048 yang
+          hanya $256$ byte, sebab di dalamnya turut tersimpan pengenal
+          algoritma dan panjang kunci.
+    \item Tanda tangan \code{sha256WithRSAEncryption}: tepat $256$ byte,
+          sepanjang satu modulus RSA-2048.
+    \item Sisanya, $281$ byte, adalah kerangka administrasi: pengenal versi,
+          nomor seri 20 byte, nama penerbit dan pemilik, dua cap waktu,
+          ekstensi, dan penanda panjang ASN.1.
+\end{itemize}
+
+Perbandingan itu memberi tiga pelajaran. Pertama, sekitar sepertiga berkas
+sertifikat bukanlah bahan kriptografis sama sekali. Kedua, menambahkan
+ekstensi seperti \textit{Subject Alternative Name} atau \textit{Key Usage}
+memperbesar berkas, dan pada rantai yang panjang hal itu terasa pada setiap
+koneksi. Ketiga, karena sertifikat \emph{self-signed} di atas diterbitkan oleh
+kuncinya sendiri, peramban akan menolaknya; sertifikat itu hanya berguna
+untuk memeriksa struktur, bukan untuk mengamankan koneksi.
+
+Perhatikan pula bahwa pada sertifikat modern, nama domain yang diperiksa
+peramban bukanlah bidang \code{subject}, melainkan ekstensi
+\code{subjectAltName}. Perubahan ini dilakukan setelah munculnya
+penyalahgunaan sertifikat yang memuat nama perusahaan pada bidang
+\code{subject} untuk menipu pengguna, padahal domain yang sebenarnya
+dilayani berbeda.
+\end{example}

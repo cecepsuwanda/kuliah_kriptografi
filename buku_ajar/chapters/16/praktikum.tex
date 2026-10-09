@@ -1,4 +1,5 @@
 
+
 \begin{obeactivity}
 \textbf{Aktivitas 16.1: Analisis Sertifikat Digital Browser}
 1. Buka browser (Chrome/Firefox) dan akses situs dengan HTTPS (misal: google.com).
@@ -21,3 +22,98 @@ tidak lagi sah.
 
 Program yang sama tersedia dalam C++ (\texttt{code/cpp/tanda\_tangan.cpp}) dan
 MATLAB (\texttt{code/matlab/tanda\_tangan.m}).
+
+\begin{obeactivity}
+\textbf{Aktivitas 16.2: Menelusuri Rantai Sertifikat dengan OpenSSL}
+1. Unduh rantai sertifikat sebuah situs HTTPS, misalnya dengan
+
+   \begin{center}
+   \begin{minipage}{0.94\linewidth}
+   \begin{verbatim}
+openssl s_client -connect example.com:443 -showcerts \
+  </dev/null > rantai.txt
+   \end{verbatim}
+   \end{minipage}
+   \end{center}
+
+2. Pisahkan setiap blok penanda awal sertifikat menjadi berkas tersendiri,
+   lalu periksa tiap berkas dengan \code{openssl x509 -noout -subject -issuer -dates}.
+3. Perhatikan bahwa bidang \code{issuer} pada satu sertifikat sama dengan
+   bidang \code{subject} pada sertifikat di atasnya. Rangkaian itulah yang
+   disebut jalur sertifikat.
+4. Tandai sertifikat mana yang berperan sebagai Root CA, mana sebagai
+   Intermediate CA, dan mana sebagai sertifikat server.
+5. Buktikan bahwa Root CA bersifat \textit{self-signed}: bidang
+   \code{issuer} dan \code{subject}-nya identik.
+6. Diskusikan: mengapa rantai tidak boleh hanya berisi satu sertifikat?
+\end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 16.3: Memeriksa Vektor Uji Ed25519 menurut RFC 8032}
+1. Vektor uji kedua pada RFC 8032 memakai kunci privat
+   \begin{center}
+   \code{4ccd089b28ff96da9db6c346ec114e0f5b8a319f35aba624da8cf6ed4fb8a6fb}
+   \end{center}
+   Bangkitkan berkas kunci PKCS\#8 dengan menambahkan awalan DER di depannya:
+   \begin{center}
+   \code{302e020100300506032b657004220420}
+   \end{center}
+   Rincian langkahnya dapat dilihat pada Contoh~\ref{ex:ed25519-rfc8032}
+   di bab ini.
+2. Tandatangani berkas berisi satu byte \code{72} dengan
+   \code{openssl pkeyutl -sign -rawin}, lalu bandingkan keluarannya dengan
+   tanda tangan resmi pada RFC 8032.
+3. Verifikasi tanda tangan itu dengan \code{openssl pkeyutl -verify}
+   memakai kunci publik yang diekstrak dari berkas kunci.
+4. Ubah satu bit saja pada pesan, lalu ulangi verifikasi. Diskusikan mengapa
+   hasilnya berubah secara total, dan kaitkan dengan sifat longsoran yang
+   sudah dibahas pada Bab~15.
+5. Jalankan penandatanganan dua kali atas pesan yang sama. Bandingkan kedua
+   keluarannya, dan jelaskan mengapa Ed25519 bersifat deterministik sedangkan
+   ECDSA tidak.
+\end{obeactivity}
+
+\begin{obeactivity}
+\textbf{Aktivitas 16.4: Membuktikan Kerentanan Pemakaian Ulang Nilai Acak}
+\label{act:pemakaian-ulang-k}
+Aktivitas ini memakai parameter DSA kecil pada bab ini: $p = 23$, $q = 11$,
+$g = 2$, $x = 5$, sehingga $y = 9$. Program berikut menandatangani dua pesan
+berbeda dengan nilai $k$ yang sama, lalu memulihkan kunci privat dari kedua
+tanda tangan itu tanpa pernah mengetahui $k$ maupun $x$.
+
+\begin{center}
+\begin{minipage}{0.94\linewidth}
+\begin{verbatim}
+p, q, g, x = 23, 11, 2, 5
+y = pow(g, x, p)
+
+def tanda_tangani(h, k):
+    r = pow(g, k, p) % q
+    s = (pow(k, -1, q) * (h + x * r)) % q
+    return r, s
+
+(r1, s1) = tanda_tangani(10, 3)   # k = 3
+(r2, s2) = tanda_tangani(7, 3)    # k = 3 juga -- keliru!
+
+h1, h2 = 10, 7
+k = ((h1 - h2) * pow((s1 - s2) % q, -1, q)) % q
+x_pulih = ((s1 * k - h1) * pow(r1, -1, q)) % q
+
+print("k terpulihkan :", k)
+print("x terpulihkan :", x_pulih, " (sebenarnya", x, ")")
+\end{verbatim}
+\end{minipage}
+\end{center}
+
+Program itu mencetak $k = 3$ dan $x = 5$ --- persis kedua rahasia yang
+seharusnya tidak pernah terungkap. Pertanyaan untuk didiskusikan:
+
+1. Berapa banyak tanda tangan yang dibutuhkan penyerang? Bandingkan dengan
+   usaha yang diperlukan untuk memecahkan logaritma diskret secara langsung.
+2. Apa yang dapat dilakukan penyerang setelah $x$ diketahui?
+3. Bagaimana Ed25519 menghindari masalah ini sepenuhnya? Kaitkan dengan
+   Aktivitas 16.3 butir 5.
+4. Carilah berita mengenai konsol PlayStation 3 pada tahun 2010 dan
+   jelaskan mengapa kelemahan itu digolongkan sebagai kesalahan
+   implementasi, bukan kelemahan algoritma.
+\end{obeactivity}

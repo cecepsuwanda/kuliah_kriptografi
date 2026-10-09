@@ -1,10 +1,16 @@
 \section{Rangkuman}
 \begin{itemize}
     \item Otentikasi entitas membuktikan identitas pihak pada saat sesi dibangun (dengan \textit{nonce} agar tahan \textit{replay}), sedangkan otentikasi pesan membuktikan keaslian dan keutuhan tiap pesan.
+    \item Tiga faktor otentikasi adalah sesuatu yang diketahui, sesuatu yang dimiliki, dan sesuatu yang melekat pada diri; otentikasi dua faktor menuntut dua kategori yang berbeda, bukan dua pertanyaan dari kategori yang sama.
+    \item Mekanisme tantangan--respons memakai \textit{nonce} yang selalu berubah, sehingga respons lama tidak dapat dipakai ulang; cap waktu dapat menggantikannya tetapi menuntut jam yang tersinkronisasi.
     \item Tanda tangan digital mengikat identitas pengirim pada isi pesan melalui hash yang ditandatangani dengan kunci privat; verifikasinya memakai kunci publik.
+    \item Skema tanda tangan dituntut memenuhi dua sifat: tidak dapat dipalsukan (EUF-CMA) dan tidak dapat dialihkan. RSA tanpa padding gagal pada sifat kedua, sebab bersifat multiplikatif.
     \item RSA menandatangani dengan $s = H(m)^d \bmod n$ dan diverifikasi dengan $H(m) = s^e \bmod n$; DSS memakai DSA/ECDSA pada subgrup prima dengan tanda tangan $(r,s)$.
     \item Pesan selalu di-hash lebih dulu karena hashing memampatkan pesan, mengefisienkan komputasi, dan mengikat tanda tangan pada isi pesan; keamanannya bergantung pada ketahanan kolisi ($2^{n/2}$).
-    \item \textit{Non-repudiation}, yaitu jaminan pengirim tidak dapat menyangkal pesannya, hanya dapat dijamin oleh tanda tangan digital, bukan oleh MAC yang bersifat simetris.
+    \item Pemakaian ulang nilai acak $k$ pada DSA/ECDSA adalah kesalahan fatal: dari dua tanda tangan dengan $r$ yang sama, kunci privat dapat dihitung dengan dua inversi modular, tanpa pencarian apa pun.
+    \item EdDSA/Ed25519 menurunkan nilai acaknya secara deterministik dari kunci privat dan hash pesan, sehingga kebal terhadap kesalahan tersebut, sekaligus menghasilkan kunci publik 32 byte pada tingkat keamanan $\approx$ 128 bit.
+    \item \textit{Non-repudiation}, yaitu jaminan pengirim tidak dapat menyangkal pesannya, hanya dapat dijamin oleh tanda tangan digital, bukan oleh MAC yang bersifat simetris; jaminannya juga menuntut kunci privat benar-benar terjaga.
     \item Sertifikat X.509 mengikat identitas subjek dengan kunci publiknya dan ditandatangani CA; keabsahannya diperiksa melalui rantai kepercayaan Root CA $\to$ Intermediate CA $\to$ sertifikat server.
-    \item Jabat tangan TLS memakai kriptografi asimetris untuk otentikasi dan penyepakatan kunci, lalu kriptografi simetris untuk sesi; TLS 1.3 mempersingkat proses dan mewajibkan \textit{forward secrecy}.
+    \item Validasi sertifikat menuntut pembangunan jalur, pemeriksaan tanda tangan pada tiap tautan, pemeriksaan masa berlaku, dan pencocokan nama; pencabutan ditangani melalui CRL, OCSP, atau OCSP stapling.
+    \item Jabat tangan TLS memakai kriptografi asimetris untuk otentikasi dan penyepakatan kunci, lalu kriptografi simetris untuk sesi; TLS 1.3 mempersingkat proses menjadi satu putaran dan mewajibkan \textit{forward secrecy}.
 \end{itemize}
