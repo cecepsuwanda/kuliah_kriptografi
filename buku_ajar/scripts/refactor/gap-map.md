@@ -1371,7 +1371,10 @@ di dalam environment `example` (semula **nol**), **25 subbagian** (16 → 25), d
   **Bab 16 menambah 10** (`eq:rsa-tanda-tangan`, `eq:rsa-multiplikatif`,
   `eq:rsa-pemalsuan`, `eq:dsa-tanda-tangan`, `eq:dsa-verifikasi`, `eq:dsa-bukti-1`,
   `eq:dsa-bukti-2`, `eq:dsa-ulang-s`, `eq:dsa-pulih-k`, `eq:dsa-pulih-x`).
-  **Cacat ini selesai untuk seluruh 16 bab.**
+  **Tersisa hanya Bab 01 dan 02, yang memang tidak memuat penurunan rumus** — keduanya
+  bab konseptual (urgensi kriptografi; jenis/tujuan serangan), sehingga penomoran
+  persamaan tidak diperlukan. Keempat belas bab lainnya sudah memakai `equation`
+  berlabel.
 - [x] **`contoh.tex` tidak konsisten** — bab 13 (6 `example`, semula **nol**),
   bab 14 (6, semula **nol**), bab 15 (7, semula **nol**), dan bab 16 (6, semula
   **nol**) sudah beres. **Seluruh 16 bab kini konsisten memakai environment
