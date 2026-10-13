@@ -1,0 +1,12 @@
+Jalankan perintah di bawah ini :
+1. baca dan pahami buku di C:\Matakuliah\kuliah_kriptografi\buku_ajar
+2. baca dan pahami silabus C:\Matakuliah\kuliah_kriptografi\rps_silabus\silabus_kriptografi.tex
+3. rubah identitas matakuliah pada 1 dan 2 menjadi :
+   Nama Program Studi : Matematika
+   Nama Fakultas : Matematika dan Ilmu Pengetahuan Alam
+   Nama Perguruan Tinggi : Universitas Bale Bandung
+   Nama Mata Kuliah : Pengantar Kriptografi
+   Kode Mata Kuliah : MPFA014
+   Semester : Ganjil
+   Dosen Pengampu : Cecep Suwanda, S.Si., M.Kom.
+   

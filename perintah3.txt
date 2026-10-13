@@ -1,0 +1,7 @@
+Jalankan perintah di bawah ini :
+1. baca dan pahami buku di C:\Matakuliah\kuliah_kriptografi\buku_ajar
+2. baca dan pahami silabus C:\Matakuliah\kuliah_kriptografi\rps_silabus\silabus_kriptografi.tex
+3. buatlah slide presentasi dalam format latex sesuai silabus dan materi pada buku
+   untuk pertemuan minggu ke 1 sampai dengan minggu ke 7 dan pertemuan minggu ke 9 sampai dengan minggu ke 15
+4. slide presentasi dibuat terpisah perminggu, taruh slide yang sudah jadi 
+   di C:\Matakuliah\kuliah_kriptografi\ppt      
