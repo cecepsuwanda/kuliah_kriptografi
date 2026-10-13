@@ -1,6 +1,6 @@
-## Buku Ajar Kriptografi — S1 Matematika FMIPA Universitas Bale Bandung
+## Buku Ajar Pengantar Kriptografi — S1 Matematika FMIPA Universitas Bale Bandung
 
-Repositori ini berisi sumber LaTeX untuk Buku Ajar Mata Kuliah Kriptografi. Buku dibangun menggunakan pendekatan multi-berkas (subfiles) sehingga dapat dikompilasi sebagai satu buku utuh atau per bab secara terpisah. Materi mengikuti RPS (`rps.tex`).
+Repositori ini berisi sumber LaTeX untuk Buku Ajar Mata Kuliah Pengantar Kriptografi (kode MPFA014, Semester Ganjil). Buku dibangun menggunakan pendekatan multi-berkas (subfiles) sehingga dapat dikompilasi sebagai satu buku utuh atau per bab secara terpisah. Materi mengikuti RPS (`rps.tex`).
 
 ### Struktur Proyek
 - `main.tex`: berkas utama buku (mengikutkan seluruh bab). Menggunakan paket `subfiles`, `natbib`, dan `microtype` dengan font `lmodern`.
