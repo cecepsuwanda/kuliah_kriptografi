@@ -10,13 +10,12 @@
     ]
         \node[fase] (fwd) at (0,0)
             {\textbf{8 putaran}\\ \textit{forward mixing}\\
-             perkalian, rotasi data,\\ penambahan kunci};
+             kotak-S, penjumlahan,\\ XOR, rotasi};
         \node[fase] (core) at (4.4,0)
-            {\textbf{16 putaran}\\ \textit{core}\\
-             kotak-S, rotasi bergantung\\ data, penambahan kunci};
+            {\textbf{16 putaran}\\ \textit{core}};
         \node[fase] (bwd) at (8.8,0)
             {\textbf{8 putaran}\\ \textit{backward mixing}\\
-             kebalikan \textit{forward mixing},\\ mengacak kembali};
+             kebalikan fase pertama};
 
         \draw[panah] (-2.2,0) -- (fwd);
         \draw[panah] (fwd) -- (core);
@@ -24,14 +23,11 @@
         \draw[panah] (bwd) -- (11.0,0);
 
         \node[catatan, anchor=north] at (4.4,-1.4)
-            {Kedua fase \textit{mixing} bekerja tanpa kunci dan dirancang agar tidak
-             dapat dibalik. Seluruh 32 putaran memakai kunci hasil perluasan dari
-             40 kata, sehingga biaya pemasangan kuncinya paling mahal di antara
-             kelima finalis AES};
+            {Kotak-S berukuran $8 \times 32$ dan pergeseran 8 bit. Penyaringan
+             memakai $K_0$ sampai $K_3$ dan $K_{36}$ sampai $K_{39}$};
     \end{tikzpicture}
-    \caption{Pembagian 32 putaran MARS. Rancangan ini menempatkan ketahanan terhadap
-    kriptanalisis pada putaran inti, sementara putaran tepi mempercepat penyebaran
-    perubahan bit masukan}
+    \caption{Pembagian 32 putaran MARS: 8 putaran \textit{forward mixing},
+    16 putaran inti, dan 8 putaran \textit{backward mixing}}
     \label{fig:mars-mixing}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; Burwick dkk., \textit{MARS}.}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB, hlm.~36.}
 \end{figure}

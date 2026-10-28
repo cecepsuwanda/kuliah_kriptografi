@@ -1,141 +1,72 @@
 \section{Data Encryption Standard (DES)}
 
-\textit{Data Encryption Standard} (DES) adalah cipher blok pertama yang diadopsi
-sebagai standar nasional oleh sebuah pemerintahan, dan selama lebih dari dua
-dasawarsa ia menjadi tulang punggung kerahasiaan data perbankan, komunikasi
-militer, dan jaringan komputer. Nama \textit{Data Encryption Standard} merujuk
-pada dokumen standarnya, yaitu FIPS PUB 46 yang diterbitkan pemerintah Amerika
-Serikat, sedangkan algoritma yang mendasarinya disebut \textit{Data Encryption
-Algorithm} (DEA). Perbedaan nama itu perlu diingat: DES adalah standarnya, DEA
-adalah algoritmanya.
+\textit{Data Encryption Standard} (DES) adalah nama sebuah standar enkripsi.
+Algoritma yang mendasarinya bernama \textit{Data Encryption Algorithm} (DEA).
+Kedua nama itu sering dikacaukan. DES termasuk algoritma kriptografi
+kunci-simetri dan tergolong cipher blok. DES beroperasi pada blok plainteks
+64 bit.
 
-Sesuai janji yang dibuat pada Bab~\ref{chap:block-cipher}, DES dibahas lengkap
-sampai ke tingkat bit. Seluruh operasinya --- permutasi awal, ekspansi,
-substitusi lewat delapan S-box, permutasi $P$, sampai pembangkitan subkunci ---
-dinyatakan sebagai tabel posisi bit, bukan sebagai rumus aljabar. Semua tabel itu
-disalin apa adanya dari standar, sehingga pembaca dapat mengerjakan DES dengan
-kertas dan pensil dan memperoleh hasil yang persis sama dengan hasil program.
+Kunci eksternal DES panjangnya 64 bit, sama dengan ukuran blok. Hanya 56 bit
+yang dipakai. Delapan bit sisanya, yaitu bit ke-8, 16, 24, 32, 40, 48, 56, dan
+64, adalah bit paritas dan tidak dipakai.
+% Koreksi: slide halaman 13 menulis bit paritas ke-8, 16, 28, ...;
+% yang benar adalah 8, 16, 24, 32, 40, 48, 56, dan 64.
+
+Setiap blok plainteks dienkripsi dalam 16 putaran \textit{enciphering}. Setiap
+putaran memakai kunci internal 48 bit yang berbeda. Kunci internal itu
+dibangkitkan dari kunci eksternal. Setiap blok mengalami permutasi awal (IP),
+16 putaran \textit{enciphering}, lalu inversi permutasi awal
+($\text{IP}^{-1}$), seperti pada Gambar~\ref{fig:skema-enkripsi-des}.
 
 \subsection{Sejarah DES}
 \label{sec:des-sejarah}
 
-Pada tahun 1972, badan standar Amerika Serikat ketika itu, \textit{National
-Bureau of Standards} (NBS; sejak 1988 berganti nama menjadi \textit{National
-Institute of Standards and Technology}, NIST), menyadari bahwa lalu lintas data
-pemerintah yang tersimpan dan terkirim semakin banyak, sementara tidak ada satu
-pun algoritma enkripsi yang dapat dipakai bersama lintas instansi. Setiap
-instansi memakai algoritmanya sendiri, sehingga data dari satu instansi tidak
-dapat dibaca oleh instansi lain, dan tidak ada yang dapat menilai keamanan
-algoritma buatan sendiri. NBS lalu mengumumkan sayembara terbuka untuk merancang
-algoritma enkripsi standar.
+Pada tahun 1972 NBS, yang sekarang bernama NIST, meminta standar enkripsi
+cipher blok. Pada tahun 1974 Horst Feistel di IBM merancang cipher blok
+\textit{Lucifer} dengan panjang kunci 128 bit dan panjang blok 128 bit.
 
-Kandidat yang akhirnya dipilih berasal dari IBM. Tim riset IBM dipimpin Horst
-Feistel, dan cipher rancangan mereka bernama \textbf{Lucifer}. Lucifer sudah
-memakai gagasan yang kelak menjadi ciri DES: jaringan berulang yang sekarang
-dikenal sebagai \textbf{jaringan Feistel}, dengan blok 128 bit dan kunci
-efektif 128 bit. Angka-angka itu jauh lebih besar daripada DES yang kita kenal
-sekarang, dan itulah pangkal persoalannya.
-
-Ketika rancangan IBM diserahkan kepada NBS, badan keamanan nasional Amerika
-Serikat (NSA) ikut memeriksanya. Hasilnya adalah beberapa perubahan yang
-diumumkan pada 1975 dan dibakukan pada 1976 melalui \textit{Federal Register}:
-
-\begin{itemize}
-    \item ukuran blok diturunkan dari 128 bit menjadi \textbf{64 bit};
-    \item panjang kunci diturunkan dari 128 bit menjadi \textbf{64 bit}, dan
-    delapan di antaranya dipakai sebagai bit paritas sehingga kunci efektifnya
-    hanya \textbf{56 bit};
-    \item delapan S-box diganti dengan rancangan baru yang kriteria
-    perancangannya tidak diumumkan.
-\end{itemize}
-
-Pemangkasan kunci dari 128 bit menjadi 56 bit mengundang kritik keras. Beberapa
-peneliti, terutama Whitfield Diffie dan Martin Hellman, berpendapat bahwa 56 bit
-sengaja dipilih agar cukup kecil bagi NSA untuk dipecahkan secara menyeluruh,
-sehingga tidak ada pihak lain yang dapat memakai DES tanpa dapat dibaca NSA.
-Pemerintah Amerika Serikat bertahan bahwa 56 bit sudah memadai untuk kebutuhan
-komersial pada masa itu. Perdebatan itu baru benar-benar selesai dua dasawarsa
-kemudian, ketika mesin khusus berhasil memecahkan DES dalam hitungan hari
---- sebagaimana dibahas pada Bagian~\ref{sec:keamanan-des}.
-
-Kecurigaan kedua menyangkut S-box. Mengapa kriterianya dirahasiakan? Jawabannya
-baru terbuka pada 1994, ketika Don Coppersmith dari IBM mengungkap bahwa S-box
-DES telah dirancang secara sadar untuk tahan terhadap \textbf{kriptanalisis
-diferensial}, teknik yang baru ditemukan publik pada 1990 oleh Eli Biham dan Adi
-Shamir. Kriteria perancangan S-box dirahasiakan bukan karena kelemahan tersembunyi,
-melainkan karena mengungkapkannya sama dengan mengungkap teknik kriptanalisis
-yang saat itu masih dikuasai badan keamanan. Peristiwa itu menjadi contoh klasik
-bahwa kerahasiaan perancangan dapat menimbulkan ketidakpercayaan meskipun
-perancangannya sebenarnya kuat.
-
-Standar DES sendiri hidup panjang. Setelah terbit sebagai FIPS PUB 46 pada
-Januari 1977, ia ditegaskan kembali pada 1983 dan 1988 (FIPS 46-1), diperbarui
-pada 1993 (FIPS 46-2), dan pada 1999 (FIPS 46-3) diperluas dengan Triple DES.
-Standar itu baru resmi ditarik pada 2005, setelah Advanced Encryption Standard
-menggantikannya.
+\textit{Lucifer} kemudian berkembang menjadi DES dengan beberapa masukan dari
+NSA. Panjang kunci menjadi 56 bit, ukuran blok menjadi 64 bit, dan jumlah
+putaran menjadi 16. Pada tahun 1976 DES disetujui NBS setelah kekuatannya
+dinilai oleh NSA. Sejak itu DES diimplementasikan secara luas, baik sebagai
+perangkat lunak maupun perangkat keras.
 
 \subsection{Karakteristik Teknis DES}
 
-Parameter DES yang perlu dihafal sebelum masuk ke mekanismenya adalah:
-
+Parameter DES yang perlu diingat adalah sebagai berikut.
 \begin{itemize}
-    \item \textbf{Ukuran blok}: 64 bit, baik untuk plainteks maupun cipherteks.
-    \item \textbf{Ukuran kunci}: kunci eksternal 64 bit, tetapi bit pada posisi
-    8, 16, 24, 32, 40, 48, 56, dan 64 adalah bit paritas ganjil dan
-    \textbf{diabaikan} oleh algoritma. Kunci efektifnya karena itu hanya
-    \textbf{56 bit}.
-    \item \textbf{Struktur}: jaringan Feistel dengan \textbf{16 putaran}.
-    \item \textbf{Subkunci}: 16 buah kunci putaran, masing-masing 48 bit, yang
-    diturunkan dari kunci efektif 56 bit.
-    \item \textbf{Jumlah putaran minimum}: DES memakai 16 putaran; seperti
-    dibahas pada Bagian~\ref{sec:keamanan-des}, DES dengan kurang dari 16 putaran
-    dapat ditembus secara sistematis.
+    \item Ukuran blok: 64 bit, baik untuk plainteks maupun cipherteks.
+    \item Kunci eksternal: 64 bit, tetapi hanya 56 bit yang dipakai.
+    \item Bit paritas: posisi 8, 16, 24, 32, 40, 48, 56, dan 64.
+    \item Struktur: 16 putaran \textit{enciphering}.
+    \item Kunci internal: 16 buah, masing-masing 48 bit.
 \end{itemize}
 
-Bit paritas pada kunci bukan bagian dari keamanan; fungsinya historis, yaitu
-memungkinkan deteksi kesalahan pengetikan kunci ketika kunci masih dibagikan
-dalam bentuk deretan angka. Karena paritasnya ganjil, setiap byte kunci selalu
-memuat jumlah bit $1$ yang ganjil. Perlu ditegaskan bahwa paritas ini tidak
-menambah sedikit pun kekuatan kunci: penyerang tetap hanya perlu menebak 56 bit,
-bukan 64 bit.
+Karena delapan bit paritas tidak dipakai, panjang kunci efektif DES adalah
+56 bit. Angka itu yang menentukan besarnya ruang kunci dan keamanan DES.
 
 \subsection{Mekanisme Kerja DES}
 
-Enkripsi DES berlangsung dalam tiga tahap:
+Enkripsi DES berlangsung dalam tiga tahap. Pertama, permutasi awal (IP)
+mengubah urutan 64 bit plainteks. Kedua, 16 putaran \textit{enciphering}
+mengolah hasil permutasi awal dengan kunci internal $K_1, K_2, \dots, K_{16}$.
+Ketiga, inversi permutasi awal ($\text{IP}^{-1}$) membentuk cipherteks dari
+gabungan kedua separuh blok.
 
-\begin{enumerate}
-    \item \textbf{Permutasi awal} (\textit{Initial Permutation}, IP) mengacak
-    urutan 64 bit plainteks.
-    \item \textbf{Enam belas putaran Feistel} (disebut tahap
-    \textit{enciphering}) mengolah hasil permutasi awal dengan 16 subkunci
-    $K_1, K_2, \dots, K_{16}$.
-    \item \textbf{Inversi permutasi awal} ($\text{IP}^{-1}$) mengembalikan bit
-    ke urutan akhir untuk membentuk cipherteks.
-\end{enumerate}
-
-Skema menyeluruhnya tampak pada Gambar~\ref{fig:skema-enkripsi-des}. Perhatikan
-satu hal yang sering menimbulkan kebingungan: permutasi awal dan inversinya
-sebenarnya \textbf{tidak menambah keamanan sama sekali}, karena keduanya tidak
-bergantung pada kunci dan bersifat tetap. Keduanya hanya bagian dari rancangan
-perangkat keras awal DES. Yang benar-benar mengandung kunci adalah 16 putaran
-Feistel di antaranya.
-
-Dekripsi DES dilakukan dengan algoritma yang sama persis. Karena struktur
-Feistel bersifat reversibel dengan sendirinya (Bab~\ref{chap:block-cipher}),
-dekripsi hanya perlu menjalankan 16 putaran yang sama dengan urutan subkunci
-dibalik, yaitu $K_{16}$ turun sampai $K_1$. Tidak ada fungsi inversi S-box yang
-perlu dibuat. Sifat inilah yang membuat DES hemat perangkat keras dan menjadi
-alasan struktural mengapa DES memakai jaringan Feistel, bukan jaringan SPN
-seperti AES.
+Dekripsi memakai algoritma yang sama dengan enkripsi. Bedanya, urutan kunci
+dibalik, yaitu $K_{16}, K_{15}, \dots, K_1$. Untuk setiap putaran
+$i = 16, 15, \dots, 1$, luaran \textit{deciphering} adalah
+\begin{equation}
+R_{i-1} = L_i, \qquad
+L_{i-1} = R_i \oplus f(R_{i-1}, K_i) = R_i \oplus f(L_i, K_i).
+\end{equation}
 
 \subsection{Permutasi Awal dan Inversinya}
 
-Permutasi awal IP dinyatakan sebagai tabel 64 bilangan. Angka pada posisi ke-$i$
-tabel menyatakan bahwa bit keluaran ke-$i$ diambil dari bit masukan nomor itu.
-Membaca tabel secara baris demi baris, bit pertama keluaran adalah bit masukan
-58, bit kedua adalah bit masukan 50, dan seterusnya. Tabel~\ref{tab:ip-des}
-menyajikan IP bersama inversinya, $\text{IP}^{-1}$; keduanya disusun sebagai
-delapan baris yang masing-masing memuat delapan bilangan.
+Tujuan permutasi awal adalah mengacak plainteks sehingga urutan bit di
+dalamnya berubah. Matriks IP dan matriks balikannya, $\text{IP}^{-1}$,
+disajikan pada Tabel~\ref{tab:ip-des}. Angka pada posisi ke-$i$ menyatakan
+bahwa bit keluaran ke-$i$ diambil dari bit masukan bernomor itu.
 
 \begin{table}[htbp]
 \centering
@@ -168,49 +99,33 @@ delapan baris yang masing-masing memuat delapan bilangan.
 \end{tabular}
 \caption{Tabel bit permutasi awal DES dan inversinya}
 \label{tab:ip-des}
-\sumber{Data dari FIPS PUB 46-3; disusun ulang dari Munir, \textit{IF4020 Kriptografi}, ITB.}
+\sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{table}
 
-Perlu dipahami bahwa IP dan $\text{IP}^{-1}$ bukan pengacakan acak. Bit masukan
-yang semula berdekatan justru sering tetap berdekatan, tetapi berpindah dari
-separuh kiri ke separuh kanan. Sebagai contoh, delapan bit pertama keluaran IP
-diambil dari bit masukan $58, 50, 42, 34, 26, 18, 10, 2$, yaitu bit-bit dari
-separuh kanan blok, sedangkan delapan bit berikutnya diambil dari
-$60, 52, 44, 36, 28, 20, 12, 4$. Pola semacam ini bukan kebetulan: perancang IP
-bermaksud mencampur separuh kiri dan separuh kanan blok sebelum putaran pertama,
-sehingga tidak ada separuh yang masuk ke jaringan Feistel tanpa pernah
-bercampur. Namun sekali lagi, karena IP tidak bergantung pada kunci,
-penyerang dapat menghitungnya sendiri tanpa biaya. Keamanan DES seluruhnya
-bersandar pada 16 putaran Feistel dan pembangkitan subkuncinya.
+Permutasi terakhir dilakukan setelah 16 putaran terhadap gabungan blok kiri
+dan blok kanan. Permutasi itu memakai matriks $\text{IP}^{-1}$.
 
 \subsection{Struktur Putaran dan Fungsi \texorpdfstring{$f$}{f}}
 
-Seperti semua cipher jaringan Feistel (Bab~\ref{chap:block-cipher}), hasil IP
-dipecah menjadi dua separuh 32 bit, $L_0$ dan $R_0$, dan setiap putaran
-berlangsung menurut
+Setiap putaran \textit{enciphering} merupakan jaringan Feistel:
 \begin{equation}
 L_i = R_{i-1}, \qquad R_i = L_{i-1} \oplus f(R_{i-1}, K_i),
 \label{eq:des-putaran}
 \end{equation}
-untuk $i = 1, 2, \dots, 16$. Setelah putaran ke-16, kedua separuh \textbf{tidak}
-ditukar lagi; blok hasil putaran terakhir langsung disusun sebagai
-$R_{16} \parallel L_{16}$ dan masuk ke $\text{IP}^{-1}$. Pembalikan urutan ini
-adalah kekhususan jaringan Feistel yang membuat dekripsi dapat memakai mesin yang
-sama.
+untuk $i = 1, 2, \dots, 16$. Setelah putaran ke-16, blok gabungan
+$R_{16} \parallel L_{16}$ dikenai $\text{IP}^{-1}$.
 
-Inti DES ada pada fungsi $f$, yang menerima blok 32 bit dan subkunci 48 bit, lalu
-menghasilkan 32 bit. Fungsi itu bekerja dalam empat langkah (fungsi-f-des.png
-pada Gambar~\ref{fig:fungsi-f-des}):
-
+Fungsi $f$ menerima blok 32 bit dan kunci internal 48 bit, lalu menghasilkan
+32 bit. Pengerjaannya berlangsung dalam empat langkah.
 \begin{enumerate}
-    \item \textbf{Ekspansi $E$} mengubah blok 32 bit menjadi 48 bit dengan
-    menyalin ulang 16 bit tertentu sehingga delapan bit masukan muncul di dua
-    posisi keluaran sekaligus.
-    \item \textbf{XOR} hasil ekspansi dengan subkunci $K_i$ yang juga 48 bit.
-    \item \textbf{Substitusi S-box}: 48 bit hasil XOR dipecah menjadi delapan
-    kelompok enam bit, dan tiap kelompok disubstitusi oleh S-box $S_1$ sampai
-    $S_8$ menjadi empat bit, sehingga 48 bit kembali menjadi 32 bit.
-    \item \textbf{Permutasi $P$} mengacak urutan 32 bit hasil S-box.
+    \item Ekspansi $E$ memperluas blok $R_{i-1}$ dari 32 bit menjadi 48 bit
+    dengan matriks permutasi ekspansi pada Tabel~\ref{tab:ep-des}.
+    \item Hasil ekspansi di-XOR-kan dengan $K_i$ menjadi blok $A$ berukuran
+    48 bit: $E(R_{i-1}) \oplus K_i = A$.
+    \item Blok $A$ dipecah menjadi delapan kelompok 6 bit. Setiap kelompok
+    disubstitusi oleh kotak-S $S_1, \dots, S_8$ menjadi 4 bit, sehingga
+    terbentuk blok $B$ berukuran 32 bit.
+    \item Permutasi $P$ mengacak blok $B$ menjadi $P(B)$.
 \end{enumerate}
 
 Secara ringkas,
@@ -220,14 +135,15 @@ f(R, K) = P\bigl( S_1(B_1) \parallel S_2(B_2) \parallel \dots \parallel S_8(B_8)
 \end{equation}
 dengan $B_j$ adalah kelompok 6 bit ke-$j$ dari $E(R) \oplus K$.
 
-Tabel ekspansi $E$ dan permutasi $P$ disajikan pada Tabel~\ref{tab:ep-des}.
-Ekspansi $E$ sengaja dibuat tumpang tindih: bit ke-4 masukan muncul di kelompok
-pertama dan kelompok kedua, bit ke-5 muncul di kelompok kedua dan ketiga, dan
-seterusnya. Akibat tumpang tindih itu, satu bit blok kanan mempengaruhi dua
-kelompok S-box yang berbeda, sehingga pengaruhnya menyebar lebih cepat.
-Permutasi $P$ melengkapi penyebaran itu dengan memindahkan bit-bit hasil S-box ke
-posisi yang berjauhan, misalnya bit keluaran pertama dan ketiga S-box $S_1$
-dipindahkan ke posisi 16 dan 20.
+Luaran fungsi $f$ adalah $P(B)$. Bit-bit $P(B)$ di-XOR-kan dengan $L_{i-1}$
+menghasilkan $R_i$:
+\[
+R_i = L_{i-1} \oplus P(B).
+\]
+Jadi luaran putaran ke-$i$ adalah
+\[
+(L_i, R_i) = (R_{i-1}, L_{i-1} \oplus P(B)).
+\]
 
 \begin{table}[htbp]
 \centering
@@ -260,33 +176,30 @@ dipindahkan ke posisi 16 dan 20.
 \end{tabular}
 \caption{Tabel bit ekspansi $E$ (32 bit menjadi 48 bit) dan permutasi $P$ pada fungsi $f$ DES}
 \label{tab:ep-des}
-\sumber{Data dari FIPS PUB 46-3; disusun ulang dari Munir, \textit{IF4020 Kriptografi}, ITB.}
+\sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{table}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.9\linewidth, height=0.82\textheight, keepaspectratio]{figures/fungsi-f-des.png}
-    \caption{Komputasi fungsi $f$ pada DES: ekspansi blok kanan 32 bit menjadi 48 bit, XOR dengan subkunci, substitusi melalui delapan S-box, dan permutasi $P$}
+    \caption{Komputasi fungsi $f$ pada DES: ekspansi blok kanan 32 bit menjadi 48 bit, XOR dengan subkunci, substitusi melalui delapan kotak-S, dan permutasi $P$}
     \label{fig:fungsi-f-des}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}
 
 \subsection{Delapan S-box DES}
 
-S-box adalah satu-satunya bagian DES yang nirlanjar, dan karena itu ia memikul
-seluruh beban kerahasiaan. Setiap S-box $S_j$ menerima enam bit masukan dan
-menghasilkan empat bit keluaran, yang berarti ia adalah pemetaan dari himpunan
-64 nilai ke himpunan 16 nilai. Tabelnya disusun sebagai matriks $4 \times 16$:
-nomor baris ditentukan oleh bit pertama dan bit keenam masukan (digabung sebagai
-bilangan 2 bit), sedangkan nomor kolomnya ditentukan oleh bit kedua sampai bit
-kelima (bilangan 4 bit). Jadi masukan $b_1b_2b_3b_4b_5b_6$ dibaca sebagai
-$\text{baris} = (b_1b_6)_2$ dan $\text{kolom} = (b_2b_3b_4b_5)_2$.
+DES memakai delapan matriks substitusi yang disebut kotak-S (\textit{S-box}).
+Setiap kotak-S menerima masukan 6 bit dan memberikan luaran 4 bit. Kedelapan
+tabelnya disajikan pada Tabel~\ref{tab:sbox-des}.
 
-Kelapan tabelnya disajikan pada Tabel~\ref{tab:sbox-des}. Cara membacanya
-diperlihatkan pada Contoh~\ref{ex:des-sbox} di bagian akhir bab, tetapi polanya
-dapat langsung dilihat: pada $S_1$, masukan $\code{011000}$ berarti baris
-$0$ (dari bit $0$ dan $0$) dan kolom $12$ (dari bit $1100$), sehingga keluarannya
-adalah entri baris 0 kolom 12, yaitu $5$ atau $\code{0101}$ dalam biner.
+Masukan $b_1b_2b_3b_4b_5b_6$ dibaca sebagai berikut. Bit pertama dan bit keenam
+menentukan nomor baris, yaitu $(b_1b_6)_2$. Bit kedua sampai bit kelima
+menentukan nomor kolom, yaitu $(b_2b_3b_4b_5)_2$. Contohnya, masukan
+\code{101010} pada $S_1$ berarti baris 2 dan kolom 5, sehingga luarannya
+6 atau \code{0110}.
+% Koreksi: slide halaman 23 menulis luaran 13 untuk masukan 101010.
+% Dengan tabel S1 baku, baris 2 kolom 5 bernilai 6 (diverifikasi Python).
 
 \begin{table}[htbp]
 \centering
@@ -326,41 +239,34 @@ $S_8$ & 13 & 2 & 8 & 4 & 6 & 15 & 11 & 1 & 10 & 9 & 3 & 14 & 5 & 0 & 12 & 7 \\
       & 7 & 11 & 4 & 1 & 9 & 12 & 14 & 2 & 0 & 6 & 10 & 13 & 15 & 3 & 5 & 8 \\
       & 2 & 1 & 14 & 7 & 4 & 10 & 8 & 13 & 15 & 12 & 9 & 0 & 3 & 5 & 6 & 11 \\
 \end{tabular}
-\caption{Delapan S-box DES. Setiap tabel memetakan 6 bit ke 4 bit; baris 0--3, kolom 0--15}
+\caption{Delapan kotak-S DES. Setiap tabel memetakan 6 bit ke 4 bit; baris 0--3, kolom 0--15}
 \label{tab:sbox-des}
-\sumber{Data dari FIPS PUB 46-3; disusun ulang dari Munir, \textit{IF4020 Kriptografi}, ITB.}
+\sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{table}
 
-Ada dua sifat S-box yang penting untuk dipahami. Pertama, tidak ada S-box yang
-merupakan fungsi linier atau affine atas masukannya; hal itu dapat diperiksa
-langsung dari tabelnya, misalnya $\code{000000}$ pada $S_1$ menghasilkan $14$
-bukan $0$. Kedua, setiap nilai keluaran 4 bit muncul tepat sekali pada setiap
-baris --- sifat itu disebut \textit{permutasi per baris} --- sehingga tidak ada
-keluaran yang hilang. Kedua sifat itu beserta sejumlah kriteria lain dipilih
-untuk memaksimumkan ketahanan terhadap kriptanalisis diferensial dan linier.
+Setiap baris di dalam kotak-S adalah permutasi angka $0, 1, 2, \dots, 15$.
+Mengubah satu bit di dalam masukan kotak-S mengakibatkan perubahan paling
+sedikit dua bit pada luaran kotak-S. Sifat itu mendukung prinsip
+\textit{confusion} (konfusi).
+
+Pengisian kotak-S DES masih menjadi misteri. Nilai-nilai awal kotak-S sudah
+diubah.
 
 \subsection{Pembangkitan Kunci Putaran}
 
-Kunci eksternal 64 bit harus diubah menjadi 16 subkunci 48 bit. Prosesnya,
-yang tampak pada Gambar~\ref{fig:pembangkitan-kunci-des}, berjalan dalam tiga
-langkah:
+Ada 16 putaran, jadi ada 16 kunci internal $K_1, K_2, \dots, K_{16}$. Kunci
+internal disebut juga kunci putaran atau \textit{subkey}. Panjang setiap kunci
+internal adalah 48 bit. Kunci internal dibangkitkan dari kunci eksternal
+64 bit yang diberikan pengguna. Di dalam dokumen resmi DES, pembangkitan kunci
+internal disebut \textit{key schedule} (jadwal kunci).
 
-\begin{enumerate}
-    \item \textbf{PC-1} (\textit{Permuted Choice 1}) memilih 56 bit dari kunci 64
-    bit, yaitu membuang delapan bit paritas. Hasilnya langsung dipecah menjadi
-    dua register 28 bit, $C_0$ dan $D_0$.
-    \item \textbf{Pergeseran siklik} (\textit{left shift}) dilakukan pada $C_i$ dan
-    $D_i$ pada setiap putaran menurut jadwal pada Tabel~\ref{tab:jadwal-geser-des}.
-    \item \textbf{PC-2} (\textit{Permuted Choice 2}) memilih 48 dari 56 bit hasil
-    gabungan $C_i \parallel D_i$ untuk menjadi subkunci $K_i$.
-\end{enumerate}
-
-Perhatikan bahwa \textbf{setiap bit kunci tidak selalu terpakai di setiap
-putaran}. PC-2 hanya memilih 48 dari 56 bit yang tersedia, sehingga delapan bit
-selalu tersisa dan berganti-ganti dari putaran ke putaran. Jadi tidak benar
-bahwa subkunci $K_1, \dots, K_{16}$ bersama-sama memuat seluruh 56 bit kunci di
-setiap putaran; yang benar adalah setiap bit kunci muncul pada sebagian besar
-putaran, tetapi tidak semua.
+Pembangkitan kunci berjalan dalam tiga langkah, seperti pada
+Gambar~\ref{fig:pembangkitan-kunci-des}. Pertama, PC-1
+(\textit{Permuted Choice 1}) membuang delapan bit paritas dan menyisakan
+56 bit. Hasilnya dipecah menjadi dua register 28 bit, $C_0$ dan $D_0$. Kedua,
+$C_i$ dan $D_i$ digeser siklik ke kiri sejumlah $s_i$ bit menurut
+Tabel~\ref{tab:jadwal-geser-des}. Ketiga, PC-2 (\textit{Permuted Choice 2})
+memilih 48 bit dari $C_i \parallel D_i$ menjadi $K_i$.
 
 Secara formal, dengan $C_0 \parallel D_0 = \mathrm{PC1}(K)$ dan
 $\mathrm{LS}_i$ menyatakan pergeseran siklik ke kiri sejauh $s_i$ bit,
@@ -369,7 +275,7 @@ C_i = \mathrm{LS}_{s_i}(C_{i-1}), \qquad D_i = \mathrm{LS}_{s_i}(D_{i-1}),
 \qquad K_i = \mathrm{PC2}(C_i \parallel D_i).
 \label{eq:des-subkunci}
 \end{equation}
-Jadwal pergeseran $s_i$ sengaja tidak seragam. Pada putaran 1, 2, 9, dan 16
+Jadwal pergeseran $s_i$ tidak seragam. Pada putaran 1, 2, 9, dan 16
 pergeserannya satu bit, sedangkan pada putaran lain dua bit.
 
 \begin{table}[htbp]
@@ -385,15 +291,14 @@ pergeserannya satu bit, sedangkan pada putaran lain dua bit.
 \end{tabular}
 \caption{Jadwal pergeseran siklik kiri pada pembangkitan subkunci DES}
 \label{tab:jadwal-geser-des}
-\sumber{Data dari FIPS PUB 46-3.}
+\sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{table}
 
-Tabel PC-1 dan PC-2 disajikan pada Tabel~\ref{tab:pc-des}. Pada PC-1, empat baris
-pertama membentuk $C_0$ dan empat baris terakhir membentuk $D_0$. Perhatikan
-bahwa tidak ada bilangan 8, 16, 24, 32, 40, 48, 56, dan 64 di dalam PC-1;
-itulah cara kedelapan bit paritas dibuang. Pada PC-2, susunannya
-mencampur bit-bit dari $C$ dan $D$ secara berselang-seling, sehingga setiap
-subkunci memuat bit dari kedua separuh kunci.
+Tabel PC-1 dan PC-2 disajikan pada Tabel~\ref{tab:pc-des}. Pada PC-1, empat
+baris pertama membentuk $C_0$ dan empat baris terakhir membentuk $D_0$.
+Perhatikan bahwa tidak ada bilangan 8, 16, 24, 32, 40, 48, 56, dan 64 di dalam
+PC-1; itulah cara kedelapan bit paritas dibuang. Pada PC-2, bit-bit dari $C$
+dan $D$ dipilih untuk membentuk setiap kunci internal.
 
 \begin{table}[htbp]
 \centering
@@ -427,7 +332,7 @@ subkunci memuat bit dari kedua separuh kunci.
 \end{tabular}
 \caption{Tabel bit pembangkitan kunci DES: PC-1 (empat baris atas menjadi $C_0$, empat baris bawah menjadi $D_0$) dan PC-2}
 \label{tab:pc-des}
-\sumber{Data dari FIPS PUB 46-3; disusun ulang dari Munir, \textit{IF4020 Kriptografi}, ITB.}
+\sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{table}
 
 \begin{figure}[htbp]

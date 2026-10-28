@@ -1,14 +1,23 @@
 
 \begin{obeassessment}
 \textbf{Kuis Bab 6}
-1. Berikan contoh skenario di mana mode CTR lebih menguntungkan dibandingkan mode CBC.
-2. Apa yang dimaksud dengan \textit{error propagation} pada mode CBC dan bagaimana mode OFB mengatasinya?
-3. Mengapa penggunaan IV (\textit{Initialization Vector}) sangat penting pada mode CBC?
-4. Jelaskan mengapa mode ECB dapat dimanipulasi oleh pihak lawan untuk mengubah makna pesan meskipun kuncinya tidak diketahui.
-5. Sebuah cipher blok berukuran 4 bit memakai $E_K(P)=(P\oplus K)\ll 1$ dengan $K=\code{1011}$. Hitung cipherteks dari plainteks $\code{0110}$ pada mode ECB.
-6. Pada mode OFB, mengapa aliran kunci dapat dihitung lebih dahulu sebelum plainteks diketahui? Sebutkan satu keuntungan praktis dari sifat itu.
-7. Jelaskan hubungan antara jumlah putaran sebuah \textit{iterated cipher} dengan tingkat keamanan dan dengan biaya komputasi. Mengapa jumlah putaran tidak dibuat sebesar mungkin?
-8. Apa perbedaan utama antara jaringan Feistel dan jaringan SPN dari sudut pandang perancang algoritma?
+1. Berikan contoh skenario di mana mode CTR lebih menguntungkan dibandingkan
+   mode CBC.
+2. Apa yang dimaksud dengan penjalaran galat pada mode CBC, dan bagaimana mode
+   OFB menghindarinya?
+3. Mengapa blok pertama pada mode CBC memerlukan IV?
+4. Jelaskan mengapa mode ECB dapat dimanipulasi pihak lawan untuk mengubah
+   makna pesan meskipun kuncinya tidak diketahui.
+5. Sebuah cipher blok berukuran 4 bit memakai $E_K(P)=(P\oplus K)\ll 1$ dengan
+   $K=\code{1011}$. Hitung cipherteks dari plainteks $\code{0110}$ pada mode
+   ECB.
+6. Pada mode OFB, mengapa kesalahan satu bit pada cipherteks hanya mempengaruhi
+   satu blok plainteks?
+7. Jelaskan hubungan antara jumlah putaran sebuah \textit{iterated cipher}
+   dengan tingkat keamanan dan dengan biaya komputasi. Mengapa jumlah putaran
+   tidak dibuat sebesar mungkin?
+8. Mengapa panjang kunci mempengaruhi ketahanan cipher blok terhadap serangan
+   \textit{brute force}? Kaitkan jawaban dengan efek confusion.
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -17,7 +26,7 @@ Indikator Kompetensi & Tercapai \\
 \hline
 Saya dapat menjelaskan perbedaan \textit{block cipher} dan \textit{stream cipher} & [ ] \\
 \hline
-Saya dapat menjelaskan mengapa $E_K$ harus merupakan permutasi bijektif & [ ] \\
+Saya dapat menjelaskan pengaruh ukuran blok dan ukuran kunci & [ ] \\
 \hline
 Saya dapat menangani blok terakhir yang tidak lengkap dengan \textit{padding} & [ ] \\
 \hline
@@ -33,15 +42,11 @@ Saya dapat menjelaskan prinsip \textit{confusion} dan \textit{diffusion} & [ ] \
 \hline
 Saya dapat menghitung substitusi satu masukan pada S-box DES & [ ] \\
 \hline
-Saya dapat menjelaskan efek \textit{avalanche} pada cipher blok & [ ] \\
+Saya dapat menguraikan mekanisme kerja jaringan Feistel & [ ] \\
 \hline
-Saya dapat menguraikan mekanisme kerja Jaringan Feistel & [ ] \\
-\hline
-Saya dapat membuktikan sifat reversibel Jaringan Feistel & [ ] \\
+Saya dapat membuktikan sifat reversible jaringan Feistel & [ ] \\
 \hline
 Saya dapat menjelaskan tujuan \textit{key scheduling} & [ ] \\
-\hline
-Saya dapat menganalisis pengaruh panjang kunci terhadap keamanan sistem & [ ] \\
 \hline
 \end{tabularx}
 \end{competencychecklist}

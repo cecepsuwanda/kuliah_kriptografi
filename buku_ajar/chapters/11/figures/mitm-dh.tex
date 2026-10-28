@@ -26,17 +26,14 @@
 
         % --- pengiriman yang dicegat ---
         \draw[panah] (a.east) -- node[above, font=\scriptsize] {$g^{a} \bmod p$} (2.6,0);
-        \node[font=\scriptsize, align=center] at (4.5,0.42) {diganti};
         \draw[palsu] (m.west) -- node[below, font=\scriptsize] {$g^{m} \bmod p$} (2.6,0);
 
         \draw[palsu] (m.east) -- node[above, font=\scriptsize] {$g^{m} \bmod p$} (10.2,0);
-        \node[font=\scriptsize, align=center] at (11.5,0.42) {seolah dari Alice};
         \draw[panah] (b.west) -- node[below, font=\scriptsize] {$g^{b} \bmod p$} (10.2,0);
 
         \node[catatan, anchor=north] at (6.4,-2.2)
-            {Alice dan Bob masing-masing merasa berbicara dengan pihak yang benar,
-             sebab kedua perhitungan berjalan mulus. Mallory memakai $K_1$ untuk
-             membaca arah Alice dan $K_2$ untuk membaca arah Bob};
+            {Mallory memakai $K_1$ untuk membaca arah Alice dan $K_2$ untuk
+             membaca arah Bob. Ia tidak perlu mengetahui $a$ atau $b$};
     \end{tikzpicture}}
     \caption{Serangan man-in-the-middle: $g^m$ menggantikan $g^a$ dan $g^b$,
     sehingga Mallory menyepakati kunci yang berbeda dengan masing-masing pihak}

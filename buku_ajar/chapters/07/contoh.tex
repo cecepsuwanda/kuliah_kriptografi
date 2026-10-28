@@ -1,33 +1,8 @@
 \section{Contoh Terhitung}
 
 \begin{example}
-\textbf{Satu putaran jaringan Feistel mainan.} Blok mainan 8 bit dibagi dua bagian
-4 bit; fungsi putaran $f(R,K)=(R\oplus K)$ digeser siklik ke kiri 1 bit. Mula-mula
-$L_0=1010$, $R_0=0011$, dengan aturan
-\[
-L_i=R_{i-1},\qquad R_i=L_{i-1}\oplus f(R_{i-1},K_i).
-\]
-Putaran 1, $K_1=1100$: $f(0011,1100)=\text{geser-kiri}(0011\oplus1100)=\text{geser-kiri}(1111)=1111$, sehingga $L_1=0011$ dan $R_1=1010\oplus1111=0101$.\\
-Putaran 2, $K_2=1010$: $f(0101,1010)=\text{geser-kiri}(1111)=1111$, sehingga $L_2=0101$ dan $R_2=0011\oplus1111=1100$.\\
-Melanjutkan dengan $K_3=0110$ dan $K_4=1001$:
-\[
-\begin{array}{c|cc}
-i & L_i & R_i\\
-\hline
-0 & 1010 & 0011\\
-1 & 0011 & 0101\\
-2 & 0101 & 1100\\
-3 & 1100 & 0000\\
-4 & 0000 & 1111
-\end{array}
-\]
-Dekripsi memakai aturan yang sama dengan urutan kunci terbalik $(K_4,K_3,K_2,K_1)$
-dan menukar peran $L,R$, tanpa perlu fungsi $f^{-1}$ yang terpisah.
-\end{example}
-
-\begin{example}
 \label{ex:des-sbox}
-\textbf{Membaca S-box DES.} S-box menerima 6 bit; bit pertama dan keenam
+\textbf{Membaca kotak-S DES.} Kotak-S menerima 6 bit. Bit pertama dan keenam
 menentukan nomor baris, bit kedua sampai kelima menentukan nomor kolom. Pakai
 tabel $S_1$ pada Tabel~\ref{tab:sbox-des}.
 
@@ -40,12 +15,15 @@ tabel $S_1$ pada Tabel~\ref{tab:sbox-des}.
 \code{011000} & $00_2=0$ & $1100_2=12$ & 5 & \code{0101} \\
 \code{110100} & $10_2=2$ & $1010_2=10$ & 9 & \code{1001} \\
 \code{011011} & $01_2=1$ & $1101_2=13$ & 5 & \code{0101} \\
+% Koreksi: slide halaman 23 menulis luaran 13 untuk masukan 101010.
+% Dengan tabel S1 baku, baris 2 kolom 5 bernilai 6.
+\code{101010} & $10_2=2$ & $0101_2=5$ & 6 & \code{0110} \\
 \hline
 \end{tabular}
 \end{center}
 
-Baris ke-2 tabel $S_1$ (dihitung dari baris 0, lihat Tabel~\ref{tab:sbox-des})
-berbunyi
+Baris ke-2 tabel $S_1$ (dihitung dari baris 0, lihat
+Tabel~\ref{tab:sbox-des}) berbunyi
 \begin{center}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -53,9 +31,8 @@ berbunyi
 4 & 1 & 14 & 8 & 13 & 6 & 2 & 11 & 15 & 12 & 9 & 7 & 3 & 10 & 5 & 0
 \end{tabular}
 \end{center}
-sehingga entri pada kolom ke-10 bernilai $9$. Perhatikan bahwa keluaran tidak
-diperoleh dari operasi linier atau affine apa pun atas masukannya --- di situlah
-letak sifat nirlanjar DES.
+sehingga entri pada kolom ke-10 bernilai $9$. Keluaran 4 bit inilah yang
+kemudian dipermutasi oleh $P$.
 \end{example}
 
 \begin{example}
@@ -69,9 +46,8 @@ Kunci itu dalam biner, byte demi byte, adalah
 \texttt{0001001\underline{1}\ 0011010\underline{0}\ 0101011\underline{1}\ 0111100\underline{1}}\\
 \texttt{1001101\underline{1}\ 1011110\underline{0}\ 1101111\underline{1}\ 1111000\underline{1}}
 \end{center}
-dengan bit terakhir setiap byte (bit pada posisi $8, 16, \dots, 64$) digarisbawahi.
-Kedelapan bit itu adalah bit paritas ganjil: setiap byte memuat jumlah bit $1$
-yang ganjil, dan bit paritas itulah yang membuat jumlahnya ganjil.
+dengan bit terakhir setiap byte (bit pada posisi $8, 16, \dots, 64$)
+digarisbawahi. Kedelapan bit itu adalah bit paritas yang dibuang oleh PC-1.
 
 Membaca PC-1 baris demi baris pada 64 bit itu, empat baris pertama menghasilkan
 \[
@@ -98,8 +74,9 @@ pergeseran $s_2 = 1$ bit lagi, adalah
 \[
 K_2 = \code{79AED9DBC9E5}.
 \]
-Perhatikan bahwa $K_1$ dan $K_2$ sama sekali berbeda; itulah tanda bahwa jadwal
-pergeseran dan PC-2 bekerja sebagaimana mestinya.
+Perhatikan bahwa $K_1$ dan $K_2$ berbeda; itulah tanda bahwa jadwal pergeseran
+dan PC-2 bekerja sebagaimana mestinya.
+% Seluruh nilai di atas diverifikasi ulang dengan Python (des_uji.py).
 \end{example}
 
 \begin{example}
@@ -113,9 +90,9 @@ Kunci      & $K = \code{133457799BBCDFF1}$ \\
 Cipherteks & $C = \code{85E813540F0AB405}$ \\
 \end{tabular}
 \end{center}
-Vektor uji itu diambil dari standar, dan seluruh langkahnya dapat dihitung dari
-tabel pada Tabel~\ref{tab:ip-des}, Tabel~\ref{tab:ep-des},
-Tabel~\ref{tab:sbox-des}, dan Tabel~\ref{tab:pc-des}.
+Seluruh langkahnya dapat dihitung dari tabel pada Tabel~\ref{tab:ip-des},
+Tabel~\ref{tab:ep-des}, Tabel~\ref{tab:sbox-des}, dan
+Tabel~\ref{tab:pc-des}.
 
 \textbf{Langkah 1 --- permutasi awal.} Membaca IP pada 64 bit plainteks
 menghasilkan dua separuh
@@ -138,7 +115,7 @@ E(R_0) \oplus K_1 &= 011000\,010001\,011110\,111010\,100001\,100110\,010100\,100
 \end{aligned}
 \]
 
-\textbf{Langkah 3 --- substitusi S-box.} Kedelapan kelompok enam bit itu
+\textbf{Langkah 3 --- substitusi kotak-S.} Kedelapan kelompok enam bit itu
 disubstitusi satu per satu memakai tabel $S_1$ sampai $S_8$:
 
 \begin{center}
@@ -177,7 +154,7 @@ R_1 = L_0 \oplus P(S) = \code{CC00CCFF} \oplus \code{234AA9BB} = \code{EF4A6544}
 \qquad L_1 = R_0 = \code{F0AAF0AA}.
 \]
 
-Kedua belas putaran berikutnya berjalan dengan pola yang sama, memakai
+Kelima belas putaran berikutnya berjalan dengan pola yang sama, memakai
 $K_2, K_3, \dots, K_{16}$. Hasil antara pada setiap putaran tercantum pada
 tabel berikut.
 
@@ -214,53 +191,30 @@ $i$ & $L_i$ & $R_i$ \\
 \end{tabular}
 \end{center}
 
-Karena jaringan Feistel tidak menukar kedua separuh pada putaran terakhir, blok
-sebelum permutasi akhir adalah $R_{16} \parallel L_{16}$, yaitu
-$0\text{A}4\text{CD}995\,43423234$. Membaca $\text{IP}^{-1}$ pada blok itu
-memberikan cipherteks
+Karena jaringan Feistel tidak menukar kedua separuh pada putaran terakhir,
+blok sebelum permutasi akhir adalah $R_{16} \parallel L_{16}$, yaitu
+\code{0A4CD99543423234}. Membaca $\text{IP}^{-1}$ pada blok itu memberikan
+cipherteks
 \[
-C = \code{85E813540F0AB405},
+C = \code{85E813540F0AB405}.
 \]
-persis sama dengan nilai resmi pada standar. Untuk dekripsi, jalankan 16 putaran
-yang sama dengan urutan subkunci dibalik, yaitu $K_{16}$ lebih dahulu dan $K_1$
-terakhir.
-\end{example}
-
-\begin{example}
-\textbf{Longsoran dan pembangkitan subkunci.}
-(i) \textit{Efek longsoran.} Ubah satu bit plainteks pada contoh mainan di atas,
-$L_0:1010\to0010$. Setelah putaran 1, 2, 3, dan 4, jumlah bit keluaran
-$(L_i,R_i)$ yang berbeda dari semula berturut-turut adalah $1,2,3,3$ bit (dari
-8 bit). Satu bit masukan makin menyebar seiring bertambahnya putaran; pada DES
-penuh (16 putaran, blok 64 bit) perubahan 1 bit menyebar ke sekitar setengah
-bit cipherteks.
-(ii) \textit{Pembangkitan subkunci.} Kunci efektif 56 bit dipecah menjadi
-$C_0,D_0$ (masing-masing 28 bit). Untuk $C_0=1111000011110000111100001111$:
-\[
-\text{putaran 1, geser-kiri 1}\to C_1=1110000111100001111000011111,
-\]
-\[
-\text{putaran 2, geser-kiri 1 lagi}\to C_2=1100001111000011110000111111,
-\]
-sesuai jadwal pergeseran putaran 1 dan 2 (masing-masing 1 bit). Hasil $C_i,D_i$
-lalu dipilih 48 bit oleh PC-2 menjadi $K_i$.
-(iii) \textit{Perbandingan dengan kunci nyata.} Pada Contoh~\ref{ex:des-subkunci},
-kunci nyata $\code{133457799BBCDFF1}$ menghasilkan $K_1=\code{1B02EFFC7072}$ dan
-$K_2=\code{79AED9DBC9E5}$; pada contoh mainan di atas pergeseran sengaja dibuat
-seragam agar mudah diikuti, padahal jadwal DES sesungguhnya tidak seragam.
+Untuk dekripsi, jalankan 16 putaran yang sama dengan urutan subkunci dibalik,
+yaitu $K_{16}$ lebih dahulu dan $K_1$ terakhir.
+% Seluruh nilai pada contoh ini diverifikasi ulang dengan Python (des_uji.py),
+% termasuk S-out = 5C82B597 (bukan 5C82B5A5).
 \end{example}
 
 \begin{example}
 \label{ex:des-kunci-lemah}
-\textbf{Mengapa kunci} \code{0101010101010101} \textbf{lemah.} Kunci itu dalam biner
-adalah delapan byte identik
+\textbf{Mengapa kunci} \code{0101010101010101} \textbf{lemah.} Kunci itu dalam
+biner adalah delapan byte identik
 \begin{center}
 \texttt{00000001\ 00000001\ 00000001\ 00000001}\\
 \texttt{00000001\ 00000001\ 00000001\ 00000001}
 \end{center}
-dan bit paritas pada posisi $8, 16, \dots, 64$ adalah bit terakhir setiap byte,
-yaitu seluruhnya bernilai $1$. Karena PC-1 membuang tepat kedelapan posisi itu,
-tujuh bit yang tersisa pada setiap byte semuanya bernilai $0$. Jadi
+dan bit pada posisi $8, 16, \dots, 64$ adalah bit terakhir setiap byte.
+Karena PC-1 membuang tepat kedelapan posisi itu, tujuh bit yang tersisa pada
+setiap byte semuanya bernilai $0$. Jadi
 \[
 C_0 = 0000\,0000\,0000\,0000\,0000\,0000\,0000, \quad
 D_0 = 0000\,0000\,0000\,0000\,0000\,0000\,0000.
@@ -268,36 +222,8 @@ D_0 = 0000\,0000\,0000\,0000\,0000\,0000\,0000.
 Pergeseran siklik atas deretan nol tetap menghasilkan deretan nol, sehingga
 $C_i = D_i = 0$ untuk semua $i$ dan PC-2 menghasilkan
 $K_i = \code{000000000000}$ untuk setiap putaran. Karena semua subkunci sama,
-fungsi $f$ yang dipakai pada putaran ganjil dan genap identik, dan akibatnya
+fungsi $f$ yang dipakai pada setiap putaran identik. Akibatnya
 $E_K(E_K(x)) = x$ untuk setiap blok $x$. Inilah yang membuat kunci itu
-dinyatakan \textit{lemah}: mengenkripsi dua kali dengan kunci yang sama sama
-dengan tidak mengenkripsi sama sekali.
-\end{example}
-
-\begin{example}
-\label{ex:des-mitm}
-\textbf{Biaya nyata serangan meet-in-the-middle.} Serangan pada Double DES
-memerlukan
-\[
-2^{56} \approx 7{,}2 \times 10^{16} \text{ enkripsi} + 2^{56} \text{ dekripsi}
-\approx 2^{57} \approx 1{,}44 \times 10^{17} \text{ operasi}.
-\]
-Pada perangkat keras berkecepatan satu miliar operasi per detik, penyerang
-memerlukan sekitar $1{,}44 \times 10^{8}$ detik, yaitu sekitar 4,6 tahun
---- lebih cepat daripada menyerang DES tunggal dengan cara yang sama, tetapi
-masih jauh lebih murah daripada $2^{112}$.
-
-Tabel yang menyimpan hasil antara berisi $2^{56}$ entri. Bila setiap entri
-memakan 8 byte --- 8 byte cipherteks antara ditambah penunjuk ke kuncinya ---
-tabel itu memerlukan sekitar
-\[
-2^{56} \times 8 \text{ byte} = 2^{59} \text{ byte} \approx 5{,}8 \times 10^{17} \text{ byte}
-\approx 576 \text{ petabita}.
-\]
-Jadi hambatan sesungguhnya bukan komputasi, melainkan memori. Bila memori
-sebesar itu tidak tersedia, penyerang memakai teknik
-\textit{distinguished points} atau menyaring dengan beberapa pasangan
-plainteks--cipherteks sekaligus, dengan konsekuensi waktu yang lebih panjang
-tetapi tetap di sekitar $2^{57}$ sampai $2^{60}$, dan tetap jauh di bawah
-$2^{112}$.
+dinyatakan lemah.
+% Subkunci nol dan sifat E_K(E_K(x)) = x diverifikasi dengan Python.
 \end{example}

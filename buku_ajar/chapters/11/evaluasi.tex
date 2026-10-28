@@ -1,44 +1,46 @@
 
 \begin{obeassessment}
 \textbf{Kuis Bab 11}
-1. Jelaskan langkah-langkah matematis yang terjadi dalam pertukaran kunci Diffie-Hellman.
-2. Apa yang dimaksud dengan masalah logaritma diskrit dan mengapa hal ini menjadi fondasi keamanan DH?
-3. Gambarkan alur serangan \textit{Man-in-the-Middle} pada protokol DH dan jelaskan mengapa hal tersebut bisa terjadi.
-4. Diketahui $p = 23$, $g = 5$, $a = 7$, dan $b = 15$. Hitunglah $A$, $B$, dan kunci
-   bersama $K$ dari kedua sisi.
-5. Jelaskan mengapa $g$ harus merupakan akar primitif dari $p$, dan tunjukkan apa
-   yang menjadi salah bila $g = 3$ dipakai pada $p = 11$.
-6. Sebutkan dua alasan mengapa protokol Diffie--Hellman tanpa otentikasi tidak
-   boleh dipakai untuk melindungi percakapan yang sungguh-sungguh rahasia.
+
+1. Jelaskan langkah-langkah kriptografi hibrida yang menggabungkan AES dan RSA.
+
+2. Jelaskan empat langkah pertukaran kunci Diffie-Hellman dan tunjukkan bahwa
+   kedua pihak memperoleh kunci yang sama.
+
+3. Apa yang dimaksud dengan logaritma diskret, dan mengapa hal itu menjadi
+   dasar keamanan Diffie-Hellman?
+
+4. Gambarkan alur serangan \textit{man-in-the-middle} pada protokol
+   Diffie-Hellman. Jelaskan mengapa serangan itu berhasil.
+
+5. Diketahui $p = 353$, $g = 3$, $a = 97$, dan $b = 233$. Hitunglah $A$, $B$,
+   dan kunci bersama $K$ dari kedua sisi.
+
+6. Jelaskan pertukaran kunci tiga pihak dan sebutkan satu penerapan
+   Diffie-Hellman.
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
 \hline
 Indikator Kompetensi & Tercapai \\
 \hline
-Saya dapat menjelaskan masalah distribusi kunci pada simetri & [ ] \\
+Saya dapat menjelaskan persoalan kunci pada kriptografi simetri & [ ] \\
+\hline
+Saya dapat menjelaskan langkah kriptografi hibrida & [ ] \\
 \hline
 Saya dapat menguraikan prosedur pertukaran kunci Diffie-Hellman & [ ] \\
 \hline
-Saya dapat menghitung kunci rahasia bersama $K$ menggunakan parameter DH & [ ] \\
+Saya dapat menghitung kunci rahasia bersama $K$ dengan parameter DH & [ ] \\
 \hline
-Saya dapat memeriksa apakah sebuah $g$ merupakan akar primitif dari $p$ & [ ] \\
+Saya dapat menyebutkan syarat $p$ dan $g$ pada protokol DH & [ ] \\
 \hline
 Saya dapat menjelaskan mengapa logaritma diskret menjadi dasar keamanan DH & [ ] \\
 \hline
-Saya dapat memperkirakan biaya serangan logaritma diskret menurut panjang modulus & [ ] \\
-\hline
 Saya dapat menganalisis risiko serangan MITM pada protokol DH & [ ] \\
 \hline
-Saya dapat menjelaskan mengapa MITM tidak dapat ditangkis dengan memperbesar modulus & [ ] \\
+Saya dapat menjelaskan pertukaran kunci tiga pihak & [ ] \\
 \hline
-Saya dapat menjelaskan peran otentikasi dalam menutup celah MITM & [ ] \\
-\hline
-Saya dapat menjelaskan perbedaan DH statis dan DH sesaat (\textit{forward secrecy}) & [ ] \\
-\hline
-Saya dapat menjelaskan pertukaran kunci tiga pihak dan menghitung $g^{abc} \bmod p$ & [ ] \\
-\hline
-Saya dapat menjelaskan implementasi DH pada protokol TLS/SSL & [ ] \\
+Saya dapat menyebutkan penerapan DH pada SSL dan TLS & [ ] \\
 \hline
 \end{tabularx}
 \end{competencychecklist}

@@ -1,87 +1,35 @@
 \section{Contoh Terhitung}
 
 \begin{example}
-\textbf{Vigen\`ere Cipher.} Enkripsi plainteks \code{SERANGPAGI} dengan kunci \code{KUNCI}. Kunci diulang periodik sepanjang pesan sehingga menjadi \code{KUNCIKUNCI} ($|P|=|K|=10$). Konversi huruf ke angka ($A=0,\dots,Z=25$):
-\[
-\begin{array}{c|cccccccccc}
-P & 18 & 4 & 17 & 0 & 13 & 6 & 15 & 0 & 6 & 8\\
-K & 10 & 20 & 13 & 2 & 8 & 10 & 20 & 13 & 2 & 8
-\end{array}
-\]
-Hitung $C_i=(P_i+K_i)\bmod 26$ tiap posisi:
-\[
-\begin{aligned}
-(18+10)_{26}&=2=\text{C}, & (13+8)_{26}&=21=\text{V},\\
-(4+20)_{26}&=24=\text{Y}, & (6+10)_{26}&=16=\text{Q},\\
-(17+13)_{26}&=4=\text{E}, & (15+20)_{26}&=9=\text{J},\\
-(0+2)_{26}&=2=\text{C}, & (0+13)_{26}&=13=\text{N},\\
-(6+2)_{26}&=8=\text{I}, & (8+8)_{26}&=16=\text{Q}.
-\end{aligned}
-\]
-Jadi cipherteks adalah \code{CYECVQJNIQ}. Dekripsi mengembalikannya melalui $P_i=(C_i-K_i)\bmod 26$.
+\textbf{Caesar cipher dengan $k=3$.} Plainteks \code{temui saya di jembatan
+merah nanti malam} dienkripsi dengan pergeseran tiga huruf. Huruf \code{t}
+$=19$ menjadi $(19+3) \bmod 26=22=\code{W}$. Huruf \code{e} $=4$ menjadi
+$7=\code{H}$. Huruf \code{m} $=12$ menjadi $15=\code{P}$. Huruf \code{u} $=20$
+menjadi $23=\code{X}$. Huruf \code{i} $=8$ menjadi $11=\code{L}$. Cipherteks
+lengkapnya adalah \code{WHPXL VDBD GL MHPEDWDQ PHUDK QDQWL PDODP}.
 \end{example}
 
 \begin{example}
-\textbf{Hill Cipher $2\times2$.} Matriks kunci $\mathbf{K}=\begin{pmatrix}3&3\\2&5\end{pmatrix}$ dengan $\det(\mathbf{K})=(3\cdot5)-(3\cdot2)=9$, dan $\gcd(9,26)=1$ sehingga $\mathbf{K}$ invertibel modulo 26. Enkripsi plainteks \code{HILL} sebagai dua vektor kolom: $\text{HI}=(7,8)$ dan $\text{LL}=(11,11)$.
-\[
-\mathbf{C}=\mathbf{KP}\pmod{26}
-\]
-\[
-\begin{pmatrix}3&3\\2&5\end{pmatrix}\begin{pmatrix}7\\8\end{pmatrix}=
-\begin{pmatrix}21+24\\14+40\end{pmatrix}=\begin{pmatrix}45\\54\end{pmatrix}\bmod 26=\begin{pmatrix}19\\2\end{pmatrix}=\text{TC}
-\]
-\[
-\begin{pmatrix}3&3\\2&5\end{pmatrix}\begin{pmatrix}11\\11\end{pmatrix}=
-\begin{pmatrix}33+33\\22+55\end{pmatrix}=\begin{pmatrix}66\\77\end{pmatrix}\bmod 26=\begin{pmatrix}14\\25\end{pmatrix}=\text{OZ}
-\]
-Cipherteks \code{TCOZ}. Dekripsi memakai $\mathbf{K}^{-1}=\det(\mathbf{K})^{-1}\begin{pmatrix}5&-3\\-2&3\end{pmatrix}$ dengan $9^{-1}\equiv3 \pmod{26}$, yaitu $\mathbf{K}^{-1}=\begin{pmatrix}15&17\\20&9\end{pmatrix}$. Uji balik untuk \code{TC}: $\mathbf{K}^{-1}\binom{19}{2}=\binom{15\cdot19+17\cdot2}{20\cdot19+9\cdot2}=\binom{319}{398}\bmod26=\binom{7}{8}=\text{HI}$.
+\textbf{Vigen\`ere cipher dengan kunci \code{soreang}.} Plainteks yang dipakai
+adalah
+\begin{center}
+\code{terimapesanangulaikambing}.
+\end{center}
+Panjangnya 25 huruf. Kunci \code{soreang} bernilai $(18,14,17,4,0,13,6)$ dan
+diulang menjadi \code{soreangsoreangsoreangsore}. Tiga huruf pertama dihitung
+sebagai $(19+18) \bmod 26=11=\code{L}$, $(4+14) \bmod 26=18=\code{S}$, dan
+$(17+17) \bmod 26=8=\code{I}$. Cipherteks lengkapnya adalah
+\begin{center}
+\code{LSIMMNVWGRRAAMMZRMKNSTWEK}.
+\end{center}
 \end{example}
 
 \begin{example}
-\textbf{One-Time Pad (XOR biner).} Plainteks $P=10110011$ dienkripsi dengan kunci acak $K=01101101$; panjang kunci sama dengan panjang pesan ($|K|=|P|=8$ bit). Enkripsi dan dekripsi identik, yaitu XOR bit-per-bit:
-\[
-C=P\oplus K=10110011\oplus01101101=11011110.
-\]
-Dekripsi: $C\oplus K=11011110\oplus01101101=10110011=P$. Jika kunci yang sama dipakai lagi untuk $P_2=11001010$, diperoleh $C_2=10100111$; maka $C\oplus C_2=01111001=P\oplus P_2$, sehingga XOR dua plainteks terbuka tanpa mengetahui kuncinya.
-\end{example}
-
-\begin{example}
-\textbf{Transposisi pagar rel dengan $k=4$.} Plainteks \code{HELLOWORLD} dituliskan pada empat baris secara zigzag. Pola barisnya berulang sebagai $0,1,2,3,2,1,0,1,2,3$, sehingga huruf-hurufnya terbagi sebagai berikut.
-\[
-\begin{array}{c|l}
-\text{Baris 0} & \text{H O}\\
-\text{Baris 1} & \text{E W R}\\
-\text{Baris 2} & \text{L O L}\\
-\text{Baris 3} & \text{L D}
-\end{array}
-\]
-Cipherteksnya diperoleh dengan membaca baris demi baris dari atas ke bawah, yaitu \code{HOEWRLOLLD}. Perhatikan bahwa menambah jumlah baris dari 3 menjadi 4 memperbesar jumlah kemungkinan kunci, tetapi tidak mengubah sifat dasar cipher: huruf-hurufnya tetap sama, hanya urutannya yang diacak. Karena itu cipherteks tetap membawa distribusi frekuensi plainteks, dan dengan bantuan bigram serta trigram bahasa teks itu dapat dibaca kembali.
-\end{example}
-
-\begin{example}
-\textbf{Pemulihan kunci OTP dari plainteks yang diketahui.} Diberikan cipherteks \code{HOJKOREGHP}. Jika kriptanalis berhasil mengetahui bahwa empat huruf pertama plainteksnya adalah \code{SALM}, ia dapat menghitung potongan kunci yang bersesuaian dengan
-\[
-K_i = (C_i - P_i) \bmod 26.
-\]
-\[
-\begin{array}{c|cccc}
-C_i & \text{H}=7 & \text{O}=14 & \text{J}=9 & \text{K}=10\\
-P_i & \text{S}=18 & \text{A}=0 & \text{L}=11 & \text{M}=12\\
-\hline
-K_i & -11 \equiv 15 = \text{P} & 14 = \text{O} & -2 \equiv 24 = \text{Y} & -2 \equiv 24 = \text{Y}
-\end{array}
-\]
-Empat huruf pertama kuncinya adalah \code{POYY}. Bila potongan plainteks itu diperoleh dari percakapan yang sedang berlangsung dan kuncinya dipakai ulang, sisa pesan pada posisi tersebut langsung terbaca. Kasus inilah yang menegaskan mengapa syarat ``kunci hanya dipakai sekali'' tidak dapat dilanggar.
-\end{example}
-
-\begin{example}
-\textbf{Analisis frekuensi pada kriptogram 45 huruf.} Diberikan cipherteks hasil cipher abjad-tunggal (substitusi) atas sebuah kalimat bahasa Indonesia:
-\[
-\code{IQDOTMBQGHDIJGRDIRGLBGTKSLGQDIULTUIEDOSJGFGQD}
-\]
-Penghitungan frekuensi menghasilkan huruf tersering \code{G} sebanyak 7 kali (15,6\%), diikuti \code{D} sebanyak 6 kali (13,3\%), \code{I} sebanyak 5 kali (11,1\%), lalu \code{Q} sebanyak 4 kali (8,9\%). Karena huruf tersering di dalam bahasa Indonesia adalah \code{A} (sekitar 17,5\%), langkah pertama kriptanalis adalah menebak bahwa \code{G} adalah padanan \code{A}. Mengganti seluruh \code{G} menjadi \code{A} dan \code{D} menjadi \code{I} atau \code{N}, lalu memeriksa bigram dan trigram yang terbentuk, akhirnya mengungkap keseluruhan pemetaan. Abjad substitusinya ternyata dibangkitkan dari kata kunci \code{GANESHA}, yaitu
-\[
-\code{GANESHBCDFIJKLMOPQRTUVWXYZ},
-\]
-dan plainteksnya adalah \code{KRIPTOGRAFIKLASIKSANGATMENARIKUNTUKDIPELAJARI}. Sebagai pemeriksaan tambahan, indeks kebetulan kriptogram ini adalah $CI = 0{,}0646$, sangat dekat dengan nilai acuan sekitar $0{,}065$ untuk cipher abjad-tunggal (lihat Bagian~\ref{sec:indeks-kebetulan}). Nilai itu jauh lebih tinggi daripada indeks kebetulan cipher abjad-majemuk, dan justru dari selisih itulah kriptanalis dapat menyimpulkan bahwa cipherteks ini dihasilkan oleh cipher abjad-tunggal.
+\textbf{One-Time Pad.} Plainteks \code{onetimepad} dan kunci
+\code{tbfrgfarhm} berpanjang sama, yaitu sepuluh huruf. Enkripsi menghasilkan
+\code{HOJKOREGHP}. Huruf pertama adalah
+$(\code{o}+\code{t})=(14+19) \bmod 26=7=\code{H}$. Dekripsi huruf pertama
+adalah $(\code{H}-\code{t})=(7-19) \bmod 26=14=\code{o}$.
+% Koreksi: slide menulis kunci tbfrgfarfm, yang menghasilkan HOJKOREGFP.
+% Kunci yang sesuai dengan cipherteks HOJKOREGHP adalah tbfrgfarhm.
 \end{example}

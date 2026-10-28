@@ -2,42 +2,44 @@
 \begin{obeassessment}
 \textbf{Kuis Bab 10}
 1. Jelaskan peran fungsi Totient Euler dalam pembangkitan kunci RSA.
-2. Bagaimana prosedur dekripsi RSA mengembalikan pesan asli menggunakan Teorema Euler?
-3. Mengapa distribusi kunci publik rentan terhadap serangan \textit{Man-in-the-Middle}?
-4. Dengan $p = 5$, $q = 11$, dan $e = 3$, hitunglah $n$, $\varphi(n)$, dan $d$. Kemudian
-   enkripsikan $m = 9$ dan periksa bahwa dekripsinya memulihkan $m$.
-5. Jelaskan mengapa RSA tanpa \textit{padding} tidak boleh dipakai untuk mengenkripsi
-   pesan apa adanya, dan sebutkan dua sifat yang membuatnya berbahaya.
-6. Sebuah sistem memakai RSA-1024. Berikan dua alasan berbeda mengapa panjang kunci itu
-   kini dianggap tidak memadai, satu dari kemajuan komputasi biasa dan satu dari
-   komputasi kuantum.
+2. Bagaimana Teorema Euler dipakai untuk menunjukkan bahwa dekripsi RSA
+   mengembalikan pesan asli?
+3. Dengan $p = 5$, $q = 11$, dan $e = 3$, hitunglah $n$, $\varphi(n)$, dan
+   $d$. Kemudian enkripsikan $m = 9$ dan periksa bahwa dekripsinya memulihkan
+   $m$.
+4. Jelaskan mengapa modulus RSA harus panjang. Sebutkan keadaan modulus 256
+   bit, 512 bit, dan 1024 bit menurut bahan kuliah.
+5. Jelaskan mengapa RSA jarang dipakai untuk mengenkripsi data berukuran
+   besar, dan bagaimana kriptografi hibrida mengatasi hal itu.
+6. Mengapa RSA memerlukan \textit{padding} seperti OAEP sebelum pesan
+   dienkripsi?
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
 \hline
 Indikator Kompetensi & Tercapai \\
 \hline
-Saya dapat membedakan kriptografi simetri dan asimetris & [ ] \\
+Saya dapat membedakan kunci publik dan kunci privat pada RSA & [ ] \\
 \hline
-Saya dapat menjelaskan fungsi satu arah dengan pintu jebakan dan kaitannya dengan RSA & [ ] \\
+Saya dapat menjelaskan properti dan kerahasiaan komponen algoritma RSA & [ ] \\
+\hline
+Saya dapat menjelaskan Teorema Euler dan Fungsi Totient Euler & [ ] \\
 \hline
 Saya dapat menghitung pasangan kunci RSA untuk parameter kecil & [ ] \\
-\hline
-Saya dapat menghitung kunci privat dengan Algoritma Euclidean diperluas & [ ] \\
 \hline
 Saya dapat melakukan proses enkripsi dan dekripsi RSA & [ ] \\
 \hline
 Saya dapat mengenkripsi pesan multi-blok dengan menjaga angka nol di depan & [ ] \\
 \hline
-Saya dapat menunjukkan bahwa RSA telanjang bersifat deterministik dan rapuh & [ ] \\
-\hline
 Saya dapat menjelaskan kaitan pemfaktoran bilangan bulat dengan keamanan RSA & [ ] \\
 \hline
-Saya dapat memperkirakan usaha pemfaktoran menurut panjang modulus & [ ] \\
+Saya dapat menjelaskan pengaruh panjang modulus dan komputasi kuantum & [ ] \\
 \hline
-Saya dapat menganalisis mekanisme kriptografi hibrida & [ ] \\
+Saya dapat menjelaskan mekanisme kriptografi hibrida & [ ] \\
 \hline
-Saya dapat menjelaskan ancaman komputasi kuantum dan langkah migrasinya & [ ] \\
+Saya dapat menjelaskan peran \textit{padding} OAEP & [ ] \\
+\hline
+Saya dapat menjelaskan serangan \textit{Man-in-the-Middle} pada distribusi kunci publik & [ ] \\
 \hline
 \end{tabularx}
 \end{competencychecklist}

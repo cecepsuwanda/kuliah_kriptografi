@@ -1,60 +1,53 @@
 
 \begin{obeassessment}
 \textbf{Kuis Bab 8}
-1. Apa perbedaan utama antara struktur internal DES (Feistel) dan AES (Substitusi-Permutasi)?
-2. Jelaskan peran \textit{S-box} dalam AES dan bagaimana ia dibentuk secara matematis.
-3. Mengapa operasi dalam AES dilakukan dalam $\text{GF}(2^8)$ dan bukan aritmetika bilangan bulat biasa?
-4. Tuliskan urutan transformasi pada satu putaran dekripsi AES dan jelaskan mengapa
-   urutan itu tidak dapat diperoleh hanya dengan membalik urutan transformasi pada
-   enkripsi.
-5. Sebuah implementasi mandiri menghasilkan cipherteks yang berbeda dari
-   implementasi lain untuk plainteks dan kunci yang sama. Sebutkan dua penyebab
-   yang paling mungkin dan cara memeriksanya.
-6. Diketahui state pada akhir putaran ke-9 sama dengan
+1. Jelaskan latar belakang pengembangan AES sebagai pengganti DES.
+2. Sebutkan lima persyaratan AES. Jelaskan pula perbedaan AES-128, AES-192,
+   dan AES-256.
+3. Jelaskan mengapa 16 byte masukan disalin ke \texttt{state} secara kolom demi
+   kolom. Tunjukkan hasilnya untuk masukan
+   $\code{00}\,\code{01}\,\code{02}\,\dots\,\code{0F}$.
+4. Jelaskan fungsi \textit{SubBytes}, \textit{ShiftRows}, \textit{MixColumns},
+   dan \textit{AddRoundKey} dalam satu putaran AES.
+5. Jelaskan langkah-langkah \textit{KeyExpansion} pada AES-128. Jelaskan pula
+   aturan tambahan yang dipakai AES-256.
+6. Tuliskan urutan operasi pada dekripsi AES. Sebutkan tiga transformasi invers
+   yang dipakai.
+7. Diketahui kunci ``Two One Nine Two'' yang ditulis dalam heksadesimal sebagai
    \[
-   \code{EB40F21E592E38848BA113E71BC342D2},
+   \code{54}\ \code{77}\ \code{6F}\ \code{20}\ \code{4F}\ \code{6E}\
+   \code{65}\ \code{20}\ \code{4E}\ \code{69}\ \code{6E}\ \code{65}\
+   \code{20}\ \code{54}\ \code{77}\ \code{6F}.
    \]
-   dan kunci putaran terakhir $K_{10}$ sama dengan
-   \[
-   \code{A150BE1DEFC16E55C4C018A35610A1DD}.
-   \]
-   Hitunglah cipherteksnya, dengan memperhatikan bahwa putaran terakhir tidak
-   memuat MixColumns.
-7. Bangkitkan $w[8]$ beserta $K_1$ untuk kunci AES-256 yang tersusun atas delapan
-   word berikut:
-   \[
-   \code{603DEB10}\ \code{15CA71BE}\ \code{2B73AEF0}\ \code{857D7781}
-   \]
-   \[
-   \code{1F352C07}\ \code{3B6108D7}\ \code{2D9810A3}\ \code{0914DFF4}.
-   \]
-   Jelaskan aturan mana yang Anda pakai, dan tunjukkan pada word keberapakah
-   aturan khusus AES-256 mulai berlaku.
+   Bangkitkan $w[4]$ sampai $w[7]$, lalu tuliskan kunci putaran $K_1$.
+8. Hitung $\code{57} \bullet \code{83}$ di $\text{GF}(2^8)$ dengan polinom
+   pereduksi $x^8 + x^4 + x^3 + x + 1$. Tunjukkan langkah reduksinya dan
+   hasil akhirnya.
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
 \hline
 Indikator Kompetensi & Tercapai \\
 \hline
-Saya dapat menjelaskan alasan penggantian DES menjadi AES & [ ] \\
+Saya dapat menjelaskan latar belakang penggantian DES menjadi AES & [ ] \\
 \hline
-Saya dapat membedakan varian AES-128, 192, dan 256 & [ ] \\
-\hline
-Saya dapat menguraikan alur kerja \textit{SubBytes, ShiftRows, MixColumns} & [ ] \\
+Saya dapat menjelaskan persyaratan AES dan ketiga varian panjang kuncinya & [ ] \\
 \hline
 Saya dapat menjelaskan konsep matriks \textit{state} pada AES & [ ] \\
 \hline
-Saya dapat memahami dasar operasi aritmetika pada $\text{GF}(2^8)$ & [ ] \\
+Saya dapat menjelaskan transformasi \textit{SubBytes, ShiftRows, MixColumns} & [ ] \\
+\hline
+Saya dapat menjelaskan transformasi \textit{AddRoundKey} & [ ] \\
+\hline
+Saya dapat menjelaskan proses \textit{KeyExpansion} AES-128 & [ ] \\
+\hline
+Saya dapat menjelaskan kekhususan \textit{KeyExpansion} AES-256 & [ ] \\
 \hline
 Saya dapat menjelaskan urutan transformasi pada dekripsi AES & [ ] \\
 \hline
-Saya dapat membedakan \textit{straightforward} dan \textit{equivalent inverse cipher} & [ ] \\
+Saya dapat memahami operasi penjumlahan dan perkalian di $\text{GF}(2^8)$ & [ ] \\
 \hline
-Saya dapat membangkitkan S-box AES dari konstruksi $\text{GF}(2^8)$ & [ ] \\
-\hline
-Saya dapat menghitung kunci putaran AES-128 dan AES-256 dengan tangan & [ ] \\
-\hline
-Saya dapat menunjukkan bahwa implementasi AES saya cocok dengan vektor uji FIPS 197 & [ ] \\
+Saya dapat menjelaskan lima langkah konstruksi S-box AES & [ ] \\
 \hline
 \end{tabularx}
 \end{competencychecklist}

@@ -1,14 +1,21 @@
 
 \begin{obeassessment}
 \textbf{Kuis Bab 7}
-1. Jelaskan perbedaan antara kunci eksternal dan kunci putaran (\textit{round key}) pada DES, serta sebutkan panjang masing-masing.
-2. Mengapa DES dianggap tidak aman untuk standar keamanan modern, meskipun memiliki struktur Jaringan Feistel yang kompleks?
-3. Bagaimana Triple DES meningkatkan keamanan dibandingkan dengan Single DES?
-4. Pada pembangkitan subkunci DES, mengapa PC-2 hanya memilih 48 dari 56 bit yang tersedia, dan apa akibatnya bagi pemakaian bit kunci?
-5. Diberikan masukan $S_3$ sebesar $\code{011110}$. Tentukan nomor baris, nomor kolom, dan keluaran 4 bitnya dengan membaca Tabel~\ref{tab:sbox-des}.
-6. Sebuah sistem memakai DES-CBC. Jelaskan mengapa memakai ulang IV yang sama untuk dua pesan berbeda melemahkan keamanan, dan bagaimana hubungannya dengan mode ECB.
-7. Buktikan bahwa pada kunci $\code{FEFEFEFEFEFEFEFE}$, seluruh 16 subkunci DES bernilai sama.
-8. Seorang insinyur mengusulkan mengganti 3DES tiga kunci dengan Double DES karena keduanya sama-sama "dua kali DES". Bantah usulan itu dengan membandingkan kompleksitas serangan nyata pada keduanya.
+1. Jelaskan perbedaan antara kunci eksternal dan kunci internal
+   (\textit{round key}) pada DES, serta sebutkan panjang masing-masing.
+2. Mengapa DES dianggap tidak aman untuk standar keamanan modern, meskipun
+   strukturnya memakai 16 putaran jaringan Feistel?
+3. Bagaimana Triple DES meningkatkan keamanan dibandingkan dengan DES tunggal?
+4. Pada pembangkitan kunci internal DES, mengapa PC-2 hanya memilih 48 bit dari
+   56 bit yang tersedia?
+5. Diberikan masukan $S_3$ sebesar $\code{011110}$. Tentukan nomor baris, nomor
+   kolom, dan keluaran 4 bitnya dengan membaca Tabel~\ref{tab:sbox-des}.
+6. Sebutkan mode operasi yang dapat dipakai DES. Mode mana yang paling sering
+   dipakai pada paket komersial, dan apa namanya?
+7. Buktikan bahwa pada kunci $\code{FEFEFEFEFEFEFEFE}$, seluruh 16 kunci
+   internal DES bernilai sama.
+8. Jelaskan mengapa Double DES tidak menambah keamanan sebesar yang
+   diharapkan, lalu jelaskan bagaimana Triple DES mengatasi masalah itu.
 \end{obeassessment}
 \begin{competencychecklist}
 \begin{tabularx}{\linewidth}{|X|c|}
@@ -17,29 +24,27 @@ Indikator Kompetensi & Tercapai \\
 \hline
 Saya dapat menjelaskan struktur global algoritma DES & [ ] \\
 \hline
-Saya dapat menjelaskan sejarah DES dari Lucifer sampai FIPS PUB 46 & [ ] \\
+Saya dapat menjelaskan sejarah DES dari Lucifer sampai persetujuan NBS 1976 & [ ] \\
 \hline
 Saya dapat menguraikan proses pembangkitan kunci internal DES & [ ] \\
 \hline
 Saya dapat membaca tabel IP, $\text{IP}^{-1}$, $E$, dan $P$ pada blok 64 bit & [ ] \\
 \hline
-Saya dapat mensubstitusi satu kelompok 6 bit melalui S-box DES & [ ] \\
+Saya dapat mensubstitusi satu kelompok 6 bit melalui kotak-S DES & [ ] \\
 \hline
 Saya dapat mengerjakan satu putaran DES lengkap di atas kertas & [ ] \\
 \hline
-Saya dapat menganalisis kelemahan Double DES terhadap Meet-in-the-Middle attack & [ ] \\
+Saya dapat menjelaskan serangan \textit{meet-in-the-middle} pada Double DES & [ ] \\
 \hline
-Saya dapat membedakan varian Triple DES (2 kunci vs 3 kunci) & [ ] \\
+Saya dapat membedakan varian Triple DES (2 kunci dan 3 kunci) & [ ] \\
 \hline
 Saya dapat menyebutkan nilai kunci lemah dan menjelaskan mengapa ia lemah & [ ] \\
 \hline
-Saya dapat menjelaskan konsep efek longsoran (\textit{avalanche effect}) & [ ] \\
-\hline
-Saya dapat menjelaskan mengapa kriptanalisis linier tidak dipakai dalam praktik & [ ] \\
+Saya dapat menjelaskan efek longsoran (\textit{avalanche effect}) & [ ] \\
 \hline
 Saya dapat menghitung waktu pemecahan DES pada laju pencarian tertentu & [ ] \\
 \hline
-Saya dapat menjelaskan alasan 3DES ditinggalkan setelah AES dibakukan & [ ] \\
+Saya dapat menyebutkan mode operasi DES dan mode yang umum dipakai & [ ] \\
 \hline
 \end{tabularx}
 \end{competencychecklist}

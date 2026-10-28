@@ -1,118 +1,92 @@
 \section{Terminologi Dasar}
 \label{sec:terminologi}
 
-Untuk memahami kriptografi, kita perlu mengenal beberapa istilah kunci. Banyak
-kesalahpahaman tentang keamanan informasi --- termasuk sejumlah kesalahpahaman yang
-berbahaya --- bersumber dari penggunaan istilah yang tidak cermat. Karena itu
-bagian ini disusun agak rinci, bukan sekadar daftar.
+Kriptografi memakai beberapa istilah kunci. Kesalahpahaman tentang keamanan
+informasi sering berasal dari penggunaan istilah yang tidak cermat.
 
 \begin{itemize}
-    \item \textbf{Pesan} (\textit{message}): data atau informasi yang dapat dibaca
-          dan dimengerti maknanya, baik dipersepsi secara visual maupun audial.
-          Dalam kriptografi, istilah ini mencakup jauh lebih banyak daripada teks:
-          rupa pesan dapat berupa gambar (\textit{plain-image}), audio, video
-          (\textit{plain-video}), tabel, daftar belanja, model tiga dimensi, bahkan
-          sinyal kendali. Nama lain untuk pesan berbentuk teks adalah
-          \textbf{plainteks} (\textit{plaintext}).
+    \item \textbf{Pesan} (\textit{message}): data atau informasi yang dapat
+          dibaca dan dimengerti maknanya. Pesan dapat berupa teks, gambar
+          (\textit{plain-image}), audio, video, tabel, atau sinyal kendali.
+          Pesan berbentuk teks disebut \textbf{plainteks} (\textit{plaintext}).
     \item \textbf{Pengirim} (\textit{sender}) dan \textbf{penerima}
-          (\textit{receiver}): pihak yang mengirim dan pihak yang menerima pesan.
-          Sebagaimana dijelaskan pada Bagian~\ref{sec:konsep-komunikasi}, keduanya
-          dapat berupa manusia maupun mesin.
+          (\textit{receiver}): pihak yang mengirim dan menerima pesan. Keduanya
+          dapat berupa manusia atau mesin.
     \item \textbf{Penyusup} (\textit{intruder}): pihak ketiga yang menyadap,
           mengintersepsi, menghapus, menambah, atau mengubah pesan.
     \item \textbf{Cipherteks} (\textit{ciphertext}): pesan yang telah disandikan
-          sehingga tidak bermakna lagi. Tujuannya ialah agar pesan tidak dapat
-          dibaca oleh pihak yang tidak berhak. Nama lainnya adalah
-          \textbf{kriptogram} (\textit{cryptogram}). Sebagai contoh, plainteks
-          \code{culik anak itu jam 11 siang} dapat berubah menjadi cipherteks
+          sehingga tidak bermakna lagi. Nama lainnya adalah \textbf{kriptogram}
+          (\textit{cryptogram}). Contohnya:
+          \code{culik anak itu jam 11 siang} diubah menjadi
           \code{t\^{}\$gfUi89rewoFpfdWqLMp[uTcxZ}.
     \item \textbf{Enkripsi} (\textit{encryption}) dan \textbf{dekripsi}
-          (\textit{decryption}): enkripsi adalah proses menyandikan plainteks
-          menjadi cipherteks (nama lain: \textit{enciphering}), sedangkan dekripsi
-          adalah proses mengembalikan cipherteks menjadi plainteks semula (nama
-          lain: \textit{deciphering}).
-    \item \textbf{Kunci} (\textit{key}): parameter yang digunakan di dalam enkripsi
+          (\textit{decryption}): enkripsi menyandikan plainteks menjadi
+          cipherteks, sedangkan dekripsi mengembalikan cipherteks menjadi
+          plainteks semula.
+    \item \textbf{Kunci} (\textit{key}): parameter yang dipakai dalam enkripsi
           dan dekripsi. Kunci disimbolkan dengan $K$ dan dapat berupa bilangan
-          bulat, untai, alfanumerik, ataupun bentuk lain. Agar enkripsi dan
-          dekripsi hanya dapat dilakukan oleh dua pihak yang berkomunikasi, kunci
-          itu harus dijaga kerahasiaannya.
-    \item \textbf{Cipher}: algoritma untuk enkripsi dan dekripsi pesan, yaitu
-          aturan (\textit{rule}) atau fungsi matematika yang digunakan untuk kedua
-          proses tersebut. Contoh aturan: ``geser tiga huruf ke kanan'' untuk
-          enkripsi dan ``geser tiga huruf ke kiri'' untuk dekripsi. Contoh padanan
-          matematisnya adalah $E(p) = (p + k) \bmod 26$ dan $D(c) = (c - k) \bmod 26$.
-          Cipher klasik antara lain Caesar, Vigen\`ere, Playfair, dan Enigma;
-          cipher modern antara lain DES, AES, Blowfish, Serpent, RSA, ElGamal,
-          RC4, dan RC5.
-    \item \textbf{Sistem kriptografi} (\textit{cryptosystem}): keseluruhan yang
-          tersusun dari kelima unsur di atas, sebagaimana dirinci pada bagian
-          berikut.
+          bulat, untai, atau alfanumerik. Kunci harus dijaga kerahasiaannya.
+    \item \textbf{Cipher}: algoritma untuk enkripsi dan dekripsi. Cipher dapat
+          berupa aturan, misalnya ``geser tiga huruf ke kanan'', atau fungsi
+          matematika, misalnya $E(p) = (p + k) \bmod 26$ dan
+          $D(c) = (c - k) \bmod 26$. Cipher klasik antara lain Caesar,
+          Vigen\`ere, Playfair, dan Enigma. Cipher modern antara lain DES, AES,
+          Blowfish, Serpent, RSA, ElGamal, RC4, dan RC5.
+    \item \textbf{Sistem kriptografi} (\textit{cryptosystem}): keseluruhan
+          unsur yang dirinci pada bagian berikut.
 \end{itemize}
 
-Seluruh istilah di atas mematuhi satu prinsip yang dirumuskan oleh Auguste
-Kerckhoffs pada abad ke-19: \important{semua algoritma kriptografi harus publik
-(tidak rahasia); hanya kuncinya yang harus dirahasiakan.} Prinsip ini sering
-disebut \textbf{Prinsip Kerckhoffs}. Nilai praktisnya besar. Bila keamanan
-bergantung pada kerahasiaan algoritma, maka algoritma itu tidak dapat diperiksa
-pihak luar, tidak dapat distandarkan, dan runtuh seketika begitu ada satu orang
-membocorkannya. Sebaliknya, bila keamanan bergantung pada kunci, maka membocorkan
-algoritma tidak merugikan siapa pun, dan penggantian kunci cukup dilakukan dengan
-membangkitkan kunci baru.
+Semua istilah itu mengikuti Prinsip Kerckhoffs: algoritma kriptografi harus
+publik, dan hanya kunci yang harus dirahasiakan. Jika keamanan bergantung pada
+kerahasiaan algoritma, algoritma itu tidak dapat diperiksa atau distandarkan.
+Jika keamanan bergantung pada kunci, membocorkan algoritma tidak merugikan dan
+kunci dapat diganti kapan saja.
 
 \subsection{Sistem Kriptografi}
 
-Secara formal, sebuah sistem kriptografi dapat dinyatakan sebagai
-\textit{quintuple} $(\mathcal{E},\allowbreak \mathcal{D},\allowbreak \mathcal{M},\allowbreak \mathcal{K},\allowbreak \mathcal{C})$ di mana:
+Sistem kriptografi adalah \textit{quintuple}
+$(\mathcal{E},\allowbreak \mathcal{D},\allowbreak \mathcal{M},\allowbreak
+\mathcal{K},\allowbreak \mathcal{C})$ dengan:
 \begin{itemize}
-    \item $\mathcal{M}$ adalah himpunan plainteks.
-    \item $\mathcal{K}$ adalah himpunan kunci.
-    \item $\mathcal{C}$ adalah himpunan cipherteks.
-    \item $\mathcal{E}$ adalah himpunan fungsi enkripsi
-          $E: \mathcal{M} \times \mathcal{K} \to \mathcal{C}$.
-    \item $\mathcal{D}$ adalah himpunan fungsi dekripsi
+    \item $\mathcal{M}$ himpunan plainteks;
+    \item $\mathcal{K}$ himpunan kunci;
+    \item $\mathcal{C}$ himpunan cipherteks;
+    \item $\mathcal{E}$ himpunan fungsi enkripsi
+          $E: \mathcal{M} \times \mathcal{K} \to \mathcal{C}$;
+    \item $\mathcal{D}$ himpunan fungsi dekripsi
           $D: \mathcal{C} \times \mathcal{K} \to \mathcal{M}$.
 \end{itemize}
 
-Agar sistem itu berguna, fungsi enkripsi dan dekripsi harus saling membatalkan pada
-setiap kunci yang sah. Secara formal, untuk setiap $k \in \mathcal{K}$ dan setiap
-$m \in \mathcal{M}$ harus berlaku
+Fungsi enkripsi dan dekripsi harus saling membatalkan. Untuk setiap $k \in
+\mathcal{K}$ dan setiap $m \in \mathcal{M}$ berlaku
 \[
     D_k\bigl(E_k(m)\bigr) = m .
 \]
-Syarat ini tampak sepele, tetapi justru inilah yang membedakan cipher dari sekadar
-pengacak: keluaran enkripsi harus dapat dipulihkan oleh pihak yang memegang kunci.
-Menarik untuk diperhatikan bahwa fungsi hash yang dibahas nanti sengaja melanggar
-syarat ini, dan justru pelanggaran itulah yang menjadi gunanya.
+Syarat ini membedakan cipher dari pengacak biasa: keluaran enkripsi harus dapat
+dipulihkan oleh pemegang kunci.
 
-Sebagai contoh, Caesar cipher --- yang sudah dikenal dari kuliah Matematika
-Diskrit --- dapat dirumuskan sebagai berikut.
+Caesar cipher dapat ditulis sebagai sistem kriptografi berikut.
 \begin{itemize}
     \item $\mathcal{M} = \{$huruf-huruf alfabet$\}$
     \item $\mathcal{K} = \{k \mid k$ bilangan bulat dan $0 \le k \le 25\}$
-    \item $\mathcal{E} = \{E_k \mid k \in \mathcal{K}$ dan untuk semua plainteks $m$,
-          $E_k(m) = (m + k) \bmod 26\}$
-    \item $\mathcal{D} = \{D_k \mid k \in \mathcal{K}$ dan untuk semua cipherteks $c$,
-          $D_k(c) = (c - k) \bmod 26\}$
+    \item $\mathcal{E} = \{E_k \mid k \in \mathcal{K}$ dan untuk semua plainteks
+          $m$, $E_k(m) = (m + k) \bmod 26\}$
+    \item $\mathcal{D} = \{D_k \mid k \in \mathcal{K}$ dan untuk semua cipherteks
+          $c$, $D_k(c) = (c - k) \bmod 26\}$
     \item $\mathcal{C} = \mathcal{M}$
 \end{itemize}
-
-Perhatikan bahwa pada Caesar cipher himpunan cipherteks sama dengan himpunan
-plainteks, $\mathcal{C} = \mathcal{M}$. Sifat ini tidak berlaku umum; pada cipher
-modern, cipherteks biasanya berupa deretan bit yang panjangnya justru dipaksa
-berbeda dari plainteksnya.
+Pada Caesar cipher, himpunan cipherteks sama dengan himpunan plainteks.
 
 \subsection{Miskonsepsi Umum tentang Kriptografi}
 
-Pemahaman istilah yang longgar melahirkan kekeliruan yang berulang. Beberapa
-kekeliruan yang paling sering dijumpai antara lain: menganggap enkripsi sama dengan
-\textit{encoding}, \textit{hashing}, atau tokenisasi; serta tidak memahami
-perbedaan antara \textit{symmetric encryption} dan \textit{asymmetric encryption},
-termasuk kapan masing-masing sebaiknya dipakai. Tabel~\ref{tab:miskonsepsi}
-merangkum perbedaan itu.
+Dua kekeliruan yang sering terjadi adalah menganggap enkripsi sama dengan
+\textit{encoding}, \textit{hashing}, atau tokenisasi, serta tidak memahami
+perbedaan enkripsi simetri dan nir-simetri. Tabel~\ref{tab:miskonsepsi}
+merangkum perbedaan istilah-istilah itu.
 
 \begin{table}[htbp]
     \centering
-    \caption{Perbandingan encoding, hashing, enkripsi, tokenisasi, dan tanda tangan}
+    \caption{Perbandingan \textit{encoding}, \textit{hashing}, enkripsi, dan tokenisasi}
     \label{tab:miskonsepsi}
     \begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
         \hline
@@ -126,26 +100,18 @@ merangkum perbedaan itu.
         \hline
         Tokenisasi & Menggantikan data sensitif dengan penanda & Hanya melalui pemetaan \\
         \hline
-        Tanda tangan & Membuktikan asal dan keutuhan data & Tidak \\
-        \hline
     \end{tabularx}
 \end{table}
 
-Kekeliruan semacam ini berbahaya karena menghasilkan rasa aman yang semu. Data yang
-hanya di-\textit{encode} dengan Base64, misalnya, sama sekali tidak terlindungi:
-siapa pun dapat membaliknya dalam hitungan detik, meskipun tampilannya sudah
-menyerupai sandi. Gambar~\ref{fig:encoding-hashing-encryption} memperlihatkan
-perbandingan kelima istilah tersebut secara visual. Dari situ dapat ditarik satu
-kebiasaan kerja yang baik: \important{tetapkan lebih dahulu sasaran perlindungan
-yang tepat, barulah pilih primitif kriptografinya.} Enkripsi dipilih bila yang
-dilindungi adalah kerahasiaan, fungsi hash dipilih bila yang dilindungi adalah
-integritas, dan tanda tangan digital dipilih bila yang dilindungi adalah
-ketidaktersangkalan asal-usul data.
+Kekeliruan itu berbahaya karena menimbulkan rasa aman yang semu. Data yang hanya
+di-\textit{encode} dengan Base64 tidak terlindungi, karena siapa pun dapat
+membaliknya tanpa kunci. Gambar~\ref{fig:encoding-hashing-encryption}
+memperlihatkan perbedaan istilah tersebut.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\linewidth, height=0.5\textheight, keepaspectratio]{figures/encoding-hashing-encryption.png}
-    \caption{Perbandingan \textit{encoding}, \textit{hashing}, enkripsi, tokenisasi, dan tanda tangan beserta algoritma serta tujuan utamanya}
+    \caption{Perbandingan \textit{encoding}, \textit{hashing}, enkripsi, dan tokenisasi}
     \label{fig:encoding-hashing-encryption}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; diadaptasi dari Burman Noviansyah.}
 \end{figure}

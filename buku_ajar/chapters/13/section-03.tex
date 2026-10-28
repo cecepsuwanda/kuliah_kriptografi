@@ -1,131 +1,98 @@
 \section{Sistem Kriptografi Merkle-Hellman}
 \label{sec:merkle-hellman}
 
-Karena \textit{superincreasing knapsack} terlalu mudah dipecahkan, Merkle dan
-Hellman mengusulkan untuk menyembunyikannya di balik sebuah transformasi modulo.
-Gagasannya bukan membuat persoalan yang baru, melainkan mengalihkan persoalan
-yang sudah ada ke bentuk yang tidak lagi menampakkan sifat mudahnya. Barisan
-superincreasing tetap dipakai --- tetapi hanya oleh pemilik kunci, dan hanya
-dalam bentuk aslinya.
+Algoritma \textit{superincreasing knapsack} lemah karena cipherteks dapat
+didekripsi menjadi plainteksnya secara mudah dalam waktu linear. Sebaliknya,
+algoritma \textit{non-superincreasing knapsack} atau \textit{normal knapsack}
+sulit karena membutuhkan waktu dalam orde eksponensial untuk memecahkannya.
 
-\subsection{Properti dan Kerahasiaan Parameter}
-
-Seluruh besaran yang terlibat dirangkum pada Tabel~\ref{tab:parameter-knapsack}.
-
-\begin{table}[htbp]
-    \centering
-    \begin{tabularx}{\linewidth}{@{}l
-                                   >{\raggedright\arraybackslash}X
-                                   c@{}}
-    \toprule
-    \textbf{Besaran} & \textbf{Arti} & \textbf{Rahasia?} \\
-    \midrule
-    $W_{priv}$ & barisan superincreasing $\{w_1, \dots, w_n\}$ & \textbf{ya} \\
-    $m$ & modulus, dengan $m > \sum_i w_i$ & \textbf{ya} \\
-    $n$ & pengali, dengan $\text{PBB}(n, m) = 1$ & \textbf{ya} \\
-    $n^{-1}$ & invers $n$ modulo $m$ & \textbf{ya} \\
-    $W_{pub}$ & barisan public $\{w'_1, \dots, w'_n\}$ & tidak \\
-    $B$ & blok plainteks, $b_i \in \{0, 1\}$ & \textbf{ya} \\
-    $C$ & kriptogram, $C = \sum_i b_i w'_i$ & tidak \\
-    \bottomrule
-    \end{tabularx}
-    \caption{Besaran pada sistem Merkle--Hellman dan status kerahasiaannya.
-    Perhatikan bahwa $n$ di sini adalah sebuah \emph{pengali}, bukan jumlah
-    elemen; panjang barisan dituliskan secara tersirat melalui indeks $i$}
-    \label{tab:parameter-knapsack}
-\end{table}
-
-Ada satu hal yang perlu diperhatikan pada Tabel~\ref{tab:parameter-knapsack}.
-Yang dirahasiakan bukan hanya barisan bobotnya, melainkan juga $m$ dan $n$.
-Kedua parameter itu adalah pintu jebakan itu sendiri: tanpa keduanya, barisan
-publik tidak dapat dikembalikan ke wujud superincreasing-nya. Sebaliknya,
-barisan publik memang dirancang untuk disiarkan, sebab dari situlah pengirim
-membaca mana elemen yang harus dijumlahkan.
+Merkle dan Hellman memodifikasi barisan \textit{superincreasing} menjadi barisan
+\textit{non-superincreasing}. Sistem hasil modifikasi memakai kunci publik untuk
+enkripsi dan kunci privat untuk dekripsi. Kunci publik berupa barisan
+\textit{non-superincreasing}, sedangkan kunci privat tetap berupa barisan
+\textit{superincreasing}. Modifikasi ini ditemukan oleh Martin Hellman dan
+Ralph Merkle.
 
 \subsection{Pembangkitan Kunci}
 
-Langkah-langkah pembangkitan kunci adalah sebagai berikut.
+Prosedur membuat kunci publik dan kunci privat adalah sebagai berikut.
 
 \begin{enumerate}
-    \item \textbf{Kunci Privat}: Pilih sebuah barisan \textit{superincreasing} $W_{priv} = \{w_1, w_2, \dots, w_n\}$.
-    \item \textbf{Parameter Transformasi}: Pilih modulus $m$ yang lebih besar dari jumlah seluruh elemen $W_{priv}$, dan pilih pengali $n$ sedemikian sehingga $\text{PBB}(n, m) = 1$.
-    \item \textbf{Kunci Publik}: Hitung barisan \textit{non-superincreasing} $W_{pub} = \{w'_1, w'_2, \dots, w'_n\}$ dengan rumus:
-    \begin{equation}
-    w'_i = (w_i \cdot n) \bmod m .
-    \label{eq:mh-kunci}
-    \end{equation}
+    \item Tentukan barisan \textit{superincreasing}
+          $W_{priv} = \{w_1, w_2, \dots, w_n\}$.
+    \item Kalikan setiap elemen barisan dengan $n$ modulo $m$. Modulus $m$
+          harus lebih besar daripada jumlah semua elemen barisan. Pengali $n$
+          harus tidak mempunyai faktor persekutuan dengan $m$, yaitu
+          $\text{PBB}(n, m) = 1$.
+    \item Hasil perkalian menjadi kunci publik, sedangkan barisan
+          \textit{superincreasing} semula menjadi kunci privat.
 \end{enumerate}
 
-Kedua syarat pada langkah 2 bukan syarat administratif, melainkan penopang
-seluruh mekanisme. Syarat $m > \sum_i w_i$ menjamin bahwa penjumlahan seluruh
-elemen barisan privat tidak pernah ``memutar'' melewati modulus; tanpa syarat
-itu, hasil dekripsi dapat berbeda dari nilai sebenarnya modulo $m$, dan
-algoritma \textit{greedy} akan menerima sisa yang keliru
-(Subbagian~\ref{subsec:bukti-knapsack}). Syarat $\text{PBB}(n, m) = 1$
-menjamin bahwa $n$ memiliki invers modulo $m$. Bila kedua bilangan itu punya
-faktor persekutuan, inversnya tidak ada, dan penerima yang sah sama sekali
-tidak dapat mendekripsi pesan --- kerusakan yang baru ketahuan setelah seluruh
-pesan terkirim.
+Kunci publik dihitung dengan
 
-Perhatikan pula bahwa hasil Persamaan~\eqref{eq:mh-kunci} memang tidak lagi
-superincreasing. Pengambilan modulo $m$ mengacak urutan besar-kecilnya, sebab
-sebuah elemen yang tadinya kecil dapat terpental hampir ke $m - 1$ bila
-$w_i \cdot n$ kebetulan sedikit di bawah kelipatan $m$. Justru pengacakan
-itulah yang diharapkan: di mata penyadap, $W_{pub}$ tampak seperti barisan
-bilangan acak biasa, dan menaksir $M = \sum_i b_i w'_i$ dari barisan semacam itu
-kembali menjadi persoalan yang sulit.
+\begin{equation}
+w'_i = (w_i \cdot n) \bmod m .
+\label{eq:mh-kunci}
+\end{equation}
 
-\subsection{Proses Enkripsi}
+Di sini $n$ adalah pengali, bukan jumlah elemen. Jumlah elemen dituliskan
+melalui indeks $i$.
 
-Pengirim menggunakan kunci publik $W_{pub}$ untuk mengenkripsi pesan biner
-$B = (b_1, b_2, \dots, b_n)$:
+Kedua syarat pada langkah 2 diperlukan. Syarat $m > \sum_i w_i$ menjamin bahwa
+penjumlahan seluruh elemen barisan privat tidak pernah melewati modulus. Syarat
+$\text{PBB}(n, m) = 1$ menjamin bahwa $n$ mempunyai invers modulo $m$. Tanpa
+invers itu, penerima yang sah tidak dapat mendekripsi pesan.
+
+Hasil Persamaan~\eqref{eq:mh-kunci} tidak lagi \textit{superincreasing}.
+Pengambilan modulo $m$ mengacak urutan besar-kecil elemen. Karena itu, kunci
+publik tampak seperti barisan bilangan biasa. Contoh pembangkitan kunci
+disajikan pada Contoh~\ref{ex:mh-kunci-105}.
+
+\subsection{Enkripsi}
+
+Plainteks dipecah menjadi blok bit yang panjangnya sama dengan banyaknya elemen
+kunci publik. Setiap bit di dalam blok dikalikan dengan elemen kunci publik yang
+berkoresponden. Kriptogram blok itu adalah jumlah hasil perkalian:
 
 \begin{equation}
 C = \sum_{i=1}^{n} b_i w'_i .
 \label{eq:mh-enkripsi}
 \end{equation}
 
-Hasil enkripsi adalah sebuah angka tunggal $C$ (kriptogram). Cara kerjanya
-sama dengan knapsack sederhana pada Bagian~\ref{sec:masalah-knapsack}: bit yang
-bernilai $1$ menyumbangkan elemen publiknya, bit yang bernilai $0$ tidak.
+Hasil enkripsi adalah sebuah bilangan tunggal $C$. Bit yang bernilai $1$
+menyumbangkan elemen publiknya, sedangkan bit yang bernilai $0$ tidak.
 
-Satu catatan perlu diberikan mengenai modulus pada
-Persamaan~\eqref{eq:mh-enkripsi}. Berbeda dari enkripsi ElGamal pada bab
-sebelumnya, penjumlahan di sini \textbf{tidak} diambil modulo $m$. Nilai $C$
-dibiarkan apa adanya, sehingga ia sering lebih besar daripada $m$ --- dan itu
-memang tidak menjadi masalah. Alasannya, dekripsi nanti hanya memakai
-$C \bmod m$, sehingga pengurangan modulo $m$ di sisi pengirim tidak mengubah
-hasil apa pun; keduanya sama-sama sah. Yang perlu dipastikan hanyalah agar
-pengirim dan penerima memakai kesepakatan yang sama, sebab bila salah satu
-mengurangi dan yang lain tidak, nilai $C$ yang diuji akan berbeda walaupun
-residunya sama.
+Penjumlahan pada Persamaan~\eqref{eq:mh-enkripsi} tidak diambil modulo $m$.
+Nilai $C$ dibiarkan apa adanya, sehingga dapat lebih besar daripada $m$.
+Dekripsi tetap berhasil karena hanya memakai $C \bmod m$. Contoh enkripsi
+disajikan pada Contoh~\ref{ex:mh-105}.
 
-Karena setiap blok menghasilkan satu bilangan, panjang pesan menentukan banyak
-blok, dan setiap blok harus sepanjang $n$ bit --- yaitu sebanyak elemen di dalam
-kunci publik. Pesan yang panjangnya bukan kelipatan $n$ perlu diberi
-\textit{padding}, persis seperti pada RSA dan ElGamal.
+\subsection{Dekripsi}
 
-\subsection{Proses Dekripsi}
+Penerima memakai kunci privat dan parameter $(n, m)$ untuk mendekripsi pesan.
+Pertama, penerima menghitung $n^{-1}$, yaitu balikan dari $n$ modulo $m$,
+sedemikian sehingga
 
-Penerima menggunakan kunci privat $W_{priv}$ dan parameter $(n, m)$ untuk
-mendekripsi:
+\[ n \cdot n^{-1} \equiv 1 \pmod{m} . \]
 
-\begin{enumerate}
-    \item Hitung invers modulo dari $n$ terhadap $m$, yaitu $n^{-1} \bmod m$.
-    \item Transformasikan kriptogram $C$ kembali menjadi bentuk \textit{superincreasing}:
-    \begin{equation}
-    C' = (C \cdot n^{-1}) \bmod m .
-    \label{eq:mh-dekripsi}
-    \end{equation}
-    \item Pecahkan $C'$ menggunakan algoritma \textit{greedy} terhadap barisan $W_{priv}$ untuk mendapatkan bit-bit plainteks $b_i$.
-\end{enumerate}
+Kedua, penerima mengalikan setiap kriptogram dengan $n^{-1}$ modulo $m$:
+
+\begin{equation}
+C' = (C \cdot n^{-1}) \bmod m .
+\label{eq:mh-dekripsi}
+\end{equation}
+
+Ketiga, penerima menyatakan $C'$ sebagai penjumlahan elemen kunci privat. Nilai
+$C'$ dipecahkan dengan algoritma pencarian solusi \textit{superincreasing
+knapsack}. Hasilnya adalah bit-bit plainteks semula. Contoh dekripsi disajikan
+pada Contoh~\ref{ex:mh-105}.
 
 \subsection{Mengapa Dekripsi Berhasil}
 \label{subsec:bukti-knapsack}
 
-Langkah 2 pada prosedur di atas adalah inti seluruh sistem, dan kebenarannya
-perlu diperlihatkan. Substitusikan Persamaan~\eqref{eq:mh-enkripsi} ke dalam
-Persamaan~\eqref{eq:mh-dekripsi}:
+Substitusikan Persamaan~\eqref{eq:mh-enkripsi} ke dalam
+Persamaan~\eqref{eq:mh-dekripsi}. Dengan rumus pembangkitan kunci pada
+Persamaan~\eqref{eq:mh-kunci}, diperoleh
 
 \begin{equation}
 \begin{split}
@@ -136,48 +103,26 @@ C' &\equiv n^{-1} \sum_{i=1}^{n} b_i w'_i \pmod{m} \\
 \label{eq:mh-bukti}
 \end{equation}
 
-Pada baris kedua, rumus pembangkitan kunci dari
-Persamaan~\eqref{eq:mh-kunci} telah dipakai; pada baris ketiga, faktor $n^{-1}$
-dan $n$ saling meniadakan sehingga yang tersisa hanyalah jumlah berbobot elemen
-privat --- tepat seperti Persamaan~\eqref{eq:knapsack-dasar}.
+Faktor $n^{-1}$ dan $n$ saling meniadakan. Yang tersisa adalah jumlah berbobot
+elemen privat, seperti pada Persamaan~\eqref{eq:knapsack-dasar}.
 
-Sampai di sini yang diperoleh baru kesamaan \emph{modulo} $m$. Agar algoritma
-\textit{greedy} dapat dipakai, kesamaan itu harus ditingkatkan menjadi kesamaan
-yang sesungguhnya. Di sinilah syarat $m > \sum_i w_i$ bekerja. Karena setiap
-$b_i$ bernilai $0$ atau $1$,
+Kesamaan itu baru berlaku modulo $m$. Agar algoritma \textit{greedy} dapat
+dipakai, kesamaan itu harus menjadi kesamaan biasa. Syarat $m > \sum_i w_i$
+menjamin hal itu. Karena setiap $b_i$ bernilai $0$ atau $1$,
 
-\[ 0 \le \sum_{i=1}^{n} b_i w_i \le \sum_{i=1}^{n} w_i < m , \]
+\[ 0 \le \sum_{i=1}^{n} b_i w_i \le \sum_{i=1}^{n} w_i < m . \]
 
-sehingga jumlah itu sudah berada di dalam selang $[0, m-1]$ dan tidak mungkin
-memutar melewati modulus. Akibatnya tidak ada dua nilai berbeda yang memberi
-residu yang sama, dan Persamaan~\eqref{eq:mh-bukti} dapat ditulis sebagai
-kesamaan biasa:
+Jumlah itu tidak pernah melewati modulus. Karena itu,
 
 \begin{equation}
 C' = \sum_{i=1}^{n} b_i w_i .
 \label{eq:mh-bukti-eksak}
 \end{equation}
 
-Dengan kata lain, mengalikan kriptogram dengan $n^{-1}$ modulo $m$ mengubah
-kembali persoalan yang tampak sulit menjadi persoalan superincreasing yang
-sudah dikenal. Seluruh kekuatan sistem Merkle--Hellman terletak pada satu
-kenyataan itu: penerima tidak pernah perlu memecahkan knapsack publik, sebab
-ia memegang $n^{-1}$ yang membuat knapsack itu lenyap.
-
-Kebalikannya juga berlaku, dan di situlah letak kerawanannya. Seorang penyerang
-yang berhasil menebak pasangan $(n, m)$ yang benar dapat melakukan tepat
-langkah yang sama seperti penerima, dan seluruh pesan terbuka untuknya. Jadi
-keamanan sistem ini sesungguhnya bergantung pada sulitnya menemukan $n^{-1}$
-tanpa mengetahui $n$, bukan pada sulitnya persoalan knapsack secara umum.
-Bagian~\ref{sec:kriptanalisis-knapsack} memperlihatkan bahwa Shamir berhasil
-menemukannya.
+Dengan demikian, penerima tidak perlu memecahkan \textit{knapsack} publik.
+Penerima cukup mengalikan kriptogram dengan $n^{-1}$ modulo $m$, lalu
+memecahkan hasilnya secara \textit{greedy}. Sebaliknya, penyerang yang berhasil
+menemukan pasangan $(n, m)$ dapat melakukan langkah yang sama. Keamanan sistem
+ini bergantung pada sulitnya menemukan $n^{-1}$ tanpa mengetahui $n$.
 
 \input{figures/alur-knapsack}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.7\linewidth, height=0.45\textheight, keepaspectratio]{figures/perumus-knapsack.png}
-    \caption{Ralph Merkle, Martin Hellman, dan Whitfield Diffie, para perumus sistem knapsack Merkle-Hellman dan protokol pertukaran kunci Diffie-Hellman}
-    \label{fig:perumus-knapsack}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
-\end{figure}

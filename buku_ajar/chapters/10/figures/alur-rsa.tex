@@ -9,8 +9,8 @@
         kunci/.style={-{Latex[length=2.4mm]}, thick, dashed, gray!75},
     ]
         \node[kotak, fill=gray!10, minimum width=8.4cm] (gen) at (2.6,0)
-            {Pembangkitan kunci: pilih $p$ dan $q$; hitung $n = pq$ dan $\phi(n) = (p-1)(q-1)$;\\
-             pilih $e$ lalu hitung $d \equiv e^{-1} \pmod{\phi(n)}$};
+            {Pembangkitan kunci: pilih $p$ dan $q$; hitung $n = pq$ dan $\varphi(n) = (p-1)(q-1)$;\\
+             pilih $e$ lalu hitung $d \equiv e^{-1} \pmod{\varphi(n)}$};
         \node[kotak, fill=blue!6, minimum width=3.0cm] (pub)  at (0.4,-1.8) {Kunci publik $(e, n)$};
         \node[kotak, fill=red!6,  minimum width=3.0cm] (priv) at (5.6,-1.8) {Kunci privat $(d, n)$};
 

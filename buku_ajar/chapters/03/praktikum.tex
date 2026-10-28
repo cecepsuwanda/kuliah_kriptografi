@@ -1,44 +1,36 @@
-
 \begin{obeactivity}
-\textbf{Aktivitas 3.1: Eksperimen Modulo dan Invers}
+\textbf{Aktivitas 3.1: Eksperimen modulo dan invers}
 \begin{enumerate}
-    \item Pilihlah dua bilangan acak $a$ dan $n$.
-    \item Periksa apakah $\text{PBB}(a, n) = 1$.
-    \item Jika ya, carilah invers modulo $a \pmod{n}$ menggunakan metode coba-coba atau
-          Algoritma Euclidean.
-    \item Diskusikan apa yang terjadi jika $\text{PBB}(a, n) \neq 1$. Apakah invers
-          modulo tetap ada?
+    \item Pilih dua bilangan $a$ dan $n$.
+    \item Periksa apakah $\text{PBB}(a,n) = 1$.
+    \item Jika ya, carilah invers modulo $a \pmod n$ dengan mencoba nilai atau
+          dengan Algoritma Euclidean.
+    \item Diskusikan apa yang terjadi jika $\text{PBB}(a,n) \neq 1$.
 \end{enumerate}
 \end{obeactivity}
 
 \begin{obeactivity}
-\textbf{Aktivitas 3.2: Menjalankan Algoritma Euclidean yang Diperluas}
-Tulis program yang menerima dua bilangan bulat lalu mengembalikan tiga nilai:
-$\text{PBB}(a,b)$, koefisien B\'ezout $m$, dan koefisien $n$.
+\textbf{Aktivitas 3.2: Algoritma Euclidean}
+Tulis program yang menerima dua bilangan bulat lalu mengembalikan PBB-nya dengan
+pembagian berulang.
 \begin{enumerate}
-    \item Uji program dengan pasangan $(48, 18)$, $(1970, 1066)$, dan dua bilangan
-          besar buatan Anda sendiri. Periksa bahwa $ma + nb$ benar-benar sama dengan
-          PBB yang dilaporkan.
-    \item Gunakan program itu untuk menghitung $550^{-1} \bmod 1769$ dan
-          $12^{-1} \bmod 5$. Periksa hasilnya dengan mengalikan kembali.
-    \item Ukur waktu eksekusinya untuk dua bilangan 1024 bit. Berapa lama program
-          mengambil keputusan?
+    \item Uji program dengan pasangan $(48,18)$ dan $(1970,1066)$.
+    \item Tampilkan setiap langkah pembagian sampai sisanya nol.
+    \item Bandingkan hasilnya dengan perhitungan manual.
 \end{enumerate}
 \end{obeactivity}
 
 \begin{obeactivity}
-\textbf{Aktivitas 3.3: Mengukur Entropi Teks Nyata}
+\textbf{Aktivitas 3.3: Mengukur entropi teks nyata}
 Ambil satu paragraf berita berbahasa Indonesia (minimal 200 huruf), lalu kerjakan
 langkah berikut dengan program sederhana.
 \begin{enumerate}
-    \item Buang spasi dan tanda baca, lalu hitung frekuensi setiap huruf dan gambarkan
-          diagram batangnya.
+    \item Buang spasi dan tanda baca, lalu hitung frekuensi setiap huruf dan
+          gambarkan diagram batangnya.
     \item Hitung entropi $H(P)$ dengan Persamaan~\ref{eq:entropi}, lalu bandingkan
           hasilnya dengan entropi maksimum $\log_2 26 = 4{,}7004$ bit/karakter.
-          Berapa persenkah pencapaiannya?
-    \item Enkripsikan paragraf itu dengan Caesar cipher atau Vigen\`ere cipher, lalu
-          hitung entropi cipherteksnya dan gambarkan diagram batangnya. Bandingkan
-          kedua diagram.
+    \item Enkripsikan paragraf itu dengan Caesar cipher, lalu hitung entropi
+          cipherteksnya dan gambarkan diagram batangnya.
     \item Simpulkan mengapa cipherteks yang sebarannya lebih rata lebih sulit
           dipecahkan dengan analisis frekuensi.
 \end{enumerate}

@@ -1,23 +1,35 @@
 
 \begin{obereflection}
 \textbf{Latihan 9.1}
-1. Mengapa penggunaan operasi perkalian pada RC6 memberikan keuntungan keamanan dibandingkan hanya menggunakan XOR dan rotasi seperti pada RC5?
-2. Jelaskan mengapa GOST dianggap lebih sulit diserang dengan \textit{brute force} dibandingkan DES. Batasi jawaban Anda pada serangan pencarian kunci menyeluruh saja, dan sebutkan secara eksplisit aspek keamanan mana yang tidak tercakup oleh jawaban itu.
-3. Apa perbedaan mendasar antara pendekatan desain Blowfish dan Twofish?
+
+1. Sebutkan tiga operasi yang menyusun fungsi $f$ pada GOST dan jelaskan
+   urutannya.
+
+2. Jelaskan mengapa pencarian kunci menyeluruh pada GOST lebih sukar daripada
+   pada DES. Sebutkan pula aspek keamanan yang tidak dicakup oleh jawaban itu.
+
+3. Apa perbedaan mendasar antara Blowfish dan Twofish?
+
+4. Jelaskan mengapa setiap kotak-S GOST harus merupakan permutasi bilangan 0
+   sampai 15.
 \end{obereflection}
 
 \begin{obereflection}
 \textbf{Latihan 9.2}
-1. Jelaskan mengapa jadwal kunci GOST jauh lebih murah diimplementasikan daripada jadwal
-   kunci DES, dan sebutkan konsekuensi keamanan yang timbul dari kesederhanaan itu.
-2. Mengapa larik $L$ pada jadwal kunci RC5 dibaca dengan urutan \textit{little-endian}?
-   Apa yang terjadi bila sebuah implementasi memakai urutan \textit{big-endian}?
-3. Konstanta $P_w$ dan $Q_w$ diturunkan dari bilangan $e$ dan $\phi$. Apakah RC5 akan
-   menjadi lebih lemah bila kedua konstanta itu diganti dengan nilai acak lain? Jelaskan
-   alasan Anda.
-4. Blowfish dan GOST sama-sama berukuran blok 64 bit. Jelaskan bagaimana keterbatasan ini
-   memengaruhi cara kedua algoritma itu seharusnya dipakai dalam sistem nyata.
-5. Serpent adalah finalis AES yang paling lambat di perangkat lunak, tetapi justru
-   dirancang agar dapat dipercepat dengan \textit{bit-slicing}. Jelaskan gagasan teknik
-   tersebut dan mengapa pemilihan kotak-S $4 \times 4$ bit menjadi prasyaratnya.
+
+1. Bandingkan jadwal kunci GOST dengan jadwal kunci DES.
+
+2. Mengapa larik $L$ pada jadwal kunci RC5 perlu diisi nol pada bagian yang
+   tidak terpakai?
+
+3. Hitung $P_{16}$ dan $Q_{16}$ dari Persamaan~\eqref{eq:pw-qw}, lalu
+   bandingkan hasilnya dengan Tabel~\ref{tab:konstanta-pw-qw}.
+
+4. Mengapa cipher blok berukuran 64 bit seperti GOST hanya boleh dipakai untuk
+   mengenkripsi sekitar $2^{32}$ blok dengan satu kunci?
+
+5. Tuliskan fungsi tambahan $f(x)$ pada RC6 dan jelaskan bedanya dengan operasi
+   pada RC5.
+
+6. Jelaskan pembagian putaran pada MARS dan bandingkan dengan struktur Serpent.
 \end{obereflection}

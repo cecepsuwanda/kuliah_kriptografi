@@ -1,14 +1,20 @@
 
 \begin{obereflection}
 \textbf{Latihan 7.1: Konsep}
-1. Mengapa Triple DES menggunakan urutan Enkripsi-Dekripsi-Enkripsi (EDE) alih-alih Enkripsi-Enkripsi-Enkripsi (EEE)?
-2. Jelaskan mekanisme kerja serangan \textit{Meet-in-the-Middle} pada Double DES secara sederhana.
-3. Apa dampak dari penggunaan kunci lemah (\textit{weak keys}) pada algoritma DES?
-4. Mengapa bit paritas pada kunci DES tidak menambah kekuatan kunci? Berapa panjang kunci efektifnya?
-5. Jelaskan mengapa permutasi awal (IP) dan inversinya tidak menambah keamanan DES sama sekali.
-6. Apa fungsi tumpang tindih bit pada tabel ekspansi $E$ terhadap penyebaran pengaruh satu bit?
-7. Mengapa kriptanalisis linier Matsui, meskipun secara teori memerlukan lebih sedikit operasi daripada pencarian menyeluruh, tidak pernah dipakai untuk memecahkan DES dalam praktik?
-8. Mengapa batas $2^{32}$ blok lebih berbahaya bagi 3DES daripada bagi AES-128?
+1. Mengapa Triple DES memakai urutan Enkripsi-Dekripsi-Enkripsi (EDE) alih-alih
+   Enkripsi-Enkripsi-Enkripsi (EEE)?
+2. Jelaskan mekanisme serangan \textit{meet-in-the-middle} pada Double DES
+   secara sederhana.
+3. Apa dampak penggunaan kunci lemah (\textit{weak keys}) pada algoritma DES?
+4. Mengapa bit paritas pada kunci DES tidak menambah kekuatan kunci? Berapa
+   panjang kunci efektifnya?
+5. Apa tujuan permutasi awal, dan kapan inversinya ($\text{IP}^{-1}$) dipakai?
+6. Mengapa blok $A$ hasil XOR berukuran 48 bit, sedangkan luaran fungsi $f$
+   hanya 32 bit?
+7. Apa yang dimaksud dengan efek longsoran (\textit{avalanche effect}), dan apa
+   tujuannya?
+8. Mode operasi apa saja yang dapat dipakai DES, dan mode mana yang paling
+   sering dipakai pada paket komersial?
 \end{obereflection}
 
 \begin{obereflection}
@@ -16,13 +22,14 @@
 Kerjakan dengan tabel pada Tabel~\ref{tab:ip-des}, Tabel~\ref{tab:ep-des},
 Tabel~\ref{tab:sbox-des}, dan Tabel~\ref{tab:pc-des}.
 
-1. Tentukan $C_0$ dan $D_0$ untuk kunci $\code{0000000000000000}$ (semua bit nol).
-   Apakah kunci ini termasuk kunci lemah? Jelaskan.
+1. Tentukan $C_0$ dan $D_0$ untuk kunci $\code{0000000000000000}$ (semua bit
+   nol). Apakah kunci ini memenuhi $E_K(E_K(x)) = x$? Jelaskan.
 2. Tentukan keluaran $S_1$ untuk masukan $\code{001011}$ dan $\code{111010}$.
 3. Pada tabel ekspansi $E$, sebutkan posisi bit masukan 32 bit yang muncul
    \emph{dua kali} pada keluaran 48 bit.
-4. Pada Kunci DES, posisi berapa saja yang merupakan bit paritas? Berapa banyak?
-5. Berapa banyak subkunci yang dibangkitkan DES dan berapa panjang masing-masing?
+4. Pada kunci DES, posisi berapa saja yang merupakan bit paritas? Berapa banyak?
+5. Berapa banyak kunci internal yang dibangkitkan DES dan berapa panjang
+   masing-masing?
 6. Tentukan $\text{IP}(\code{8000000000000000})$, yaitu permutasi awal atas blok
    yang hanya bit pertamanya bernilai 1. Nyatakan jawabannya dalam heksadesimal.
 7. Hitung waktu rata-rata pemecahan DES pada laju $10^{10}$ kunci per detik.

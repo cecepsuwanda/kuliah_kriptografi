@@ -25,12 +25,12 @@
         \draw[panah] (rot.north) |- (x.east);
 
         \node[catatan, anchor=north west] at (1.0,-3.0)
-            {Fungsi $f(R_{i-1}, K_i)$ tersusun atas ketiga operasi di atas, dan
-             setengah blok kiri hanya disalin: $L_i = R_{i-1}$. Kunci putaran $K_i$
+            {Fungsi $f(R_{i-1}, K_i)$ tersusun atas ketiga operasi di atas.
+             Setengah blok kiri disalin: $L_i = R_{i-1}$. Kunci putaran $K_i$
              berasal dari jadwal pada Tabel~\ref{tab:jadwal-kunci-gost}};
     \end{tikzpicture}
-    \caption{Satu putaran GOST. Setengah blok kanan diolah fungsi $f$, hasilnya di-XOR
-    dengan setengah blok kiri, lalu kedua setengah blok bertukar peran}
+    \caption{Satu putaran GOST. Setengah blok kanan diolah fungsi $f$, hasilnya
+    di-XOR dengan setengah blok kiri, lalu peran kedua bagian bertukar}
     \label{fig:putaran-gost}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; RFC 5830.}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB, hlm.~6--7.}
 \end{figure}

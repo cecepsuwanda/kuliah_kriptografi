@@ -1,17 +1,45 @@
 \section{Rangkuman}
 \begin{itemize}
-    \item \textit{Block cipher} membagi plainteks menjadi blok tetap $n$ bit ($C=E_K(P)$, $P=D_K(C)$); panjang cipherteks sama dengan panjang plainteks, sedangkan panjang kunci eksternal bebas.
-    \item Untuk setiap kunci, $E_K$ harus merupakan permutasi bijektif atas himpunan $2^n$ blok; cipher blok hanya memilih $2^m$ permutasi dari $2^n!$ permutasi yang tersedia.
-    \item Bila pesan tidak habis dibagi ukuran blok, blok terakhir ditambahi bit \textit{padding} agar panjangnya kembali $n$ bit.
-    \item Confusion menyembunyikan hubungan kunci--cipherteks melalui substitusi non-linear (S-box, misalnya $S_1$ DES: $\code{110100}\to\code{1001}$), sedangkan diffusion menyebarkan pengaruh satu bit plainteks ke banyak bit cipherteks melalui permutasi.
-    \item Confusion dan diffusion baru tercapai menyeluruh setelah substitusi dan permutasi diulang berkali-kali sebagai \textit{iterated cipher}, dengan kunci putaran yang berbeda pada setiap putaran.
-    \item Mode ECB ($C_i=E_K(P_i)$) sederhana dan mendukung akses acak, tetapi blok plainteks yang sama selalu menghasilkan cipherteks yang sama sehingga pola data bocor dan blok dapat dibuang atau disusun ulang.
-    \item Mode CBC ($C_i=E_K(P_i\oplus C_{i-1})$, $C_0=IV$) menghapus pola berulang dan menutup manipulasi blok, namun galat satu bit menjalar ke seluruh blok cipherteks berikutnya saat enkripsi.
-    \item Mode CFB ($C_j=P_j\oplus\mathrm{MSB}_s(E_K(X_j))$) memperlakukan cipher blok seperti cipher alir untuk data yang belum genap satu blok, dengan umpan balik diambil dari cipherteks.
-    \item Mode OFB mengambil umpan balik dari keluaran $E_K$, bukan dari cipherteks, sehingga aliran kuncinya tidak bergantung pada data dan galat tidak menjalar sama sekali.
-    \item Mode CTR ($C_i=P_i\oplus E_K(\text{counter}_i)$) mendukung pemrosesan paralel penuh dan akses acak karena tiap blok tidak bergantung pada blok lain; nilai counter wajib tidak pernah berulang.
-    \item Jaringan Feistel ($L_i=R_{i-1}$, $R_i=L_{i-1}\oplus f(R_{i-1},K_i)$) bersifat reversibel sehingga dekripsi memakai urutan kunci terbalik tanpa fungsi $f^{-1}$ terpisah; sifat ini tidak bergantung pada bentuk fungsi $f$.
-    \item Jaringan SPN seperti AES menuntut setiap komponen putaran dapat dibalik, sehingga inversi S-box dan matriks pencampur harus dirancang khusus.
-    \item \textit{Key scheduling} menurunkan kunci eksternal menjadi $r$ kunci putaran yang berbeda; DES mengubah kunci 64 bit menjadi 16 kunci putaran 48 bit.
-    \item Ukuran blok menentukan luas diffusion, sedangkan ukuran kunci menentukan ketahanan terhadap pencarian menyeluruh; blok 64 bit perlu diganti kunci sebelum $2^{32}$ blok karena paradoks ulang tahun.
+    \item \textit{Block cipher} membagi plainteks menjadi blok tetap $n$ bit
+          ($C=E_K(P)$, $P=D_K(C)$). Panjang cipherteks sama dengan panjang
+          plainteks, sedangkan panjang kunci eksternal bebas.
+    \item Bila pesan tidak habis dibagi ukuran blok, blok terakhir ditambahi bit
+          \textit{padding} agar panjangnya kembali $n$ bit.
+    \item Cipher blok mainan $(P\oplus K)\ll 1$ memperlihatkan enkripsi dan
+          dekripsi yang saling membalik, tetapi sangat lemah. Cipher blok modern
+          memakai substitusi, permutasi, pergeseran, kompresi, dan ekspansi
+          secara berulang.
+    \item Confusion menyembunyikan hubungan statistik antara plainteks,
+          cipherteks, dan kunci melalui substitusi nirlanjar, misalnya S-box
+          DES: $\code{110100}\to\code{1001}$.
+    \item Diffusion menyebarkan pengaruh satu bit plainteks ke banyak bit
+          cipherteks melalui permutasi, P-box, atau pergeseran siklik.
+    \item Confusion dan diffusion dicapai setelah substitusi dan permutasi
+          diulang berkali-kali sebagai \textit{iterated cipher}, dengan kunci
+          putaran yang berbeda pada setiap putaran.
+    \item Mode ECB ($C_i=E_K(P_i)$) sederhana dan mendukung akses acak, tetapi
+          blok plainteks yang sama selalu menghasilkan cipherteks yang sama.
+          Polanya bocor, dan blok dapat dibuang atau disusun ulang.
+    \item Mode CBC ($C_i=E_K(P_i\oplus C_{i-1})$, $C_0=\mathrm{IV}$) menghapus
+          pola berulang, tetapi galat satu bit menjalar ke seluruh blok
+          cipherteks berikutnya saat enkripsi.
+    \item Mode CFB mengenkripsi data dalam unit $s$ bit dengan antrian, sehingga
+          cipher blok dipakai seperti cipher alir. Umpan baliknya diambil dari
+          cipherteks.
+    \item Mode OFB mengambil umpan balik dari keluaran $E_K$, bukan dari
+          cipherteks, sehingga galat tidak menjalar. Mode ini cocok untuk suara
+          dan video terdigitalisasi.
+    \item Mode CTR ($C_j=P_j\oplus E_K(T_j)$) tidak merantai blok, sehingga
+          mendukung pemrosesan paralel dan akses acak. Nilai counternya harus
+          berbeda untuk setiap blok dan tidak dapat diprediksi.
+    \item Jaringan Feistel membagi blok menjadi dua bagian dengan aturan
+          $L_i=R_{i-1}$ dan $R_i=L_{i-1}\oplus f(R_{i-1},K_i)$. Struktur ini
+          reversible, sehingga dekripsi memakai urutan kunci terbalik tanpa
+          fungsi $f^{-1}$ terpisah.
+    \item \textit{Key scheduling} menurunkan kunci eksternal menjadi kunci-kunci
+          putaran yang berbeda-beda. Panjang kunci putaran tidak harus sama
+          dengan panjang kunci eksternal.
+    \item Ukuran blok menentukan luas diffusion, sedangkan ukuran kunci
+          menentukan efek confusion dan ketahanan terhadap serangan
+          \textit{brute force}.
 \end{itemize}

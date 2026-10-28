@@ -2,15 +2,15 @@
 \begin{obeactivity}
 \textbf{Aktivitas 4.1: Praktik Analisis Frekuensi}
 1. Gunakan alat \textit{online} seperti \url{https://www.cryptool.org/en/cto/n-gram-analysis}.
-2. Masukkan sebuah cipherteks yang dihasilkan dari monoalphabetic cipher.
-3. Analisis distribusi frekuensi hurufnya dan coba petakan huruf yang paling sering muncul ke huruf 'E' atau 'A'.
-4. Lakukan iterasi \textit{trial-and-error} hingga pesan dapat terbaca sepenuhnya.
+2. Masukkan sebuah cipherteks yang dihasilkan dari cipher abjad-tunggal.
+3. Analisis distribusi frekuensi hurufnya, lalu petakan huruf yang paling sering muncul ke huruf \code{E} atau \code{A}.
+4. Lakukan iterasi \textit{trial-and-error} sampai pesan dapat terbaca.
 \end{obeactivity}
 
-Langkah-langkah pada Aktivitas 4.1 dapat dijalankan langsung melalui program
-pada Listing~\ref{lst:caesar-frekuensi}. Program itu mengenkripsi sebuah pesan,
-menghitung frekuensi huruf cipherteksnya, lalu menebak kunci dengan
-menyelaraskan huruf tersering ke urutan huruf bahasa Indonesia.
+Langkah-langkah pada Aktivitas 4.1 dapat dijalankan melalui program pada
+Listing~\ref{lst:caesar-frekuensi}. Program itu mengenkripsi pesan, menghitung
+frekuensi huruf cipherteks, lalu menebak kunci dengan menyelaraskan huruf
+tersering ke urutan huruf bahasa Indonesia.
 
 \lstinputlisting[
     language=Python,
@@ -23,17 +23,18 @@ Program yang sama tersedia dalam C++ (\texttt{code/cpp/caesar.cpp}) dan MATLAB
 
 \begin{obeactivity}
 \textbf{Aktivitas 4.2: Kriptanalisis Vigen\`ere dengan Metode Kasiski}
-1. Bangkitkan sebuah cipherteks Vigen\`ere dari kalimat bahasa Indonesia yang panjang (minimal 200 huruf) dengan kunci berpanjang 4 sampai 6 huruf. Gunakan alat \textit{online} seperti \url{https://www.dcode.fr/vigenere-cipher} atau \url{https://cryptii.com/pipes/vigenere-cipher}.
-2. Tanpa melihat kunci, cari kriptogram (rangkaian huruf cipherteks) yang berulang dan catat jarak antar kemunculannya.
+1. Bangkitkan cipherteks Vigen\`ere dari kalimat bahasa Indonesia yang panjang (minimal 200 huruf) dengan kunci berpanjang 4 sampai 6 huruf. Gunakan alat \textit{online} seperti \url{https://www.dcode.fr/vigenere-cipher} atau \url{https://cryptii.com/pipes/vigenere-cipher}.
+2. Tanpa melihat kunci, cari kriptogram yang berulang dan catat jarak antar kemunculannya.
 3. Faktorkan setiap jarak, lalu tentukan panjang kunci $m$ sebagai faktor yang muncul pada semua himpunan faktor.
-4. Bagi cipherteks menjadi $m$ kelompok menurut posisi modulo $m$, lalu jalankan analisis frekuensi pada masing-masing kelompok untuk menebak huruf kunci.
-5. Bandingkan kunci yang Anda peroleh dengan kunci aslinya. Catat berapa banyak huruf yang benar.
+4. Bagi cipherteks menjadi $m$ kelompok menurut posisi modulo $m$, lalu jalankan analisis frekuensi pada setiap kelompok untuk menebak huruf kunci.
+5. Bandingkan kunci yang diperoleh dengan kunci aslinya.
 \end{obeactivity}
 
 \begin{obeactivity}
-\textbf{Aktivitas 4.3: Membandingkan Cipher Klasik secara Terukur}
-1. Enkripsikan satu kalimat yang sama (misalnya \texttt{kriptografi klasik menarik untuk dipelajari}) dengan empat cipher: Caesar, Vigen\`ere, Playfair, dan Hill $2 \times 2$.
-2. Hitung frekuensi huruf tiap cipherteks, lalu hitung indeks kebetulannya dengan rumus pada Bagian~\ref{sec:indeks-kebetulan}.
-3. Susun tabel yang memuat indeks kebetulan keempat cipherteks beserta indeks kebetulan plainteksnya.
-4. Simpulkan cipher mana yang paling berhasil menyembunyikan distribusi frekuensi bahasa, dan jelaskan mengapa Hill cipher unggul pada ukuran itu.
+\textbf{Aktivitas 4.3: Membandingkan Cipher melalui Indeks Kebetulan}
+1. Enkripsikan satu kalimat yang sama dengan Caesar cipher dan Vigen\`ere cipher.
+2. Hitung frekuensi huruf setiap cipherteks.
+3. Hitung indeks kebetulan dengan rumus pada Bagian~\ref{sec:indeks-kebetulan}.
+4. Bandingkan hasilnya dengan nilai acuan $0{,}065$ untuk cipher abjad-tunggal dan $0{,}038$ untuk teks acak.
+5. Simpulkan cipher mana yang distribusinya lebih mendekati teks acak.
 \end{obeactivity}

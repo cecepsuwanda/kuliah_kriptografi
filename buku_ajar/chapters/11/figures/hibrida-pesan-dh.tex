@@ -12,7 +12,7 @@
     ]
         % --- sisi Alice ---
         \node[kotak, fill=green!10] (kunci) at (0,0)
-            {Kunci sesi $K$\\acak, 256 bit};
+            {Kunci rahasia $K$};
         \node[kotak, fill=orange!12] (aes) at (0,-2.3)
             {Pesan $M$};
         \node[kotak, fill=blue!6] (bungkus) at (3.8,0)
@@ -42,11 +42,10 @@
         \draw[panah] (buka) -- (pulih);
 
         \node[catatan, anchor=north] at (6.4,-3.4)
-            {RSA menangani kunci sesi yang pendek, AES menangani seluruh isi
-             pesan. Urutan pemulihan tidak dapat ditukar: $C_K$ memberi kunci,
-             $C_M$ memberi isi};
+            {Kunci $K$ dienkripsi dengan RSA. Pesan $M$ dienkripsi dengan AES.
+             Bob memulihkan $K$ lebih dahulu, lalu memulihkan $M$};
     \end{tikzpicture}}
-    \caption{Enam langkah kriptografi hibrida: $C_K$ dan $C_M$ melewati saluran
+    \caption{Alur kriptografi hibrida: $C_K$ dan $C_M$ melewati saluran
     terbuka, lalu dipertemukan kembali oleh Bob}
     \label{fig:hibrida-pesan-dh}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}

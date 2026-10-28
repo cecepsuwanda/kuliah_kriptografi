@@ -12,7 +12,7 @@
         \node[draw, rounded corners=1pt, inner sep=6pt,
               fit={(2.5,0.85) (9.5,-0.85)}] (rnd) {};
         \node[kotak] (kx)  at (3.0,0) {XOR dengan\\$\hat{K}_i$};
-        \node[kotak] (sb)  at (5.5,0) {32 kotak-S\\$4 \times 4$ bit};
+        \node[kotak] (sb)  at (5.5,0) {kotak-S\\$4 \times 4$ bit};
         \node[kotak] (lt)  at (8.0,0) {transformasi\\linier (LT)};
         \node[kotak] (ipv) at (11.4,0) {permutasi\\akhir (IP$^{-1}$)};
 
@@ -24,12 +24,11 @@
         \node[font=\footnotesize, anchor=north] at (5.7,-1.1)
             {diulang 32 kali (putaran terakhir tanpa LT)};
         \node[catatan, anchor=north west] at (-1.0,-1.75)
-            {Tiga puluh tiga subkunci $\hat{K}_0, \dots, \hat{K}_{32}$ diturunkan dari
-             kunci melalui cipher itu sendiri, sehingga jadwal kuncinya justru lebih
-             mahal daripada jadwal kunci DES};
+            {Penyaringan dengan $K_{32}$ dikerjakan sebelum permutasi akhir
+             IP$^{-1}$};
     \end{tikzpicture}
-    \caption{Struktur Serpent. Seluruh blok diproses dalam satu jalur substitusi-permutasi
-    berputar, dengan sebuah transformasi linier bit demi bit sebagai pelebur antarputaran}
+    \caption{Struktur Serpent: permutasi awal, 32 putaran
+    substitusi--permutasi, dan permutasi akhir}
     \label{fig:putaran-serpent}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; Anderson, Biham, \& Knudsen, \textit{Serpent}.}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB, hlm.~32.}
 \end{figure}

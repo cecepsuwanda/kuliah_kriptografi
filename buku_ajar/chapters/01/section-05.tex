@@ -1,49 +1,35 @@
 \section{Kriptanalisis dan Kriptologi}
 \label{sec:kriptanalisis}
 
-\textbf{Kriptanalisis} (\textit{cryptanalysis}) adalah ilmu dan seni untuk
-memecahkan cipherteks menjadi plainteks tanpa mengetahui kunci yang digunakan.
-Pelakunya disebut kriptanalis, dan bidang ini merupakan ``lawan'' dari kriptografi.
-Teknik kriptanalisis sudah ada sejak abad ke-9, jauh lebih tua daripada istilah
-kriptografi itu sendiri.
+\textbf{Kriptanalisis} (\textit{cryptanalysis}) adalah ilmu dan seni memecahkan
+cipherteks menjadi plainteks tanpa mengetahui kunci yang digunakan. Pelakunya
+disebut kriptanalis. Kriptanalisis merupakan ``lawan'' kriptografi. Teknik ini
+sudah ada sejak abad ke-9.
 
-Kriptanalisis dikemukakan pertama kali oleh seorang ilmuwan Arab pada abad IX
-bernama \textit{Abu Yusuf Yaqub Ibnu Ishaq Ibnu As-Sabbah Ibnu 'Omran Ibnu Ismail
-Al-Kindi}, atau yang lebih dikenal sebagai \textbf{Al-Kindi}. Ia menulis buku
-tentang seni memecahkan kode berjudul \textit{Risalah fi Istikhraj al-Mu'amma}
+Kriptanalisis dikemukakan pertama kali oleh ilmuwan Arab pada abad ke-9 bernama
+Abu Yusuf Yaqub Ibnu Ishaq Ibnu As-Sabbah Ibnu 'Omran Ibnu Ismail Al-Kindi, atau
+Al-Kindi. Ia menulis buku berjudul \textit{Risalah fi Istikhraj al-Mu'amma}
 (\textit{Manuscript for the Deciphering Cryptographic Messages}). Al-Kindi
-menemukan adanya keteraturan frekuensi perulangan huruf di dalam Al-Quran, dan
-teknik yang digunakannya kelak dinamakan \textbf{analisis frekuensi}, yaitu teknik
-untuk memecahkan cipherteks berdasarkan frekuensi kemunculan karakter di dalam
-pesan. Gagasan intinya sederhana namun ampuh: pada bahasa alami, huruf tidak muncul
-sama sering, dan pola ketidaksamaan itu tetap terbawa meskipun identitas setiap
-huruf telah disamarkan.
+menemukan keteraturan frekuensi perulangan huruf di dalam Al-Quran. Teknik itu
+kemudian disebut \textbf{analisis frekuensi}, yaitu teknik memecahkan cipherteks
+berdasarkan frekuensi kemunculan karakter. Gagasannya sederhana: pada bahasa
+alami, huruf tidak muncul sama sering, dan pola itu tetap terbawa meskipun
+identitas huruf telah disamarkan.
 
-Sejarah kriptanalisis mencatat hasil-hasil gemilang, misalnya pemecahan Telegram
-Zimmermann yang membawa Amerika Serikat masuk ke kancah Perang Dunia I. Pesan
-rahasia Menteri Luar Negeri Jerman itu berisi tawaran aliansi kepada Meksiko dan
-berhasil dibaca pihak Sekutu; begitu isinya dipublikasikan, tekanan politik yang
-timbul tidak terbendung lagi. Kejadian ini menegaskan bahwa nilai kriptanalisis
-tidak terletak pada rahasia yang dibongkar semata, melainkan pada akibat yang
-ditimbulkannya.
+Sejarah kriptanalisis mencatat pemecahan Telegram Zimmermann, yang membawa
+Amerika Serikat masuk ke Perang Dunia I. Pesan rahasia Menteri Luar Negeri
+Jerman itu berisi tawaran aliansi kepada Meksiko dan berhasil dibaca pihak
+Sekutu.
 
-Yang perlu disadari, kriptanalisis bukanlah kegiatan yang berada di luar kriptografi
-melainkan justru mesin penggeraknya. Setiap algoritma pada bab-bab berikutnya
-dirancang dengan memperhitungkan serangan yang sudah diketahui; AES, misalnya,
-memakai struktur yang khusus dipilih untuk menahan serangan diferensial dan linear
-yang sebelumnya berhasil mengguncang DES. Karena itu, mempelajari cara menyerang
-adalah bagian tak terpisahkan dari mempelajari cara membangun.
-
-\textbf{Kriptologi} (\textit{cryptology}) adalah studi menyeluruh yang mencakup
-kriptografi (pembuatan kode) dan kriptanalisis (pemecahan kode). Hubungan keduanya
-tampak pada Gambar~\ref{fig:kriptologi-cabang}: keduanya berdiri sejajar di bawah
-kriptologi, dan panah dua arah di antara keduanya menandakan bahwa kemajuan di satu
-sisi selalu menuntut kemajuan di sisi lain.
+\textbf{Kriptologi} (\textit{cryptology}) adalah studi yang mencakup kriptografi
+dan kriptanalisis. Hubungan keduanya tampak pada
+Gambar~\ref{fig:kriptologi-cabang}: keduanya berdiri sejajar di bawah
+kriptologi.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.62\linewidth, height=0.7\textheight, keepaspectratio]{figures/kriptologi-cabang.png}
-    \caption{Kriptologi terbagi menjadi dua cabang: kriptografi yang merancang cara merahasiakan pesan, dan kriptanalisis yang berupaya memecahkan cipherteks}
+    \caption{Kriptologi mencakup kriptografi yang merancang cara merahasiakan pesan dan kriptanalisis yang memecahkan cipherteks}
     \label{fig:kriptologi-cabang}
     \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}

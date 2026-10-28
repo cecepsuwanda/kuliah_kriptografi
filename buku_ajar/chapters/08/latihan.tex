@@ -1,43 +1,41 @@
 \begin{obereflection}
 \textbf{Latihan 8.1}
-1. Mengapa tahap \textit{MixColumns} dihilangkan pada putaran terakhir AES?
-2. Jelaskan bagaimana kombinasi \textit{SubBytes}, \textit{ShiftRows}, dan \textit{MixColumns} secara kolektif mengimplementasikan prinsip \textit{confusion} dan \textit{diffusion} Shannon.
-3. Berikan analisis singkat: mengapa AES-256 lebih tahan terhadap serangan \textit{quantum computing} (misal: algoritma Grover) dibandingkan AES-128?
+1. Jelaskan perbedaan orientasi data dan struktur putaran antara DES dan AES.
+2. Sebutkan lima persyaratan yang harus dipenuhi calon AES.
+3. Jelaskan perbedaan AES-128, AES-192, dan AES-256 dalam panjang kunci,
+   $N_k$, dan $N_r$.
+4. Hitung jumlah kemungkinan kunci AES-128. Berapa waktu yang diperlukan untuk
+   mencoba seluruh kunci itu pada laju satu juta kunci per detik?
 
 \textbf{Latihan 8.2}
-4. Jelaskan mengapa pemetaan 16 byte masukan ke matriks \textit{state} harus dilakukan
-   kolom demi kolom, bukan baris demi baris. Apa akibat praktisnya bagi implementasi
-   yang salah memilih konvensi?
-5. Buktikan bahwa AddRoundKey bersifat involutif, sedangkan SubBytes dan MixColumns
-   tidak. Untuk yang terakhir, tunjukkan dua byte berbeda yang dipertukarkan oleh
-   SubBytes.
-6. Hitunglah dengan tangan $\code{02} \bullet \code{57}$ dan
-   $\code{04} \bullet \code{57}$ di $\text{GF}(2^8)$, lalu tentukan
-   $\code{08} \bullet \code{57}$. Petunjuk: setiap langkah hanya menggeser satu bit
-   ke kiri dan mereduksi dengan $\code{1B}$ bila perlu.
-7. Diketahui bahwa invers perkalian dari $\code{1F}$ di $\text{GF}(2^8)$ adalah
-   $\code{B2}$. Periksa dengan Persamaan~\eqref{eq:aes-sbox-rumus} bahwa
-   $\text{S-box}(\code{1F}) = \code{C0}$, lalu periksa hasil itu pada
-   Tabel~\ref{tab:sbox-aes}.
-8. Bangkitkan $\text{RC}[11]$ seandainya AES memerlukan sebelas kunci putaran
-   untuk varian berputaran 11. Petunjuk: lanjutkan dari
-   $\text{RC}[10] = \code{36}$.
+5. Petakan 16 byte masukan $\code{00}\,\code{01}\,\code{02}\,\dots\,\code{0F}$
+   ke dalam \texttt{state} secara kolom demi kolom. Tuliskan matriks
+   $4 \times 4$ yang dihasilkan.
+6. Gunakan Tabel~\ref{tab:sbox-aes} untuk menentukan nilai
+   $\text{S-box}(\code{23})$, $\text{S-box}(\code{54})$,
+   $\text{S-box}(\code{77})$, $\text{S-box}(\code{6F})$, dan
+   $\text{S-box}(\code{20})$.
+7. Terapkan \textit{ShiftRows} pada \texttt{state} hasil soal 5. Tuliskan
+   matriks hasilnya dan jelaskan perpindahan setiap baris.
+8. Hitung \textit{MixColumns} untuk kolom
+   $[\,\code{26}\ \code{7B}\ \code{BD}\ \code{43}\,]^{T}$. Tunjukkan bahwa
+   hasilnya $[\,\code{3F}\ \code{4F}\ \code{F9}\ \code{2A}\,]^{T}$.
+9. Tunjukkan bahwa menerapkan \textit{AddRoundKey} dua kali dengan kunci yang
+   sama mengembalikan \texttt{state} ke nilai semula.
 
 \textbf{Latihan 8.3}
-9. Tuliskan urutan transformasi yang dijalankan oleh satu putaran dekripsi AES dan
-   bandingkan dengan urutan pada putaran enkripsi. Jelaskan mengapa keduanya tidak
-   sekadar kebalikan cermin.
-10. Pada \textit{equivalent inverse cipher}, kunci putaran diubah menjadi
-    $\tilde{K}_i = \text{InvMixColumns}(K_i)$. Tunjukkan dengan mempergunakan
-    sifat linier InvMixColumns bahwa perubahan itu tidak mengubah hasil dekripsi.
-11. Tunjukkan bahwa InvShiftRows dan InvSubBytes saling komutatif, tetapi
-    InvMixColumns tidak komutatif dengan keduanya. Berikan satu contoh penyangkal
-    untuk yang terakhir.
-12. Untuk AES-256, jelaskan mengapa aturan $\text{SubWord}$ tambahan diperlukan
-    hanya ketika $i \bmod 8 = 4$, dan apa yang terjadi pada jadwal kunci bila aturan
-    itu dihilangkan.
-13. Berapa banyak word yang harus dibangkitkan untuk AES-192, dan berapa nilai
-    $\text{Rcon}$ terbesar yang dipakai? Jelaskan asal angka-angka itu.
-14. AES-128 memerlukan 10 putaran, sedangkan DES 16 putaran atas blok yang justru
-    lebih kecil. Jelaskan mengapa AES tetap dapat mencapai difusi penuh lebih cepat.
+10. Bangkitkan $w[4]$ sampai $w[7]$ untuk kunci
+    ``Two One Nine Two''. Tuliskan pula kunci putaran $K_1$ sebagai matriks
+    \texttt{state}.
+11. Jelaskan aturan \textit{expansion key} pada AES-256. Kapan operasi
+    \textit{SubWord} dijalankan tanpa \textit{RotWord} dan tanpa Rcon?
+12. Sebutkan tiga transformasi invers yang dipakai pada dekripsi AES. Tuliskan
+    urutan operasi dalam satu putaran dekripsi.
+13. Hitung $\code{0D} + \code{06}$ dan $\code{57} + \code{83}$ di
+    $\text{GF}(2^8)$. Jelaskan mengapa hasilnya sama dengan operasi XOR.
+14. Hitung $\code{57} \bullet \code{83}$ di $\text{GF}(2^8)$ dengan
+    $f(x) = x^8 + x^4 + x^3 + x + 1$. Tunjukkan bahwa hasilnya $\code{C1}$.
+15. Jelaskan lima langkah konstruksi S-box AES. Gunakan
+    Persamaan~\eqref{eq:aes-sbox-affine} untuk menunjukkan peran matriks
+    \textit{affine}.
 \end{obereflection}

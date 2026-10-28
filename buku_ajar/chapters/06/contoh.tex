@@ -1,91 +1,41 @@
 \section{Contoh Terhitung}
 
 \begin{example}
-\textbf{ECB vs CBC.} Pakai blok mainan 4 bit: $E_K(P)$ adalah $(P\oplus K)$ yang digeser siklik ke kiri 1 bit, sedangkan $D_K(C)$ adalah hasil geser siklik ke kanan 1 bit atas $C$ yang di-XOR dengan $K$. Plainteks $1010\,0010\,0011\,1010\,1001$ (heksa $\code{A23A9}$), kunci $K=1011$ ($\code{B}$), dan $IV=\code{0000}$. Perhatikan blok ke-1 dan ke-4 sama, yaitu $A$.
+\textbf{ECB dan CBC pada plainteks yang sama.} Cipher blok mainan berukuran
+4 bit memakai $E_K(P) = (P \oplus K) \ll 1$ dan
+$D_K(C) = (C \gg 1) \oplus K$. Plainteksnya \code{1010 0010 0011 1010 1001}
+(heksa \code{A23A9}), kuncinya $K = \code{1011}$ (heksa \code{B}), dan
+$IV = \code{0000}$. Blok ke-1 dan ke-4 sama, yaitu \code{1010}.
 
-\textbf{ECB} ($C_i=E_K(P_i)$, tiap blok independen):
-\[
-\begin{aligned}
-E_K(1010)&=0010, & E_K(0010)&=0011, & E_K(0011)&=0001,\\
-E_K(1010)&=0010, & E_K(1001)&=0100.
-\end{aligned}
-\]
-sehingga $C=\code{23124}$. Blok $A$ yang berulang menghasilkan cipherteks $2$ yang sama, jadi pola plainteks tetap tampak.
+\textbf{Mode ECB.} Setiap blok dienkripsi sendiri-sendiri:
+\begin{enumerate}
+    \item $E_K(\code{1010}) = \code{0010}$.
+    \item $E_K(\code{0010}) = \code{0011}$.
+    \item $E_K(\code{0011}) = \code{0001}$.
+    \item $E_K(\code{1010}) = \code{0010}$.
+    \item $E_K(\code{1001}) = \code{0100}$.
+\end{enumerate}
+Cipherteksnya \code{0010 0011 0001 0010 0100}, yaitu \code{23124} dalam heksa.
+Blok \code{1010} yang berulang menghasilkan cipherteks \code{0010} yang sama,
+sehingga pola plainteks tetap tampak.
 
-\textbf{CBC} ($C_0=IV$ dan $C_i=E_K(P_i\oplus C_{i-1})$):
-\[
-\begin{aligned}
-C_1&=E_K(1010\oplus0000)=E_K(1010)=0010,\\
-C_2&=E_K(0010\oplus0010)=E_K(0000)=0111,\\
-C_3&=E_K(0011\oplus0111)=E_K(0100)=1111,\\
-C_4&=E_K(1010\oplus1111)=E_K(0101)=1101,\\
-C_5&=E_K(1001\oplus1101)=E_K(0100)=1111,
-\end{aligned}
-\]
-sehingga $C=\code{27FDF}$. Blok $A$ di posisi 1 dan 4 kini berubah menjadi $2$ dan $D$, jadi pengulangan tersembunyi. Dekripsi dengan $P_i=D_K(C_i)\oplus C_{i-1}$ mengembalikan plainteks semula.
-\end{example}
+\textbf{Mode CBC.} Setiap blok di-XOR dulu dengan cipherteks sebelumnya:
+\begin{enumerate}
+    \item $C_1 = E_K(\code{1010} \oplus \code{0000}) = \code{0010}$.
+    \item $C_2 = E_K(\code{0010} \oplus \code{0010}) = \code{0111}$.
+    \item $C_3 = E_K(\code{0011} \oplus \code{0111}) = \code{1111}$.
+    \item $C_4 = E_K(\code{1010} \oplus \code{1111}) = \code{1101}$.
+    \item $C_5 = E_K(\code{1001} \oplus \code{1101}) = \code{1111}$.
+\end{enumerate}
+% Koreksi: slide menulis 27FBF. Hitung ulang memberi 0010 0111 1111 1101 1111
+% = 27FDF, dan dekripsi mengembalikan plainteks semula.
+Cipherteksnya \code{0010 0111 1111 1101 1111}, yaitu \code{27FDF} dalam heksa.
+Blok \code{1010} di posisi 1 dan 4 kini menjadi \code{0010} dan \code{1101},
+sehingga pengulangan tersembunyi.
 
-\begin{example}
-\textbf{Mode Counter (CTR).} Masih dengan kunci dan blok mainan di atas, tiap blok di-XOR dengan $E_K(\text{counter}_i)$ untuk $\text{counter}_i=i$:
-\[
-\begin{aligned}
-E_K(0001)&=0101, & E_K(0010)&=0011, & E_K(0011)&=0001,\\
-E_K(0100)&=1111, & E_K(0101)&=1101.
-\end{aligned}
-\]
-Kemudian $C_i=P_i\oplus E_K(\text{counter}_i)$:
-\[
-C_1=1010\oplus0101=1111,\quad C_2=0010\oplus0011=0001,\quad C_3=0011\oplus0001=0010,
-\]
-\[
-C_4=1010\oplus1111=0101,\quad C_5=1001\oplus1101=0100,\qquad C=\code{F1254}.
-\]
-Karena setiap blok hanya bergantung pada counternya, bukan pada cipherteks sebelumnya, blok dapat dienkripsi paralel dan diakses acak, berbeda dari CBC.
-\end{example}
-
-\begin{example}
-\textbf{Jaringan Feistel dua putaran.} Ambil blok 8 bit yang dipecah menjadi dua bagian 4 bit, $L_0=1011$ dan $R_0=0110$. Fungsi putarannya diambil sesederhana mungkin, yaitu $f(R,K_i)=R\oplus K_i$, dengan $K_1=1010$ dan $K_2=0101$. Aturan putarannya $L_i=R_{i-1}$ dan $R_i=L_{i-1}\oplus f(R_{i-1},K_i)$.
-
-\textbf{Putaran 1:}
-\[
-L_1=R_0=0110,\quad R_1=L_0\oplus f(R_0,K_1)=1011\oplus(0110\oplus1010)=1011\oplus1100=0111.
-\]
-\textbf{Putaran 2:}
-\[
-L_2=R_1=0111,\quad R_2=L_1\oplus f(R_1,K_2)=0110\oplus(0111\oplus0101)=0110\oplus0010=0100.
-\]
-Jadi cipherteksnya adalah $L_2\parallel R_2=\code{01110100}$.
-
-\textbf{Dekripsi} memakai urutan kunci yang terbalik, yaitu $K_2$ lalu $K_1$, dengan aturan $R_{i-1}=L_i$ dan $L_{i-1}=R_i\oplus f(L_i,K_i)$. Dari $L_2=0111$ dan $R_2=0100$:
-\[
-R_1=L_2=0111,\qquad L_1=R_2\oplus f(L_2,K_2)=0100\oplus(0111\oplus0101)=0100\oplus0010=0110,
-\]
-lalu
-\[
-R_0=L_1=0110,\qquad L_0=R_1\oplus f(L_1,K_1)=0111\oplus(0110\oplus1010)=0111\oplus1100=1011.
-\]
-Hasilnya $L_0\parallel R_0=\code{10110110}$, yaitu plainteks semula. Perhatikan bahwa fungsi $f$ yang dipakai saat dekripsi sama persis dengan yang dipakai saat enkripsi; yang berubah hanya urutan kuncinya.
-\end{example}
-
-\begin{example}
-\textbf{Bahaya pengulangan counter pada mode CTR.} Misalkan dua pesan berbeda dienkripsi dengan kunci $K=1011$ dan nilai awal counter yang sama, yaitu $\text{counter}_1=0001$ dan $\text{counter}_2=0010$. Pesan pertama berisi blok $1010$ dan $0010$, sedangkan pesan kedua berisi blok $0011$ dan $1001$. Aliran kunci yang dibangkitkan identik untuk kedua pesan:
-\[
-E_K(0001)=0101, \qquad E_K(0010)=0011.
-\]
-Cipherteks kedua pesan menjadi
-\[
-C_A=(1010\oplus0101,\ 0010\oplus0011)=\code{1111\,0001},
-\]
-\[
-C_B=(0011\oplus0101,\ 1001\oplus0011)=\code{0110\,1010}.
-\]
-Penyerang yang menjumlahkan kedua cipherteks dengan XOR memperoleh
-\[
-C_A\oplus C_B=\code{1111\,0001}\oplus\code{0110\,1010}=\code{1001\,1011},
-\]
-yang persis sama dengan $P_A\oplus P_B$, karena kunci saling menghapus:
-\[
-C_A\oplus C_B=(P_A\oplus Z)\oplus(P_B\oplus Z)=P_A\oplus P_B.
-\]
-Tanpa mengetahui kunci sama sekali, penyerang sudah memiliki hubungan langsung antara kedua plainteks. Inilah serangan \textit{two-time pad} yang sama seperti pada penggunaan ulang One-Time Pad; karena itu nilai counter pada mode CTR tidak boleh pernah berulang untuk kunci yang sama.
+\textbf{Dekripsi CBC.} Dengan $P_i = D_K(C_i) \oplus C_{i-1}$, blok pertama
+menjadi $D_K(\code{0010}) \oplus \code{0000} = \code{1010} \oplus \code{0000} =
+\code{1010}$. Blok berikutnya kembali menjadi \code{0010}, \code{0011},
+\code{1010}, dan \code{1001}. Jadi seluruh plainteks \code{A23A9} diperoleh
+kembali.
 \end{example}

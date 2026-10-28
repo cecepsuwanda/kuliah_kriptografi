@@ -17,18 +17,8 @@
         \draw[panah] (inv) -- (bit);
         \draw[panah] (bit) -- (aff);
         \draw[panah] (aff) -- (out);
-
-        % Jejak contoh untuk a = 53.
-        \node[font=\footnotesize, anchor=north] at (0,-1.05)  {$53$};
-        \node[font=\footnotesize, anchor=north] at (2.9,-1.05) {$\code{CA}$};
-        \node[font=\footnotesize, anchor=north] at (5.8,-1.05) {$\code{11001010}$};
-        \node[font=\footnotesize, anchor=north] at (8.7,-1.05) {$\code{10110111}$};
-        \node[font=\footnotesize, anchor=north] at (11.6,-1.05) {$\code{ED}$};
-
-        \draw[dashed] (-1.35,-0.8) -- (12.95,-0.8);
-        \node[font=\footnotesize, anchor=west] at (-1.35,-1.42) {contoh untuk $a = \code{53}$};
     \end{tikzpicture}
     \caption{Lima langkah konstruksi S-box AES. Byte masukan dibalik di $\text{GF}(2^8)$, hasilnya dinyatakan sebagai vektor bit, dikenai transformasi affine, lalu dibaca kembali sebagai byte}
     \label{fig:konstruksi-sbox}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; NIST, FIPS PUB 197.}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
 \end{figure}

@@ -35,12 +35,11 @@
         \node[font=\footnotesize, anchor=south] at (9.0,-0.12) {$d$};
 
         \node[catatan, anchor=north] at (5.1,-1.25)
-            {$x$ (32 bit) dipecah menjadi empat byte $a, b, c, d$. Setiap kotak-S
-             berisi 256 entri 32 bit dan seluruhnya dibangkitkan dari kunci, sehingga
-             penyerang tidak pernah mengetahuinya sebelum kunci ditebak};
+            {$x$ (32 bit) dipecah menjadi empat byte $a, b, c, d$. Setiap byte
+             menjadi indeks bagi satu kotak-S};
     \end{tikzpicture}
-    \caption{Fungsi $F$ pada Blowfish. Dua penjumlahan modulo $2^{32}$ dipisahkan oleh
-    satu XOR, sehingga luaran tidak dapat dipisahkan per byte}
+    \caption{Fungsi $F$ pada Blowfish: empat kotak-S, dua penjumlahan modulo
+    $2^{32}$, dan satu XOR}
     \label{fig:fungsi-f-blowfish}
-    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB; Schneier, \textit{Blowfish}.}
+    \sumber{Munir, \textit{IF4020 Kriptografi}, ITB, hlm.~30.}
 \end{figure}

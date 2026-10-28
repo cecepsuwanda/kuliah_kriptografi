@@ -1,13 +1,19 @@
 
 \begin{obeactivity}
 \textbf{Aktivitas 6.1: Analisis Mode ECB vs CBC}
-1. Gunakan alat bantu enkripsi (seperti CyberChef) untuk mengenkripsi sebuah gambar sederhana (misal: gambar logo kecil) menggunakan AES mode ECB dan AES mode CBC.
-2. Amati hasil cipherteks yang dihasilkan. Apakah gambar asli masih terlihat pada mode ECB?
-3. Diskusikan mengapa mode CBC lebih aman untuk data yang memiliki pola berulang.
+Gunakan alat bantu enkripsi untuk membandingkan dua mode pada data yang sama.
+\begin{enumerate}
+    \item Enkripsi sebuah gambar sederhana memakai AES mode ECB dan AES mode
+          CBC.
+    \item Amati cipherteks yang dihasilkan. Apakah gambar asli masih terlihat
+          pada mode ECB?
+    \item Diskusikan mengapa mode CBC lebih baik untuk data yang memiliki pola
+          berulang.
+\end{enumerate}
 \end{obeactivity}
 
 Langkah-langkah pada Aktivitas 6.1 dapat dijalankan langsung melalui program
-pada Listing~\ref{lst:mode-operasi}. Program itu memakai block cipher mainan
+pada Listing~\ref{lst:mode-operasi}. Program itu memakai cipher blok mainan
 berukuran 4 byte untuk membandingkan ECB dan CBC pada plainteks berpola
 berulang, sehingga kebocoran pola pada ECB terlihat jelas tanpa perlu mengolah
 gambar.
@@ -23,31 +29,18 @@ MATLAB (\texttt{code/matlab/mode\_operasi.m}).
 
 \begin{obeactivity}
 \textbf{Aktivitas 6.2: Menelusuri Penjalaran Galat pada CBC dan OFB}
-1. Dengan kunci dan mode yang sama, enkripsi sebuah pesan yang terdiri atas
-   paling sedikit lima blok.
-2. Balik satu bit pada blok cipherteks ke-2 (bukan blok pertama dan bukan blok
-   terakhir), lalu dekripsi cipherteks yang sudah diubah itu.
-3. Bandingkan plainteks hasil dekripsi dengan plainteks semula. Pada mode CBC,
-   blok plainteks mana saja yang rusak? Pada mode OFB, blok mana saja yang rusak?
-4. Ulangi percobaan dengan mengubah bit pada dua posisi berbeda di dalam blok
-   cipherteks ke-2, lalu simpulkan bagaimana posisi bit yang dirusak menentukan
-   posisi bit plainteks yang rusak pada mode CBC.
-5. Kaitkan hasil pengamatan dengan Tabel~\ref{tab:perbandingan-mode} dan
-   jelaskan mengapa mode OFB lebih cocok untuk transmisi suara terdigitalisasi.
-\end{obeactivity}
-
-\begin{obeactivity}
-\textbf{Aktivitas 6.3: Menunjukkan Bahaya Pengulangan Counter (CTR)}
-1. Siapkan dua pesan pendek berbeda yang panjangnya sama, misalnya
-   \code{SERANG PAGI} dan \code{SERANG MALAM}.
-2. Enkripsi kedua pesan dengan kunci dan nilai awal counter yang sama memakai
-   mode CTR. Untuk keperluan ini, nilai counter dapat dibuat manual dan sama
-   untuk kedua pesan.
-3. XOR-kan kedua cipherteks yang diperoleh, lalu XOR-kan kedua plainteks aslinya.
-   Bandingkan kedua hasil itu; apakah keduanya sama?
-4. Jelaskan mengapa hasil tersebut membuat kunci tidak lagi diperlukan untuk
-   memperoleh hubungan antara kedua plainteks.
-5. Usulkan dua cara agar nilai counter tidak pernah berulang untuk kunci yang
-   sama, dan jelaskan bagaimana cara itu dihubungkan dengan konsep
-   \textit{nonce} pada Bab~\ref{chap:stream-cipher}.
+Pakai cipher blok mainan 4 bit pada bab ini.
+\begin{enumerate}
+    \item Enkripsi pesan yang terdiri atas paling sedikit lima blok.
+    \item Balik satu bit pada blok cipherteks ke-3, lalu dekripsi cipherteks
+          yang sudah diubah itu.
+    \item Bandingkan plainteks hasil dekripsi dengan plainteks semula. Pada
+          mode CBC, blok plainteks mana saja yang rusak? Pada mode OFB, blok
+          mana saja yang rusak?
+    \item Ulangi percobaan dengan mengubah bit pada posisi lain di dalam blok
+          cipherteks ke-3. Simpulkan hubungan antara posisi bit yang dirusak
+          dan posisi bit plainteks yang rusak pada mode CBC.
+    \item Jelaskan mengapa mode OFB lebih cocok untuk transmisi suara
+          terdigitalisasi.
+\end{enumerate}
 \end{obeactivity}

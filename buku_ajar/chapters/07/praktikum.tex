@@ -1,24 +1,14 @@
 
 \begin{obeactivity}
-\textbf{Aktivitas 7.1: Analisis Kompleksitas Kunci}
-1. Hitung berapa lama waktu yang dibutuhkan untuk melakukan brute force terhadap DES (56 bit) jika sebuah komputer dapat mencoba $10^9$ kunci per detik.
-2. Bandingkan hasil tersebut dengan waktu yang dibutuhkan untuk menyerang AES-128 ($2^{128}$ kemungkinan).
-3. Diskusikan mengapa peningkatan panjang kunci secara eksponensial jauh lebih efektif daripada sekadar mengulang algoritma yang sama (seperti pada Double DES).
+\textbf{Aktivitas 7.1: Menghitung Waktu Pencarian Kunci}
+1. Hitung waktu terburuk dan waktu rata-rata \textit{brute force} DES (56 bit)
+   jika satu komputer dapat mencoba $10^9$ kunci per detik. Gunakan $2^{56}$
+   kemungkinan kunci dan waktu rata-rata $2^{55}$ percobaan.
+2. Bandingkan hasilnya dengan waktu yang diperlukan untuk mencoba seluruh kunci
+   Triple DES tiga kunci, yaitu $2^{168}$ kemungkinan, pada kecepatan yang sama.
+3. Diskusikan mengapa mengulang DES dua kali dengan dua kunci (Double DES) tidak
+   menambah keamanan sebesar yang diharapkan.
 \end{obeactivity}
-
-Langkah-langkah pada Aktivitas 7.1 dapat dijalankan langsung melalui program
-pada Listing~\ref{lst:kompleksitas-kunci}. Program itu menghitung waktu
-pencarian menyeluruh untuk DES, Double DES, Triple DES, dan AES, dengan
-memakai panjang kunci efektif sesuai pembahasan Bab 7 \S3.
-
-\lstinputlisting[
-    language=Python,
-    caption={Kompleksitas ruang kunci: waktu brute force dari DES sampai AES-256},
-    label={lst:kompleksitas-kunci}
-]{\codefile{python/kompleksitas_kunci.py}}
-
-Program yang sama tersedia dalam C++ (\texttt{code/cpp/kompleksitas\_kunci.cpp})
-dan MATLAB (\texttt{code/matlab/kompleksitas\_kunci.m}).
 
 \begin{obeactivity}
 \textbf{Aktivitas 7.2: Mengerjakan Satu Putaran DES di Atas Kertas}
@@ -35,13 +25,14 @@ $\code{133457799BBCDFF1}$.
 4. Baca tabel $E$ pada $R_0$, lalu XOR hasilnya dengan $K_1$.
 5. Potong hasilnya menjadi delapan kelompok enam bit dan substitusikan melalui
    $S_1$ sampai $S_8$.
-6. Baca tabel $P$ pada hasil S-box, lalu XOR dengan $L_0$ untuk memperoleh $R_1$.
+6. Baca tabel $P$ pada hasil kotak-S, lalu XOR dengan $L_0$ untuk memperoleh
+   $R_1$.
 7. Bandingkan seluruh hasil kerja Anda dengan tabel jejak putaran pada
    Contoh~\ref{ex:des-putaran-pertama}.
 \end{obeactivity}
 
 \begin{obeactivity}
-\textbf{Aktivitas 7.3: Memeriksa Tabel dan Kunci Lemah dengan Program}
+\textbf{Aktivitas 7.3: Memeriksa Vektor Uji dan Kunci Lemah dengan Program}
 Berkas \texttt{code/python/des\_uji.py} berisi implementasi DES lengkap yang
 memuat seluruh tabel bit pada bab ini. Jalankan program itu
 (\texttt{python des\_uji.py}) dan perhatikan keluarannya:
@@ -53,9 +44,6 @@ memuat seluruh tabel bit pada bab ini. Jalankan program itu
 3. Amati bagian kunci lemah: keempat kunci pada daftar itu menghasilkan 16
    subkunci yang sama. Jelaskan mengapa hal itu terjadi dengan menelusuri
    $C_0$ dan $D_0$ untuk kunci $\code{0101010101010101}$.
-4. Amati bagian kunci semi-lemah: untuk setiap pasangan, subkunci kunci kedua
-   adalah kebalikan urutan subkunci kunci pertama. Jelaskan mengapa sifat itu
-   menyebabkan $E_{K'}(E_K(x)) = x$.
-5. Amati bagian efek longsoran dan catat berapa bit cipherteks yang berubah
+4. Amati bagian efek longsoran dan catat berapa bit cipherteks yang berubah
    ketika satu bit plainteks dibalik.
 \end{obeactivity}
