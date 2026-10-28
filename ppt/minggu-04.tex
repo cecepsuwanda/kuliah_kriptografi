@@ -1,0 +1,816 @@
+% =====================================================================
+%  minggu-04.tex  --  Slide Pertemuan Minggu ke-4
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Kriptografi klasik I
+%  Sumber materi : buku_ajar/chapters/04/section-01.tex dan section-05.tex
+%  Sub-CPMK      : 1.1
+%
+%  Cakupan: Caesar, substitusi monoalfabetik, Affine, transposisi Rail
+%           Fence, dan super-enkripsi. Vigenere, Playfair, Hill, Enigma,
+%           dan OTP tidak dibahas pada pertemuan ini.
+%
+%  Kompilasi dari dalam folder ppt/:
+%      compile-ppt.bat 04
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Cipher Klasik I: Substitusi dan Transposisi}
+\subtitle{Dari Caesar dan Affine sampai Rail Fence dan super-enkripsi}
+\setWeekInfo{Minggu 4}{Kriptografi klasik I}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \slidejudul{Lima bagian}
+            \begin{enumerate}
+                \item Kriptografi klasik dan dua teknik dasar
+                \item Cipher substitusi monoalfabetik dan Caesar
+                \item Affine cipher
+                \item Transposisi Rail Fence
+                \item Super-enkripsi dan kelemahan substitusi
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 4 buku ajar; Munir, \textit{IF4020 Kriptografi},
+                ITB, 2026 (modul 03 dan 04)
+            \end{block}
+            \begin{exampleblock}{Benang merah}
+                \footnotesize
+                Substitusi menyembunyikan identitas huruf; transposisi
+                menyembunyikan urutannya.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK yang dibebankan}
+        \footnotesize
+        \textbf{Sub-CPMK 1.1} --- Mengenal cipher klasik, yaitu substitusi
+        (Caesar, monoalfabetik, Affine), transposisi (Rail Fence),
+        Vigen\`{e}re, Playfair, Hill, dan Enigma, beserta gagasan
+        kriptanalisisnya (analisis frekuensi dan metode Kasiski).
+    \end{block}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Pada pertemuan ini, mahasiswa mampu}
+        \begin{itemize}
+            \item menjelaskan perbedaan cipher substitusi dan transposisi;
+            \item mengenal cipher monoalfabetik dan Caesar beserta
+                  kriptanalisisnya;
+            \item menjelaskan rumus dan syarat kunci Affine;
+            \item mengidentifikasi pola zigzag pada transposisi Rail Fence;
+            \item menjelaskan super-enkripsi sebagai gabungan dua teknik.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Kriptografi Klasik dan Dua Teknik}
+% =====================================================================
+
+\begin{frame}{Kriptografi Klasik: Ciri dan Alasannya}
+    \begin{itemize}
+        \item Bekerja pada huruf alfabet, bukan pada bit atau blok data.
+        \item Alat utamanya pena dan kertas; belum ada komputer digital.
+        \item Termasuk kriptografi kunci-simetri: pengirim dan penerima
+              memakai kunci yang sama.
+        \item Usianya ribuan tahun, tetapi gagasannya masih hidup di cipher
+              modern.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{block}{Tiga alasan mempelajarinya}
+        \begin{enumerate}
+            \item Memahami konsep dasar kriptografi.
+            \item Melihat akar algoritma kriptografi modern.
+            \item Mengenali kelemahan yang membuat suatu cipher mudah
+                  dipecahkan.
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Dua Teknik Dasar}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Substitusi}
+                \footnotesize
+                Mengganti \emph{identitas} huruf; urutan huruf tidak
+                berubah.\\[3pt]
+                \code{MENGANTUK} $\longrightarrow$ \code{CQBSIBONW}
+            \end{block}
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \begin{exampleblock}{Transposisi}
+                \footnotesize
+                Memindahkan \emph{posisi} huruf; identitas huruf tidak
+                berubah.\\[3pt]
+                \code{MENGANTUK} $\longrightarrow$ \code{TNEAKMNGU}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.3cm}
+    \begin{alertblock}{Gabungan keduanya}
+        Substitusi lalu transposisi, atau sebaliknya, disebut
+        \textbf{super-enkripsi} atau \textit{product cipher}.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Peta Kriptologi}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.55\textwidth}
+            \begin{itemize}
+                \item Kriptografi klasik bercabang menjadi cipher substitusi
+                      dan cipher transposisi.
+                \item Setiap cabang dapat dipakai sendiri-sendiri.
+                \item Keduanya juga dapat dirangkai menjadi super-enkripsi.
+            \end{itemize}
+            \vspace{0.1cm}
+            \begin{block}{Fokus minggu ini}
+                \footnotesize
+                Monoalfabetik, Caesar, Affine, Rail Fence, dan super-enkripsi.
+            \end{block}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{04}{kriptologi-hierarki.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Cipher Substitusi Monoalfabetik}
+% =====================================================================
+
+\begin{frame}{Cipher Abjad-Tunggal}
+    Pada cipher abjad-tunggal, setiap huruf plainteks dipetakan ke tepat satu
+    huruf cipherteks, dan pemetaan itu tetap untuk seluruh pesan.
+    \[
+        26! = 403.291.461.126.605.635.584.000.000
+    \]
+    \begin{itemize}
+        \item Pemetaan harus satu-satu: 26 huruf menempati 26 posisi berbeda.
+        \item Banyaknya tabel substitusi yang mungkin adalah $26!$.
+        \item Tabel dapat dibentuk dari permutasi sembarang atau dari kalimat
+              kunci.
+    \end{itemize}
+    \begin{alertblock}{Ruang kunci besar bukan jaminan}
+        \footnotesize
+        Struktur statistik bahasa tetap lolos ke cipherteks, sehingga cipher
+        ini dapat dipecahkan tanpa mencoba seluruh kunci.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Tabel Substitusi dari Kalimat Kunci}
+    \footnotesize
+    Kalimat kunci: \code{di bawah sinar bulan purnama hati resah jadi senang}.
+    Huruf berulang dibuang sehingga tersisa 17 huruf:
+    \code{DIBAWHSNRULPMTEJG}. Sisa alfabet disambung menurut abjad:
+    \code{CFKOQVXYZ}.
+    \vspace{0.1cm}
+    \begin{center}
+    \scriptsize
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{@{}l*{13}{c}@{}}
+        \toprule
+        Plainteks  & A&B&C&D&E&F&G&H&I&J&K&L&M \\
+        Cipherteks & D&I&B&A&W&H&S&N&R&U&L&P&M \\
+        \midrule
+        Plainteks  & N&O&P&Q&R&S&T&U&V&W&X&Y&Z \\
+        Cipherteks & T&E&J&G&C&F&K&O&Q&V&X&Y&Z \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.05cm}
+    \begin{block}{Yang perlu dicatat}
+        \footnotesize
+        Kalimat kunci hanya memudahkan menghafal tabel; ia tidak menambah
+        banyaknya kemungkinan kunci.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Caesar Cipher: Pergeseran Tetap}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            Caesar cipher menggeser setiap huruf sejauh $k$ posisi. Versi
+            historis memakai $k=3$.
+            \begin{itemize}
+                \item \code{A} $\rightarrow$ \code{D},
+                      \code{B} $\rightarrow$ \code{E}, dan seterusnya.
+                \item \code{X}, \code{Y}, \code{Z} melingkar ke
+                      \code{A}, \code{B}, \code{C}.
+            \end{itemize}
+            Dengan pemetaan $A=0,\dots,Z=25$:
+            \[
+                c=(p+k)\bmod 26, \qquad p=(c-k)\bmod 26.
+            \]
+            \footnotesize
+            Untuk alfabet 256 karakter ASCII, modulusnya menjadi 256.
+        \end{column}
+        \begin{column}{0.43\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{04}{caesar-pergeseran.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Alat Bantu: Cakram Caesar}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.58\textwidth}
+            \begin{itemize}
+                \item Cakram Caesar memakai dua lingkar alfabet yang dapat
+                      diputar.
+                \item Memutar lingkar luar sejauh $k$ posisi sama dengan
+                      menambahkan $k$ pada setiap huruf.
+                \item Hasilnya identik dengan rumus $(p+k)\bmod 26$.
+                \item Alat ini membantu penghitungan manual, bukan menambah
+                      keamanan.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \centering
+            \bookfig[0.88\linewidth]{04}{cakram-caesar.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Contoh Caesar: Enkripsi dengan $k=3$}
+    \footnotesize
+    Plainteks: \code{temui saya di jembatan merah nanti malam}. Spasi
+    dibuang, lalu setiap huruf ditambah 3 modulo 26.
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{center}
+            \begin{tabular}{@{}c c c c@{}}
+                \toprule
+                Huruf & $p$ & $(p+3)\bmod 26$ & Hasil \\
+                \midrule
+                \code{t} & 19 & 22 & \code{W} \\
+                \code{e} & 4  & 7  & \code{H} \\
+                \code{m} & 12 & 15 & \code{P} \\
+                \code{u} & 20 & 23 & \code{X} \\
+                \code{i} & 8  & 11 & \code{L} \\
+                \bottomrule
+            \end{tabular}
+            \end{center}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Cipherteks lengkap}
+                \code{WHPXLVDBDGLMHPEDWDQPHUDKQDQWLPDODP}\\[3pt]
+                Dikelompokkan empat huruf:\\
+                \code{WHPX LVDB DGLM HPED WDQP}\\
+                \code{HUDK QDQW LPDO DP}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.05cm}
+    {\scriptsize Lima huruf pertama \code{temui} menjadi \code{WHPXL}; 34
+    huruf plainteks menghasilkan 34 huruf cipherteks.}
+\end{frame}
+
+\begin{frame}{Dekripsi Caesar dan Konvensi Penulisan}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            Dekripsi memakai $p=(c-k)\bmod 26$:
+            \begin{itemize}
+                \item \code{W} $=22 \rightarrow (22-3)\bmod 26=19=\code{t}$
+                \item \code{H} $=7 \rightarrow (7-3)\bmod 26=4=\code{e}$
+                \item \code{P} $=15 \rightarrow (15-3)\bmod 26=12=\code{m}$
+                \item \code{X} $=23 \rightarrow (23-3)\bmod 26=20=\code{u}$
+                \item \code{L} $=11 \rightarrow (11-3)\bmod 26=8=\code{i}$
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Konvensi cipherteks}
+                \footnotesize
+                Spasi dibuang, lalu cipherteks dikelompokkan menjadi blok
+                empat huruf: \code{WHPX LVDB DGLM \dots}
+            \end{block}
+            \begin{alertblock}{Tujuannya}
+                \footnotesize
+                Menghapus petunjuk panjang kata dan membuat cipherteks lebih
+                sulit dibaca.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Kriptanalisis Caesar: Coba Semua Kunci}
+    \footnotesize
+    Hanya ada 26 kemungkinan kunci. Penyerang mendekripsi cipherteks
+    \code{XMZVH} dengan setiap nilai $k$ lalu memeriksa hasilnya.
+    \vspace{0.1cm}
+    \begin{center}
+    \scriptsize
+    \begin{tabular}{@{}l l @{\hspace{14pt}} l l@{}}
+        \toprule
+        $k$ & Dekripsi & $k$ & Dekripsi \\
+        \midrule
+        0  & \code{XMZVH} & 13 & \code{KZMIU} \\
+        1  & \code{WLYUG} & 14 & \code{JYLHT} \\
+        2  & \code{VKXTF} & 15 & \code{IXKGS} \\
+        3  & \code{UJWSE} & 16 & \code{HWJFR} \\
+        4  & \code{TIVRD} & 17 & \code{GVIEQ} \\
+        5  & \code{SHUQC} & 18 & \code{FUHDP} \\
+        6  & \code{RGTPB} & 19 & \code{ETGCO} \\
+        7  & \code{QFSOA} & 20 & \code{DSFBN} \\
+        8  & \code{PERNZ} & 21 & \textbf{\code{CREAM}} \\
+        9  & \code{ODQMY} & 22 & \code{BQDZL} \\
+        10 & \code{NCPLX} & 23 & \code{APCYK} \\
+        11 & \code{MBOKW} & 24 & \code{ZOBXJ} \\
+        12 & \code{LANJV} & 25 & \code{YNAWI} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.02cm}
+    {\scriptsize Hanya $k=21$ yang memberi kata bermakna, yaitu \code{CREAM};
+    jadi kunci yang benar adalah 21.}
+\end{frame}
+
+\begin{frame}{Bila Dua Kunci Sama-Sama Bermakna}
+    \begin{itemize}
+        \item Cipherteks \code{HSPPW} pada $k=4$ menghasilkan \code{DOLLS}.
+        \item Pada $k=11$ cipherteks yang sama menghasilkan \code{WHEEL}.
+        \item Keduanya kata bermakna, sehingga pencarian menyeluruh saja tidak
+              cukup.
+        \item Konteks pesan atau potongan cipherteks lain dipakai untuk memilih
+              kunci.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{alertblock}{Pelajaran}
+        \footnotesize
+        Caesar tetap rapuh karena ruang kuncinya hanya 26; ambiguitas hanya
+        mempersulit pemeriksaan akhir, bukan menyelamatkannya.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{ROT13: Caesar dengan $k=13$}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.55\textwidth}
+            \begin{itemize}
+                \item ROT13 adalah Caesar cipher dengan pergeseran 13.
+                \item Karena $13+13=26$, penerapan dua kali mengembalikan
+                      pesan semula.
+                \item $\mathrm{ROT13}(\code{ROTATE})=\code{EBGNGR}$.
+                \item Enkripsi dan dekripsi memakai operasi yang sama.
+            \end{itemize}
+            \[
+                \mathrm{ROT13}(\mathrm{ROT13}(P))=P.
+            \]
+            \begin{alertblock}{Bukan untuk kerahasiaan}
+                \footnotesize
+                ROT13 dipakai untuk menyembunyikan jawaban teka-teki atau
+                lelucon, bukan untuk mengamankan pesan.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.43\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{04}{rot13.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Affine Cipher}
+% =====================================================================
+
+\begin{frame}{Dari Caesar ke Affine}
+    Caesar hanya menggeser setiap huruf. Affine menambahkan satu operasi:
+    mengalikan nilai huruf dengan $m$ sebelum menggeser sejauh $b$.
+    \begin{block}{Rumus}
+        \[
+            C \equiv mP+b \pmod{26}, \qquad
+            P \equiv m^{-1}(C-b) \pmod{26}.
+        \]
+    \end{block}
+    \begin{itemize}
+        \item Kuncinya adalah pasangan $(m,b)$.
+        \item $m^{-1}$ adalah invers $m$ modulo 26, yaitu
+              $m\cdot m^{-1}\equiv 1\pmod{26}$.
+        \item Caesar adalah kasus khusus Affine dengan $m=1$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Syarat Kunci Affine}
+    \begin{itemize}
+        \item Ukuran alfabet $n=26$.
+        \item $m$ harus relatif prima dengan 26 agar pemetaan satu-satu dan
+              inversnya ada.
+        \item Nilai $m$ yang sah: $1,3,5,7,9,11,15,17,19,21,23,25$
+              (12 nilai).
+        \item Ada 25 pilihan untuk $b$.
+        \item Ruang kunci: $12\times 25=300$ kemungkinan.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{alertblock}{Bandingkan dengan cipher abjad-tunggal}
+        \footnotesize
+        $26!$ tabel menjadi hanya 300 kunci; Affine jauh lebih mudah dicoba
+        seluruhnya.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Contoh Affine: Enkripsi \code{kripto}}
+    \footnotesize
+    Kunci $m=7$ dan $b=10$, sehingga $C\equiv 7P+10\pmod{26}$.
+    \vspace{0.1cm}
+    \begin{center}
+    \begin{tabular}{@{}c c c c c@{}}
+        \toprule
+        Plainteks & $P$ & $7P+10$ & $(7P+10)\bmod 26$ & Cipherteks \\
+        \midrule
+        \code{k} & 10 & 80  & 2  & \code{C} \\
+        \code{r} & 17 & 129 & 25 & \code{Z} \\
+        \code{i} & 8  & 66  & 14 & \code{O} \\
+        \code{p} & 15 & 115 & 11 & \code{L} \\
+        \code{t} & 19 & 143 & 13 & \code{N} \\
+        \code{o} & 14 & 108 & 4  & \code{E} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.05cm}
+    \begin{exampleblock}{Hasil}
+        Cipherteks \code{kripto} adalah \code{CZOLNE}. Setiap baris memuat
+        operasi perkalian, penambahan, dan sisa bagi.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Contoh Affine: Dekripsi dengan Invers}
+    \footnotesize
+    Karena $7\cdot 15=105\equiv 1\pmod{26}$, inversnya $7^{-1}=15$.
+    Dekripsi memakai $P\equiv 15(C-10)\pmod{26}$.
+    \vspace{0.1cm}
+    \begin{center}
+    \begin{tabular}{@{}c c c c c@{}}
+        \toprule
+        Cipherteks & $C$ & $15(C-10)$ & $\bmod 26$ & Plainteks \\
+        \midrule
+        \code{C} & 2  & $-120$ & 10 & \code{k} \\
+        \code{Z} & 25 & 225    & 17 & \code{r} \\
+        \code{O} & 14 & 60     & 8  & \code{i} \\
+        \code{L} & 11 & 15     & 15 & \code{p} \\
+        \code{N} & 13 & 45     & 19 & \code{t} \\
+        \code{E} & 4  & $-90$  & 14 & \code{o} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.05cm}
+    {\scriptsize Hasilnya kembali \code{kripto}. Perhatikan bahwa
+    $(-120)\bmod 26=10$ dan $(-90)\bmod 26=14$; sisa bagi selalu diambil
+    nonnegatif.}
+\end{frame}
+
+\begin{frame}{Kriptanalisis Affine: Known-Plaintext}
+    \footnotesize
+    Misalkan kriptanalis mengetahui dua pasangan: cipherteks \code{C} berasal
+    dari plainteks \code{K}, dan \code{E} dari \code{O}. Nilainya
+    $C=2$, $K=10$, $E=4$, $O=14$.
+    \begin{block}{Dua kekongruenan}
+        \[
+            2\equiv 10m+b\pmod{26}, \qquad
+            4\equiv 14m+b\pmod{26}.
+        \]
+    \end{block}
+    \begin{itemize}
+        \item Kurangkan persamaan kedua dengan pertama:
+              $2\equiv 4m\pmod{26}$.
+        \item Solusi yang dipakai: $m=7$.
+        \item Substitusi $m=7$: $2\equiv 70+b\pmod{26}$, sehingga $b=10$.
+        \item Kunci yang diperoleh: $(m,b)=(7,10)$.
+    \end{itemize}
+    \begin{alertblock}{Mengapa berhasil}
+        \footnotesize
+        Dua pasangan huruf memberi dua persamaan untuk dua bilangan yang tidak
+        diketahui.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Kriptanalisis Affine: Pencarian Menyeluruh}
+    Bila pasangan plainteks-cipherteks tidak tersedia, penyerang masih dapat
+    mencoba seluruh kunci.
+    \begin{itemize}
+        \item 12 nilai $m$ yang sah dikalikan 25 nilai $b$ memberi 300 kunci.
+        \item Setiap kunci menghasilkan satu kandidat plainteks.
+        \item Kandidat yang bermakna menunjukkan kunci yang benar.
+        \item Komputer mencoba 300 kunci dalam waktu yang sangat singkat.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{block}{Pelajaran}
+        \footnotesize
+        Keamanan cipher tidak ditentukan oleh kerumitan rumusnya, melainkan
+        oleh besar ruang kunci dan ketahanan strukturnya.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Varian: Affine atas Blok Huruf}
+    \footnotesize
+    Untuk memperbesar ruang kunci, huruf dienkripsi per blok, bukan satu per
+    satu.
+    \begin{itemize}
+        \item Pesan \code{kriptografi} dipecah menjadi \code{krip},
+              \code{togr}, \code{afi}.
+        \item Setiap huruf menjadi dua angka:
+              \code{krip} $\rightarrow 10\,17\,08\,15=10170815$.
+        \item Blok terbesar \code{ZZZZ} bernilai $25252525$, dipakai sebagai
+              modulus.
+    \end{itemize}
+    \begin{block}{Fungsi enkripsi}
+        \[
+            C\equiv 21\,035\,433\,P+23\,210\,025 \pmod{25\,252\,525}.
+        \]
+    \end{block}
+    \begin{exampleblock}{Contoh dan dekripsi}
+        $P=10170815$ menghasilkan $C=22\,837\,395$. Dekripsi memakai invers
+        $11\,837\,547$.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Transposisi Rail Fence}
+% =====================================================================
+
+\begin{frame}{Cipher Transposisi: Mengubah Posisi}
+    Cipher transposisi tidak mengganti huruf, tetapi memindahkan posisinya.
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Yang tetap}
+                \footnotesize
+                Panjang pesan dan sebaran frekuensi huruf tunggal tidak
+                berubah.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Yang berubah}
+                \footnotesize
+                Urutan huruf, sehingga pola bigram dan trigram ikut terganggu.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{itemize}
+        \item Nama lain: cipher permutasi atau \textit{scrambling}.
+        \item Buku membahas transposisi kolom, Rail Fence, dan transposisi
+              blok.
+        \item Pertemuan ini berfokus pada Rail Fence.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Rail Fence: Pola Zigzag}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \begin{itemize}
+                \item Plainteks ditulis menuruni dan menaiki beberapa baris.
+                \item Setiap baris disebut \textit{rail} atau pagar.
+                \item Untuk $k=3$ baris, pola nomor barisnya
+                      $1,2,3,2,1,2,3,\dots$
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \begin{itemize}
+                \item Cipherteks dibaca baris demi baris dari atas.
+                \item Kuncinya adalah banyaknya baris $k$.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{center}
+        \bookfig[0.98\linewidth]{04}{rail-fence-3baris.png}
+        \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Contoh Rail Fence: $k=3$}
+    \footnotesize
+    Plainteks \code{CRYPTOGRAPHY AND DATA SECURITY}; spasi dibuang sehingga
+    tersisa 27 huruf.
+    \vspace{0.05cm}
+    \begin{center}
+    \begin{tabular}{@{}l l@{}}
+        \toprule
+        Baris & Isi \\
+        \midrule
+        1 & \code{CTAAAEI} \\
+        2 & \code{RPORPYNDTSCRT} \\
+        3 & \code{YGHDAUY} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.02cm}
+    {\scriptsize Pola penempatan: \code{C} ke baris 1, \code{R} ke baris 2,
+    \code{Y} ke baris 3, \code{P} kembali ke baris 2, \code{T} ke baris 1,
+    dan seterusnya.}
+    \vspace{0.08cm}
+    \begin{exampleblock}{Cipherteks}
+        \code{CTAAAEIRPORPYNDTSCRTYGHDAUY}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Kelemahan Rail Fence}
+    \begin{itemize}
+        \item Kuncinya hanya bilangan $k$, yaitu banyaknya baris.
+        \item Untuk 27 huruf, penyerang cukup mencoba $k=2$ sampai $26$.
+        \item Setiap nilai $k$ menghasilkan satu kandidat plainteks.
+        \item Kandidat yang bermakna menunjukkan kunci yang benar.
+        \item Tidak ada kunci rahasia tambahan selain $k$.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{alertblock}{Sama seperti Caesar}
+        \footnotesize
+        Ruang kunci yang kecil membuat cipher transposisi ini tumbang oleh
+        pencarian menyeluruh.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Super-Enkripsi dan Kelemahan Substitusi}
+% =====================================================================
+
+\begin{frame}{Super-Enkripsi (\textit{Product Cipher})}
+    Super-enkripsi menggabungkan cipher substitusi dengan cipher transposisi.
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Pembagian tugas}
+                \footnotesize
+                Substitusi mengacak identitas huruf; transposisi mengacak
+                urutannya.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Urutan}
+                \footnotesize
+                Substitusi dahulu lalu transposisi, atau sebaliknya; keduanya
+                harus disepakati.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{itemize}
+        \item Menggabungkan dua teknik menjadi satu cipher yang lebih sulit
+              dibaca.
+        \item Gagasan ini menjadi benih cipher modern yang bergantian
+              melakukan substitusi dan permutasi.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Contoh Super-Enkripsi: Dua Tahap}
+    \footnotesize
+    Plainteks \code{hello world}.
+    \vspace{0.05cm}
+    \begin{block}{Tahap 1 --- Caesar $k=3$}
+        \code{h}$=7\rightarrow(7+3)\bmod 26=10=$\code{K},
+        \code{e}$=4\rightarrow7=$\code{H},
+        \code{l}$=11\rightarrow14=$\code{O},
+        \code{o}$=14\rightarrow17=$\code{R},
+        sehingga \code{hello world} $\rightarrow$ \code{KHOORZRUOG}.
+    \end{block}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Tahap 2 --- transposisi 4 kolom}
+                \footnotesize
+                10 huruf ditambah 2 huruf dummy \code{Z} menjadi 12 huruf.
+                \[
+                \begin{array}{cccc}
+                    K&H&O&O\\
+                    R&Z&R&U\\
+                    O&G&Z&Z
+                \end{array}
+                \]
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Hasil}
+                \footnotesize
+                Kolom dibaca dari kiri ke kanan: \code{KRO}, \code{HZG},
+                \code{ORZ}, \code{OUZ}.\\
+                Cipherteks: \code{KROHZGORZOUZ}.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Membalik Super-Enkripsi}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \begin{enumerate}
+                \item Tulis cipherteks \code{KROHZGORZOUZ} ke grid 4 kolom.
+                \item Baca baris demi baris: \code{KHOORZRUOGZZ}.
+                \item Buang huruf dummy \code{Z} di akhir.
+                \item Batalkan Caesar: \code{K}$=10\rightarrow7=$\code{h},
+                      \code{H}$=7\rightarrow4=$\code{e}, dan seterusnya.
+                \item Diperoleh kembali \code{hello world}.
+            \end{enumerate}
+            \begin{alertblock}{Urutan pembalikan}
+                \footnotesize
+                Transposisi dibatalkan lebih dahulu, baru substitusi, karena
+                enkripsi menerapkan substitusi lebih dahulu.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \begin{block}{Arah proses}
+                \footnotesize
+                Enkripsi: substitusi $\rightarrow$ transposisi.\\
+                Dekripsi: transposisi$^{-1}$ $\rightarrow$
+                substitusi$^{-1}$.
+            \end{block}
+            \begin{exampleblock}{Kunci}
+                \footnotesize
+                Urutan yang dipakai harus sama dengan urutan pembalikannya.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+%  Satu frame penutup bagian: kelemahan substitusi monoalfabetik
+% =====================================================================
+
+\begin{frame}{Mengapa Substitusi Monoalfabetik Bocor}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.58\textwidth}
+            \begin{itemize}
+                \item Substitusi tetap mempertahankan frekuensi: huruf yang
+                      sering di plainteks tetap sering di cipherteks.
+                \item Bahasa Inggris didominasi \code{E}, \code{T}, \code{A},
+                      \code{O}, \code{I}, lalu \code{N}, \code{S}, \code{H}.
+                \item Bahasa Indonesia punya urutan berbeda, sehingga tabel
+                      acuan harus disesuaikan.
+                \item Kriptanalis mencocokkan huruf tersering cipherteks dengan
+                      huruf tersering bahasa.
+                \item Bigram dan trigram mempertajam tebakan.
+                \item Penyerang tidak mencari kunci, tetapi menebak pemetaan
+                      huruf.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \centering
+            \bookfig[0.85\linewidth]{04}{frekuensi-huruf-inggris.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.05cm}
+    \begin{alertblock}{Akibatnya}
+        \footnotesize
+        Ruang kunci $26!$ tidak menolong karena analisis frekuensi tidak
+        menelusuri ruang kunci.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Rangkuman}
+% =====================================================================
+
+\begin{frame}{Rangkuman}
+    \footnotesize
+    \begin{itemize}
+        \item Cipher substitusi mengganti identitas huruf; cipher transposisi
+              memindahkan posisinya.
+        \item Cipher abjad-tunggal memakai satu pemetaan tetap; tabelnya
+              $26!$, tetapi frekuensi bahasa tetap bocor.
+        \item Caesar: $c=(p+k)\bmod 26$; hanya 26 kunci sehingga tumbang oleh
+              pencarian menyeluruh.
+        \item Affine: $C\equiv mP+b\pmod{26}$; $m$ harus relatif prima dengan
+              26 dan ruang kuncinya 300.
+        \item Rail Fence menyusun plainteks zigzag pada $k$ baris lalu
+              membacanya baris demi baris.
+        \item Super-enkripsi merangkai substitusi dan transposisi; gagasan ini
+              menjadi benih cipher modern.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Yang Harus Diingat}
+    \begin{block}{Empat butir kunci}
+        \begin{itemize}
+            \item Cipher klasik bekerja pada huruf dan termasuk kriptografi
+                  kunci-simetri.
+            \item Substitusi menyembunyikan identitas huruf, transposisi
+                  menyembunyikan urutan.
+            \item Ruang kunci kecil membuat Caesar, Affine, dan Rail Fence
+                  mudah dicoba seluruhnya.
+            \item Struktur statistik bahasa tetap lolos pada substitusi
+                  monoalfabetik.
+        \end{itemize}
+    \end{block}
+    \vspace{0.25cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 5 --- Kriptografi klasik II}
+    \end{exampleblock}
+\end{frame}
+
+\end{document}

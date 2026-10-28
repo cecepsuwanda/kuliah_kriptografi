@@ -1,0 +1,938 @@
+% =====================================================================
+%  minggu-05.tex  --  Slide Pertemuan Minggu ke-5
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Kriptografi klasik II
+%  Sumber materi : buku_ajar/chapters/04/section-02.tex, section-03.tex,
+%                  dan section-04.tex; bagian analisis frekuensi pada
+%                  section-01.tex
+%  Sub-CPMK      : 1.1
+%
+%  Cakupan: analisis frekuensi, Vigen\`ere, metode Kasiski, Playfair,
+%           Hill, dan Enigma. One-time pad (minggu 6), Caesar dan cipher
+%           monoalfabetik (minggu 4), serta cipher modern tidak dibahas
+%           pada pertemuan ini.
+%
+%  Kompilasi dari dalam folder ppt/:
+%      compile-ppt.bat 05
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Kriptografi Klasik II: Abjad-Majemuk dan Polygram}
+\subtitle{Vigen\`ere, Kasiski, Playfair, Hill, dan Enigma}
+\setWeekInfo{Minggu 5}{Kriptografi klasik II}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \slidejudul{Lima bagian}
+            \begin{enumerate}
+                \item Analisis frekuensi dan batasnya
+                \item Vigen\`ere dan metode Kasiski
+                \item Playfair: substitusi bigram
+                \item Hill: cipher blok aljabar linier
+                \item Enigma: cipher berbasis mesin
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 4 buku ajar; Munir, \textit{IF4020 Kriptografi},
+                ITB, 2026 (modul 04)
+            \end{block}
+            \begin{exampleblock}{Benang merah}
+                \footnotesize
+                Setiap cipher memperbesar unit yang disubstitusi, dan setiap
+                pembesaran itu memunculkan kelemahan baru yang khas.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK 1.1}
+        \footnotesize
+        Mengenal cipher klasik, yaitu substitusi (Caesar, monoalfabetik,
+        Affine), transposisi (Rail Fence), Vigen\`{e}re, Playfair, Hill,
+        dan Enigma, beserta gagasan kriptanalisisnya (analisis frekuensi
+        dan metode Kasiski).
+    \end{block}
+    \vspace{0.12cm}
+    \begin{exampleblock}{Pada pertemuan ini, mahasiswa mampu}
+        \footnotesize
+        \begin{itemize}
+            \item menjelaskan mengapa analisis frekuensi melemah pada cipher
+                  abjad-majemuk;
+            \item menerapkan rumus enkripsi dan dekripsi Vigen\`ere;
+            \item menjelaskan langkah metode Kasiski untuk menduga panjang
+                  kunci;
+            \item menerapkan tiga aturan Playfair pada bigram;
+            \item menghitung enkripsi dan dekripsi Hill;
+            \item menjelaskan prinsip rotor dan kriptanalisis Enigma.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Analisis Frekuensi dan Batasnya}
+% =====================================================================
+
+\begin{frame}{Analisis Frekuensi: Gagasan}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Cipher abjad-tunggal memetakan satu huruf ke satu huruf
+                      cipherteks yang tetap.
+                \item Akibatnya sebaran frekuensi plainteks tercermin pada
+                      cipherteks.
+                \item Huruf tersering bahasa Inggris: \code{E}, \code{T},
+                      \code{A}, \code{O}, \code{I}, \code{N}, \code{S},
+                      \code{H}, \code{R}, \code{D}, \code{L}, \code{U}.
+                \item Bigram tersering: \code{TH}, \code{HE}, \code{IN},
+                      \code{EN}, \code{NT}, \code{RE}, \code{ER}, \code{AN},
+                      \code{TI}, \code{ES}.
+                \item Trigram tersering: \code{THE}, \code{AND}, \code{THA},
+                      \code{ENT}, \code{ING}, \code{ION}, \code{TIO},
+                      \code{FOR}, \code{NDE}, \code{HAS}.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.95\linewidth]{04}{frekuensi-huruf-inggris.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Analisis Frekuensi: Langkah Kerja}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \begin{enumerate}
+                \item Hitung frekuensi relatif setiap huruf cipherteks.
+                \item Bandingkan dengan tabel bahasa; huruf tersering
+                      cipherteks diduga \code{E} pada plainteks.
+                \item Ulangi untuk huruf tersering berikutnya; biasanya dua
+                      sampai tiga huruf sudah cukup.
+                \item Lanjutkan dengan bigram, trigram, dan seterusnya.
+            \end{enumerate}
+            \begin{alertblock}{Yang dicari bukan kunci}
+                \footnotesize
+                Kriptanalis menebak pemetaan huruf, bukan menelusuri ruang
+                kunci.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \centering
+            \bookfig[0.95\linewidth]{04}{tabel-frekuensi-huruf.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Mengapa Perlu Cipher Abjad-Majemuk}
+    \footnotesize
+    \begin{itemize}
+        \item Analisis frekuensi bekerja karena satu huruf selalu menjadi
+              huruf yang sama.
+        \item Pertahanan alaminya: buat satu huruf plainteks menjadi
+              huruf cipherteks yang berbeda-beda.
+        \item Cipher abjad-majemuk memakai kunci berbeda untuk setiap posisi.
+        \item Bila kunci berulang secara periodik, cipher menjadi rangkaian
+              Caesar dengan pergeseran berganti-ganti.
+        \item Akibatnya histogram cipherteks menjadi lebih datar.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{block}{Harga yang dibayar}
+        \footnotesize
+        Pola statistik huruf tunggal tertutup, tetapi periodisitas kunci
+        meninggalkan jejak yang dapat dilacak.
+    \end{block}
+\end{frame}
+
+% =====================================================================
+\section{Vigen\`ere dan Metode Kasiski}
+% =====================================================================
+
+\begin{frame}{Vigen\`ere: Kunci yang Diulang}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            Kunci $K=k_1k_2\cdots k_m$ berpanjang $m$ diulang secara periodik
+            sepanjang plainteks.
+            \[
+                c_j=(p_j+k_i)\bmod 26,
+                \qquad
+                p_j=(c_j-k_i)\bmod 26.
+            \]
+            \begin{itemize}
+                \item Setiap huruf dienkripsi dengan Caesar memakai huruf kunci
+                      pada posisi itu.
+                \item Untuk $m=1$, Vigen\`ere kembali menjadi cipher
+                      abjad-tunggal.
+                \item Tabel Vigen\`ere: baris ke-$i$ adalah alfabet yang
+                      digeser $i$ posisi.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{vigenere-square.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Vigen\`ere: Contoh Tiga Huruf Pertama}
+    \footnotesize
+    Kunci \code{soreang} bernilai $(18,14,17,4,0,13,6)$. Plainteks
+    \code{terimapesanangulaikambing} berisi 25 huruf, sehingga kunci diulang
+    menjadi \code{soreangsoreangsoreangsore}.
+    \vspace{0.08cm}
+    \begin{center}
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+         & Huruf ke-1 & Huruf ke-2 & Huruf ke-3 \\
+        \midrule
+        Plainteks $P$ & $t=19$ & $e=4$ & $r=17$ \\
+        Kunci $K$ & $s=18$ & $o=14$ & $r=17$ \\
+        $C=(P+K)\bmod 26$ & $(19+18)\bmod 26=11$ &
+        $(4+14)\bmod 26=18$ & $(17+17)\bmod 26=8$ \\
+        Cipherteks & \code{L} & \code{S} & \code{I} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.08cm}
+    \begin{exampleblock}{Pemeriksaan dekripsi}
+        \footnotesize
+        $L=11$ dikurangi $s=18$ memberi
+        $(11-18)\bmod 26=-7\bmod 26=19=t$.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Vigen\`ere: Hasil dan Sifatnya}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Melanjutkan perhitungan yang sama memberi cipherteks
+                      \code{LSIMMNVWGRRAAMMZRMKNSTWEK}.
+                \item Huruf \code{e} menjadi \code{S} pada posisi kedua dan
+                      \code{R} pada posisi kedelapan.
+                \item Huruf cipherteks \code{M} dapat berasal dari \code{i},
+                      \code{m}, \code{g}, \code{u}, atau \code{k}.
+                \item Distribusi huruf cipherteks menjadi lebih seragam,
+                      sehingga histogramnya cenderung datar.
+            \end{itemize}
+            \begin{alertblock}{Akibatnya}
+                \footnotesize
+                Analisis frekuensi huruf tunggal kehilangan pijakan.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{histogram-flat.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Vigen\`ere: Sejarah Singkat}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.58\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Dijelaskan Giovan Batista Belaso pada tahun 1553.
+                \item Dipublikasikan Blaise de Vigen\`ere pada tahun 1586.
+                \item Pada abad ke-19 banyak orang mengira Vigen\`ere
+                      penemunya, sehingga namanya melekat.
+                \item Dipecahkan Babbage dan Kasiski pada pertengahan abad
+                      ke-19.
+                \item Dipakai Tentara Konfederasi pada Perang Sipil Amerika.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.38\textwidth}
+            \centering
+            \bookfig[0.72\linewidth]{04}{blaise-de-vigenere.png}\\
+            {\scriptsize Blaise de Vigen\`ere (1523--1596)}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Vigen\`ere: Tiga Varian}
+    \footnotesize
+    \begin{itemize}
+        \item \textbf{Full Vigen\`ere} --- setiap baris tabel berupa permutasi
+              huruf, bukan pergeseran; tabelnya dirahasiakan.
+        \item \textbf{Auto-Key} --- kunci yang pendek disambung dengan
+              plainteks.
+        \item \textbf{Running-Key} --- kunci panjang diambil dari teks
+              bermakna.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Auto-Key dengan kunci \code{INDO}}
+        \scriptsize
+        \begin{tabular}{@{}l l@{}}
+            Plainteks  & \code{negarapenghasilminyakmentahdidunia}\\
+            Kunci      & \code{INDONEGARAPENGHASILMINYAKMENTAHDID}\\
+            Cipherteks & \code{VRJOEEVEEGWEFOSMAVJMSZCNDMLQBDBQQD}
+        \end{tabular}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Metode Kasiski: Prinsip}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Ditemukan Friedrich Kasiski pada tahun 1863.
+                \item Jika sebuah string plainteks muncul berulang pada jarak
+                      kelipatan panjang kunci, kedua kemunculan menghasilkan
+                      kriptogram yang sama.
+                \item Contoh: plainteks \code{cryptoisshortforcryptography}
+                      dengan kunci \code{abcd} berpanjang 4.
+                \item Kata \code{crypto} muncul dua kali pada jarak 16 huruf.
+                \item Karena 16 kelipatan 4, kedua kemunculan menghasilkan
+                      kriptogram \code{CSASTP}.
+                \item Dengan kunci \code{abcdef} berpanjang 6, jarak 16 bukan
+                      kelipatan 6, sehingga kriptogramnya berbeda.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{kasiski-jarak16.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Metode Kasiski: Empat Langkah}
+    \footnotesize
+    \begin{enumerate}
+        \item Temukan semua kriptogram yang berulang di dalam cipherteks.
+        \item Hitung jarak antara kemunculan-kemunculan itu.
+        \item Faktorkan setiap jarak; faktor-faktornya menyatakan panjang
+              kunci yang mungkin.
+        \item Ambil irisan himpunan faktor; nilai yang muncul di irisan
+              adalah dugaan panjang kunci.
+    \end{enumerate}
+    \vspace{0.2cm}
+    \begin{alertblock}{Batas metode}
+        \footnotesize
+        Kasiski hanya menduga \emph{panjang} kunci, belum menemukan
+        huruf-huruf kuncinya.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Kasiski: Contoh Pendek}
+    \footnotesize
+    \begin{itemize}
+        \item Kriptogram \code{DYDUXRMH} berulang pada jarak 18, dengan faktor
+              $\{18,9,6,3,2\}$.
+        \item Kriptogram \code{NQD} berulang pada jarak 20, dengan faktor
+              $\{20,10,5,4,2\}$.
+        \item Irisan kedua himpunan faktor adalah $\{2\}$.
+        \item Jadi panjang kunci kemungkinan besar adalah 2.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{block}{Membaca hasilnya}
+        \footnotesize
+        Setiap jarak menyumbang satu himpunan kandidat; kandidat yang bertahan
+        di semua himpunan adalah panjang kunci yang paling mungkin.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Kasiski: Contoh Lengkap \code{LJV}}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Kriptogram \code{LJV} muncul enam kali.
+                \item Jarak berturut-turut: 15, 15, 15, 10, dan 10.
+                \item Faktor 15: $\{3,5,15\}$.
+                \item Faktor 10: $\{2,5,10\}$.
+                \item Satu-satunya nilai yang muncul di kedua himpunan adalah
+                      5.
+                \item Jadi panjang kunci adalah 5.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{kasiski-ljv.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Kasiski: Dari \code{LJV} ke Kunci \code{SCRAM}}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Dengan panjang kunci 5, cipherteks dibagi menjadi lima
+                      kelompok.
+                \item Huruf tersering tiap kelompok: \code{L}, \code{J},
+                      \code{V}, \code{N}, dan \code{A}.
+                \item \code{LJV} diduga padanan trigram \code{THE}.
+                \item Setiap huruf kunci dihitung dengan
+                      $K=(C-P)\bmod 26$.
+            \end{itemize}
+            \begin{center}
+            \scriptsize
+            \begin{tabular}{@{}lccccc@{}}
+                \toprule
+                 & 1 & 2 & 3 & 4 & 5 \\
+                \midrule
+                Cipher & $L=11$ & $J=9$ & $V=21$ & $N=13$ & $A=0$ \\
+                Plain  & $T=19$ & $H=7$ & $E=4$ & $N=13$ & $O=14$ \\
+                Kunci  & $18=S$ & $2=C$ & $17=R$ & $0=A$ & $12=M$ \\
+                \bottomrule
+            \end{tabular}
+            \end{center}
+            {\footnotesize Kunci yang diperoleh: \code{SCRAM}.}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{kasiski-scram.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Playfair}
+% =====================================================================
+
+\begin{frame}{Playfair: Substitusi Bigram}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Ditemukan Sir Charles Wheatstone dan dipromosikan Baron
+                      Lyon Playfair pada tahun 1854.
+                \item Satu blok plainteks disubstitusi dengan satu blok
+                      cipherteks; unitnya bigram.
+                \item Kunci disusun dalam matriks $5\times5$.
+                \item Karena hanya ada 25 sel, huruf \code{J} dibuang dan
+                      setiap \code{J} diganti \code{I}.
+                \item Jumlah matriks kunci:
+                      $25!=15.511.043.330.985.984.000.000$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \centering
+            \bookfig[0.90\linewidth]{04}{playfair-matriks.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Playfair: Dari Kalimat Kunci ke Matriks}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \footnotesize
+            \begin{enumerate}
+                \item Pilih kalimat kunci yang mudah diingat:
+                      \code{JALAN GANESHA SEPULUH}.
+                \item Buang huruf berulang dan huruf \code{J}, sehingga
+                      tersisa \code{ALNGESHPU}.
+                \item Tambahkan huruf yang belum ada, kecuali \code{J}:
+                      \code{ALNGESHPUBCDFIKMOQRTVWXYZ}.
+                \item Isikan baris demi baris ke dalam matriks.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \centering
+            \footnotesize
+            \begin{tabular}{|c|c|c|c|c|}
+                \hline
+                A & L & N & G & E \\ \hline
+                S & H & P & U & B \\ \hline
+                C & D & F & I & K \\ \hline
+                M & O & Q & R & T \\ \hline
+                V & W & X & Y & Z \\ \hline
+            \end{tabular}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Playfair: Menyiapkan Plainteks}
+    \footnotesize
+    Contoh plainteks \code{temui ibu nanti malam}.
+    \begin{enumerate}
+        \item Buang spasi: \code{temuibunantimalam}.
+        \item Ganti \code{j} dengan \code{i}; pada contoh ini tidak ada
+              \code{j}.
+        \item Tulis sebagai bigram: \code{te mu ii bu na nt im al am}.
+        \item Sisipkan \code{x} pada bigram kembar:
+              \code{te mu ix ib un an ti ma la m}.
+        \item Bila bigram terakhir hanya satu huruf, tambahkan \code{x}:
+              \code{te mu ix ib un an ti ma la mx}.
+    \end{enumerate}
+    \begin{alertblock}{Mengapa perlu}
+        \footnotesize
+        Aturan enkripsi tidak terdefinisi bila kedua huruf berada pada sel
+        yang sama.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Playfair: Tiga Aturan Enkripsi}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.0cm}
+        >{\raggedright\arraybackslash}X
+        >{\raggedright\arraybackslash}p{4.4cm}@{}}
+        \toprule
+        Posisi kedua huruf & Aturan & Contoh \\
+        \midrule
+        Baris yang sama & Tiap huruf diganti huruf di kanannya; di ujung baris
+        siklik kembali ke awal. & \code{di} $\rightarrow$ \code{FK};
+        \code{qt} $\rightarrow$ \code{RM} \\
+        \addlinespace
+        Kolom yang sama & Tiap huruf diganti huruf di bawahnya; di ujung kolom
+        siklik kembali ke awal. & \code{nq} $\rightarrow$ \code{PX};
+        \code{ow} $\rightarrow$ \code{WL} \\
+        \addlinespace
+        Membentuk persegi panjang & Huruf pertama mengambil barisnya sendiri
+        dan kolom huruf kedua; huruf kedua berlaku sebaliknya. &
+        \code{hz} $\rightarrow$ \code{BW};
+        \code{IH} $\rightarrow$ \code{DU} \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.15cm}
+    \begin{block}{Dekripsi}
+        \footnotesize
+        Baris yang sama: huruf di kirinya. Kolom yang sama: huruf di atasnya.
+        Aturan persegi panjang berlaku sama. Huruf pengisi \code{X} kemudian
+        dibuang.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Playfair: Contoh Terhitung}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \footnotesize
+            Bigram yang telah disiapkan:
+            \begin{center}
+            \scriptsize\texttt{te mu ix ib un an ti ma la mx}
+            \end{center}
+            \begin{itemize}
+                \item Bigram pertama \code{te}: \code{t} di baris 4 kolom 5,
+                      \code{e} di baris 1 kolom 5.
+                \item Keduanya satu kolom, sehingga masing-masing diganti
+                      huruf di bawahnya.
+                \item $t\rightarrow Z$ dan $e\rightarrow B$, jadi
+                      \code{te} $\rightarrow$ \code{ZB}.
+                \item Melanjutkan seluruh bigram memberi
+                      \code{ZB RS FY KU PG LG RK VS NL QV}.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{playfair-contoh.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Playfair: Kriptanalisis}
+    \footnotesize
+    \begin{itemize}
+        \item Terdapat $26\times26=676$ bigram, sehingga identifikasi bigram
+              jauh lebih sukar daripada huruf tunggal.
+        \item Namun unitnya hanya dua huruf, sehingga cipher ini tetap tidak
+              aman.
+        \item Frekuensi bigram bahasa masih bocor: \code{TH} dan \code{HE}
+              paling sering muncul.
+        \item Bigram dan kebalikannya, misalnya \code{AB} dan \code{BA},
+              menghasilkan pola plainteks yang sama; contohnya \code{RE} dan
+              \code{ER}.
+        \item Tebakan \code{TH} $\rightarrow$ \code{BM} memaksa posisi
+              \code{T}, \code{H}, \code{B}, dan \code{M} konsisten, lalu
+              matriks parsial dapat disusun.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Pelajaran}
+        \footnotesize
+        Playfair menaikkan biaya analisis frekuensi, tetapi tidak menghapus
+        struktur statistik bahasa.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Hill}
+% =====================================================================
+
+\begin{frame}{Hill: Cipher Blok Berbasis Aljabar Linier}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.58\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Dikembangkan Lester Hill pada tahun 1929.
+                \item $m$ huruf plainteks dienkripsi sekaligus menjadi $m$
+                      huruf cipherteks.
+                \item Untuk $m=3$:
+                      $C_1=(k_{11}p_1+k_{12}p_2+k_{13}p_3)\bmod 26$,
+                      dan seterusnya untuk $C_2$ dan $C_3$.
+                \item Bentuk matriks: $\mathbf{C}=\mathbf{KP}\pmod{26}$,
+                      dengan $\mathbf{K}$ berukuran $m\times m$ dan
+                      $\mathbf{P}$ vektor kolom.
+                \item Dekripsi memakai $\mathbf{K}^{-1}$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \centering
+            \bookfig[0.95\linewidth]{04}{hill-matriks.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Hill: Syarat Kunci dan Invers}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Dekripsi memerlukan $\mathbf{K}^{-1}$ dengan
+                      $\mathbf{KK}^{-1}=\mathbf{I}$.
+                \item Invers modulo 26 ada hanya bila
+                      $\gcd(\det(\mathbf{K}),26)=1$.
+                \item Untuk $2\times2$:
+                      $\mathbf{K}^{-1}=(\det)^{-1}
+                      \begin{pmatrix}d&-b\\-c&a\end{pmatrix}$.
+                \item Untuk $3\times3$ dipakai matriks kofaktor dengan
+                      $\det(\mathbf{K})=aA+bB+cC$.
+            \end{itemize}
+            \begin{alertblock}{Pada kunci $m=3$ nanti}
+                \footnotesize
+                $\det(\mathbf{K})=-939\equiv 23\pmod{26}$ dan
+                $\gcd(23,26)=1$, sehingga inversnya ada.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{hill-invers-3x3.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Hill: Contoh Enkripsi $m=3$}
+    \footnotesize
+    Matriks kunci
+    $\mathbf{K}=\begin{pmatrix}17&17&5\\21&18&21\\2&2&19\end{pmatrix}$
+    dan plainteks \code{paymoremoney}. Kelompok pertama \code{pay} memberi
+    $\mathbf{P}=(15,0,24)^T$.
+    \[
+        \mathbf{KP}=
+        \begin{pmatrix}
+            17\cdot15+17\cdot0+5\cdot24\\
+            21\cdot15+18\cdot0+21\cdot24\\
+            2\cdot15+2\cdot0+19\cdot24
+        \end{pmatrix}
+        =
+        \begin{pmatrix}375\\819\\486\end{pmatrix}
+        \bmod 26
+        =
+        \begin{pmatrix}11\\13\\18\end{pmatrix}
+        =\text{\code{LNS}}.
+    \]
+    Meneruskan cara yang sama untuk seluruh blok menghasilkan cipherteks
+    \begin{center}
+        \code{LNSHDLEWMTRW}.
+    \end{center}
+\end{frame}
+
+\begin{frame}{Hill: Contoh Dekripsi dan Uji}
+    \footnotesize
+    Invers kunci yang sama adalah
+    $\mathbf{K}^{-1}=
+    \begin{pmatrix}4&9&15\\15&17&6\\24&0&17\end{pmatrix}$.
+    Dekripsi \code{LNS}$=(11,13,18)^T$:
+    \[
+        \mathbf{K}^{-1}
+        \begin{pmatrix}11\\13\\18\end{pmatrix}
+        =
+        \begin{pmatrix}431\\494\\570\end{pmatrix}
+        \bmod 26
+        =
+        \begin{pmatrix}15\\0\\24\end{pmatrix}
+        =\text{\code{PAY}}.
+    \]
+    \begin{block}{Uji $\mathbf{KK}^{-1}=\mathbf{I}$}
+        \footnotesize
+        Baris pertama $\mathbf{K}$ dikali kolom pertama $\mathbf{K}^{-1}$:
+        $17\cdot4+17\cdot15+5\cdot24=443\equiv1\pmod{26}$.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Hill: Menghitung Invers $2\times2$}
+    \footnotesize
+    Ambil
+    $\mathbf{K}=\begin{pmatrix}3&10\\15&9\end{pmatrix}$.
+    Determinannya
+    \[
+        \det(\mathbf{K})=3\cdot9-15\cdot10=27-150=-123\equiv7\pmod{26}.
+    \]
+    Karena $7\cdot15=105\equiv1\pmod{26}$, maka $7^{-1}\equiv15$.
+    Dengan $-10\equiv16$ dan $-15\equiv11$,
+    \[
+        \mathbf{K}^{-1}=15
+        \begin{pmatrix}9&16\\11&3\end{pmatrix}
+        =
+        \begin{pmatrix}135&240\\165&45\end{pmatrix}
+        \bmod 26
+        =
+        \begin{pmatrix}5&6\\9&19\end{pmatrix}.
+    \]
+    Uji balik:
+    $\mathbf{KK}^{-1}=
+    \begin{pmatrix}105&208\\156&261\end{pmatrix}\bmod26
+    =\begin{pmatrix}1&0\\0&1\end{pmatrix}$.
+\end{frame}
+
+\begin{frame}{Hill: Kriptanalisis Known-Plaintext}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.59\textwidth}
+            \footnotesize
+            Hill menyembunyikan frekuensi huruf tunggal, tetapi rumusnya
+            linier. Untuk $m=2$, dua pasangan sudah cukup:
+            \[
+                (19,7)\rightarrow(0,23),
+                \qquad
+                (4,17)\rightarrow(12,6).
+            \]
+            Susun sebagai kolom:
+            \[
+                \mathbf{P}=\begin{pmatrix}19&4\\7&17\end{pmatrix},
+                \quad
+                \mathbf{C}=\begin{pmatrix}0&12\\23&6\end{pmatrix},
+                \quad
+                \mathbf{P}^{-1}=\begin{pmatrix}25&14\\5&5\end{pmatrix}.
+            \]
+            Dengan semua operasi modulo 26,
+            \[
+                \mathbf{K}=\mathbf{C}\mathbf{P}^{-1}
+                =\begin{pmatrix}0&12\\23&6\end{pmatrix}
+                \begin{pmatrix}25&14\\5&5\end{pmatrix}
+                =\begin{pmatrix}8&8\\7&14\end{pmatrix}.
+            \]
+        \end{column}
+        \begin{column}{0.39\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{hill-known-plaintext.png}\\
+            {\scriptsize Uji balik $(19,7)$:
+            $(208,231)\bmod26=(0,23)$.}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Enigma}
+% =====================================================================
+
+\begin{frame}{Enigma: Mesin dan Komponennya}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Ditemukan dan dipatenkan Arthur Scherbius untuk tujuan
+                      komersial, diplomatik, dan militer.
+                \item Namanya berasal dari bahasa Latin \textit{enigmae} yang
+                      berarti teka-teki.
+                \item Dipakai tentara Nazi Jerman pada Perang Dunia II.
+                \item Papan tombol mengetik plainteks; papan lampu menampilkan
+                      cipherteks.
+                \item Papan steker menukar pasangan huruf dan diubah setiap
+                      hari.
+                \item Tiga atau empat rotor, reflektor, dan jendela pengamat
+                      posisi rotor.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \centering
+            \bookfig[0.82\linewidth]{04}{enigma-bagian.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Enigma: Rotor dan Periodenya}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Setiap rotor melakukan substitusi abjad-tunggal.
+                \item Hasil satu rotor menjadi masukan rotor berikutnya.
+                \item Setiap kali satu huruf dienkripsi, rotor berputar satu
+                      huruf.
+                \item Setelah 26 putaran, rotor berikutnya maju satu posisi;
+                      bekerja seperti odometer.
+                \item Tiga rotor: $26^3=17.576$ huruf. Empat rotor:
+                      $26^4=456.976$ huruf sebelum urutan berulang.
+                \item Posisi awal rotor menjadi kunci Enigma.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{enigma-skema.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Enigma: Contoh Huruf demi Huruf}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            Model sederhana: alfabet enam huruf dan tiga rotor.
+            \begin{itemize}
+                \item \code{D} masuk rotor pertama, keluar \code{E}.
+                \item \code{E} masuk rotor kedua, keluar \code{B}.
+                \item \code{B} masuk rotor ketiga, keluar \code{E}.
+                \item Jadi \code{D} dienkripsi menjadi \code{E}.
+                \item Setelah rotor ketiga bergeser satu huruf, \code{D}
+                      berikutnya menghasilkan \code{A}.
+            \end{itemize}
+            \begin{exampleblock}{Pesan sesungguhnya}
+                \footnotesize
+                \code{PESAWATMENDARAT} menghasilkan
+                \code{GUFYLFRKQEJXVHM}; tiga huruf pertama
+                \code{P}$\rightarrow$\code{G},
+                \code{E}$\rightarrow$\code{Q},
+                \code{S}$\rightarrow$\code{F}.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{enigma-rotor.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Enigma: Jalur Sinyal Lengkap}
+    \footnotesize
+    Pada mesin sesungguhnya, sinyal melewati papan steker, tiga rotor,
+    reflektor, lalu kembali melalui ketiga rotor dan papan steker.
+    \vspace{0.1cm}
+    {\scriptsize
+    \begin{tabularx}{\linewidth}{@{}c c >{\raggedright\arraybackslash}X c@{}}
+        \toprule
+        Huruf & Posisi rotor & Jalur sinyal & Keluaran \\
+        \midrule
+        \code{P} & \texttt{ABE} & steker \code{P} $\rightarrow$ R3 \code{W}
+        $\rightarrow$ R2 \code{U} $\rightarrow$ R1 \code{A} $\rightarrow$
+        reflektor \code{Y} $\rightarrow$ R1 \code{O} $\rightarrow$ R2
+        \code{T} $\rightarrow$ R3 \code{G} $\rightarrow$ steker \code{G} &
+        \textbf{\code{G}} \\
+        \addlinespace
+        \code{E} & \texttt{ABM} & steker \code{E} $\rightarrow$ R3 \code{W}
+        $\rightarrow$ R2 \code{U} $\rightarrow$ R1 \code{A} $\rightarrow$
+        reflektor \code{Y} $\rightarrow$ R1 \code{O} $\rightarrow$ R2
+        \code{T} $\rightarrow$ R3 \code{Q} $\rightarrow$ steker \code{Q} &
+        \textbf{\code{Q}} \\
+        \addlinespace
+        \code{S} & \texttt{ABG} & steker \code{S} $\rightarrow$ R3 \code{K}
+        $\rightarrow$ R2 \code{G} $\rightarrow$ R1 \code{D} $\rightarrow$
+        reflektor \code{H} $\rightarrow$ R1 \code{P} $\rightarrow$ R2
+        \code{P} $\rightarrow$ R3 \code{F} $\rightarrow$ steker \code{F} &
+        \textbf{\code{F}} \\
+        \bottomrule
+    \end{tabularx}
+    }
+    \vspace{0.1cm}
+    \begin{exampleblock}{Hasil}
+        \footnotesize
+        Tiga huruf pertama \code{PES} menghasilkan \code{GQF}, bagian awal
+        cipherteks \code{GUFYLFRKQEJXVHM}.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Enigma: Kriptanalisis}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item 1932: Marian Rejewski, Jerzy R\'o\.zycki, dan Henryk
+                      Zygalski dari Polandia menemukan kriptanalisis Enigma.
+                \item 1939: Jerman mendesain ulang Enigma dengan menambahkan
+                      papan steker dan reflektor.
+                \item Metode kriptanalisis yang lama tidak berlaku lagi.
+                \item Dengan bantuan Polandia, Prancis, dan Inggris dibuat
+                      mesin \textit{bombe}.
+                \item \textit{Bombe} dirancang Alan Turing dan berhasil
+                      memecahkan Enigma buatan Jerman.
+                \item Keberhasilan itu diperkirakan memperpendek Perang Dunia
+                      II menjadi dua tahun.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.92\linewidth]{04}{enigma-bombe.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Rangkuman}
+% =====================================================================
+
+\begin{frame}{Rangkuman}
+    \footnotesize
+    \begin{itemize}
+        \item Analisis frekuensi bergantung pada pemetaan huruf yang tetap;
+              cipher abjad-majemuk mematahkannya dengan mengganti kunci setiap
+              posisi.
+        \item Vigen\`ere memakai
+              $c_j=(p_j+k_i)\bmod26$ dengan kunci periodik, sehingga huruf
+              yang sama dapat menjadi huruf berbeda.
+        \item Kasiski memfaktorkan jarak kriptogram berulang; irisan faktor
+              menduga panjang kunci, lalu frekuensi per kelompok menemukan
+              huruf kunci.
+        \item Playfair bekerja pada bigram dengan matriks $5\times5$ dan tiga
+              aturan; kuat terhadap frekuensi huruf tunggal, tetapi bocor pada
+              frekuensi bigram.
+        \item Hill memakai $\mathbf{C}=\mathbf{KP}\bmod26$ dengan syarat
+              $\gcd(\det\mathbf{K},26)=1$; sifat liniernya membuatnya tumbang
+              oleh \textit{known-plaintext}.
+        \item Enigma adalah cipher abjad-majemuk berbasis rotor berperiode
+              $26^3$ atau $26^4$; kriptanalisis Polandia dan \textit{bombe}
+              Turing memecahkannya.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Yang Harus Diingat}
+    \begin{block}{Empat butir kunci}
+        \begin{itemize}
+            \item Cipher abjad-majemuk menaikkan biaya analisis frekuensi,
+                  tetapi periodisitas kunci membuka jalan bagi Kasiski.
+            \item Playfair dan Hill memperbesar unit substitusi menjadi bigram
+                  dan blok; Hill menambahkan struktur aljabar linier yang
+                  justru mudah dibalik.
+            \item Enigma adalah puncak cipher klasik berbasis mesin, dan
+                  kerapuhannya terletak pada struktur, bukan panjang kunci.
+            \item Kriptanalisis klasik selalu mencari struktur yang bertahan,
+                  bukan mencoba seluruh kunci.
+        \end{itemize}
+    \end{block}
+    \vspace{0.25cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 6 --- One-time pad}
+    \end{exampleblock}
+\end{frame}
+
+\end{document}

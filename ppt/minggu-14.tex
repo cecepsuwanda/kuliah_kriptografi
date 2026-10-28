@@ -1,0 +1,1082 @@
+% =====================================================================
+%  minggu-14.tex  --  Slide Pertemuan Minggu ke-14
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Knapsack, steganografi, dan steganalisis
+%  Sumber materi : buku_ajar/chapters/13 (Bab 13) untuk knapsack;
+%                  referensi/19-Steganografi-Bagian1-2026 dan
+%                  referensi/20-Steganografi-Bagian2-2026 (modul 19 dan 20)
+%                  untuk steganografi dan steganalisis
+%  Sub-CPMK      : 1.4 dan 2.5
+%
+%  Kompilasi dari dalam folder ppt/:
+%      pdflatex -interaction=nonstopmode minggu-14.tex   (dua kali)
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Knapsack dan Steganografi: Dua Jalan Menyembunyikan}
+\subtitle{Sistem Merkle--Hellman, LSB pada citra dan audio, serta steganalisis}
+\setWeekInfo{Minggu 14}{Knapsack, steganografi, dan steganalisis}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \slidejudul{Lima bagian}
+            \footnotesize
+            \begin{enumerate}
+                \item \textbf{Persoalan knapsack} --- memilih objek dengan
+                      bobot total tertentu.
+                \item \textbf{Barisan \textit{superincreasing} dan
+                      Merkle--Hellman} --- kunci privat yang mudah, kunci
+                      publik yang tampak sukar.
+                \item \textbf{Contoh terhitung} --- pembangkitan kunci,
+                      enkripsi, dan dekripsi dengan angka dari bab.
+                \item \textbf{Steganografi} --- gagasan penyembunyian
+                      informasi dan LSB pada citra serta audio.
+                \item \textbf{Steganalisis} --- tujuan, jenis, dan metode
+                      pendeteksian pesan tersembunyi.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 13 buku ajar; Munir, \textit{IF4020 Kriptografi}, ITB,
+                2026 (modul 16, 19, dan 20)
+            \end{block}
+            \begin{exampleblock}{Benang merah}
+                \footnotesize
+                Knapsack menyembunyikan pesan di balik \kunci{kesulitan
+                hitung}; steganografi menyembunyikan pesan di balik
+                \kunci{media yang tampak biasa}.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK yang dibebankan}
+        \footnotesize
+        \begin{itemize}
+            \item \textbf{Sub-CPMK 1.4} --- Mengenal algoritma kriptografi
+                  kunci publik, yaitu RSA, Diffie--Hellman, ElGamal, knapsack,
+                  dan \textit{Elliptic Curve Cryptography} (ECC), beserta
+                  persoalan matematis yang mendasarinya.
+            \item \textbf{Sub-CPMK 2.5} --- Menjelaskan gagasan steganografi
+                  dan steganalisis sebagai pelengkap kriptografi dalam
+                  penyembunyian informasi beserta urgensinya.
+        \end{itemize}
+    \end{block}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \footnotesize
+        \begin{itemize}
+            \item menjelaskan persoalan knapsack dan barisan
+                  \textit{superincreasing};
+            \item menjelaskan prosedur Merkle--Hellman dari pembangkitan kunci
+                  sampai dekripsi;
+            \item menghitung satu contoh enkripsi dan dekripsi knapsack;
+            \item menjelaskan mengapa knapsack tidak lagi dianggap aman;
+            \item menjelaskan LSB pada citra dan audio; serta
+            \item membedakan jenis dan metode steganalisis.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Knapsack: dari Tas ke Kunci Publik}
+% =====================================================================
+
+\begin{frame}{Persoalan Knapsack}
+    Diberikan $n$ objek dengan bobot $w_1, w_2, \dots, w_n$ dan sebuah tas
+    berkapasitas total $M$. Kita harus memilih objek yang dimasukkan:
+    \[
+        M = b_1w_1 + b_2w_2 + \cdots + b_nw_n,
+        \qquad b_i \in \{0,1\}.
+    \]
+    \begin{itemize}
+        \item $b_i = 1$ berarti objek ke-$i$ dimasukkan; $b_i = 0$ berarti
+              tidak.
+        \item Persoalan ini termasuk kelompok \kunci{NP-complete}.
+        \item Tidak ada algoritma waktu polinomial yang diketahui untuk
+              memecahkannya ketika $n$ membesar.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Asimetri yang dimanfaatkan}
+        \footnotesize
+        Menghitung $M$ dari bit $b_i$ itu mudah. Menentukan kembali bit $b_i$
+        dari $M$ itu sukar.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Ilustrasi Persoalan Knapsack}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \centering
+            \bookfig[0.95\linewidth]{13}{ilustrasi-masalah-knapsack.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Setiap barang memiliki bobot yang berbeda.
+                \item Kita harus memilih himpunan bagian yang berat totalnya
+                      tepat $15$ kg.
+                \item Dalam kriptografi, pilihan itu menyatakan bit $0$ atau
+                      $1$.
+                \item Menghitung total itu mudah; menebak pilihan yang
+                      menghasilkan total itu yang sukar.
+            \end{itemize}
+            \begin{exampleblock}{Inti persoalannya}
+                \footnotesize
+                Banyak himpunan bagian yang mungkin, tetapi hanya sedikit yang
+                memberikan total tepat.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Dari Persoalan ke Kriptografi}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Bit-bit plainteks berperan sebagai $b_i$.
+                \item Bobot $w_i$ berperan sebagai kunci rahasia.
+                \item Pengirim menghasilkan satu bilangan $M$ untuk setiap
+                      blok bit.
+                \item Penyadap harus menyelesaikan persoalan subset-sum untuk
+                      membacanya.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{alertblock}{Masalah pertama}
+                \footnotesize
+                Penerima yang sah juga tidak dapat menyelesaikan persoalan itu.
+                Knapsack biasa hanya dapat dipakai untuk enkripsi, bukan untuk
+                dekripsi.
+            \end{alertblock}
+            \begin{block}{Jalan keluar}
+                \footnotesize
+                Pilih barisan bobot yang \kunci{mudah dipecahkan oleh pemilik
+                kunci}, tetapi tampak sukar bagi orang lain.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Barisan \textit{Superincreasing}}
+    Barisan $\{w_1, w_2, \dots, w_n\}$ disebut \textit{superincreasing} jika
+    setiap elemen lebih besar daripada jumlah semua elemen sebelumnya:
+    \[
+        w_i > \sum_{j=1}^{i-1} w_j
+        \quad \text{untuk } i = 2, \dots, n.
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{exampleblock}{Contoh yang memenuhi}
+                \footnotesize
+                $\{1,3,6,13,27,52\}$:
+                $3>1$, $6>4$, $13>10$, $27>23$, dan $52>50$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{alertblock}{Contoh yang gagal}
+                \footnotesize
+                $\{1,3,4,9,15,25\}$:
+                $4$ tidak lebih besar daripada $1+3=4$, dan $25$ tidak lebih
+                besar daripada $1+3+4+9+15=32$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.05cm}
+    \footnotesize
+    Akibatnya, elemen terbesar tidak mungkin digantikan oleh kombinasi
+    elemen-elemen yang lebih kecil.
+\end{frame}
+
+\begin{frame}{Prosedur \textit{Greedy} pada Barisan \textit{Superincreasing}}
+    \begin{enumerate}
+        \item Mulai dengan bobot total $M$.
+        \item Bandingkan bobot total dengan bobot terbesar yang tersisa.
+        \item Jika bobot itu $\le$ bobot total, masukkan objeknya dan kurangi
+              bobot total. Jika tidak, lewati objek itu.
+        \item Ulangi untuk bobot berikutnya sampai semua bobot diperiksa.
+        \item Jika bobot total menjadi nol, solusinya ditemukan.
+    \end{enumerate}
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Mengapa selalu berhasil}
+                \footnotesize
+                Keputusan untuk elemen terbesar bersifat pasti: elemen itu
+                tidak dapat dibentuk oleh semua elemen yang lebih kecil.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Harga kemudahan}
+                \footnotesize
+                Dekripsi berlangsung dalam waktu \kunci{linear}, $O(n)$.
+                Siapa pun yang mengetahui barisannya dapat membuka pesan.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Gagasan Merkle--Hellman}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Merkle dan Hellman (1978) menyembunyikan barisan
+                      \textit{superincreasing} di balik perkalian modulo.
+                \item Kunci privat tetap barisan \textit{superincreasing}
+                      $W_{priv}$.
+                \item Kunci publik $W_{pub}$ dibentuk dengan mengalikan setiap
+                      elemen lalu mengambil modulo:
+                      \[
+                          w'_i = (w_i \cdot n) \bmod m.
+                      \]
+                \item Hasilnya bukan lagi barisan \textit{superincreasing}.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{exampleblock}{Dua kunci, dua peran}
+                \footnotesize
+                Pengirim memakai $W_{pub}$ untuk enkripsi. Penerima memakai
+                $W_{priv}$ dan $(n,m)$ untuk dekripsi.
+            \end{exampleblock}
+            \begin{alertblock}{Catatan notasi}
+                \footnotesize
+                $n$ di sini adalah \kunci{pengali}, bukan jumlah elemen.
+                Jumlah elemen ditulis melalui indeks $i$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Syarat Pembangkitan Kunci}
+    \begin{block}{Dua syarat yang tidak boleh dilanggar}
+        \begin{enumerate}
+            \item Modulus harus lebih besar daripada jumlah seluruh elemen
+                  privat:
+                  \[
+                      m > \sum_{i=1}^{n} w_i.
+                  \]
+            \item Pengali $n$ harus relatif prima terhadap modulus:
+                  \[
+                      \mathrm{PBB}(n,m) = 1.
+                  \]
+        \end{enumerate}
+    \end{block}
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Akibat syarat pertama}
+                \footnotesize
+                Penjumlahan seluruh elemen privat tidak pernah melewati
+                modulus, sehingga hasil dekripsi berupa kesamaan biasa.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Akibat syarat kedua}
+                \footnotesize
+                $n$ mempunyai invers modulo $m$. Tanpa invers itu, penerima
+                yang sah tidak dapat mendekripsi.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Enkripsi}
+    Plainteks dipecah menjadi blok yang panjangnya sama dengan banyaknya
+    elemen kunci publik. Untuk setiap blok:
+    \[
+        C = \sum_{i=1}^{n} b_i w'_i.
+    \]
+    \begin{itemize}
+        \item Bit $1$ menyumbangkan elemen publik yang bersesuaian.
+        \item Bit $0$ tidak menyumbangkan apa pun.
+        \item Hasilnya satu bilangan $C$ untuk setiap blok.
+        \item Penjumlahan \kunci{tidak diambil modulo} $m$.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Akibatnya}
+        \footnotesize
+        $C$ dapat lebih besar daripada $m$. Hal itu tidak menjadi masalah
+        karena dekripsi hanya memakai $C \bmod m$.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Dekripsi}
+    Penerima memegang $W_{priv}$, pengali $n$, dan modulus $m$.
+    \begin{enumerate}
+        \item Hitung invers $n^{-1}$ modulo $m$, yaitu bilangan yang memenuhi
+              \[
+                  n \cdot n^{-1} \equiv 1 \pmod{m}.
+              \]
+        \item Kalikan kriptogram dengan invers itu:
+              \[
+                  C' = (C \cdot n^{-1}) \bmod m.
+              \]
+        \item Nyatakan $C'$ sebagai jumlah elemen $W_{priv}$ dengan prosedur
+              \textit{greedy}.
+        \item Bit-bit yang dihasilkan adalah plainteks semula.
+    \end{enumerate}
+    \vspace{0.1cm}
+    \begin{alertblock}{Inti gagasannya}
+        \footnotesize
+        Penerima tidak perlu memecahkan knapsack publik. Ia mengembalikan
+        kriptogram ke ranah privat, lalu memecahkannya secara linear.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Mengapa Dekripsi Berhasil}
+    Substitusikan rumus enkripsi dan pembangkitan kunci:
+    \begin{align*}
+        C' &\equiv n^{-1}\sum_{i=1}^{n} b_i w'_i \pmod{m} \\
+           &\equiv n^{-1}\sum_{i=1}^{n} b_i (w_i n) \pmod{m} \\
+           &\equiv \sum_{i=1}^{n} b_i w_i \pmod{m}.
+    \end{align*}
+    \begin{itemize}
+        \item Faktor $n^{-1}$ dan $n$ saling meniadakan.
+        \item Karena $0 \le \sum b_iw_i \le \sum w_i < m$, kongruensi itu
+              menjadi \kunci{kesamaan biasa}.
+        \item Jadi $C' = \sum b_iw_i$, dan \textit{greedy} memulihkan bit
+              dengan tepat.
+    \end{itemize}
+    \vspace{0.05cm}
+    \footnotesize
+    Keamanan sistem bergantung pada sulitnya menemukan $n^{-1}$ tanpa
+    mengetahui $n$.
+\end{frame}
+
+\begin{frame}{Kriptanalisis: Serangan Shamir}
+    \begin{itemize}
+        \item Pada 1982, Adi Shamir merumuskan transformasi waktu polinomial
+              untuk memecahkan Merkle--Hellman dasar.
+        \item Shamir tidak memecahkan persoalan knapsack secara umum.
+        \item Ia memanfaatkan \kunci{struktur khusus} kunci publik: kunci itu
+              merupakan kelipatan modulo dari sebuah barisan
+              \textit{superincreasing}.
+        \item Struktur tersebut cukup untuk merekonstruksi kunci privat tanpa
+              menelusuri seluruh kemungkinan.
+    \end{itemize}
+    \vspace{0.2cm}
+    \begin{alertblock}{Kesimpulan}
+        \footnotesize
+        Knapsack Merkle--Hellman tidak lagi dianggap aman. Persoalan knapsack
+        umum tetap sukar, tetapi \emph{konstruksi khusus} inilah yang runtuh.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Ukuran Kunci dan Kelemahan Praktis}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Kriptogram lebih panjang daripada plainteks: satu blok
+                      $n$ bit menjadi satu bilangan besar.
+                \item Sumber menganjurkan sedikitnya $250$ elemen.
+                \item Setiap elemen sebaiknya berukuran $200$ sampai $400$
+                      bit.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{alertblock}{Anjuran yang tidak konsisten}
+                \footnotesize
+                Sumber juga menyebut modulus $100$--$200$ bit. Untuk $250$
+                elemen berukuran sedikitnya $200$ bit, jumlahnya sudah melebihi
+                $2^{448}$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{block}{Koreksi yang harus dipahami}
+        \footnotesize
+        Karena modulus harus lebih besar daripada jumlah seluruh elemen,
+        panjangnya paling sedikit \kunci{$449$ bit}. Modulus $100$--$200$ bit
+        tidak mungkin memenuhi syarat $m > \sum w_i$.
+    \end{block}
+\end{frame}
+
+% =====================================================================
+\section{Contoh Terhitung Merkle--Hellman}
+% =====================================================================
+
+\begin{frame}{Langkah 1: Menyiapkan Kunci Privat}
+    Dipilih barisan \textit{superincreasing}
+    \[
+        W_{priv} = \{2, 3, 6, 13, 27, 52\},
+        \qquad \sum_{i=1}^{6} w_i = 103.
+    \]
+    Pemeriksaan:
+    \[
+        3>2,\quad 6>2+3=5,\quad 13>2+3+6=11,
+    \]
+    \[
+        27>2+3+6+13=24,\quad 52>2+3+6+13+27=51.
+    \]
+    \begin{itemize}
+        \item Modulus dipilih $m = 105$, lebih besar daripada $103$.
+        \item Pengali dipilih $n = 31$.
+        \item Karena $\mathrm{PBB}(31,105)=1$, invers $31$ modulo $105$ ada.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Langkah 2: Membangkitkan Kunci Publik}
+    Setiap elemen privat dikalikan $31$, lalu diambil modulo $105$:
+    \vspace{0.1cm}
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}c r r r@{}}
+        \toprule
+        $i$ & $w_i$ & $w_i \cdot 31$ & $(w_i \cdot 31) \bmod 105$ \\
+        \midrule
+        $1$ & $2$  & $62$   & $62$  \\
+        $2$ & $3$  & $93$   & $93$  \\
+        $3$ & $6$  & $186$  & $81$  \\
+        $4$ & $13$ & $403$  & $88$  \\
+        $5$ & $27$ & $837$  & $102$ \\
+        $6$ & $52$ & $1612$ & $37$  \\
+        \bottomrule
+    \end{tabular}
+    \vspace{0.15cm}
+    \raggedright
+    \begin{exampleblock}{Hasil}
+        \footnotesize
+        $W_{pub} = \{62, 93, 81, 88, 102, 37\}$. Barisan ini tidak lagi
+        \textit{superincreasing}: $81 < 62+93$, dan $37$ yang tadinya elemen
+        terbesar justru menjadi terkecil.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Langkah 3: Invers Pengali}
+    Penerima membutuhkan $n^{-1} = 31^{-1} \bmod 105$.
+    \begin{align*}
+        31 \cdot 61 &= 1891, \\
+        1891 &= 18 \cdot 105 + 1.
+    \end{align*}
+    Karena sisanya $1$:
+    \[
+        n^{-1} = 31^{-1} \bmod 105 = \kunci{61}.
+    \]
+    \begin{itemize}
+        \item Nilai $61$ dipegang penerima dan menjadi rahasia.
+        \item Penyerang yang hanya melihat $W_{pub}$ tidak memperoleh $61$.
+        \item Pasangan $(n,m)=(31,105)$ dan barisan $W_{priv}$ membentuk
+              kunci privat.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Pesan yang akan dikirim}
+        \footnotesize
+        Plainteks \code{011000110101101110}, dipecah menjadi tiga blok enam
+        bit: \code{011000}, \code{110101}, dan \code{101110}.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Langkah 4: Enkripsi}
+    Pengirim memakai $W_{pub} = \{62,93,81,88,102,37\}$:
+    \vspace{0.1cm}
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}l l r@{}}
+        \toprule
+        Blok & Bobot publik yang dipakai & Kriptogram $C$ \\
+        \midrule
+        \code{011000} & $93 + 81$             & $174$ \\
+        \code{110101} & $62 + 93 + 88 + 37$   & $280$ \\
+        \code{101110} & $62 + 81 + 88 + 102$  & $333$ \\
+        \bottomrule
+    \end{tabular}
+    \vspace{0.15cm}
+    \raggedright
+    \begin{itemize}
+        \item Kriptogram yang dikirim adalah $(174, 280, 333)$.
+        \item Nilai $280$ dan $333$ melampaui $m=105$.
+        \item Hal itu sah karena dekripsi hanya memakai $C \bmod 105$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Langkah 5: Dekripsi}
+    Setiap kriptogram dikalikan $61$ modulo $105$:
+    \vspace{0.1cm}
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}r r r l l@{}}
+        \toprule
+        $C$ & $C \cdot 61$ & $C' = (C\cdot61)\bmod105$
+            & Hasil \textit{greedy} & Blok \\
+        \midrule
+        $174$ & $10614$ & $9$  & $6+3$             & \code{011000} \\
+        $280$ & $17080$ & $70$ & $52+13+3+2$       & \code{110101} \\
+        $333$ & $20313$ & $48$ & $27+13+6+2$       & \code{101110} \\
+        \bottomrule
+    \end{tabular}
+    \vspace{0.15cm}
+    \raggedright
+    \begin{block}{Operasi modulo yang dipakai}
+        \footnotesize
+        $10614 = 101\cdot105 + 9$;\quad
+        $17080 = 162\cdot105 + 70$;\quad
+        $20313 = 193\cdot105 + 48$.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Rincian \textit{Greedy} untuk $C' = 70$}
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}c c c l@{}}
+        \toprule
+        Bobot & Sisa $M$ & Perbandingan & Bit \\
+        \midrule
+        $52$ & $70$ & $52 \le 70$ & $b_6 = 1$, sisa $18$ \\
+        $27$ & $18$ & $27 > 18$  & $b_5 = 0$ \\
+        $13$ & $18$ & $13 \le 18$ & $b_4 = 1$, sisa $5$ \\
+        $6$  & $5$  & $6 > 5$    & $b_3 = 0$ \\
+        $3$  & $5$  & $3 \le 5$  & $b_2 = 1$, sisa $2$ \\
+        $2$  & $2$  & $2 \le 2$  & $b_1 = 1$, sisa $0$ \\
+        \bottomrule
+    \end{tabular}
+    \vspace{0.15cm}
+    \raggedright
+    \begin{exampleblock}{Membaca hasilnya}
+        \footnotesize
+        Bit dibaca dari belakang:
+        $(b_1,b_2,b_3,b_4,b_5,b_6)=(1,1,0,1,0,1)=\code{110101}$.
+        Pemeriksaan: $2+3+13+52=70$.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Langkah 6: Memeriksa Hasil}
+    Ketiga blok pulih tepat seperti semula:\par
+    \vspace{0.1cm}
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}r l l@{}}
+        \toprule
+        $C'$ & \textit{Greedy} & Blok \\
+        \midrule
+        $9$  & $6+3$           & \code{011000} \\
+        $70$ & $52+13+3+2$     & \code{110101} \\
+        $48$ & $27+13+6+2$     & \code{101110} \\
+        \bottomrule
+    \end{tabular}
+    \vspace{0.2cm}
+    \raggedright
+    \begin{block}{Plainteks yang dipulihkan}
+        \footnotesize
+        \[
+            \code{011000}\;\code{110101}\;\code{101110}
+            = \code{011000110101101110}.
+        \]
+    \end{block}
+    \begin{itemize}
+        \item Enkripsi hanya memerlukan penjumlahan.
+        \item Dekripsi memerlukan satu perkalian modulo dan enam
+              perbandingan \textit{greedy}.
+    \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Steganografi: Menyembunyikan Keberadaan Pesan}
+% =====================================================================
+
+\begin{frame}{Gagasan Penyembunyian Informasi}
+    \begin{block}{Apa yang disembunyikan}
+        Kriptografi menyembunyikan \emph{isi} pesan. Steganografi
+        menyembunyikan \kunci{keberadaan} pesan itu sendiri.
+    \end{block}
+    \vspace{0.1cm}
+    \begin{exampleblock}{\textit{The Prisoner's Problem}}
+        \footnotesize
+        Alice dan Bob dipenjara dan hanya dapat berkomunikasi melalui Wendy.
+        Mereka harus bertukar pesan tanpa membuat Wendy curiga bahwa ada pesan
+        rahasia. Pesan yang terlihat biasa justru merupakan syarat
+        keberhasilannya.
+    \end{exampleblock}
+    \begin{itemize}
+        \item Pesan disisipkan ke dalam media pembawa yang wajar.
+        \item Media pembawa dapat berupa teks, citra, audio, atau video.
+        \item Peninjau tidak mengetahui bahwa ada pesan yang perlu dicari.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Terminologi Steganografi}
+    \begin{itemize}
+        \item \textbf{\textit{Embedded message}} --- pesan yang
+              disembunyikan; dapat berupa teks, citra, audio, atau video.
+        \item \textbf{\textit{Cover-object}} --- media yang dipakai untuk
+              menyembunyikan pesan.
+        \item \textbf{\textit{Stego-object}} --- media yang sudah berisi
+              pesan tersembunyi.
+        \item \textbf{\textit{Stego-key}} --- kunci yang dipakai untuk
+              menyisipkan dan mengekstraksi pesan.
+    \end{itemize}
+    \vspace{0.2cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Sebelum}
+                \centering
+                \textit{cover-object} + pesan
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Sesudah}
+                \centering
+                \textit{stego-object} yang tampak biasa
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Steganografi Bukan Pengganti Kriptografi}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Keduanya saling melengkapi.
+                \item Pesan dapat dienkripsi lebih dahulu, lalu cipherteksnya
+                      disembunyikan di dalam media.
+                \item Bila pesan itu ditemukan, penyerang masih harus
+                      memecahkan ciphernya.
+                \item Steganografi menurunkan peluang pesan terdeteksi;
+                      kriptografi melindungi isinya bila terdeteksi.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{tikzpicture}[
+                kotak/.style={draw, rounded corners, align=center,
+                              font=\scriptsize, inner sep=3pt,
+                              text width=2.6cm},
+                panah/.style={-{Latex[length=1.8mm]}, thick, ubbgray},
+            ]
+                \node[kotak, fill=ubbblue!8] (p) at (0,0) {Pesan};
+                \node[kotak, fill=ubbblue!8] (e) at (0,-1.1) {Enkripsi};
+                \node[kotak, fill=ubbgreen!10] (s) at (0,-2.2)
+                    {\textit{stego-object}};
+                \draw[panah] (p) -- (e);
+                \draw[panah] (e) -- (s);
+                \node[font=\tiny, right=2pt of e] {cipherteks};
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Kriteria Steganografi yang Baik}
+    \begin{enumerate}
+        \item \textbf{\textit{Imperceptible}} --- keberadaan pesan tidak dapat
+              dipersepsi secara visual atau audial.
+        \item \textbf{\textit{Fidelity}} --- kualitas media pembawa tidak jauh
+              berubah.
+        \item \textbf{\textit{Recovery}} --- pesan dapat diekstraksi kembali.
+        \item \textbf{\textit{Capacity}} --- ukuran pesan yang disembunyikan
+              sedapat mungkin besar.
+    \end{enumerate}
+    \vspace{0.15cm}
+    \begin{alertblock}{Yang justru bukan isu utama}
+        \footnotesize
+        \textit{Robustness} atau ketahanan terhadap pengolahan media bukan
+        prioritas utama dalam steganografi. Prioritasnya adalah pesan tidak
+        terdeteksi dan tetap dapat dipulihkan.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Media dan Ranah Operasi}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Media pembawa}
+                \footnotesize
+                \begin{itemize}
+                    \item teks;
+                    \item citra;
+                    \item audio;
+                    \item video.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Ranah operasi}
+                \footnotesize
+                \begin{itemize}
+                    \item \textbf{spasial/waktu}: mengubah langsung nilai byte
+                          (intensitas piksel atau amplitudo);
+                    \item \textbf{transformasi}: mengubah hasil transformasi
+                          sinyal, misalnya ranah frekuensi.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Fokus pertemuan ini}
+        \footnotesize
+        Metode LSB termasuk ranah spasial. Ia mengubah bit kurang berarti pada
+        nilai byte, baik pada citra maupun pada sampel audio.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Citra Digital}
+    \begin{itemize}
+        \item Citra terdiri atas sejumlah \textit{pixel}.
+        \item Citra $1200 \times 1500$ memiliki
+              $1200 \times 1500 = 1.800.000$ piksel.
+        \item Setiap piksel panjangnya $n$ bit:
+              \begin{itemize}
+                  \item citra biner: $1$ bit per piksel;
+                  \item citra \textit{grayscale}: $8$ bit per piksel;
+                  \item citra \textit{true color}: $24$ bit per piksel.
+              \end{itemize}
+        \item Pada citra $24$ bit, satu piksel terdiri atas tiga komponen
+              \textbf{RGB} (\textit{red}, \textit{green}, \textit{blue}).
+        \item Setiap komponen menempati satu byte, sehingga satu piksel
+              menyediakan tiga byte.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Konsekuensi}
+        \footnotesize
+        Setiap byte menyediakan satu bit LSB. Semakin banyak piksel, semakin
+        besar pesan yang dapat disembunyikan.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Metode LSB}
+    Di dalam setiap byte, bit tersusun dari yang paling berarti sampai yang
+    paling kurang berarti:
+    \[
+        b_7b_6b_5b_4b_3b_2b_1b_0.
+    \]
+    \begin{itemize}
+        \item \textbf{MSB} adalah $b_7$; \textbf{LSB} adalah $b_0$.
+        \item Mengubah $b_0$ hanya mengubah nilai byte sebesar satu tingkat.
+        \item Contoh: $1101000\underline{1}$ bernilai $209$; bila LSB diubah
+              menjadi $0$, hasilnya $1101000\underline{0}$ bernilai $208$.
+        \item Pergeseran satu dari $256$ tingkat warna tidak dapat dibedakan
+              mata manusia.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{block}{Karena itu}
+        \footnotesize
+        LSB menjadi tempat alami untuk menyisipkan bit pesan tanpa mengubah
+        persepsi atas citra secara keseluruhan.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Contoh LSB pada Satu Piksel}
+    Tinjau satu piksel citra $24$ bit:
+    \[
+        [130,\;123,\;117]
+        = \code{10000010}\;\code{01111011}\;\code{01110101}.
+    \]
+    Pesan yang disisipkan adalah tiga bit \code{101}.
+    \begin{align*}
+        \code{1000001}\underline{0} &\to \code{1000001}\underline{1}
+            = 131, \\
+        \code{0111011}\underline{1} &\to \code{0111011}\underline{0}
+            = 122, \\
+        \code{0111010}\underline{1} &\to \code{0111010}\underline{1}
+            = 117.
+    \end{align*}
+    \begin{exampleblock}{Hasil}
+        \footnotesize
+        Piksel berubah dari $[130,123,117]$ menjadi $[131,122,117]$. Warna
+        tetap tampak ``ungu''; perubahannya terlalu kecil untuk dilihat.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Penyisipan, Ekstraksi, dan Kapasitas}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Penyisipan dan ekstraksi}
+                \footnotesize
+                \begin{itemize}
+                    \item Pesan dibaca bit demi bit.
+                    \item Setiap bit menggantikan LSB satu byte.
+                    \item Ekstraksi membaca byte, mengambil LSB-nya, lalu
+                          merangkainya kembali menjadi bit pesan.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{exampleblock}{Kapasitas}
+                \footnotesize
+                \begin{itemize}
+                    \item \textit{Grayscale} $256\times256$:
+                          $65536$ byte $\to$ $65536$ bit $=8$ KB.
+                    \item Warna $24$ bit $256\times256$:
+                          $196608$ byte $\to$ $196608$ bit $=24$ KB.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{alertblock}{Batasnya}
+        \footnotesize
+        Satu byte hanya menampung satu bit pesan. Kapasitas naik sebanding
+        dengan jumlah byte media, bukan dengan ukuran berkas terkompresi.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Varian Metode LSB}
+    \begin{itemize}
+        \item \textbf{Penyisipan berurutan} --- bit pesan menempati piksel
+              pertama, kedua, dan seterusnya.
+        \item \textbf{Penyisipan acak} --- posisi piksel dipilih oleh
+              \textit{PRNG}; penerima membangkitkan urutan yang sama.
+        \item \textbf{$m$-bit LSB} --- lebih dari satu bit LSB per byte
+              dipakai, misalnya $b_1$ dan $b_0$.
+        \item \textbf{Pra-enkripsi} --- bit pesan di-XOR dengan keystream
+              sebelum disisipkan.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{alertblock}{\textit{Trade-off} yang harus diingat}
+        \footnotesize
+        Semakin banyak bit LSB yang dipakai, semakin besar kapasitas, tetapi
+        semakin turun kualitas \textit{stego-image}. Bila posisi acak dipakai,
+        diperlukan \textit{stego-key} untuk membangkitkan posisi tersebut.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{LSB pada Audio}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Media yang dipakai adalah WAV tidak terkompresi.
+                \item Berkas WAV tersusun atas \textit{RIFF header},
+                      \textit{fmt chunk}, dan \textit{data chunk}.
+                \item \textit{Data chunk} memuat sampel audio mentah.
+                \item Pada PCM $16$ bit, satu sampel menempati $2$ byte.
+                \item Stereo $16$ bit: satu frame berisi $4$ byte
+                      (kiri dan kanan).
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Penyisipan}
+                \footnotesize
+                \begin{itemize}
+                    \item Satu bit pesan menggantikan LSB satu byte sampel.
+                    \item Ekstraksi membaca LSB sampel dalam urutan yang sama.
+                    \item Perubahan satu tingkat amplitudo tidak terdengar.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{alertblock}{Syarat praktis}
+        \footnotesize
+        Audio harus tidak terkompresi. Kompresi menghapus atau mengubah bit
+        LSB, sehingga pesan tidak lagi dapat dipulihkan.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Steganalisis: Mendeteksi yang Tersembunyi}
+% =====================================================================
+
+\begin{frame}{Tujuan Steganalisis}
+    \begin{block}{Tujuan utama}
+        Menentukan apakah sebuah media yang dicurigai mengandung pesan
+        tersembunyi atau tidak.
+    \end{block}
+    \vspace{0.15cm}
+    \begin{itemize}
+        \item Steganalisis dianggap berhasil bila keputusannya lebih baik
+              daripada menerka secara acak.
+        \item Tujuan minor: menentukan panjang pesan, tipe algoritma
+              penyisipan, dan kunci yang dipakai.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Konteks forensik}
+        \footnotesize
+        Steganalisis dipakai di dalam \textit{forensic image analysis},
+        khususnya \textit{content analysis}: mendeteksi pesan tersembunyi di
+        dalam citra yang menjadi barang bukti.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{\textit{Targeted} versus \textit{Blind} Steganalisis}
+    \footnotesize
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+        >{\raggedright\arraybackslash}X
+        >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        Aspek & \textit{Targeted} & \textit{Blind} \\
+        \midrule
+        Cakupan & Algoritma steganografi tertentu, kadang terbatas pada format
+                 media tertentu. & Sembarang algoritma dan sembarang format
+                 media. \\
+        \addlinespace
+        Cara kerja & Mempelajari algoritma penyisipan, lalu mencari statistik
+                    yang berubah setelah penyisipan. & Mempelajari perbedaan
+                    statistik \textit{cover} dan \textit{stego}, biasanya
+                    melalui pelatihan model \textit{machine learning}. \\
+        \addlinespace
+        Akurasi & Sangat akurat untuk sasaran yang tepat. & Kurang akurat
+                  dibandingkan \textit{targeted}. \\
+        \addlinespace
+        Keluwesan & Tidak dapat diperluas ke algoritma atau format lain. &
+                    Dapat diperluas ke algoritma lain. \\
+        \bottomrule
+    \end{tabularx}\par
+    \vspace{0.3cm}
+    \raggedright
+    Keduanya menjawab pertanyaan yang sama dengan trade-off yang berbeda.
+\end{frame}
+
+\begin{frame}{Metode Steganalisis: Visual dan Statistik}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Serangan visual}
+                \footnotesize
+                \begin{itemize}
+                    \item Khusus untuk \textit{stego-object} berupa citra.
+                    \item Mengamati artefak secara kasat mata, lalu
+                          membandingkannya dengan citra asli.
+                    \item Bersifat subjektif.
+                    \item Contoh: \textit{LSB plane attack} dan
+                          \textit{filtered visual attack}
+                          (\textit{enhanced LSB}).
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Serangan statistik}
+                \footnotesize
+                \begin{itemize}
+                    \item Memakai analisis matematik atas citra.
+                    \item Mencari perbedaan statistik antara \textit{cover}
+                          dan \textit{stego}.
+                    \item Penyisipan meninggalkan artefak yang dapat diukur.
+                    \item Contoh: analisis histogram,
+                          \textit{regular-singular} (RS),
+                          \textit{chi-square}, dan
+                          \textit{sample pair} (SP).
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \footnotesize
+    Serangan visual banyak dipakai pada masa awal riset steganalisis;
+    serangan statistik memberi ukuran yang lebih objektif.
+\end{frame}
+
+\begin{frame}{Batas Serangan Visual}
+    \begin{exampleblock}{\textit{Enhanced LSB} pada citra kontras tinggi}
+        \footnotesize
+        Metode ini bekerja baik bila citra memiliki latar yang jelas atau
+        perbedaan warna yang kontras antara latar dan objek utama. Artefak
+        pesan menjadi mudah terlihat.
+    \end{exampleblock}
+    \vspace{0.1cm}
+    \begin{alertblock}{Pada citra kontras rendah}
+        \footnotesize
+        Pada citra fotografi dengan kontras rendah, \textit{enhanced LSB}
+        sering menyulitkan steganalisis. Pemeriksa sulit membedakan mana
+        struktur gambar yang wajar dan mana artefak pesan rahasia.
+    \end{alertblock}
+    \vspace{0.1cm}
+    \begin{block}{Pelajaran}
+        \footnotesize
+        Tidak ada satu metode yang cukup untuk semua citra. Pemeriksaan visual
+        perlu dilengkapi metode statistik.
+    \end{block}
+\end{frame}
+
+% =====================================================================
+\section{Rangkuman dan Penutup}
+% =====================================================================
+
+\begin{frame}{Rangkuman}
+    \footnotesize
+    \begin{itemize}
+        \item Knapsack mengubah bit plainteks menjadi pilihan objek dengan
+              bobot total tertentu.
+        \item Barisan \textit{superincreasing} dapat dipecahkan secara
+              \textit{greedy} dalam waktu linear, sehingga tidak aman dipakai
+              langsung.
+        \item Merkle--Hellman menyembunyikannya melalui
+              $w'_i=(w_i n)\bmod m$ dengan $m>\sum w_i$ dan
+              $\mathrm{PBB}(n,m)=1$.
+        \item Dekripsi memakai $C'=(C n^{-1})\bmod m$, lalu \textit{greedy}
+              pada kunci privat.
+        \item Contoh: $W_{priv}=\{2,3,6,13,27,52\}$, $m=105$, $n=31$,
+              $n^{-1}=61$; blok \code{011000}, \code{110101}, \code{101110}
+              menjadi $(174,280,333)$ dan pulih tepat.
+        \item Shamir (1982) memecahkan Merkle--Hellman dasar dalam waktu
+              polinomial dengan memanfaatkan struktur kuncinya.
+        \item Steganografi menyembunyikan keberadaan pesan; LSB bekerja pada
+              citra dan audio tidak terkompresi.
+        \item Steganalisis dibedakan menjadi \textit{targeted} dan
+              \textit{blind}, dengan metode visual dan statistik.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Yang Harus Diingat}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Knapsack}
+                \footnotesize
+                \begin{itemize}
+                    \item Mudah dienkripsi, sukar didekripsi tanpa jebakan.
+                    \item Jebakannya adalah barisan \textit{superincreasing}
+                          di balik transformasi modulo.
+                    \item Keamanannya runtuh karena strukturnya khusus, bukan
+                          karena knapsack umum terpecahkan.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Steganografi dan steganalisis}
+                \footnotesize
+                \begin{itemize}
+                    \item LSB mengubah satu tingkat nilai byte; mata dan
+                          telinga tidak menangkapnya.
+                    \item Kapasitas terbatas oleh jumlah byte media.
+                    \item Setiap penyisipan meninggalkan jejak yang dapat
+                          dicari secara visual atau statistik.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 15} --- Review CPMK-1 dan CPMK-2.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Penutup}
+    \begin{block}{Tiga butir yang dibawa pulang}
+        \footnotesize
+        \begin{enumerate}
+            \item Knapsack menunjukkan bahwa kunci publik dapat dibangun dari
+                  persoalan yang sukar, asalkan pemilik kunci memegang jalan
+                  pintas.
+            \item Steganografi melengkapi kriptografi: isi pesan dilindungi,
+                  keberadaannya disamarkan.
+            \item Steganalisis mengingatkan bahwa penyembunyian selalu
+                  meninggalkan jejak, sekecil apa pun perubahannya.
+        \end{enumerate}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 15} --- Review CPMK-1 dan CPMK-2: ringkasan seluruh
+        algoritma dan konsep dari pertemuan 1 sampai 14.
+    \end{exampleblock}
+    \vspace{0.2cm}
+    \centering
+    \textit{Terima kasih.}
+\end{frame}
+
+\end{document}

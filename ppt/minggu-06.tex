@@ -1,0 +1,679 @@
+% =====================================================================
+%  minggu-06.tex  --  Slide Pertemuan Minggu ke-6
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : One-time pad
+%  Sumber materi : buku_ajar/chapters/04/section-06.tex (Bab 4, \S6)
+%  Sub-CPMK      : 1.2
+%
+%  Kompilasi dari dalam folder ppt/:
+%      pdflatex -interaction=nonstopmode minggu-06.tex   (dua kali)
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{One-Time Pad: Rahasia yang Terbukti Sempurna}
+\subtitle{OTP Vernam, tiga syarat kerahasiaan sempurna, dan kelemahan praktisnya}
+\setWeekInfo{Minggu 6}{One-time pad}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \slidejudul{Enam bagian}
+            \begin{enumerate}
+                \item Batas cipher klasik dan tiga syaratnya
+                \item Prinsip kerja OTP dan aturan modular
+                \item Contoh hitung sepuluh huruf
+                \item Tiga syarat kerahasiaan sempurna
+                \item Kerahasiaan sempurna dan kelemahan praktis
+                \item Sejarah, rangkuman, dan latihan
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 4 buku ajar; Munir, \textit{IF4020 Kriptografi}, ITB,
+                2026 (modul 05).
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Benang merah}
+        OTP adalah satu-satunya cipher yang keamanannya dapat dibuktikan
+        secara matematis --- dan harganya paling mahal.
+    \end{exampleblock}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK 1.2 --- One-time pad dan stream cipher modern}
+        \footnotesize
+        Mengenal one-time pad serta stream cipher modern, yaitu representasi
+        bit, operasi XOR, keystream generator, FSR, RC4, A5, Trivium,
+        Salsa20, dan ChaCha20.
+    \end{block}
+    \vspace{0.1cm}
+    {\scriptsize\itshape Pertemuan ini menuntaskan bagian one-time pad;
+    bagian stream cipher modern menjadi bahan Minggu 7.}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \footnotesize
+        \begin{itemize}
+            \item menjelaskan mengapa cipher klasik dapat dipecahkan dan
+                  apa yang menutup celah itu;
+            \item menyebutkan tiga syarat cipher yang tidak dapat
+                  dipecahkan;
+            \item menerapkan aturan $C=(P+K)\bmod 26$ dan
+                  $P=(C-K)\bmod 26$ pada contoh buku ajar;
+            \item menjelaskan makna kerahasiaan sempurna menurut Shannon;
+            \item mengidentifikasi kelemahan praktis OTP dan alasan OTP
+                  jarang dipakai.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Menuju Cipher yang Tidak Dapat Dipecahkan}
+% =====================================================================
+
+\begin{frame}{Klaim yang Tidak Pernah Terbukti}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            Setiap perancang cipher berharap karyanya \emph{unbreakable}.
+            Kenyataannya, hampir semua cipher yang pernah dibuat
+            \emph{breakable}:
+            \begin{itemize}
+                \item Caesar, Vigen\`ere, Playfair, dan Affine;
+                \item Enigma dan Hill.
+            \end{itemize}
+            Semuanya sudah kedaluwarsa karena berhasil dipecahkan.
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \begin{alertblock}{Pertanyaan}
+                \footnotesize
+                Adakah cipher yang benar-benar tidak dapat dipecahkan?
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.25cm}
+    \begin{block}{Jawaban singkat}
+        Ada, tetapi hanya bila tiga syarat dipenuhi sekaligus.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Tiga Syarat Cipher yang Tidak Dapat Dipecahkan}
+    \footnotesize
+    \begin{enumerate}
+        \item \textbf{Kunci acak sejati.} Nilainya tidak dapat diprediksi
+              dan pembangkitannya tidak dapat diulang.
+        \item \textbf{Panjang kunci sama dengan panjang plainteks.}
+              Tidak ada huruf kunci yang dipakai untuk dua huruf plainteks.
+        \item \textbf{Kunci hanya dipakai sekali.} Setelah satu pesan,
+              kunci itu tidak boleh muncul lagi.
+    \end{enumerate}
+    \vspace{0.25cm}
+    \begin{alertblock}{Ketiganya satu paket}
+        Melanggar satu syarat saja sudah cukup untuk membatalkan jaminan
+        kerahasiaan. Dua syarat yang lain tidak dapat menutupinya.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Acak Sejati dan Acak Semu}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Acak sejati}
+                \footnotesize
+                \begin{itemize}
+                    \item nilainya tidak dapat diprediksi;
+                    \item pembangkitannya tidak dapat diulang.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Acak semu}
+                \footnotesize
+                \begin{itemize}
+                    \item dihasilkan oleh prosedur tertentu;
+                    \item dapat diulang bila umpan (\textit{seed}) sama.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Akibat dua syarat pertama}
+        Plainteks yang sama tidak selalu menghasilkan cipherteks yang sama.
+        Karena itu OTP menuntut acak sejati, bukan acak semu.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Prinsip Kerja One-Time Pad}
+% =====================================================================
+
+\begin{frame}{Vernam 1917 dan Shannon 1949}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.58\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Gilbert Vernam menemukan OTP pada tahun 1917.
+                \item Claude Shannon membuktikan keamanannya secara
+                      matematis pada tahun 1949.
+                \item OTP menjawab kelemahan Vigen\`ere: kunci tidak lagi
+                      diulang secara periodik.
+            \end{itemize}
+            \vspace{0.1cm}
+            \begin{exampleblock}{Yang membuat OTP berbeda}
+                Panjang kunci menyamai panjang pesan dan seluruh isinya acak
+                sejati, sehingga tidak ada pola yang dapat ditelusuri.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.38\textwidth}
+            \centering
+            \bookfig[0.62\linewidth]{04}{gilbert-vernam.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Pad Kertas yang Hanya Dipakai Sekali}
+    \footnotesize
+    Nama \emph{one-time pad} mengacu pada bloknot kertas berisi deretan
+    huruf kunci yang dibangkitkan secara acak.
+    \begin{itemize}
+        \item Pengirim dan penerima memegang salinan pad yang sama.
+        \item Satu pad dipakai untuk satu pesan saja.
+        \item Setelah dipakai, pad dimusnahkan agar tidak terpakai lagi.
+    \end{itemize}
+    \vspace{0.2cm}
+    \begin{alertblock}{Satu pad, satu pesan}
+        Aturan ini bukan sekadar anjuran. Memakai ulang pad mengubah OTP
+        menjadi \emph{two-time pad}, yang tidak lagi aman.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Aturan Enkripsi dan Dekripsi}
+    \footnotesize
+    Setiap huruf dipetakan ke bilangan $0$ sampai $25$. Aturannya sama
+    dengan Vigen\`ere, tetapi tanpa pengulangan kunci:
+    \[
+        C = (P + K) \bmod 26, \qquad
+        P = (C - K) \bmod 26 .
+    \]
+    \begin{itemize}
+        \item Panjang kunci sama dengan panjang plainteks.
+        \item Setiap huruf plainteks berpasangan dengan satu huruf kunci
+              yang khusus untuknya.
+        \item Tidak ada kunci yang dipakai dua kali di dalam satu pesan.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Akibatnya}
+        Metode Kasiski mencari jarak pengulangan kunci. Pada OTP jarak itu
+        tidak pernah ada, sehingga metodenya kehilangan pijakan.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Contoh Satu Huruf}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \footnotesize
+            Ambil $P=\code{o}$ dan $K=\code{t}$. Dalam bilangan,
+            $P=14$ dan $K=19$.
+            \begin{align*}
+                C &= (14+19) \bmod 26 \\
+                  &= 33 \bmod 26 = 7 = \code{H}.
+            \end{align*}
+            Dekripsi mengembalikan huruf semula:
+            \begin{align*}
+                P &= (7-19) \bmod 26 \\
+                  &= -12 \bmod 26 = 14 = \code{o}.
+            \end{align*}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{04}{contoh-one-time-pad.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Contoh Perhitungan dari Buku Ajar}
+% =====================================================================
+
+\begin{frame}{Data Contoh}
+    \footnotesize
+    Buku ajar memakai plainteks dan kunci yang sama-sama sepuluh huruf.
+    Tidak ada huruf kunci yang berulang menurut posisi:
+    \begin{center}
+    \small
+    \begin{tabular}{@{}l l@{}}
+        \toprule
+        Plainteks  & \code{onetimepad} \\
+        Kunci      & \code{tbfrgfarhm} \\
+        \midrule
+        Cipherteks & \code{HOJKOREGHP} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Huruf pertama}
+        $(\code{o}+\code{t}) = (14+19) = 33$, lalu
+        $33 \bmod 26 = 7 = \code{H}$.
+    \end{exampleblock}
+    \begin{exampleblock}{Huruf kedua}
+        $(\code{n}+\code{b}) = (13+1) = 14$, lalu
+        $14 \bmod 26 = 14 = \code{O}$.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Sepuluh Langkah Enkripsi}
+    \scriptsize
+    Setiap baris adalah satu huruf. Operasinya
+    $c_i = (p_i + k_i) \bmod 26$, dengan $p_i$ dan $k_i$ dalam bilangan
+    $0$ sampai $25$.
+    \begin{center}
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabular}{@{}c c c c c c@{}}
+        \toprule
+        $i$ & $p_i$ & $k_i$ & $p_i+k_i$ & $\bmod\,26$ & $c_i$ \\
+        \midrule
+        1  & \code{o} (14) & \code{t} (19) & 33 & 7  & \code{H} \\
+        2  & \code{n} (13) & \code{b} (1)  & 14 & 14 & \code{O} \\
+        3  & \code{e} (4)  & \code{f} (5)  & 9  & 9  & \code{J} \\
+        4  & \code{t} (19) & \code{r} (17) & 36 & 10 & \code{K} \\
+        5  & \code{i} (8)  & \code{g} (6)  & 14 & 14 & \code{O} \\
+        6  & \code{m} (12) & \code{f} (5)  & 17 & 17 & \code{R} \\
+        7  & \code{e} (4)  & \code{a} (0)  & 4  & 4  & \code{E} \\
+        8  & \code{p} (15) & \code{r} (17) & 32 & 6  & \code{G} \\
+        9  & \code{a} (0)  & \code{h} (7)  & 7  & 7  & \code{H} \\
+        10 & \code{d} (3)  & \code{m} (12) & 15 & 15 & \code{P} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.1cm}
+    Baris pertama memperlihatkan urutan lengkapnya:
+    $14+19=33$, $33 \bmod 26=7$, dan $7$ adalah huruf \code{H}.
+    Hasil kesepuluh baris itu adalah \code{HOJKOREGHP}.
+\end{frame}
+
+\begin{frame}{Pemeriksaan Dekripsi}
+    \footnotesize
+    Dekripsi memakai pengurangan, $p_i=(c_i-k_i)\bmod 26$. Tiga huruf
+    pertama:
+    \begin{align*}
+        (\code{H}-\code{t}) &= (7-19) \bmod 26 = 14 = \code{o}, \\
+        (\code{O}-\code{b}) &= (14-1) \bmod 26 = 13 = \code{n}, \\
+        (\code{J}-\code{f}) &= (9-5) \bmod 26 = 4 = \code{e}.
+    \end{align*}
+    Bila seluruh baris dikerjakan, hasilnya kembali menjadi
+    \code{onetimepad}.
+    \vspace{0.1cm}
+    \begin{exampleblock}{Yang perlu diperhatikan}
+        Sepuluh huruf memakai sepuluh huruf kunci yang berbeda. Tidak ada
+        satu operasi pun yang berlaku untuk dua posisi sekaligus.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Tiga Syarat Kerahasiaan Sempurna}
+% =====================================================================
+
+\begin{frame}{Syarat 1: Kunci Acak Sejati}
+    \footnotesize
+    Kunci OTP harus seluruhnya acak sejati dan sepanjang pesan.
+    \begin{itemize}
+        \item Kunci yang diambil dari novel, buku, atau berita tidak acak.
+        \item Teks semacam itu dapat ditebak dan mengandung pola bahasa.
+        \item Akibatnya cipher tersebut bukan OTP dan tidak memiliki
+              kerahasiaan sempurna.
+    \end{itemize}
+    \vspace{0.2cm}
+    \begin{alertblock}{Panjang saja tidak cukup}
+        Kunci sepanjang pesan tetap lemah bila isinya dapat dibaca atau
+        diperkirakan penyerang.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Syarat 2: Panjang Kunci Sama dengan Plainteks}
+    \footnotesize
+    \begin{itemize}
+        \item Setiap huruf plainteks memperoleh huruf kunci sendiri.
+        \item Tidak ada pengulangan kunci secara periodik.
+        \item Pola jarak yang biasa ditelusuri Kasiski tidak terbentuk.
+    \end{itemize}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Bandingkan dengan Vigen\`ere}
+        Pada Vigen\`ere kunci pendek diulang, sehingga cipherteks menyimpan
+        jejak periodisitas. Pada OTP jejak itu dihapus oleh panjang kunci.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Syarat 3: Kunci Hanya Dipakai Sekali}
+    \footnotesize
+    Bila kunci yang sama dipakai untuk dua pesan, cipher itu bukan lagi
+    \emph{one-time pad}, melainkan \emph{two-time pad}.
+    \[
+        C_1 - C_2 = (P_1 + K) - (P_2 + K) = P_1 - P_2 \pmod{26}.
+    \]
+    Kunci saling menghapus, sehingga yang tersisa hanya selisih kedua
+    plainteks. Penyerang tidak perlu mengetahui kunci untuk memperoleh
+    hubungan itu.
+    \vspace{0.1cm}
+    \begin{alertblock}{Kesimpulan}
+        Pemakaian ulang kunci membuat cipher tersebut tidak aman, sepanjang
+        apa pun pesannya.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Akibatnya: Pemetaan Satu-ke-Satu}
+    \footnotesize
+    Untuk sembarang plainteks $P$ dan cipherteks $C$, hanya ada satu kunci
+    yang memetakan keduanya:
+    \[
+        K = (C - P) \bmod 26 .
+    \]
+    \begin{itemize}
+        \item Kriptanalis dapat mendekripsi $C$ dengan beberapa kunci
+              berbeda.
+        \item Hasilnya beberapa plainteks yang semuanya bermakna.
+        \item Ia tidak dapat menentukan plainteks mana yang benar.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Inti argumennya}
+        Cipherteks tidak menyempitkan ruang kemungkinan plainteks. Semua
+        tebakan tetap sama masuk akal.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Satu Cipherteks, Dua Plainteks Bermakna}
+    \footnotesize
+    Cipherteks \code{HOJKOREGHP} dapat dijelaskan oleh lebih dari satu
+    kunci. Dua di antaranya:
+    \begin{center}
+    \small
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabular}{@{}l l l@{}}
+        \toprule
+        \textbf{Cipherteks} & \textbf{Kunci} & \textbf{Plainteks} \\
+        \midrule
+        \code{HOJKOREGHP} & \code{POYYAEAABX} & \code{SALMONEGGS} \\
+        \code{HOJKOREGHP} & \code{BXFGBMWCWM} & \code{GREENFIELD} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.1cm}
+    Kedua kunci dihitung dengan $K=(C-P)\bmod 26$. Keduanya sah dan
+    keduanya menghasilkan kalimat yang bermakna.
+    \vspace{0.1cm}
+    \begin{alertblock}{Yang tidak dapat dilakukan penyerang}
+        Memilih di antara keduanya hanya dari cipherteks. Ia membutuhkan
+        informasi lain di luar cipherteks.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Kerahasiaan Sempurna}
+% =====================================================================
+
+\begin{frame}{Definisi Shannon}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.58\textwidth}
+            \footnotesize
+            Pada tahun 1949 Claude Shannon, dari Laboratorium Bell,
+            membuktikan bahwa OTP memiliki \emph{perfect secrecy}.
+            \begin{itemize}
+                \item Buktinya dimuat dalam \emph{Communication Theory of
+                      Secrecy Systems}.
+                \item Setelah cipherteks diperoleh, informasi tentang
+                      plainteks tidak bertambah.
+            \end{itemize}
+            \[
+                P(P=p \mid C=c) = P(P=p).
+            \]
+            Probabilitas plainteks sama sebelum dan sesudah cipherteks
+            diamati.
+        \end{column}
+        \begin{column}{0.38\textwidth}
+            \centering
+            \bookfig[0.62\linewidth]{04}{claude-shannon.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Mengapa OTP Memenuhi Definisi Itu}
+    \footnotesize
+    Misalkan kunci dipilih uniform, sehingga $P(K=k)=1/26$ untuk
+    $k=0,1,\dots,25$.
+    \begin{itemize}
+        \item Untuk setiap plainteks $p$, pemetaan $C=(P+K)\bmod 26$
+              adalah satu-ke-satu dari semua kunci ke semua cipherteks.
+        \item Karena itu $P(C=c \mid P=p)=1/26$ untuk setiap $c$.
+        \item Setiap huruf cipherteks sama mungkinnya, tidak bergantung
+              pada $p$.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Maknanya}
+        Cipherteks tidak memberi petunjuk untuk mempersempit tebakan
+        plainteks. Inilah yang membuat OTP disebut sempurna secara teori.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Kelemahan Praktis dan Warisan Sejarah}
+% =====================================================================
+
+\begin{frame}{Kelemahan 1: Kunci Sepanjang Pesan}
+    \footnotesize
+    \begin{itemize}
+        \item Ukuran kunci tumbuh seiring panjang pesan.
+        \item Pesan yang sangat panjang menuntut kunci yang sama panjang.
+        \item Membangkitkan miliaran karakter yang benar-benar acak
+              membutuhkan komputasi berat.
+        \item Komunikasi yang berlangsung terus-menerus menuntut pasokan
+              kunci tanpa henti.
+    \end{itemize}
+    \vspace{0.2cm}
+    \begin{alertblock}{Sifat yang melekat}
+        Ini bukan cacat implementasi, melainkan harga langsung dari syarat
+        panjang kunci sama dengan plainteks.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Kelemahan 2: Kunci Harus Dibangkitkan Acak Sejati}
+    \footnotesize
+    \begin{itemize}
+        \item Pengirim dan penerima tidak dapat membangkitkan kunci acak
+              yang sama secara bersamaan.
+        \item Keduanya harus menyepakati kunci lebih dahulu.
+        \item Kunci itu harus sepanjang pesan dan hanya boleh dipakai
+              sekali.
+    \end{itemize}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Akibatnya}
+        Kesepakatan kunci menjadi pekerjaan tersendiri yang harus
+        diselesaikan sebelum pesan pertama dikirim.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Distribusi Kunci Butuh Saluran Kedua}
+    \footnotesize
+    OTP hanya dapat dipakai bila tersedia saluran komunikasi kedua yang
+    sangat aman untuk mengirim kunci.
+    \begin{itemize}
+        \item Saluran itu tidak boleh sama dengan saluran pesan.
+        \item Umumnya lambat dan mahal, misalnya kurir terpercaya lewat
+              jalur darat.
+        \item Alternatifnya, kunci dikirim pada saluran yang sama tetapi
+              pada waktu yang berbeda.
+    \end{itemize}
+    \vspace{0.2cm}
+    \begin{alertblock}{Pertukaran yang tidak mudah}
+        Keamanan sempurna di saluran pesan dibayar dengan kebutuhan
+        saluran rahasia untuk kuncinya.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Tidak Cocok untuk Komunikasi Dinamis}
+    \footnotesize
+    Komunikasi modern yang terus berubah sulit dilayani OTP:
+    \begin{itemize}
+        \item WhatsApp, HTTPS, VPN, dan \textit{cloud storage};
+        \item email dan komunikasi IoT.
+    \end{itemize}
+    Pada komunikasi semacam itu data terus bertambah, perangkat dapat
+    berganti, pengguna dapat \textit{offline}, dan ukuran pesan
+    berbeda-beda.
+    \vspace{0.1cm}
+    \begin{alertblock}{Beban manajemen kunci}
+        Setiap tambahan data memerlukan tambahan kunci acak yang belum
+        pernah dipakai. Manajemen kunci menjadi sangat berat.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Syal Agen Rahasia Perang Dunia II}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.46\textwidth}
+            \footnotesize
+            OTP pernah dipakai oleh mata-mata selama Perang Dunia II.
+            \begin{itemize}
+                \item Kunci dicetak pada kain, bukan kertas.
+                \item Kain mudah disembunyikan.
+                \item Kain juga mudah dimusnahkan setelah dipakai.
+            \end{itemize}
+            Pejabat eksekutif operasi khusus Inggris memperlihatkan syal
+            berisi kunci OTP sebagai contohnya.
+        \end{column}
+        \begin{column}{0.50\textwidth}
+            \centering
+            \bookfig[0.78\linewidth]{04}{otp-syal.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Hotline Moskow--Washington 1963}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.55\linewidth]{04}{otp-hotline.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            Saluran langsung antara pemimpin Amerika Serikat dan Uni Soviet
+            dibangun setelah Krisis Rudal Kuba tahun 1963.
+            \begin{itemize}
+                \item Peralatannya OTP bernama ITT Intelex Teletype L015.
+                \item Pita kunci \emph{one-time pad} disimpan dan
+                      diterbangkan antara Washington DC dan Moskow.
+            \end{itemize}
+            Kunci tidak pernah dikirim melalui saluran pesan itu sendiri.
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Penilaian Bellovin}
+    \footnotesize
+    Steve Bellovin merangkum ketegangan antara teori dan praktik:
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{OTP}
+                Tidak dapat dipecahkan secara teori, tetapi rapuh dalam
+                praktik karena beban kuncinya.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Cipher konvensional}
+                Dapat dipecahkan secara teori, tetapi kuat dalam praktik
+                karena kuncinya pendek dan mudah dikelola.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Pelajaran}
+        Keamanan teoretis tidak otomatis menjadi keamanan operasional.
+        Pilihan cipher selalu menimbang keduanya.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Rangkuman dan Latihan}
+% =====================================================================
+
+\begin{frame}{Rangkuman (1/2)}
+    \footnotesize
+    \begin{itemize}
+        \item Cipher klasik berguguran karena menyimpan pola. OTP menutup
+              pola itu dengan kunci acak sejati sepanjang pesan.
+        \item Tiga syaratnya: acak sejati, panjang sama dengan plainteks,
+              dan hanya dipakai sekali.
+        \item Enkripsi memakai $C=(P+K)\bmod 26$; dekripsi memakai
+              $P=(C-K)\bmod 26$.
+        \item Contoh buku ajar: \code{onetimepad} dengan kunci
+              \code{tbfrgfarhm} menghasilkan \code{HOJKOREGHP}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Rangkuman (2/2)}
+    \footnotesize
+    \begin{itemize}
+        \item Kerahasiaan sempurna berarti
+              $P(P=p \mid C=c)=P(P=p)$: cipherteks tidak menambah
+              informasi tentang plainteks.
+        \item Pemetaan satu-ke-satu membuat banyak plainteks bermakna
+              mungkin; kriptanalis tidak dapat memilih yang benar.
+        \item Kelemahan praktisnya: kunci sepanjang pesan, pembangkitan
+              acak sejati yang berat, distribusi lewat saluran kedua, dan
+              ketidakcocokan dengan komunikasi dinamis.
+        \item OTP terbukti istimewa secara teori, tetapi bukan pilihan
+              sehari-hari.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Latihan}
+    \footnotesize
+    \begin{enumerate}
+        \item Dengan $P=\code{onetimepad}$ dan $K=\code{tbfrgfarhm}$,
+              hitunglah cipherteksnya huruf demi huruf.
+        \item Dekripsikan \code{HOJKOREGHP} dengan kunci
+              \code{tbfrgfarhm}, lalu bandingkan hasilnya dengan plainteks
+              semula.
+        \item Mengapa kunci yang diambil dari sebuah novel tidak
+              menghasilkan kerahasiaan sempurna?
+        \item Jelaskan bagaimana dua kunci berbeda dapat menghasilkan dua
+              plainteks bermakna dari cipherteks yang sama.
+        \item Sebutkan tiga kelemahan praktis OTP dan tentukan mana yang
+              paling menghambat komunikasi modern.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Penutup}
+    \begin{block}{Tiga hal yang harus dibawa dari pertemuan ini}
+        \begin{enumerate}
+            \item OTP adalah cipher yang keamanannya terbukti, dengan syarat
+                  kunci acak sejati, sepanjang pesan, dan sekali pakai.
+            \item Kerahasiaan sempurna berarti cipherteks tidak memberi
+                  informasi tambahan tentang plainteks.
+            \item Kelemahan OTP bersifat praktis: kunci besar, distribusi
+                  sulit, dan pemakaian ulang menghancurkan keamanannya.
+        \end{enumerate}
+    \end{block}
+    \vspace{0.3cm}
+    \begin{exampleblock}{Pertemuan berikutnya --- Minggu 7}
+        \textbf{Minggu 7 --- Kriptografi modern dan stream cipher}
+    \end{exampleblock}
+\end{frame}
+
+\end{document}

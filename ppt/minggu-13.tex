@@ -1,0 +1,889 @@
+% =====================================================================
+%  minggu-13.tex  --  Slide Pertemuan Minggu ke-13
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Kriptografi kurva eliptik
+%  Sumber materi : buku_ajar/chapters/14 (Bab 14, Bagian 1--4)
+%  Sub-CPMK      : 1.4
+%
+%  Kompilasi dari dalam folder ppt/:
+%      pdflatex -interaction=nonstopmode minggu-13.tex   (dua kali)
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Menghitung dengan Titik, Bukan Bilangan Besar}
+\subtitle{Kurva eliptik, ECDLP, ECDH, dan ECEG}
+\setWeekInfo{Minggu 13}{Kriptografi kurva eliptik}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \slidejudul{Lima bagian}
+            \footnotesize
+            \begin{enumerate}
+                \item \textbf{Landasan yang dipakai} --- grup, medan
+                      berhingga, dan invers modulo.
+                \item \textbf{Kurva eliptik} --- bentuk kurva, titik
+                      $\mathcal{O}$, penjumlahan, dan penggandaan titik.
+                \item \textbf{ECDLP} --- persoalan matematis yang menopang
+                      keamanan ECC.
+                \item \textbf{ECDH dan ECEG} --- kesepakatan kunci dan
+                      enkripsi dengan titik kurva.
+                \item \textbf{Keamanan dan keuntungan} --- ukuran kunci serta
+                      pemakaian ECC.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 14 buku ajar; Munir, \textit{IF4020 Kriptografi}, ITB,
+                2026 (modul 17 dan 18)
+            \end{block}
+            \begin{exampleblock}{Benang merah}
+                \footnotesize
+                ECC tidak memperbesar bilangan. Ia memindahkan hitungan ke
+                \kunci{titik-titik pada kurva berhingga}.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK yang dibebankan}
+        \footnotesize
+        \textbf{Sub-CPMK 1.4} --- Mengenal algoritma kriptografi kunci
+        publik, yaitu RSA, Diffie--Hellman, ElGamal, knapsack, dan
+        \textit{Elliptic Curve Cryptography} (ECC), beserta persoalan
+        matematis yang mendasarinya.
+    \end{block}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \footnotesize
+        \begin{itemize}
+            \item menjelaskan aksioma grup dan medan berhingga sejauh dipakai
+                  oleh operasi titik;
+            \item menjelaskan aturan penjumlahan dan penggandaan titik pada
+                  kurva eliptik;
+            \item menjelaskan ECDLP sebagai persoalan yang mendasari keamanan
+                  ECC;
+            \item menjelaskan langkah ECDH dan ECEG beserta hasil hitungnya;
+            \item membandingkan ukuran kunci ECC dengan RSA pada tingkat
+                  keamanan yang setara.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Landasan yang Dipakai}
+% =====================================================================
+
+\begin{frame}{Mengapa Hitungannya Dipindahkan ke Titik}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Sistem kunci publik biasa menghitung di dalam himpunan
+                      bilangan modulo.
+                \item ECC menghitung dengan pasangan $(x,y)$ yang memenuhi
+                      persamaan sebuah kurva.
+                \item Pasangan itu harus dapat dijumlahkan dan diulang
+                      berkali-kali.
+                \item Karena itu himpunan titiknya harus berbentuk
+                      \kunci{grup}.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Syarat pendukung}
+                \footnotesize
+                Koordinat titik diambil dari medan berhingga. Setiap operasi
+                memberi hasil eksak, tanpa pembulatan.
+            \end{block}
+            \begin{alertblock}{Satu operasi dasar}
+                \footnotesize
+                Seluruh protokol ECC dibangun dari perkalian titik $kP$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Peran bilangan riil}
+        \footnotesize
+        Kurva di atas $\R$ dipakai untuk memahami geometri. Kriptografi
+        memakai kurva di atas medan berhingga, sebab bilangan riil dibulatkan
+        dan galatnya menumpuk.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Grup: Empat Aksioma}
+    \begin{block}{Definisi}
+        \footnotesize
+        Grup adalah himpunan $G$ dengan operasi biner $*$ yang memetakan
+        setiap pasangan elemen $G$ kembali ke $G$.
+    \end{block}
+    \vspace{0.05cm}
+    \begin{enumerate}
+        \item \textbf{Ketertutupan}: $a * b \in G$ untuk semua $a,b \in G$.
+        \item \textbf{Asosiatif}: $a * (b * c) = (a * b) * c$.
+        \item \textbf{Elemen netral}: ada $e \in G$ dengan
+              $a * e = e * a = a$.
+        \item \textbf{Elemen invers}: setiap $a$ punya $a'$ dengan
+              $a * a' = e$.
+    \end{enumerate}
+    \vspace{0.05cm}
+    \begin{exampleblock}{Contoh: $\langle \Z_{11}, + \rangle$}
+        \footnotesize
+        Elemen netralnya $0$. Invers dari $a$ adalah $11-a$, sehingga
+        $7 + 4 = 11 \equiv 0 \pmod{11}$.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Grup Abelian dan Satu Sifat yang Dipakai ECDH}
+    \begin{block}{Aksioma kelima}
+        \footnotesize
+        Grup disebut \textbf{abelian} bila operasinya komutatif:
+        $a * b = b * a$ untuk semua $a,b \in G$.
+    \end{block}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Penjumlahan modulo $n$ bersifat komutatif.
+        \item Perkalian modulo prima juga bersifat komutatif.
+        \item Urutan pengoperasian karena itu tidak mengubah hasil.
+        \item ECDH memerlukan sifat ini untuk menyamakan
+              $a(bB)$ dengan $b(aB)$.
+        \item Tanpa komutatif, kedua pihak tidak akan bertemu di titik yang
+              sama.
+    \end{itemize}
+    \[
+        a(bB) = (ab)B = (ba)B = b(aB) .
+    \]
+\end{frame}
+
+\begin{frame}{Medan Berhingga $GF(p)$ dan Invers Modulo}
+    \begin{block}{Definisi medan}
+        \footnotesize
+        Himpunan $F$ dengan dua operasi $+$ dan $\cdot$ disebut medan bila
+        $\langle F,+ \rangle$ dan $\langle F-\{0\},\cdot \rangle$ keduanya
+        grup abelian, serta perkalian menyebar terhadap penjumlahan.
+    \end{block}
+    \vspace{0.05cm}
+    \begin{itemize}
+        \item $GF(p)$ berisi $\{0,1,\dots,p-1\}$ dengan operasi modulo prima
+              $p$.
+        \item Setiap unsur bukan nol punya invers:
+              $a \cdot a^{-1} \equiv 1 \pmod p$.
+        \item Pembagian pada rumus titik diganti perkalian dengan invers.
+        \item Contoh: $3^{-1} \equiv 4 \pmod{11}$ sebab
+              $3 \cdot 4 = 12 \equiv 1$.
+    \end{itemize}
+    \begin{alertblock}{Medan biner}
+        \footnotesize
+        ECC juga dapat didefinisikan di $GF(2^m)$. Pertemuan ini memakai
+        $GF(p)$ agar operasinya tetap aritmetika modulo biasa.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Kurva Eliptik}
+% =====================================================================
+
+\begin{frame}{Bentuk Kurva dan Syaratnya}
+    \begin{block}{Persamaan kurva}
+        \[
+            y^2 = x^3 + ax + b,
+            \qquad 4a^3 + 27b^2 \neq 0 .
+        \]
+    \end{block}
+    \vspace{0.05cm}
+    \begin{itemize}
+        \item Nilai $a$ dan $b$ menentukan bentuk serta letak kurva.
+        \item Syarat diskriminan menolak kurva yang memiliki akar ganda.
+        \item Contoh: $y^2 = x^3 - 4x$ memakai $a=-4$ dan $b=0$.
+        \item Contoh: $y^2 = x^3 - 12x + 13$ memakai $a=-12$ dan $b=13$.
+    \end{itemize}
+    \begin{alertblock}{Kurva di atas $GF(p)$}
+        \footnotesize
+        Untuk kriptografi persamaannya dibaca modulo $p$:
+        $y^2 \equiv x^3 + ax + b \pmod p$, dengan
+        $x,y \in \{0,1,\dots,p-1\}$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Lima Bentuk Kurva di Atas Bilangan Riil}
+    \centering
+    \bookfig[0.94\linewidth]{14}{galeri-kurva.png}
+    \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \footnotesize
+        \item Setiap pasangan $(a,b)$ memberi bentuk yang berbeda.
+        \item Jumlah komponen kurva dapat berubah dari satu pasangan ke
+              pasangan lain.
+        \item Gambar ini menjelaskan geometri, bukan dipakai menghitung.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Titik di Ketakhinggaan sebagai Elemen Netral}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Titik-titik biasa belum menyediakan elemen netral.
+                \item Ditambahkan satu titik $\mathcal{O}$, yaitu titik di
+                      ketakhinggaan.
+                \item $\mathcal{O}$ tidak tergambar, tetapi melengkapi
+                      grup.
+                \item Lawan titik diperoleh dengan pencerminan:
+                      $-P = (x,(-y) \bmod p)$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Peran $\mathcal{O}$}
+                \[
+                    P + \mathcal{O} = \mathcal{O} + P = P
+                \]
+                \[
+                    P + (-P) = \mathcal{O}
+                \]
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Akibatnya}
+        \footnotesize
+        Penjumlahan dua titik yang ordinatnya berlawanan tidak menghasilkan
+        titik baru, melainkan $\mathcal{O}$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Penjumlahan Titik: Empat Langkah Geometris}
+    \begin{enumerate}
+        \item Tarik garis lurus melalui $P$ dan $Q$.
+        \item Garis itu memotong kurva di titik ketiga, yaitu $-R$.
+        \item Cerminkan $-R$ terhadap sumbu-$x$.
+        \item Hasil pencerminan adalah $R = P + Q$.
+    \end{enumerate}
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \begin{block}{Koordinat}
+                Bila $R=(x_r,y_r)$, maka
+                \[
+                    -R = (x_r,-y_r) \pmod p .
+                \]
+            \end{block}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{alertblock}{Inti langkah}
+                \footnotesize
+                Pencerminan inilah yang membedakan penjumlahan titik dari
+                penjumlahan bilangan biasa.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Dari Geometri ke Rumus: Hubungan Vieta}
+    \footnotesize
+    \begin{itemize}
+        \item Garis melalui $P(x_p,y_p)$ dan $Q(x_q,y_q)$ ditulis
+              $y = mx + c$.
+        \item Substitusi ke persamaan kurva menghasilkan polinom kubik
+              \[
+                  x^3 - m^2x^2 + (a-2mc)x + (b-c^2) = 0 .
+              \]
+        \item Akar-akarnya adalah $x_p$, $x_q$, dan $x_r$.
+        \item Vieta memberi $x_p + x_q + x_r = m^2$.
+        \item Karena itu
+              $x_r = m^2 - x_p - x_q$.
+        \item Ordinatnya $y_r = m(x_p - x_r) - y_p$.
+        \item Di atas $GF(p)$, setiap hasil diambil modulo $p$.
+    \end{itemize}
+    \begin{exampleblock}{Gradien garis potong}
+        \[
+            m = \frac{y_p - y_q}{x_p - x_q}
+              \equiv (y_p - y_q)(x_p - x_q)^{-1} \pmod p .
+        \]
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Rumus Penjumlahan di $GF(p)$}
+    \begin{block}{Untuk $P \neq Q$}
+        \[
+        \begin{aligned}
+            m   &\equiv (y_p - y_q)(x_p - x_q)^{-1} \pmod p, \\
+            x_r &\equiv m^2 - x_p - x_q \pmod p, \\
+            y_r &\equiv m(x_p - x_r) - y_p \pmod p .
+        \end{aligned}
+        \]
+    \end{block}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Pembagian diganti perkalian dengan invers modulo.
+        \item Rumus hanya memakai operasi yang tersedia di dalam medan.
+        \item Hasilnya selalu titik lain pada kurva yang sama.
+    \end{itemize}
+    \begin{alertblock}{Kasus khusus}
+        \footnotesize
+        Bila $x_p = x_q$ dan $y_p = -y_q$, garisnya tegak dan
+        $P + Q = \mathcal{O}$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Penggandaan Titik}
+    \begin{block}{Menjumlahkan titik dengan dirinya sendiri}
+        Garis yang dipakai adalah garis singgung di $P$, sehingga
+        \[
+            m \equiv (3x_p^2 + a)(2y_p)^{-1} \pmod p .
+        \]
+    \end{block}
+    \vspace{0.05cm}
+    \begin{block}{Koordinat hasil $2P$}
+        \[
+            x_r \equiv m^2 - 2x_p \pmod p,
+            \qquad
+            y_r \equiv m(x_p - x_r) - y_p \pmod p .
+        \]
+    \end{block}
+    \vspace{0.05cm}
+    \begin{alertblock}{Bila $y_p = 0$}
+        \footnotesize
+        Penyebut gradien menjadi nol. Garis singgungnya tegak, sehingga
+        $2P = \mathcal{O}$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Perkalian Skalar dengan Penjumlahan dan Penggandaan}
+    \begin{block}{Pelelaran titik}
+        \[
+            kP = \underbrace{P + P + \dots + P}_{k \text{ kali}} .
+        \]
+    \end{block}
+    \vspace{0.05cm}
+    \begin{itemize}
+        \item Penjumlahan dan penggandaan adalah dua operasi dasar.
+        \item Keduanya dipakai bergantian mengikuti bit skalar $k$.
+        \item Contoh: $23P$ dihitung tanpa menjumlahkan $P$ dua puluh dua
+              kali.
+    \end{itemize}
+    \[
+        23P = 2\bigl(2(2(2P) + P) + P\bigr) + P .
+    \]
+    \begin{exampleblock}{Mengapa penting}
+        \footnotesize
+        ECDH dan ECEG sama-sama memerlukan $kP$. Biaya hitungnya tumbuh
+        sebanding dengan panjang $k$ dalam bit, bukan dengan nilai $k$.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Titik Kurva Membentuk Grup Abelian}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}l l >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Aksioma} & \textbf{Pemenuhan} & \textbf{Alasan} \\
+        \midrule
+        Ketertutupan & hasil $P+Q$ &
+        rumus koordinat hanya memakai operasi medan \\
+        \addlinespace
+        Asosiatif & --- &
+        $P+(Q+R) = (P+Q)+R$ \\
+        \addlinespace
+        Elemen netral & $\mathcal{O}$ &
+        $P+\mathcal{O} = \mathcal{O}+P = P$ \\
+        \addlinespace
+        Elemen invers & $-P=(x_p,-y_p)$ &
+        $P+(-P) = \mathcal{O}$ \\
+        \addlinespace
+        Komutatif & --- &
+        $P+Q = Q+P$ \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.25cm}
+    \begin{exampleblock}{Kesimpulan}
+        \footnotesize
+        Himpunan semua titik kurva ditambah $\mathcal{O}$, dengan operasi
+        penjumlahan titik, adalah \kunci{grup abelian}.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Menghitung Titik pada Kurva di $GF(11)$}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            Kurva: $y^2 \equiv x^3 + x + 6 \pmod{11}$.
+            \begin{itemize}
+                \item Untuk tiap $x$, hitung ruas kanan modulo $11$.
+                \item Nilai $y^2$ yang mungkin: $0,1,3,4,5,9$.
+                \item Hanya $x=2,3,5,7,8,10$ yang memberi kuadrat.
+                \item Setiap $x$ itu memberi dua nilai $y$, kecuali bila
+                      ruas kanannya nol.
+            \end{itemize}
+            \begin{exampleblock}{Hasil}
+                \footnotesize
+                Ada $12$ titik berhingga. Dengan $\mathcal{O}$, orde grupnya
+                $13$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{14}{sebaran-titik-gf11.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{ECDLP dan Pembangkitan Kunci}
+% =====================================================================
+
+\begin{frame}{ECDLP: Membalik Perkalian Titik}
+    \begin{block}{Persoalan logaritma diskret kurva eliptik}
+        \footnotesize
+        Diberikan titik $P$ dan $Q$ pada sebuah kurva. Carilah bilangan bulat
+        $k$ sehingga
+        \[
+            Q = kP .
+        \]
+    \end{block}
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Arah maju: mudah}
+                \footnotesize
+                Dari $k$ dan $P$, titik $Q$ dihitung dengan penjumlahan dan
+                penggandaan.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Arah balik: sukar}
+                \footnotesize
+                Dari $P$ dan $Q$, mencari $k$ sangat sukar bila orde grup
+                besar.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Bilangan $k$ disebut logaritma diskret dari $Q$ dengan basis
+              $P$.
+        \item Keamanan ECC bersandar pada kesukaran arah balik ini.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Membangkitkan Pasangan Kunci ECC}
+    \begin{enumerate}
+        \item Sepakati kurva $y^2 \equiv x^3 + ax + b \pmod p$, yaitu nilai
+              $a$, $b$, dan $p$.
+        \item Sepakati grup titik yang dihasilkan kurva itu.
+        \item Pilih titik basis $B(x_B,y_B)$ dari grup tersebut.
+    \end{enumerate}
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Milik pribadi}
+                \footnotesize
+                Kunci privat adalah bilangan bulat $x$ dengan
+                $1 \le x \le p-1$.
+            \end{block}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Milik publik}
+                \footnotesize
+                Kunci publik adalah titik
+                \[
+                    Q = x \cdot B .
+                \]
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Letak kesukarannya}
+        \footnotesize
+        Siapa pun boleh mengetahui $Q$ dan $B$. Memulihkan $x$ dari keduanya
+        berarti memecahkan ECDLP.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{ECDH}
+% =====================================================================
+
+\begin{frame}{Pertukaran Kunci ECDH}
+    \begin{enumerate}
+        \item Alice dan Bob menyepakati kurva serta titik basis $B$.
+        \item Alice memilih $a$ dan menghitung $P_A = aB$; Bob memilih $b$
+              dan menghitung $P_B = bB$.
+        \item Keduanya bertukar $P_A$ dan $P_B$, lalu mengalikan kunci publik
+              mitranya dengan kunci privat sendiri.
+    \end{enumerate}
+    \vspace{0.1cm}
+    \begin{block}{Hasil di kedua sisi}
+        \[
+        \begin{aligned}
+            \text{Alice:}\quad K &= a \cdot P_B = a(bB) = abB, \\
+            \text{Bob:}\quad   K &= b \cdot P_A = b(aB) = abB .
+        \end{aligned}
+        \]
+    \end{block}
+    \vspace{0.05cm}
+    \begin{alertblock}{Yang tidak pernah dikirim}
+        \footnotesize
+        Kunci privat $a$ dan $b$ tidak pernah melewati saluran. Yang berpindah
+        hanya titik $P_A$ dan $P_B$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Contoh ECDH pada $GF(5)$}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \footnotesize
+            Kurva: $y^2 \equiv x^3 + 2x + 1 \pmod 5$.
+            \begin{itemize}
+                \item Enam titik berhingga, ditambah $\mathcal{O}$ menjadi
+                      orde $7$.
+                \item Titik basis $B(0,1)$.
+                \item Alice memilih $a=2$; Bob memilih $b=3$.
+            \end{itemize}
+            \vspace{0.1cm}
+            \begin{tabular}{@{}c l l@{}}
+                \toprule
+                $k$ & $kB$ & Peran \\
+                \midrule
+                $1$ & $(0,1)$ & basis $B$ \\
+                $2$ & $(1,3)$ & publik Alice \\
+                $3$ & $(3,3)$ & publik Bob \\
+                $4$ & $(3,2)$ & --- \\
+                $5$ & $(1,2)$ & --- \\
+                $6$ & $(0,4)$ & kunci bersama \\
+                $7$ & $\mathcal{O}$ & orde tercapai \\
+                \bottomrule
+            \end{tabular}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Kunci publik}
+                \footnotesize
+                \[
+                    P_A = 2B = (1,3), \qquad
+                    P_B = 3B = (3,3) .
+                \]
+            \end{block}
+            \begin{exampleblock}{Kunci bersama}
+                \footnotesize
+                Alice: $K = 2 \cdot (3,3)$.
+
+                Bob: $K = 3 \cdot (1,3)$.
+
+                Keduanya memperoleh $(0,4) = 6B$. Karena $B$ berorde $7$,
+                maka $6B = -B$.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{ECEG}
+% =====================================================================
+
+\begin{frame}{Pesan Harus Menjadi Titik: Metode Koblitz}
+    \begin{itemize}
+        \item ECEG mengenkripsi titik kurva, bukan rangkaian karakter.
+        \item Setiap karakter dipetakan ke bilangan $m$: angka $0$--$9$
+              bernilai $0$--$9$, sedangkan huruf \texttt{A}--\texttt{Z}
+              bernilai $10$--$35$.
+        \item Pilih parameter basis $k$, lalu coba $x = mk+1$, $mk+2$, dan
+              seterusnya.
+        \item Percobaan berhenti ketika ruas kanan kurva menjadi kuadrat
+              modulo $p$.
+    \end{itemize}
+    \begin{exampleblock}{Huruf \texttt{B} pada $y^2 \equiv x^3 - x + 188
+        \pmod{751}$}
+        \footnotesize
+        Nilai $m=11$ dan $k=20$ memberi $x = 11 \cdot 20 + 1 = 221$.
+        Percobaan $x=221,222,223$ gagal. Pada $x=224$ ruas kanan bernilai
+        $673$, dan $248^2 \equiv 503^2 \equiv 673$. Jadi huruf \texttt{B}
+        menjadi titik $(224,248)$.
+    \end{exampleblock}
+    \begin{alertblock}{Dekode}
+        \footnotesize
+        $m = \lfloor (x-1)/k \rfloor = \lfloor 223/20 \rfloor = 11$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Enkripsi ECEG}
+    \begin{block}{Bahan yang sudah dimiliki Alice}
+        \footnotesize
+        Kurva, titik basis $B$, dan kunci publik Bob
+        $P_B = bB$. Pesan $M$ sudah diubah menjadi titik $P_M$.
+    \end{block}
+    \vspace{0.1cm}
+    \begin{enumerate}
+        \item Alice memilih bilangan acak $k$ dengan $1 \le k \le p-1$.
+        \item Alice menghitung titik $kB$.
+        \item Alice menutupi pesan dengan $P_M + kP_B$.
+        \item Cipherteks dikirim sebagai pasangan titik
+              \[
+                  P_C = \left[\, (kB),\ (P_M + kP_B) \,\right] .
+              \]
+    \end{enumerate}
+    \begin{alertblock}{Peran setiap komponen}
+        \footnotesize
+        $kB$ adalah bagian sementara yang dibutuhkan penerima. Komponen kedua
+        menyembunyikan titik pesan.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Dekripsi ECEG}
+    \begin{block}{Langkah Bob}
+        \footnotesize
+        Bob memakai kunci privat $b$ pada komponen pertama, lalu
+        mengurangkannya dari komponen kedua:
+        \[
+        \begin{aligned}
+            (P_M + kP_B) - b(kB)
+                &= P_M + k(bB) - b(kB) \\
+                &= P_M + kbB - kbB \\
+                &= P_M .
+        \end{aligned}
+        \]
+    \end{block}
+    \vspace{0.05cm}
+    \begin{itemize}
+        \item Pengurangan titik adalah penjumlahan dengan titik lawannya.
+        \item Setelah $P_M$ diperoleh, Koblitz dibalik untuk mendapat $M$.
+    \end{itemize}
+    \begin{exampleblock}{Sumber keberhasilan}
+        \footnotesize
+        $b(kB) = k(bB)$ berlaku karena perkalian skalar bersifat asosiatif
+        dan komutatif.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Keamanan dan Keuntungan ECC}
+% =====================================================================
+
+\begin{frame}{Keamanan ECC Bersandar pada ECDLP}
+    \begin{itemize}
+        \item Penyerang melihat kurva, titik basis $B$, dan kunci publik
+              $Q = xB$.
+        \item Yang dirahasiakan hanyalah skalar $x$.
+        \item Untuk memperoleh $x$, penyerang harus menyelesaikan ECDLP.
+        \item Kesukarannya bertambah seiring orde titik basis.
+    \end{itemize}
+    \begin{exampleblock}{Ilustrasi orde}
+        \footnotesize
+        Pada kurva $GF(11)$ sebelumnya, $P(2,4)$ berorde $13$ sehingga
+        $13P = \mathcal{O}$. Kurva yang dipakai sungguhan memilih titik
+        basis berorde sangat besar.
+    \end{exampleblock}
+    \begin{alertblock}{Salah paham yang sering muncul}
+        \footnotesize
+        Keamanan tidak berasal dari kerahasiaan kurva. Kurva, $p$, dan $B$
+        justru parameter publik yang disepakati.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Ukuran Kunci pada Keamanan Setara}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{5.0cm}
+                                  c c >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Kebutuhan} & \textbf{RSA} & \textbf{ECC} & \textbf{Catatan} \\
+        \midrule
+        Keamanan setara & 1024 bit & 160 bit &
+        kunci ECC jauh lebih pendek \\
+        \addlinespace
+        Menyalurkan kunci AES-128 & 3072 bit & 256 bit &
+        selisihnya makin besar \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item Dengan keamanan yang sama, ECC menuntut bit jauh lebih sedikit.
+        \item Pertambahan ukuran kunci ECC lebih landai daripada RSA.
+        \item Kunci pendek menghemat penyimpanan dan lebar pita.
+    \end{itemize}
+    \begin{alertblock}{Yang dibandingkan}
+        \footnotesize
+        Angka di atas adalah ukuran kunci, bukan ukuran cipherteks.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Keuntungan dan Tempat Pemakaian ECC}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Keuntungan}
+                \footnotesize
+                \begin{itemize}
+                    \item kunci lebih pendek pada keamanan setara;
+                    \item memori dan penyimpanan lebih hemat;
+                    \item komputasi lebih ringan;
+                    \item lebar pita yang dibutuhkan lebih kecil.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Pemakaian yang cocok}
+                \footnotesize
+                \begin{itemize}
+                    \item piranti komunikasi nirkabel;
+                    \item \textit{smart card};
+                    \item peladen web dengan banyak sesi;
+                    \item perangkat berdaya dan memori terbatas.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Layanan yang diberikan}
+        \footnotesize
+        Sama seperti sistem kunci publik lain: kerahasiaan, integritas, dan
+        autentikasi. Yang berbeda adalah \kunci{biaya} untuk mencapai tingkat
+        keamanan itu.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Contoh Terhitung}
+% =====================================================================
+
+\begin{frame}{Contoh: Penjumlahan $P+Q$ pada $GF(11)$}
+    \footnotesize
+    Kurva $y^2 \equiv x^3 + x + 6 \pmod{11}$, dengan $a=1$ dan $p=11$.
+    Titik $P(2,4)$ dan $Q(5,9)$.
+    \vspace{0.1cm}
+    \begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}p{3.8cm}
+                                  >{\raggedright\arraybackslash}X
+                                  >{\raggedright\arraybackslash}p{1.6cm}@{}}
+        \toprule
+        \textbf{Langkah} & \textbf{Operasi} & \textbf{Perhitungan} &
+        \textbf{Hasil} \\
+        \midrule
+        1 & Periksa $P$ & $4^2=16\equiv 5$ dan $2^3+2+6=16\equiv 5$ &
+        $P$ pada kurva \\
+        \addlinespace
+        2 & Gradien & $m \equiv (9-4)(5-2)^{-1} = 5 \cdot 3^{-1}
+        = 5 \cdot 4 = 20$ & $m \equiv 9$ \\
+        \addlinespace
+        3 & Absis & $x_r \equiv 9^2 - 2 - 5 = 81 - 7 = 74$ &
+        $x_r \equiv 8$ \\
+        \addlinespace
+        4 & Ordinat & $y_r \equiv 9(2-8) - 4 = -54 - 4 = -58$ &
+        $y_r \equiv 8$ \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Hasil}
+        \footnotesize
+        $P + Q = (8,8)$. Pemeriksaan: $8^2 = 64 \equiv 9$ dan
+        $8^3+8+6 = 526 \equiv 9 \pmod{11}$. Invers yang dipakai
+        $3^{-1} \equiv 4$ sebab $3 \cdot 4 = 12 \equiv 1 \pmod{11}$.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Contoh: Penggandaan $2P$ pada $GF(11)$}
+    \footnotesize
+    Masih dengan kurva $y^2 \equiv x^3 + x + 6 \pmod{11}$ dan $P(2,4)$.
+    \vspace{0.1cm}
+    \begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}p{3.5cm}
+                                  >{\raggedright\arraybackslash}X
+                                  >{\raggedright\arraybackslash}p{1.5cm}@{}}
+        \toprule
+        \textbf{Langkah} & \textbf{Operasi} & \textbf{Perhitungan} &
+        \textbf{Hasil} \\
+        \midrule
+        1 & Gradien & $m \equiv (3 \cdot 2^2 + 1)(2 \cdot 4)^{-1}
+        = 13 \cdot 8^{-1} = 13 \cdot 7 = 91$ & $m \equiv 3$ \\
+        \addlinespace
+        2 & Absis & $x_r \equiv 3^2 - 2(2) = 9 - 4 = 5$ &
+        $x_r = 5$ \\
+        \addlinespace
+        3 & Ordinat & $y_r \equiv 3(2-5) - 4 = -9 - 4 = -13$ &
+        $y_r \equiv 9$ \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Hasil}
+        \footnotesize
+        $2P = (5,9)$. Titik ini sama dengan $Q$, sehingga
+        $P+Q = 3P = (8,8)$.
+    \end{exampleblock}
+    \begin{alertblock}{Invers yang dipakai}
+        \footnotesize
+        $8^{-1} \equiv 7$ sebab $8 \cdot 7 = 56 \equiv 1 \pmod{11}$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Pelelaran $kP$ dan Orde Titik}
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}c l @{\hspace{7mm}} c l @{\hspace{7mm}} c l@{}}
+        \toprule
+        $k$ & $kP$ & $k$ & $kP$ & $k$ & $kP$ \\
+        \midrule
+        $1$  & $(2,4)$   & $6$  & $(7,2)$  & $11$ & $(5,2)$ \\
+        \addlinespace
+        $2$  & $(5,9)$   & $7$  & $(7,9)$  & $12$ & $(2,7)$ \\
+        \addlinespace
+        $3$  & $(8,8)$   & $8$  & $(3,6)$  & $13$ & $\mathcal{O}$ \\
+        \addlinespace
+        $4$  & $(10,9)$  & $9$  & $(10,2)$ &      & \\
+        \addlinespace
+        $5$  & $(3,5)$   & $10$ & $(8,3)$  &      & \\
+        \bottomrule
+    \end{tabular}
+    \vspace{0.2cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Yang dibaca dari tabel}
+                \footnotesize
+                $3P = (8,8)$, sama dengan hasil penjumlahan $P+Q$.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Orde titik}
+                \footnotesize
+                $13P = \mathcal{O}$, jadi orde $P$ adalah $13$, sama dengan
+                orde grup.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Penutup}
+% =====================================================================
+
+\begin{frame}{Yang Harus Diingat dan Pertemuan Berikutnya}
+    \begin{block}{Butir yang harus diingat}
+        \footnotesize
+        \begin{itemize}
+            \item Titik kurva ditambah $\mathcal{O}$ membentuk grup abelian;
+                  operasinya adalah penjumlahan titik.
+            \item Penjumlahan memakai gradien garis potong, penggandaan
+                  memakai gradien garis singgung, semuanya modulo $p$.
+            \item ECDLP --- mencari $k$ dari $Q=kP$ --- adalah dasar keamanan
+                  ECC.
+            \item ECDH menyamakan $abB$; ECEG mengirim
+                  $\left[(kB),\ (P_M+kP_B)\right]$ dan membukanya dengan
+                  $b(kB)$.
+            \item ECC memberi keamanan setara dengan kunci yang jauh lebih
+                  pendek daripada RSA.
+        \end{itemize}
+    \end{block}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 14} --- Knapsack, steganografi, dan steganalisis.
+    \end{exampleblock}
+\end{frame}
+
+\end{document}

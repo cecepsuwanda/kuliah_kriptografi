@@ -1,0 +1,1246 @@
+% =====================================================================
+%  minggu-09.tex  --  Slide Pertemuan Minggu ke-9
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Block cipher, DES, dan Triple DES
+%  Sumber materi : buku_ajar/chapters/06 (Bab 6) dan chapters/07 (Bab 7)
+%  Sub-CPMK      : 1.3
+%
+%  Cakupan: mode ECB, CBC, CFB, OFB, CTR; confusion dan diffusion;
+%  jaringan Feistel; DES; Double DES; Triple DES. AES dibahas di Minggu 10.
+%
+%  Kompilasi dari dalam folder ppt/:
+%      pdflatex -interaction=nonstopmode minggu-09.tex   (dua kali)
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Cipher Blok: Dari Satu Blok ke DES}
+\subtitle{Mode operasi, jaringan Feistel, DES, dan Triple DES}
+\setWeekInfo{Minggu 9}{Block cipher, DES, dan Triple DES}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \slidejudul{Delapan bagian}
+            \begin{enumerate}
+                \item Cipher blok dan padding
+                \item Lima mode operasi
+                \item Confusion dan diffusion
+                \item Iterated cipher dan Feistel
+                \item DES: alur dan fungsi $f$
+                \item Keamanan DES
+                \item Double DES dan Triple DES
+                \item Contoh hitung satu putaran
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 6 dan Bab 7 buku ajar; Munir, \textit{IF4020
+                Kriptografi}, ITB, 2026 (modul 08 dan 09).
+            \end{block}
+            \begin{exampleblock}{Dua poros pertemuan}
+                \footnotesize
+                Bagaimana satu blok diacak, dan bagaimana blok-blok itu
+                dirangkai menjadi pesan.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK 1.3}
+        \footnotesize
+        Mengenal block cipher dan mode operasinya (ECB, CBC, CFB, OFB,
+        CTR), jaringan Feistel, DES, Triple DES, AES, serta beberapa block
+        cipher lain (GOST, RC5, RC6, Blowfish, Serpent, Twofish, dan MARS).
+    \end{block}
+    \vspace{0.1cm}
+    {\scriptsize\itshape Pertemuan ini berhenti pada Triple DES; AES dan
+    cipher blok lain menjadi bahan Minggu 10.}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \footnotesize
+        \begin{itemize}
+            \item membedakan cipher blok dari cipher alir;
+            \item menjelaskan peran lima mode operasi pada rangkaian blok;
+            \item membedakan confusion dan diffusion;
+            \item menelusuri satu putaran Feistel dan fungsi $f$ DES;
+            \item menjelaskan mengapa Double DES lemah dan bagaimana
+                  Triple DES menutupnya;
+            \item menghitung putaran pertama DES pada vektor uji buku.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Cipher Blok: Satu Blok, Satu Kunci}
+% =====================================================================
+
+\begin{frame}{Cipher Blok Bekerja per Blok}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Plainteks dipotong menjadi blok $n$ bit yang
+                      panjangnya sama.
+                \item Setiap blok dienkripsi sebagai satu kesatuan dengan
+                      bit-bit kunci.
+                \item Panjang cipherteks sama dengan panjang plainteks.
+                \item Ukuran blok yang lazim: 64, 128, dan 256 bit.
+                \item Panjang kunci eksternal tidak harus sama dengan
+                      ukuran blok.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Dua fungsi}
+                \[
+                    C = E_K(P), \qquad P = D_K(C)
+                \]
+                \footnotesize
+                Keduanya bekerja pada himpunan blok $n$ bit yang sama.
+            \end{block}
+            \begin{alertblock}{Beda dengan cipher alir}
+                \footnotesize
+                Cipher alir memproses data sedikit demi sedikit; cipher
+                blok menunggu satu blok penuh.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Padding: Menutup Blok Terakhir}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Pesan jarang habis dibagi ukuran blok.
+                \item Blok terakhir yang pendek ditambahi bit
+                      \textit{padding}.
+                \item Isi padding dapat berupa bit 0 semua, bit 1 semua,
+                      atau 0 dan 1 berselang-seling.
+                \item Penerima harus tahu aturan padding agar dapat
+                      membuangnya kembali.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{exampleblock}{Contoh blok 8 bit}
+                \footnotesize
+                Pesan tiga blok:
+                \[
+                    \code{10001101}\quad \code{00101001}\quad
+                    \code{10110}
+                \]
+                Blok terakhir hanya 5 bit, ditambah tiga bit nol:
+                \[
+                    \code{10001101}\quad \code{00101001}\quad
+                    \code{10110000}
+                \]
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{block}{Ukuran blok dan ukuran kunci}
+        \footnotesize
+        Ukuran blok menentukan jangkauan diffusion; ukuran kunci
+        menentukan efek confusion dan ketahanan terhadap pencarian
+        menyeluruh.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Cipher Blok Mainan}
+    \footnotesize
+    Dua operasi sederhana sudah membentuk cipher blok yang dapat dibalik:
+    XOR dengan kunci, lalu geser siklik satu bit ke kiri.
+    \[
+        C = E_K(P) = \mathrm{rotl}_1(P \oplus K), \qquad
+        P = D_K(C) = \mathrm{rotr}_1(C) \oplus K
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Enkripsi blok pertama}
+                \footnotesize
+                $P_1=\code{11011101}$, $K=\code{01010110}$:
+                \begin{enumerate}
+                    \item $P_1 \oplus K = \code{10001011}$;
+                    \item geser kiri satu bit: $C_1=\code{00010111}$.
+                \end{enumerate}
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Dekripsi}
+                \footnotesize
+                \begin{enumerate}
+                    \item Geser kanan $\code{00010111}$ menjadi
+                          $\code{10001011}$;
+                    \item XOR dengan kunci:
+                          $\code{10001011}\oplus\code{01010110}
+                          =\code{11011101}$.
+                \end{enumerate}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Terlalu lemah}
+        \footnotesize
+        Cipher mainan ini mudah dipecahkan. Cipher blok modern mengulang
+        substitusi, permutasi, pergeseran, kompresi, dan ekspansi berkali-kali.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Lima Mode Operasi}
+% =====================================================================
+
+\begin{frame}{Mengapa Perlu Mode Operasi}
+    \footnotesize
+    Fungsi $E_K$ hanya mengolah satu blok. Pesan yang dikirim biasanya
+    terdiri atas banyak blok.
+    \begin{block}{Definisi mode operasi}
+        Aturan yang menentukan bagaimana blok-blok pesan dirangkai
+        sebelum dienkripsi atau sesudah didekripsi.
+    \end{block}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.46\textwidth}
+            \begin{enumerate}
+                \item ECB --- \textit{Electronic Code Book}
+                \item CBC --- \textit{Cipher Block Chaining}
+                \item CFB --- \textit{Cipher Feedback}
+                \item OFB --- \textit{Output Feedback}
+                \item CTR --- \textit{Counter Mode}
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.50\textwidth}
+            \begin{exampleblock}{Dua pertanyaan pembeda}
+                \footnotesize
+                Apakah blok plainteks yang sama selalu menjadi blok
+                cipherteks yang sama? Apakah galat satu bit menjalar ke
+                blok lain?
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{ECB: Tiap Blok Berdiri Sendiri}
+    \footnotesize
+    \[
+        C_i = E_K(P_i), \qquad P_i = D_K(C_i)
+    \]
+    Tidak ada ketergantungan antarblok. Blok dapat diproses dalam urutan
+    apa pun.
+    \begin{exampleblock}{Contoh buku: plainteks \code{A23A9}, kunci \code{B}}
+        \footnotesize
+        Plainteks 20 bit dipotong menjadi lima blok 4 bit. Cipher blok
+        mainan $\mathrm{rotl}_1(P\oplus K)$ diterapkan pada tiap blok.
+        \begin{center}
+            \begin{tabular}{@{}lccccc@{}}
+                \toprule
+                Blok & 1 & 2 & 3 & 4 & 5 \\
+                \midrule
+                $P_i$ & \code{1010} & \code{0010} & \code{0011}
+                      & \code{1010} & \code{1001} \\
+                $C_i$ & \code{0010} & \code{0011} & \code{0001}
+                      & \code{0010} & \code{0100} \\
+                \bottomrule
+            \end{tabular}
+        \end{center}
+        Cipherteksnya \code{0010 0011 0001 0010 0100}, yaitu
+        \code{23124} dalam heksadesimal.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{ECB: Buku Kode dan Kebocoran Pola}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Blok plainteks yang sama selalu menghasilkan blok
+                      cipherteks yang sama.
+                \item Pola berulang, misalnya spasi panjang, tetap tampak
+                      dan dapat dianalisis frekuensinya.
+                \item Secara teori mode ini adalah buku kode: $2^n$ buku
+                      untuk kunci $n$ bit, masing-masing $2^n$ entri.
+                \item Untuk blok 64 bit, satu buku berisi $2^{64}$ entri;
+                      terlalu besar untuk disimpan.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{alertblock}{Blok dapat dibuang}
+                \footnotesize
+                Pesan ``Uang ditransfer lima satu juta rupiah'' dengan
+                blok 2 karakter. Bila $C_8$ dan $C_9$ dibuang, penerima
+                tetap memperoleh pesan bermakna: uang yang dikirim hanya
+                satu juta rupiah.
+            \end{alertblock}
+            \begin{exampleblock}{Sisi baiknya}
+                \footnotesize
+                Akses acak dan galat satu bit hanya mengenai bloknya
+                sendiri.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{CBC: Merantai Blok dengan IV}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \[
+                C_0 = \mathrm{IV}, \qquad
+                C_i = E_K(P_i \oplus C_{i-1})
+            \]
+            \[
+                P_i = D_K(C_i) \oplus C_{i-1}
+            \]
+            \begin{itemize}
+                \item IV adalah blok semu pertama, diberikan pengguna
+                      atau dibangkitkan acak.
+                \item Setiap blok terikat pada seluruh blok sebelumnya.
+                \item Blok plainteks yang sama pada posisi berbeda
+                      menghasilkan cipherteks berbeda.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{center}
+                \begin{tikzpicture}[>=Stealth,font=\scriptsize,
+                                    scale=0.86,transform shape]
+                    \node (p1) at (0,0) {$P_1$};
+                    \node[circle,draw,inner sep=1.2pt] (x1) at (1.1,0)
+                          {$\oplus$};
+                    \node[draw,rounded corners,inner sep=2pt] (e1) at
+                          (2.5,0) {$E_K$};
+                    \node (c1) at (3.8,0) {$C_1$};
+                    \node (iv) at (1.1,0.95) {IV};
+                    \draw[->] (iv) -- (x1);
+                    \draw[->] (p1) -- (x1);
+                    \draw[->] (x1) -- (e1);
+                    \draw[->] (e1) -- (c1);
+                    \node (p2) at (0,-1.5) {$P_2$};
+                    \node[circle,draw,inner sep=1.2pt] (x2) at (1.1,-1.5)
+                          {$\oplus$};
+                    \node[draw,rounded corners,inner sep=2pt] (e2) at
+                          (2.5,-1.5) {$E_K$};
+                    \node (c2) at (3.8,-1.5) {$C_2$};
+                    \draw[->] (p2) -- (x2);
+                    \draw[->] (c1) -- ++(0,-0.35) -| (x2);
+                    \draw[->] (x2) -- (e2);
+                    \draw[->] (e2) -- (c2);
+                \end{tikzpicture}
+            \end{center}
+            \figsumber{Alur perantaian mode CBC.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{CBC: Pola Hilang, Galat Menjalar}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{exampleblock}{Contoh buku}
+                \footnotesize
+                Dengan plainteks \code{A23A9}, $K=\code{1011}$, dan
+                $C_0=\code{0000}$, cipherteks CBC adalah
+                \code{0010 0111 1111 1101 1111} atau \code{27FDF}.
+                Blok \code{1010} di posisi 1 dan 4 menjadi \code{0010}
+                dan \code{1101}, bukan lagi kembar.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Pengulangan plainteks tidak lagi terlihat pada
+                      cipherteks.
+                \item Saat enkripsi, galat satu bit merambat ke blok itu
+                      dan semua blok sesudahnya.
+                \item Saat dekripsi, galat satu bit cipherteks hanya
+                      mengenai blok itu dan satu bit pada blok berikutnya.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{block}{Harga yang dibayar}
+        \footnotesize
+        Keamanan pola diperoleh dengan kehilangan sebagian sifat
+        independen: enkripsi harus berjalan berurutan.
+    \end{block}
+\end{frame}
+
+\begin{frame}{CFB: Cipher Blok Meniru Cipher Alir}
+    \footnotesize
+    Data dienkripsi per unit $s$ bit, dengan $s\le b$ dan $b$ ukuran blok.
+    \[
+        C_j = P_j \oplus \mathrm{MSB}_s(E_K(X_j)), \qquad
+        X_{j+1} = \mathrm{LSB}_{b-s}(X_j) \parallel C_j
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{itemize}
+                \item $X_1=\mathrm{IV}$; antrian (\textit{shift register})
+                      panjangnya $b$ bit.
+                \item Umpan balik diambil dari cipherteks.
+                \item Bila $s=b$: $C_i=P_i\oplus E_K(C_{i-1})$.
+                \item Dekripsi hanya memerlukan $E_K$, bukan $D_K$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{alertblock}{Galat}
+                \footnotesize
+                Pada enkripsi, galat merambat ke blok sekarang dan
+                blok-blok berikutnya. Pada dekripsi, galat terbatas pada
+                blok sekarang dan satu blok sesudahnya.
+            \end{alertblock}
+            \begin{exampleblock}{Kegunaan}
+                \footnotesize
+                Cocok untuk data yang belum mencapai satu blok penuh,
+                misalnya satu karakter 8 bit (CFB 8-bit).
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{OFB: Umpan Balik dari Keluaran Enkripsi}
+    \footnotesize
+    \[
+        C_j = P_j \oplus \mathrm{MSB}_s(E_K(X_j)), \qquad
+        X_{j+1} = \mathrm{LSB}_{b-s}(X_j) \parallel
+        \mathrm{MSB}_s(E_K(X_j))
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{itemize}
+                \item Bedanya dengan CFB: yang masuk antrian adalah
+                      keluaran $E_K$, bukan cipherteks.
+                \item Umpan balik tidak melewati cipherteks.
+                \item Galat satu bit pada plainteks maupun cipherteks
+                      hanya mengenai bloknya sendiri.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{exampleblock}{Sasaran pemakaian}
+                \footnotesize
+                Transmisi analog yang didigitisasi, seperti suara dan
+                video. Satu bit salah masih dapat ditoleransi, tetapi
+                penjalaran galat tidak boleh terjadi.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{CTR: Counter sebagai Pembangkit Keystream}
+    \footnotesize
+    \[
+        C_j = P_j \oplus E_K(T_j), \qquad T_j = T_{j-1}+1
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{itemize}
+                \item $T_j$ adalah blok counter sebesar ukuran blok.
+                \item Nilai counter harus berbeda untuk setiap blok.
+                \item Counter diinisialisasi sekali, lalu dinaikkan satu
+                      untuk blok berikutnya.
+                \item Blok terakhir yang tidak penuh memakai bit paling
+                      kiri dari keystream.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{exampleblock}{Sifat utama}
+                \footnotesize
+                Hanya algoritma enkripsi yang diperlukan. Blok tidak
+                saling bergantung, sehingga enkripsi dan dekripsi dapat
+                diparalelkan dan diakses acak.
+            \end{exampleblock}
+            \begin{alertblock}{Syarat}
+                \footnotesize
+                Nilai counter harus tidak diketahui atau tidak dapat
+                diprediksi lawan.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Perbandingan Lima Mode}
+    \scriptsize
+    \begin{center}
+        \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{1.05cm}
+            *{3}{>{\raggedright\arraybackslash}X}
+            >{\raggedright\arraybackslash}p{3.3cm}@{}}
+            \toprule
+            \textbf{Mode} & \textbf{Ketergantungan} &
+            \textbf{Galat} & \textbf{Akses} & \textbf{Ciri khas} \\
+            \midrule
+            ECB & Tidak ada & Hanya blok itu & Acak, paralel &
+            Pola plainteks berulang ikut bocor \\
+            CBC & Blok sebelumnya & Enkripsi menjalar & Enkripsi serial &
+            IV menghapus pola berulang \\
+            CFB & Cipherteks & Menjalar saat enkripsi & Serial &
+            Bekerja per unit $s$ bit seperti cipher alir \\
+            OFB & Keluaran $E_K$ & Tidak menjalar & Serial &
+            Cocok untuk suara dan video terdigitalisasi \\
+            CTR & Tidak ada & Tidak menjalar & Acak, paralel &
+            Counter harus unik dan tak terprediksi \\
+            \bottomrule
+        \end{tabularx}
+    \end{center}
+    \vspace{0.1cm}
+    {\footnotesize Pilihan mode menentukan dua hal sekaligus: pola apa
+    yang masih terlihat pada cipherteks, dan sejauh mana satu galat
+    merusak data sesudahnya.}
+\end{frame}
+
+% =====================================================================
+\section{Confusion dan Diffusion}
+% =====================================================================
+
+\begin{frame}{Confusion: Menutup Hubungan Statistik}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Diperkenalkan Shannon pada 1949 bersama diffusion.
+                \item Confusion menyembunyikan hubungan statistik antara
+                      plainteks, cipherteks, dan kunci.
+                \item Kriptanalis kehilangan pola statistik yang biasa
+                      dipakai untuk menebak kunci.
+                \item Sarannya: substitusi nirlanjar, umumnya berupa tabel
+                      pencarian.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Inti gagasan}
+                \footnotesize
+                Hubungan antara bit masukan dan bit keluaran dibuat
+                berbelit, sehingga perubahan kecil pada kunci tidak
+                tampak sebagai perubahan yang dapat diprediksi.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{S-box: Enam Bit Menjadi Empat Bit}
+    \footnotesize
+    Pada DES, kotak-S menerima 6 bit dan mengeluarkan 4 bit.
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.44\textwidth}
+            \begin{itemize}
+                \item Bit ke-1 dan ke-6 menentukan nomor baris.
+                \item Bit ke-2 sampai ke-5 menentukan nomor kolom.
+                \item Masukan $\code{110100}$: baris
+                      $(10)_2=2$, kolom $(1010)_2=10$.
+                \item Masukan $\code{101010}$: baris 2, kolom 5.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.54\textwidth}
+            \begin{exampleblock}{Baris 2 tabel $S_1$}
+                \scriptsize
+                \setlength{\tabcolsep}{1.2pt}
+                \begin{center}
+                    \begin{tabular}{@{}*{16}{c}@{}}
+                        4 & 1 & 14 & 8 & 13 & 6 & 2 & 11 & 15 & 12
+                        & 9 & 7 & 3 & 10 & 5 & 0 \\
+                    \end{tabular}
+                \end{center}
+                Kolom ke-10 bernilai 9, jadi keluarannya
+                $\code{1001}$.
+            \end{exampleblock}
+            \begin{alertblock}{Peran dalam cipher}
+                \footnotesize
+                Mengubah satu bit masukan mengubah paling sedikit dua bit
+                keluaran. Sifat ini menopang confusion.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Diffusion: Satu Bit Mengubah Banyak Bit}
+    \footnotesize
+    Diffusion menyebarkan pengaruh satu bit plainteks atau kunci ke
+    sebanyak mungkin bit cipherteks.
+    \begin{exampleblock}{Contoh blok 16 bit}
+        \footnotesize
+        \[
+            \code{1111111111111111} \longrightarrow
+            \code{0110110000010100}
+        \]
+        Ubah bit pertama menjadi 0:
+        \[
+            \code{0111111111111111} \longrightarrow
+            \code{1011001011101111}
+        \]
+        Perubahan satu bit masukan mengubah banyak bit keluaran.
+    \end{exampleblock}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}
+                \item Dicapai dengan permutasi atau transposisi yang
+                      diulang.
+                \item Hasilnya sukar diprediksi dari masukan.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Akibat bagi penyerang}
+                \footnotesize
+                Menebak kunci dari sebagian cipherteks tidak lagi
+                memberi petunjuk tentang bit plainteks yang lain.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{P-box dan Putaran yang Diulang}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item P-box adalah matriks permutasi: entri ke-$i$
+                      menyatakan bit masukan yang pindah ke posisi $i$.
+                \item Pada DES, bit ke-58 pindah ke posisi pertama dan
+                      bit ke-50 ke posisi kedua.
+                \item Permutasi dapat pula mengompresi (mengurangi bit)
+                      atau mengekspansi (menambah bit).
+                \item Cipher lain memakai pergeseran siklik, bukan P-box.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Satu putaran}
+                \footnotesize
+                Substitusi menghasilkan confusion, permutasi
+                menghasilkan diffusion. Keduanya diulang dengan kunci
+                putaran yang berbeda.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Iterated Cipher dan Jaringan Feistel}
+% =====================================================================
+
+\begin{frame}{Iterated Cipher: Satu Blok, $r$ Putaran}
+    \footnotesize
+    \[
+        C_i = f(C_{i-1}, K_i), \qquad i=1,2,\dots,r
+    \]
+    Plainteks adalah $C_0$, cipherteks adalah $C_r$. Kunci sering
+    dicampurkan sebelum putaran pertama dan sesudah putaran terakhir:
+    \[
+        C_0 = P\oplus K_0, \qquad
+        C = C_{r-1}\oplus K_r
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{itemize}
+                \item $f$ disebut fungsi putaran; di dalamnya ada
+                      substitusi dan permutasi.
+                \item Setiap putaran memakai subkunci berbeda.
+                \item DES memakai $r=16$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{alertblock}{Trade-off}
+                \footnotesize
+                Makin banyak putaran, makin luas diffusion, tetapi
+                komputasi makin mahal. Jumlah putaran harus
+                menyeimbangkan keamanan dan efisiensi.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Jaringan Feistel: Dua Separuh yang Bertukar Peran}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \footnotesize
+            Blok dibagi menjadi $L$ dan $R$. Pada setiap putaran:
+            \[
+                L_i = R_{i-1}, \qquad
+                R_i = L_{i-1}\oplus f(R_{i-1},K_i)
+            \]
+            \begin{itemize}
+                \item Hanya satu separuh yang diolah fungsi $f$.
+                \item Hasilnya di-XOR-kan ke separuh lain.
+                \item Kedua separuh bertukar peran pada putaran
+                      berikutnya.
+                \item Struktur ini dipakai DES.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{center}
+                \bookfig[0.98\linewidth]{06}{jaringan-feistel.png}
+            \end{center}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Mengapa Feistel Mudah Dibalik}
+    \footnotesize
+    Dari persamaan enkripsi, dekripsi tidak memerlukan fungsi $f^{-1}$:
+    \[
+        R_{i-1} = L_i, \qquad
+        L_{i-1} = R_i \oplus f(L_i,K_i)
+    \]
+    Pemeriksaannya langsung:
+    \[
+        L_{i-1}\oplus f(R_{i-1},K_i)\oplus f(R_{i-1},K_i)
+        = L_{i-1}
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{itemize}
+                \item Dekripsi menjalankan jaringan yang sama dari bawah
+                      ke atas.
+                \item Urutan subkunci dibalik: $K_{16},\dots,K_1$.
+                \item Perancang tidak perlu menulis algoritma dekripsi
+                      terpisah.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{exampleblock}{Konsekuensi rancangan}
+                \footnotesize
+                Karena tidak perlu dibalik, $f$ boleh dibuat serumit
+                mungkin tanpa mengorbankan kemampuan dekripsi.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Key Scheduling: Dari Kunci Eksternal ke Subkunci}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{itemize}
+                \item Kunci eksternal diturunkan menjadi kunci putaran
+                      melalui \textit{key expansion} atau
+                      \textit{key scheduling}.
+                \item Panjang subkunci tidak harus sama dengan panjang
+                      kunci eksternal.
+                \item DES: kunci 64 bit menjadi 16 subkunci 48 bit.
+                \item Subkunci berbeda tiap putaran mencegah transformasi
+                      yang sama terulang.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{center}
+                \bookfig[0.98\linewidth]{06}{pembangkitan-subkunci.png}
+            \end{center}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Data Encryption Standard}
+% =====================================================================
+
+\begin{frame}{DES: Standar, Algoritma, dan Sejarah}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item DES adalah nama standar; algoritmanya disebut
+                      \textit{Data Encryption Algorithm} (DEA).
+                \item Termasuk cipher blok kunci-simetri.
+                \item 1972: NBS meminta standar enkripsi blok.
+                \item 1974: Horst Feistel di IBM merancang
+                      \textit{Lucifer} dengan kunci dan blok 128 bit.
+                \item Lucifer berkembang menjadi DES: kunci 56 bit, blok
+                      64 bit, 16 putaran.
+                \item 1976: DES disetujui setelah dinilai NSA.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Yang berubah dari Lucifer}
+                \footnotesize
+                Panjang kunci dipangkas, ukuran blok diperkecil, dan
+                jumlah putaran ditetapkan 16. Perubahan itulah yang
+                menjadi inti perdebatan keamanan DES.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Parameter DES}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \small
+            \begin{tabular}{@{}ll@{}}
+                \toprule
+                \textbf{Parameter} & \textbf{Nilai} \\
+                \midrule
+                Ukuran blok & 64 bit \\
+                Kunci eksternal & 64 bit \\
+                Kunci efektif & 56 bit \\
+                Bit paritas & 8, 16, 24, 32, 40, 48, 56, 64 \\
+                Putaran & 16 \\
+                Kunci internal & 16 buah, masing-masing 48 bit \\
+                \bottomrule
+            \end{tabular}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \begin{alertblock}{Delapan bit yang dibuang}
+                \footnotesize
+                Bit pada posisi kelipatan 8 hanya paritas. Karena itu
+                ruang kunci DES berisi $2^{56}$ kemungkinan, bukan
+                $2^{64}$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.25cm}
+    \begin{block}{Ruang kunci}
+        \footnotesize
+        Angka $2^{56}$ inilah yang menentukan keamanan DES dan menjadi
+        sasaran serangan pencarian menyeluruh.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Alur Enkripsi DES}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \footnotesize
+            Tiga tahap:
+            \begin{enumerate}
+                \item Permutasi awal (IP) mengubah urutan 64 bit
+                      plainteks.
+                \item 16 putaran \textit{enciphering} memakai
+                      $K_1,\dots,K_{16}$.
+                \item Invers permutasi awal ($\mathrm{IP}^{-1}$)
+                      membentuk cipherteks.
+            \end{enumerate}
+            \begin{itemize}
+                \item Setelah putaran ke-16, blok disusun
+                      $R_{16}\parallel L_{16}$; putaran terakhir tidak
+                      menukar separuh.
+                \item Dekripsi memakai algoritma sama dengan subkunci
+                      terbalik.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{center}
+                \bookfig[0.98\linewidth]{07}{skema-enkripsi-des.png}
+            \end{center}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Fungsi $f$: Empat Langkah}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            Fungsi $f$ menerima 32 bit dan subkunci 48 bit, lalu
+            mengembalikan 32 bit.
+            \begin{enumerate}
+                \item Ekspansi $E$: 32 bit menjadi 48 bit.
+                \item XOR dengan $K_i$: $A=E(R_{i-1})\oplus K_i$.
+                \item $A$ dipecah menjadi delapan kelompok 6 bit;
+                      $S_1,\dots,S_8$ masing-masing menghasilkan 4 bit,
+                      membentuk $B$ 32 bit.
+                \item Permutasi $P$ mengacak $B$.
+            \end{enumerate}
+            \[
+                f(R,K)=P\bigl(S_1(B_1)\parallel\dots\parallel
+                S_8(B_8)\bigr)
+            \]
+            Luaran putaran: $(L_i,R_i)=(R_{i-1},L_{i-1}\oplus P(B))$.
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{center}
+                \bookfig[0.98\linewidth]{07}{fungsi-f-des.png}
+            \end{center}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Pembangkitan 16 Subkunci DES}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \footnotesize
+            \begin{enumerate}
+                \item PC-1 membuang delapan bit paritas dan menyisakan
+                      56 bit.
+                \item Hasilnya dipecah menjadi $C_0$ dan $D_0$, masing-masing
+                      28 bit.
+                \item $C_i$ dan $D_i$ digeser siklik ke kiri menurut
+                      jadwal $1,1,2,2,\dots,1$.
+                \item PC-2 memilih 48 bit dari $C_i\parallel D_i$
+                      menjadi $K_i$.
+            \end{enumerate}
+            \[
+                \begin{aligned}
+                    C_i&=\mathrm{LS}_{s_i}(C_{i-1}), \qquad
+                    D_i=\mathrm{LS}_{s_i}(D_{i-1}),\\
+                    K_i&=\mathrm{PC2}(C_i\parallel D_i)
+                \end{aligned}
+            \]
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{center}
+                \bookfig[0.98\linewidth]{07}{pembangkitan-kunci-des.png}
+            \end{center}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Keamanan DES}
+% =====================================================================
+
+\begin{frame}{Ruang Kunci $2^{56}$ dan Pencarian Menyeluruh}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{itemize}
+                \item Penyerang memerlukan pasangan plainteks-cipherteks
+                      yang berkoresponden.
+                \item Untuk setiap kandidat $k$, hitung
+                      $\mathrm{DES}(k,p)$ dan bandingkan dengan $c$.
+                \item Ruang kunci berisi
+                      \[
+                          2^{56}=72\,057\,594\,037\,927\,936
+                      \]
+                      kemungkinan.
+                \item Kunci diharapkan ditemukan sebelum $2^{55}$
+                      iterasi.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{exampleblock}{Laju satu juta kunci per detik}
+                \footnotesize
+                Pencarian rata-rata $2^{55}$ memerlukan sekitar 1.142
+                tahun. Seluruh ruang kunci dua kali lebih lama.
+            \end{exampleblock}
+            \begin{alertblock}{Kenyataan perangkat keras}
+                \footnotesize
+                1997: kontes DESCHALL. 1998: mesin EFF senilai \$250.000
+                dengan 1.856 chip menemukan kunci dalam sedikit lebih
+                dari dua hari. 1999: kurang dari satu hari.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Efek Longsoran}
+    \footnotesize
+    Efek longsoran menunjukkan bahwa perubahan satu bit masukan menyebar
+    ke sekitar separuh bit keluaran.
+    \begin{exampleblock}{Vektor uji resmi}
+        \footnotesize
+        \[
+            \mathrm{DES}(\code{0123456789ABCDEF},
+            \code{133457799BBCDFF1})
+            = \code{85E813540F0AB405}
+        \]
+        Balik bit pertama plainteks:
+        \[
+            \mathrm{DES}(\code{8123456789ABCDEF},
+            \code{133457799BBCDFF1})
+            = \code{AD9DFD6C35DE8DEC}
+        \]
+    \end{exampleblock}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}
+                \item Kedua cipherteks berbeda pada 33 dari 64 bit.
+                \item Perubahan itu mendekati separuh bit.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Makna praktis}
+                \footnotesize
+                Hubungan masukan-keluaran sukar ditebak, sehingga
+                penyerang tidak dapat menilai kandidat kunci dari
+                kemiripan cipherteks.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Empat Kunci Lemah DES}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Kunci lemah memenuhi $E_K(E_K(x))=x$ untuk semua
+                      plainteks $x$.
+                \item Artinya enkripsi dan dekripsi menjadi sama.
+                \item Penyebabnya: seluruh 16 subkunci identik.
+                \item Ada empat kunci lemah, semuanya panjang 56 bit.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Contoh \code{0101010101010101}}
+                \footnotesize
+                Setiap byte bernilai \code{00000001}. PC-1 membuang bit
+                terakhir tiap byte, sehingga $C_0$ dan $D_0$ seluruhnya
+                nol. Pergeseran atas deretan nol tetap nol, dan semua
+                subkunci menjadi \code{000000000000}.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{center}
+        \small
+        \code{0101010101010101} \quad
+        \code{1F1F1F1F0E0E0E0E} \\
+        \vspace{2pt}
+        \code{E0E0E0E0F1F1F1F1} \quad
+        \code{FEFEFEFEFEFEFEFE}
+    \end{center}
+    \begin{alertblock}{Praktik}
+        \footnotesize
+        Keempat kunci ini harus dihindari saat membangkitkan kunci DES.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Double DES dan Triple DES}
+% =====================================================================
+
+\begin{frame}{Double DES dan Serangan Meet-in-the-Middle}
+    \footnotesize
+    \[
+        C=E_{K_2}\bigl(E_{K_1}(P)\bigr), \qquad
+        P=D_{K_1}\bigl(D_{K_2}(C)\bigr)
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{enumerate}
+                \item Tentukan nilai antara
+                      $X=E_{K_1}(P)=D_{K_2}(C)$.
+                \item Enkripsi $P$ dengan semua $2^{56}$ nilai $K_1$;
+                      simpan setiap $X$ dalam tabel.
+                \item Dekripsi $C$ dengan semua $2^{56}$ nilai $K_2$;
+                      bandingkan hasilnya dengan isi tabel.
+                \item Kecocokan memberi pasangan calon $(K_1,K_2)$.
+                \item Uji pasangan itu dengan pasangan
+                      plainteks-cipherteks lain.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{alertblock}{Mengapa gagal}
+                \footnotesize
+                Dua kunci 56 bit seolah memberi $2^{112}$ kemungkinan,
+                tetapi pertemuan di nilai antara menurunkan biaya
+                pencarian menjadi sekitar $2^{57}$.
+            \end{alertblock}
+            \begin{block}{Pelajaran}
+                \footnotesize
+                Menambah satu lapis enkripsi tidak otomatis menggandakan
+                keamanan.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Triple DES: EEE dan EDE}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            \textbf{Mode EEE} (enkripsi-enkripsi-enkripsi):
+            \[
+                C=E_{K_3}\bigl(E_{K_2}(E_{K_1}(P))\bigr)
+            \]
+            \textbf{Mode EDE} (enkripsi-dekripsi-enkripsi):
+            \[
+                C=E_{K_3}\bigl(D_{K_2}(E_{K_1}(P))\bigr)
+            \]
+            \[
+                P=D_{K_1}\bigl(E_{K_2}(D_{K_3}(C))\bigr)
+            \]
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Mengapa EDE}
+                \footnotesize
+                Bila $K_1=K_2=K_3=K$, maka
+                $E_K(D_K(E_K(P)))=E_K(P)$. Triple DES tetap kompatibel
+                dengan DES tunggal.
+            \end{block}
+            \begin{exampleblock}{Panjang kunci}
+                \footnotesize
+                Dua kunci: $K_1,K_2,K_1$ memberi $56+56=112$ bit.
+                Tiga kunci: $K_1,K_2,K_3$ memberi $56+56+56=168$ bit.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Tujuan}
+        \footnotesize
+        Tiga lapis enkripsi membuat serangan meet-in-the-middle kembali
+        mahal, tanpa meninggalkan kompatibilitas dengan DES.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Contoh Terhitung: Putaran Pertama DES}
+% =====================================================================
+
+\begin{frame}{Contoh: Putaran Pertama DES (1/4)}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Vektor uji}
+                \small
+                \begin{tabular}{@{}ll@{}}
+                    $P$ & \code{0123456789ABCDEF} \\
+                    $K$ & \code{133457799BBCDFF1} \\
+                    $C$ & \code{85E813540F0AB405} \\
+                \end{tabular}
+            \end{block}
+            \begin{exampleblock}{Kunci pertama}
+                \footnotesize
+                Dari jadwal kunci diperoleh
+                $K_1=\code{1B02EFFC7072}$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.52\textwidth}
+            \textbf{Langkah 1 --- permutasi awal (IP).}
+            \footnotesize
+            Membaca tabel IP pada 64 bit plainteks menghasilkan dua
+            separuh:
+            \[
+                L_0=\code{CC00CCFF}, \qquad
+                R_0=\code{F0AAF0AA}
+            \]
+            Operasi: urutan bit plainteks diubah menurut tabel IP, lalu
+            hasilnya dibelah dua.
+            \[
+                \mathrm{IP}(P)=\code{CC00CCFFF0AAF0AA}
+            \]
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Contoh: Putaran Pertama DES (2/4)}
+    \footnotesize
+    \textbf{Langkah 2 --- ekspansi dan XOR subkunci.}
+    $R_0$ dalam biner:
+    \[
+        \code{1111}\ \code{0000}\ \code{1010}\ \code{1010}\
+        \code{1111}\ \code{0000}\ \code{1010}\ \code{1010}
+    \]
+    Ekspansi $E$ mengubah 32 bit menjadi 48 bit:
+    \[
+        E(R_0)=\code{7A15557A1555}
+    \]
+    XOR dengan $K_1$:
+    \[
+        \begin{aligned}
+            E(R_0)\oplus K_1
+            &=\code{011000}\ \code{010001}\ \code{011110}\
+              \code{111010}\\
+            &\quad\ \code{100001}\ \code{100110}\ \code{010100}\
+              \code{100111}\\
+            &=\code{6117BA866527}
+        \end{aligned}
+    \]
+    \begin{block}{Hasil langkah 2}
+        Diperoleh blok $A=\code{6117BA866527}$ berukuran 48 bit, siap
+        dipecah menjadi delapan kelompok enam bit.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Contoh: Putaran Pertama DES (3/4)}
+    \footnotesize
+    \textbf{Langkah 3 --- substitusi kotak-S.} Setiap kelompok enam bit
+    masuk ke kotak-S yang berbeda.
+    \begin{center}
+        \small
+        \begin{tabular}{@{}cccccc@{}}
+            \toprule
+            $j$ & Masukan & Baris & Kolom & $S_j$ & Keluaran \\
+            \midrule
+            1 & \code{011000} & 0 & 12 & 5  & \code{0101} \\
+            2 & \code{010001} & 1 & 8  & 12 & \code{1100} \\
+            3 & \code{011110} & 0 & 15 & 8  & \code{1000} \\
+            4 & \code{111010} & 2 & 13 & 2  & \code{0010} \\
+            5 & \code{100001} & 3 & 0  & 11 & \code{1011} \\
+            6 & \code{100110} & 2 & 3  & 5  & \code{0101} \\
+            7 & \code{010100} & 0 & 10 & 9  & \code{1001} \\
+            8 & \code{100111} & 3 & 3  & 7  & \code{0111} \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+    \begin{block}{Hasil langkah 3}
+        Delapan keluaran 4 bit digabung menjadi
+        $S\text{-out}=\code{5C82B597}$ (32 bit). Setiap baris memakai
+        kotak-S yang berbeda; hanya potongan tabel yang diperlukan
+        contoh ini yang ditampilkan.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Contoh: Putaran Pertama DES (4/4)}
+    \footnotesize
+    \textbf{Langkah 4 --- permutasi $P$.}
+    Membaca tabel $P$ pada $\code{5C82B597}$:
+    \[
+        P(S)=\code{234AA9BB}
+    \]
+    \textbf{Langkah 5 --- pembentukan separuh baru.}
+    Subkunci $K_1$ tidak dipakai lagi; yang tersisa adalah XOR dengan
+    separuh kiri:
+    \[
+        R_1=L_0\oplus P(S)
+        =\code{CC00CCFF}\oplus\code{234AA9BB}
+        =\code{EF4A6544}
+    \]
+    \[
+        L_1=R_0=\code{F0AAF0AA}
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Setelah 16 putaran}
+                \footnotesize
+                $L_{16}=\code{43423234}$ dan
+                $R_{16}=\code{0A4CD995}$. Blok sebelum permutasi akhir:
+                $\code{0A4CD99543423234}$.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Hasil akhir}
+                \footnotesize
+                $\mathrm{IP}^{-1}$ memberi
+                $C=\code{85E813540F0AB405}$, sama dengan vektor uji.
+                Dekripsi dengan $K_{16},\dots,K_1$ mengembalikan $P$.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------ penutup
+\begin{frame}{Penutup}
+    \begin{block}{Yang harus dibawa dari pertemuan ini}
+        \begin{enumerate}
+            \item Cipher blok mengolah blok $n$ bit; mode operasi
+                  menentukan perantaian, pola yang bocor, dan penjalaran
+                  galat.
+            \item ECB membocorkan pola; CBC menghapusnya dengan IV;
+                  CFB dan OFB bekerja per unit $s$ bit; CTR memungkinkan
+                  pemrosesan paralel.
+            \item Confusion dicapai substitusi (S-box), diffusion dicapai
+                  permutasi (P-box); Feistel membuat dekripsi tidak
+                  memerlukan $f^{-1}$.
+            \item DES memakai blok 64 bit, kunci efektif 56 bit, dan 16
+                  putaran; ruang $2^{56}$ terlalu kecil, sehingga Double
+                  DES tumbang oleh meet-in-the-middle dan Triple DES
+                  memperpanjang kunci.
+        \end{enumerate}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 10 --- AES dan cipher blok lain}
+    \end{exampleblock}
+\end{frame}
+
+\end{document}

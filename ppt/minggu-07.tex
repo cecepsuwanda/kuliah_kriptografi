@@ -1,0 +1,1078 @@
+% =====================================================================
+%  minggu-07.tex  --  Slide Pertemuan Minggu ke-7
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Kriptografi modern dan stream cipher
+%  Sumber materi : buku_ajar/chapters/05 (Bab 5, \S1--\S3 dan contoh)
+%  Sub-CPMK      : 1.2
+%
+%  Kompilasi dari dalam folder ppt/:
+%      pdflatex -interaction=nonstopmode minggu-07.tex   (dua kali)
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Kriptografi Modern dan Stream Cipher}
+\subtitle{Dari bit dan XOR sampai RC4, A5/1, Trivium, Salsa20, dan ChaCha20}
+\setWeekInfo{Minggu 7}{Kriptografi modern dan stream cipher}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \slidejudul{Delapan bagian}
+            \begin{enumerate}
+                \item Dari karakter ke bit: representasi dan XOR
+                \item Cipher alir dan keystream generator
+                \item FSR dan LFSR
+                \item Contoh terhitung LFSR
+                \item RC4
+                \item A5/1
+                \item Trivium
+                \item Salsa20 dan ChaCha20
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 5 buku ajar; Munir, \textit{IF4020 Kriptografi}, ITB,
+                2026 (modul 07).
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Benang merah}
+        \footnotesize
+        Cipher alir mengganti kunci pendek yang berulang dengan aliran
+        kunci acak semu yang panjang. Keamanannya bergantung pada
+        generator dan umpan yang dipakai.
+    \end{exampleblock}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK 1.2 --- One-time pad dan stream cipher modern}
+        \footnotesize
+        Mengenal one-time pad serta stream cipher modern, yaitu representasi
+        bit, operasi XOR, keystream generator, FSR, RC4, A5, Trivium,
+        Salsa20, dan ChaCha20.
+    \end{block}
+    \vspace{0.1cm}
+    {\scriptsize\itshape Pertemuan ini menuntaskan bagian stream cipher
+    modern; one-time pad telah dibahas pada Minggu 6.}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \footnotesize
+        \begin{itemize}
+            \item menjelaskan representasi bit, byte, dan heksadesimal;
+            \item menjelaskan operasi XOR dan sifat $a\oplus a=0$;
+            \item menjelaskan peran keystream generator dan umpan $U$;
+            \item menjelaskan mekanisme FSR/LFSR beserta contoh keystream-nya;
+            \item menjelaskan KSA/PRGA RC4, kaidah mayoritas A5/1,
+                  NLFSR Trivium, dan ARX Salsa20/ChaCha20;
+            \item membandingkan keempat cipher alir tersebut.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Dari Karakter ke Bit}
+% =====================================================================
+
+\begin{frame}{Mengapa Cipher Modern Bekerja pada Bit}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Cipher klasik}
+                \begin{itemize}
+                    \item satu huruf dipetakan ke satu huruf;
+                    \item kunci berupa rangkaian huruf;
+                    \item pola bahasa masih terlihat pada cipherteks.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Cipher modern}
+                \begin{itemize}
+                    \item plainteks, kunci, dan cipherteks berupa rangkaian bit;
+                    \item panjang kunci dinyatakan dalam bit;
+                    \item operasi bekerja bit demi bit atau byte demi byte.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{block}{Yang tetap dan yang berubah}
+        Substitusi dan transposisi tetap menjadi kerangka. Bedanya, operasi
+        kini memakai XOR, rotasi, kompresi, ekspansi, dan penjumlahan modulo
+        sehingga hubungan kunci--cipherteks lebih sulit dilacak.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Bit, Byte, dan Heksadesimal}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Satuan dasar}
+                \begin{itemize}
+                    \item $1$ byte $=8$ bit;
+                    \item $1$ digit heksadesimal $=4$ bit;
+                    \item satu byte ditulis sebagai dua digit heksadesimal;
+                    \item biner dipakai saat operasi diperlihatkan langkah
+                          demi langkah.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Contoh konversi}
+                \begin{itemize}
+                    \item $1001\ 1101\ 0110\ 1010=\code{9D6A}$;
+                    \item \code{Halo} $=$
+                          \code{01001000 01100001 01101100 01101111};
+                    \item \code{Indonesia emas 2045} menempati
+                          $19\times 8=152$ bit.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Mengapa dipadatkan}
+        Rangkaian delapan bit sulit dibaca. Heksadesimal memadatkan empat
+        bit menjadi satu digit tanpa mengubah nilainya.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{XOR: Aturan dan Tiga Sifat}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.34\textwidth}
+            \begin{block}{Tabel kebenaran}
+                \centering
+                \begin{tabular}{@{}ccc@{}}
+                    \toprule
+                    $a$ & $b$ & $a\oplus b$ \\
+                    \midrule
+                    0 & 0 & 0 \\
+                    0 & 1 & 1 \\
+                    1 & 0 & 1 \\
+                    1 & 1 & 0 \\
+                    \bottomrule
+                \end{tabular}
+            \end{block}
+        \end{column}
+        \begin{column}{0.62\textwidth}
+            \begin{block}{Tiga sifat yang dipakai berulang}
+                \begin{enumerate}
+                    \item $a\oplus a=0$;
+                    \item $a\oplus b=b\oplus a$ (komutatif);
+                    \item $a\oplus(b\oplus c)=(a\oplus b)\oplus c$
+                          (asosiatif).
+                \end{enumerate}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Membaca tabel}
+        Hasil XOR bernilai $1$ hanya bila kedua operand berbeda. Contoh:
+        $1\oplus1=0$, $1\oplus0=1$, dan $1\oplus(0\oplus1)=0$.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{XOR Bitwise dan Sifat Membalik Diri}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \begin{itemize}
+                \item XOR diterapkan pada posisi bit yang bersesuaian.
+                \item Contoh: $10011\oplus11001=01010$.
+                \item Enkripsi: $c=p\oplus k$.
+                \item Dekripsi:
+                      $p'=c\oplus k=(p\oplus k)\oplus k=p$.
+                \item Contoh byte: $\code{65}_{16}\oplus\code{35}_{16}
+                      =\code{50}_{16}$ (karakter \code{P}); XOR sekali lagi
+                      mengembalikan \code{65} (karakter \code{e}).
+            \end{itemize}
+            \begin{block}{Akibatnya}
+                Enkripsi dan dekripsi memakai operasi yang sama. Tidak ada
+                rangkaian invers terpisah.
+            \end{block}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{05}{xor-bitwise.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Cipher XOR Sederhana dan Kelemahannya}
+    \footnotesize
+    Bila kunci lebih pendek daripada pesan, bit kunci diulang secara
+    periodik:
+    \vspace{0.1cm}
+    \begin{center}
+        \footnotesize
+        \begin{tabular}{@{}l@{\quad}l@{}}
+            Plainteks  & \texttt{10010010101110101010001110001} \\
+            Kunci      & \texttt{11011011011011011011011011011} \\
+            Cipherteks & \texttt{01001001110101110001010101010} \\
+        \end{tabular}
+    \end{center}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Kunci pada contoh hanya pola tiga bit \code{110}.
+        \item Bit plainteks pada posisi $i$, $i+3$, $i+6$ memakai bit kunci
+              yang sama.
+        \item Pola pengulangan dapat ditemukan dengan cara yang serupa
+              dengan metode Kasiski.
+    \end{itemize}
+    \begin{alertblock}{Kesimpulan}
+        Cipher XOR sederhana \kunci{tidak aman}. Diperlukan keystream yang
+        berubah sepanjang pesan, bukan kunci pendek yang berulang.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Cipher Alir dan Keystream Generator}
+% =====================================================================
+
+\begin{frame}{Prinsip Cipher Alir}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \begin{itemize}
+                \item Cipher alir memproses $1$ bit, $1$ byte, atau $n$ bit
+                      setiap langkah.
+                \item Setiap bit plainteks di-XOR dengan bit keystream pada
+                      posisi yang sama:
+                      \[
+                          c_i=p_i\oplus k_i .
+                      \]
+                \item Dekripsi memakai aturan yang sama:
+                      \[
+                          p_i=c_i\oplus k_i .
+                      \]
+                \item Cipher alir langsung bekerja pada aliran data tanpa
+                      menunggu data terkumpul.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{05}{diagram-blok-stream-cipher.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{block}{Syarat}
+        Pengirim dan penerima harus membangkitkan keystream yang identik.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Keystream Generator dan Umpan $U$}
+    \footnotesize
+    \begin{itemize}
+        \item Keystream generator adalah prosedur yang sama di sisi pengirim
+              dan penerima.
+        \item Masukannya adalah umpan $U$; keluarannya merupakan fungsi dari
+              $U$.
+        \item Umpan harus sama di kedua pihak dan dijaga kerahasiaannya,
+              karena kedudukannya setara dengan kunci eksternal.
+        \item Keystream bersifat acak semu: dapat dibangkitkan ulang secara
+              identik dan memiliki periode.
+        \item Generator dapat mengeluarkan keystream dalam satuan bit, byte,
+              atau blok bit.
+    \end{itemize}
+    \begin{exampleblock}{Konsekuensi}
+        Umpan berbeda menghasilkan keystream berbeda. Bila umpan bocor,
+        penyerang dapat mereproduksi seluruh keystream.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Galat Satu Bit Tidak Menyebar}
+    \footnotesize
+    \begin{itemize}
+        \item Setiap bit plainteks ditentukan hanya oleh satu bit cipherteks
+              dan satu bit keystream.
+        \item Satu bit cipherteks yang rusak menghasilkan satu bit plainteks
+              yang rusak.
+        \item Tidak ada efek longsoran ke bit-bit berikutnya.
+        \item Sifat ini cocok untuk aliran data kontinu dan pemrosesan
+              \textit{real-time}, misalnya suara pada jaringan GSM.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{block}{Galat terlokalisasi}
+        Galat tidak menyebar ke bit berikutnya; hanya posisi yang terkena
+        yang berubah.
+    \end{block}
+    \begin{exampleblock}{Praktisnya}
+        Transmisi suara lebih toleran terhadap satu bit yang salah daripada
+        terhadap bagian data yang harus diulang seluruhnya.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Peta Cipher Alir yang Dibahas}
+    \footnotesize
+    \begin{center}
+        \scriptsize
+        \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.5cm}
+                >{\centering\arraybackslash}p{1.0cm}
+                >{\raggedright\arraybackslash}X
+                >{\raggedright\arraybackslash}p{3.9cm}@{}}
+            \toprule
+            Cipher & Tahun & Struktur utama & Catatan \\
+            \midrule
+            RC4 & 1987 & larik $S$ 256 byte; KSA dan PRGA &
+                pernah dipakai di SSL/TLS dan WEP/WPA \\
+            \addlinespace
+            A5/1 & 1989 & tiga LFSR 19, 22, dan 23 bit &
+                cipher suara GSM; sudah dipecahkan \\
+            \addlinespace
+            Trivium & 2004 & tiga NLFSR 93, 84, dan 111 bit &
+                peserta eSTREAM; ringan untuk perangkat keras \\
+            \addlinespace
+            Salsa20 & 2004 & matriks $4\times4$ kata 32 bit; ARX &
+                peserta eSTREAM; 512 bit per panggilan \\
+            \addlinespace
+            ChaCha20 & 2008 & modifikasi Salsa20; ARX &
+                putaran kolom dan diagonal \\
+            \bottomrule
+        \end{tabularx}
+    \end{center}
+    \vspace{0.1cm}
+    \begin{block}{Rute belajar}
+        RC4 dan A5/1 mewakili desain lama; Trivium dan keluarga
+        Salsa20/ChaCha20 mewakili desain setelah eSTREAM.
+    \end{block}
+\end{frame}
+
+% =====================================================================
+\section{FSR dan LFSR}
+% =====================================================================
+
+\begin{frame}{FSR: Register Geser dengan Umpan Balik}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \begin{itemize}
+                \item \textit{Feedback Shift Register} (FSR) terdiri atas
+                      register geser $n$ bit dan fungsi umpan balik.
+                \item Setiap detak menggeser isi register satu posisi.
+                \item Bit yang terlempar keluar menjadi bit keystream.
+                \item Sebagian bit register diumpanbalikkan untuk mengisi
+                      posisi yang kosong.
+                \item Bila fungsi umpan baliknya hanya XOR, FSR itu disebut
+                      LFSR.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{05}{fsr-blok.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{block}{Keadaan internal}
+        Isi register adalah keadaan internal generator. Umpan balik
+        menentukan bit berikutnya dari keadaan itu.
+    \end{block}
+\end{frame}
+
+\begin{frame}{LFSR: Umpan Balik Linier}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{itemize}
+                \item LFSR memakai XOR saja sebagai fungsi umpan balik.
+                \item Bit register ditulis $b_n b_{n-1}\dots b_1$.
+                \item Setiap detak: $b_n$ pindah ke $b_{n-1}$, dan seterusnya;
+                      $b_1$ keluar menjadi luaran.
+                \item Posisi $b_n$ yang kosong diisi XOR bit-bit \textit{tap}.
+                \item Bila semua bit dipakai:
+                      $f=b_n\oplus b_{n-1}\oplus\dots\oplus b_1$.
+                \item LFSR $n$ bit dapat mencapai periode $2^n-1$; keadaan
+                      nol tidak dipakai.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{05}{lfsr.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Contoh LFSR 4 Bit: Langkah demi Langkah}
+    \footnotesize
+    \begin{block}{Data contoh}
+        Isi awal $U=\code{1111}$; umpan balik $f=b_4\oplus b_1$; register
+        bergeser ke kanan. Bit luaran adalah $b_1$ sebelum register
+        bergeser, dan $f$ masuk ke posisi $b_4$.
+    \end{block}
+    \vspace{0.1cm}
+    \begin{tabular}{@{}l@{\quad}l@{\quad}l@{}}
+        \toprule
+        Detak & Operasi & Hasil \\
+        \midrule
+        $0\to1$ & $f=1\oplus1=0$; keluaran $b_1=1$ & $\code{1111}\to\code{0111}$ \\
+        $1\to2$ & $f=0\oplus1=1$; keluaran $b_1=1$ & $\code{0111}\to\code{1011}$ \\
+        $2\to3$ & $f=1\oplus1=0$; keluaran $b_1=1$ & $\code{1011}\to\code{0101}$ \\
+        $3\to4$ & $f=0\oplus1=1$; keluaran $b_1=1$ & $\code{0101}\to\code{1010}$ \\
+        \bottomrule
+    \end{tabular}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Membaca hasil}
+        Setiap baris memuat operasi umpan balik, bit yang keluar, dan isi
+        register baru. Empat bit luaran pertama adalah \code{1111}.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Tabel Lengkap 15 Detak}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.44\textwidth}
+            \centering
+            \scriptsize
+            \begin{tabular}{@{}cccccc@{}}
+                \toprule
+                $i$ & $b_4$ & $b_3$ & $b_2$ & $b_1$ & Keluaran \\
+                \midrule
+                0  & 1 & 1 & 1 & 1 & 1 \\
+                1  & 0 & 1 & 1 & 1 & 1 \\
+                2  & 1 & 0 & 1 & 1 & 1 \\
+                3  & 0 & 1 & 0 & 1 & 1 \\
+                4  & 1 & 0 & 1 & 0 & 0 \\
+                5  & 1 & 1 & 0 & 1 & 1 \\
+                6  & 0 & 1 & 1 & 0 & 0 \\
+                7  & 0 & 0 & 1 & 1 & 1 \\
+                8  & 1 & 0 & 0 & 1 & 1 \\
+                9  & 0 & 1 & 0 & 0 & 0 \\
+                10 & 0 & 0 & 1 & 0 & 0 \\
+                11 & 0 & 0 & 0 & 1 & 1 \\
+                12 & 1 & 0 & 0 & 0 & 0 \\
+                13 & 1 & 1 & 0 & 0 & 0 \\
+                14 & 1 & 1 & 1 & 0 & 0 \\
+                \bottomrule
+            \end{tabular}
+        \end{column}
+        \begin{column}{0.52\textwidth}
+            \begin{itemize}
+                \item Barisan luaran:
+                      \code{111101011001000}.
+                \item Setelah 15 detak, register kembali ke \code{1111}.
+                \item Periode $=15=2^4-1$, bukan $16$.
+                \item Keadaan \code{0000} tidak dipakai karena akan bernilai
+                      nol selamanya.
+            \end{itemize}
+            \begin{block}{Mengapa periode penting}
+                Keystream berulang setelah satu periode. Pesan yang lebih
+                panjang dari periode memakai ulang bit awal keystream.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Contoh Terhitung: Keystream 24 Bit}
+    \footnotesize
+    \begin{block}{Langkah 1 --- menyusun keystream}
+        Pesan 24 bit lebih panjang daripada periode 15 bit. Keystream
+        memakai 15 bit pertama, lalu 9 bit awalnya lagi.
+    \end{block}
+    \vspace{0.1cm}
+    \begin{center}
+        \scriptsize
+        \begin{tabular}{@{}l@{\quad}l@{}}
+            Periode 15 bit & \texttt{1111 0101 1001 000} \\
+            9 bit awal     & \texttt{1111 01011} \\
+            Keystream 24 bit & \texttt{1111 0101 1001 0001 1110 1011} \\
+        \end{tabular}
+    \end{center}
+    \vspace{0.1cm}
+    \[
+        K=\code{111101011001000}\;\Vert\;\code{111101011}
+         =\code{F591EB}.
+    \]
+    \begin{exampleblock}{Langkah 2 --- hasil}
+        Keystream yang dipakai adalah $K=\code{F591EB}$. Sembilan bit
+        terakhirnya sama dengan sembilan bit pertama karena periode
+        keystream hanya 15 bit.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Contoh Terhitung: Enkripsi dan Dekripsi}
+    \footnotesize
+    \begin{block}{Data}
+        Plainteks \code{Aku} $=\code{416B75}
+        =\code{0100 0001 0110 1011 0111 0101}$; keystream
+        $K=\code{F591EB}=\code{1111 0101 1001 0001 1110 1011}$.
+    \end{block}
+    \vspace{0.05cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Enkripsi per byte}
+                \begin{tabular}{@{}l@{}}
+                    $\code{41}\oplus\code{F5}=\code{B4}$ \\
+                    $\code{6B}\oplus\code{91}=\code{FA}$ \\
+                    $\code{75}\oplus\code{EB}=\code{9E}$ \\
+                \end{tabular}
+                \vspace{0.1cm}
+
+                Jadi $C=\code{B4FA9E}$.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Dekripsi}
+                \begin{tabular}{@{}l@{}}
+                    $\code{B4}\oplus\code{F5}=\code{41}$ \\
+                    $\code{FA}\oplus\code{91}=\code{6B}$ \\
+                    $\code{9E}\oplus\code{EB}=\code{75}$ \\
+                \end{tabular}
+                \vspace{0.1cm}
+
+                Hasilnya \code{416B75}, yaitu \code{Aku}.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Pemeriksaan bit}
+        Setiap posisi byte memakai operasi yang sama. Tidak ada kunci
+        dekripsi khusus: keystream yang sama di-XOR-kan kembali.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{RC4}
+% =====================================================================
+
+\begin{frame}{RC4: Gambaran Umum}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \begin{itemize}
+                \item Dibuat Ronald Rivest pada 1987 di Laboratorium RSA.
+                \item \code{RC} ditafsirkan sebagai \textit{Ron's Code} atau
+                      \textit{Rivest Cipher}.
+                \item Kunci paling panjang 256 byte; bila lebih pendek,
+                      byte kunci diulang periodik.
+                \item Keadaan internal: larik $S_0,\dots,S_{255}$ dan dua
+                      pencacah $i$, $j$.
+                \item Dua subproses: KSA mengacak $S$; PRGA membangkitkan
+                      byte keystream.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{05}{alur-rc4.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{block}{Keluaran}
+        RC4 menghasilkan keystream byte demi byte tanpa batas panjang;
+        setiap byte di-XOR-kan dengan satu byte plainteks.
+    \end{block}
+\end{frame}
+
+\begin{frame}{KSA: Mengacak Larik $S$}
+    \footnotesize
+    \begin{block}{Key-Scheduling Algorithm}
+        \begin{enumerate}
+            \item Isi larik: $S_i=i$ untuk $i=0,1,\dots,255$.
+            \item Setel $j=0$.
+            \item Untuk $i=0$ sampai $255$:
+                  \[
+                      j\leftarrow(j+S_i+K_{i\bmod |K|})\bmod 256,
+                  \]
+                  lalu tukar $S_i$ dan $S_j$.
+        \end{enumerate}
+    \end{block}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Indeks kunci $i\bmod |K|$ membuat byte kunci berulang bila
+              kunci lebih pendek daripada 256 byte.
+        \item Hasil KSA adalah permutasi larik $S$ yang ditentukan oleh
+              kunci rahasia.
+    \end{itemize}
+    \begin{exampleblock}{Peran KSA}
+        KSA menyiapkan keadaan awal. Tanpa KSA, PRGA akan memakai larik
+        berurutan yang sama untuk setiap kunci.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{PRGA: Membangkitkan Byte Keystream}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \begin{block}{Pseudo-random generation algorithm}
+                \begin{enumerate}
+                    \item Setel $i=j=0$.
+                    \item Untuk setiap byte:
+                          \begin{align*}
+                              i&\leftarrow(i+1)\bmod 256,\\
+                              j&\leftarrow(j+S_i)\bmod 256,
+                          \end{align*}
+                          tukar $S_i$ dan $S_j$, lalu
+                          \[
+                              t\leftarrow(S_i+S_j)\bmod 256,\qquad
+                              u\leftarrow S_t .
+                          \]
+                    \item Byte keystream $u$ di-XOR-kan dengan plainteks:
+                          $C=P\oplus u$.
+                \end{enumerate}
+            \end{block}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{05}{rc4-prga.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.05cm}
+    \begin{block}{Dekripsi}
+        Prosedur PRGA yang sama dipakai dengan kunci yang sama.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Keamanan RC4}
+    \footnotesize
+    \begin{itemize}
+        \item Byte keystream awal berkorelasi tinggi dengan beberapa byte
+              awal kunci.
+        \item Implementasi yang hati-hati membuang 256 sampai 512 byte
+              keystream pertama.
+        \item RC4 lemah terhadap serangan \textit{flip-bit} dan serangan
+              \textit{stream} lain.
+        \item Keamanannya dapat dipecahkan dalam hitungan jam atau hari.
+        \item RFC 7465 (Februari 2015) melarang pemakaian RC4 di TLS.
+        \item Varian perbaikan: Spritz, RC4A, VMPC, dan RC4+.
+    \end{itemize}
+    \begin{alertblock}{Pelajaran}
+        Panjang kunci bukan jaminan keamanan. RC4 menunjukkan bahwa cipher
+        cepat tetap dapat kehilangan keamanannya.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{A5/1}
+% =====================================================================
+
+\begin{frame}{A5/1: Cipher Alir untuk GSM}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \begin{itemize}
+                \item A5 adalah cipher alir untuk transmisi suara pada
+                      jaringan GSM.
+                \item Satu frame GSM panjangnya 228 bit dan dikirim setiap
+                      4,6 milidetik.
+                \item Kunci eksternalnya adalah kunci sesi 64 bit.
+                \item A5/1 adalah versi kuat yang dipakai di Eropa; A5/2
+                      adalah versi ekspor yang lebih lemah.
+                \item Algoritma awalnya rahasia, lalu terbongkar melalui
+                      rekayasa balik pada 1994.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{05}{a51-lfsr.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{block}{Keluaran per frame}
+        Setiap frame memakai keystream 228 bit yang di-XOR-kan dengan
+        bit-bit frame pesan.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Tiga LFSR dan Kaidah Mayoritas}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \centering
+            \scriptsize
+            \begin{tabular}{@{}lccc@{}}
+                \toprule
+                Register & Panjang & Kendali & Umpan balik \\
+                \midrule
+                $R_1$ & 19 & 8  & 13, 16, 17, 18 \\
+                $R_2$ & 22 & 10 & 20, 21 \\
+                $R_3$ & 23 & 10 & 7, 20, 21, 22 \\
+                \bottomrule
+            \end{tabular}
+            \vspace{0.1cm}
+
+            Total $19+22+23=64$ bit.
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{itemize}
+                \item Bit kendali tiap register dibandingkan dengan bit
+                      mayoritas dari ketiganya.
+                \item Register yang bit kendalinya sama dengan mayoritas
+                      akan didetak.
+                \item Peluang sebuah register didetak adalah $3/4$; biasanya
+                      dua atau tiga register bergeser.
+                \item Luaran:
+                      \[
+                          z_t=R_1[18]\oplus R_2[21]\oplus R_3[22].
+                      \]
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Inisialisasi dan Pembangkitan Keystream}
+    \footnotesize
+    \begin{enumerate}
+        \item \textbf{Muat kunci.} Ketiga register diisi nol, lalu 64 putaran.
+              Pada putaran ke-$i$, bit $K[i]$ di-XOR-kan ke LSB setiap
+              register sebelum register didetak.
+        \item \textbf{Muat nomor frame.} Lakukan 22 putaran tambahan; bit
+              $F_n[i]$ di-XOR-kan ke LSB setiap register.
+        \item \textbf{Pemanasan.} Detak 100 putaran dengan kaidah mayoritas;
+              bit luarannya dibuang.
+        \item \textbf{Bangkitkan keystream.} Detak 228 putaran dengan kaidah
+              mayoritas; setiap putaran menghasilkan satu bit menurut
+              $z_t=R_1[18]\oplus R_2[21]\oplus R_3[22]$.
+    \end{enumerate}
+    \vspace{0.1cm}
+    \begin{block}{Urutan kerja}
+        Tahap 1 dan 2 menyiapkan keadaan, tahap 3 mencampur kunci dengan
+        nomor frame, dan tahap 4 menghasilkan 228 bit keystream.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Keamanan A5/1}
+    \footnotesize
+    \begin{itemize}
+        \item Tujuan kriptanalisis adalah menemukan kunci sesi dari
+              keystream awal yang diketahui.
+        \item Serangan tergolong \textit{known-plaintext attack}.
+        \item Ross Anderson (1994) menerka 42 bit isi $R_1$ dan $R_2$,
+              lalu menurunkan 23 bit $R_3$.
+        \item Pekerjaan itu memerlukan lebih dari sebulan pada sebuah PC.
+        \item Pada tahun-tahun berikutnya, kunci dapat ditemukan hanya
+              dalam beberapa menit.
+    \end{itemize}
+    \begin{alertblock}{Status}
+        A5/1 sudah berhasil dikriptanalisis. LFSR linear dengan keadaan
+        64 bit tidak cukup untuk menjaga percakapan GSM.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Trivium}
+% =====================================================================
+
+\begin{frame}{Trivium: Tiga NLFSR}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \begin{itemize}
+                \item Diajukan Christophe De Cannière dan Bart Preneel pada
+                      kompetisi eSTREAM 2004--2008.
+                \item Tiga \textit{nonlinear LFSR} (NLFSR): $A=93$ bit,
+                      $B=84$ bit, dan $C=111$ bit.
+                \item Total keadaan internal $93+84+111=288$ bit.
+                \item Gerbang AND membuat strukturnya nonlinier, berbeda
+                      dari LFSR murni.
+                \item Luaran:
+                      $s_i=a_i\oplus b_i\oplus c_i$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{05}{trivium-sirkuit.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{block}{Implementasi perangkat keras}
+        Trivium hanya memerlukan 288 sel register, tiga gerbang AND, dan
+        tujuh gerbang XOR.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Trivium: Titik Umpan Balik}
+    \footnotesize
+    \begin{center}
+        \scriptsize
+        \begin{tabular}{@{}lcccc@{}}
+            \toprule
+            Register & Panjang & Umpan balik & \textit{Feedforward} & Masukan AND \\
+            \midrule
+            $A$ & 93 bit  & 69 & 66 & 91, 92 \\
+            $B$ & 84 bit  & 78 & 69 & 82, 83 \\
+            $C$ & 111 bit & 87 & 66 & 109, 110 \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Umpan balik, \textit{feedforward}, dan masukan gerbang AND
+              menentukan pembaruan nonlinier setiap register.
+        \item Luaran tetap XOR dari luaran ketiga register:
+              $s_i=a_i\oplus b_i\oplus c_i$.
+        \item Panjang dan titik tap yang berbeda membuat ketiga register
+              bergerak dengan pola yang tidak sama.
+    \end{itemize}
+    \begin{block}{Membaca tabel}
+        Kolom \textit{feedforward} dan masukan AND adalah posisi bit yang
+        diambil dari register, bukan nilai bitnya.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Trivium: Inisialisasi dan Pemanasan}
+    \footnotesize
+    \begin{itemize}
+        \item \textit{Initialization vector} 80 bit dimasukkan ke register
+              $A$.
+        \item Kunci 80 bit dimasukkan ke register $B$.
+        \item Register $C$ diisi nol, kecuali tiga bit terakhir:
+              $c_{109}=c_{110}=c_{111}=1$.
+        \item Ketiga NLFSR didetak $4\times288=1152$ kali tanpa
+              menghasilkan luaran.
+        \item Pemanasan mencampur kunci dan IV sehingga pengaruhnya
+              tersebar ke seluruh register.
+    \end{itemize}
+    \begin{exampleblock}{Mengapa ringan}
+        Keadaan 288 bit dan gerbang sederhana membuat Trivium cocok untuk
+        \textit{lightweight cryptography} pada perangkat dengan sumber
+        daya terbatas.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Salsa20 dan ChaCha20}
+% =====================================================================
+
+\begin{frame}{Salsa20: Keadaan $4\times4$}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \begin{itemize}
+                \item Dikembangkan Daniel J. Bernstein pada 2005 dan
+                      diajukan pada eSTREAM 2004--2008.
+                \item Kunci rahasia 256 bit; \textit{nonce} 64 bit; pencacah
+                      64 bit yang dimulai dari nol.
+                \item Satu pemanggilan menghasilkan keystream 512 bit
+                      atau 64 byte.
+                \item Keadaan internal: matriks $4\times4$ berisi 16 kata.
+                \item Satu kata 32 bit, sehingga ukurannya
+                      $16\times32=512$ bit.
+                \item \textit{Nonce} dan pencacah tidak perlu dirahasiakan;
+                      kunci harus tetap rahasia.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{05}{salsa20-state.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Salsa20: Putaran dan \textit{Quarter Round}}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{\textit{Quarter round} (QR)}
+                \begin{align*}
+                    b&\leftarrow b\oplus(a+d)\lll 7,\\
+                    c&\leftarrow c\oplus(b+a)\lll 9,\\
+                    d&\leftarrow d\oplus(c+b)\lll 13,\\
+                    a&\leftarrow a\oplus(d+c)\lll 18.
+                \end{align*}
+            \end{block}
+            {\scriptsize $+$ adalah penjumlahan modulo $2^{32}$;
+            $\lll k$ adalah rotasi kiri $k$ bit.}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{itemize}
+                \item Satu putaran ganda terdiri atas putaran kolom dan
+                      putaran baris.
+                \item Salsa20 melakukan 10 putaran ganda, yaitu 20 putaran.
+                \item Setelah itu hasilnya dijumlahkan dengan keadaan awal:
+                      \[
+                          y_j=x'_j+x_j\bmod 2^{32}.
+                      \]
+                \item Pencacah bertambah satu untuk setiap blok 512 bit;
+                      \textit{nonce} tetap.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{block}{Difusi}
+        Perubahan kecil pada kunci, \textit{nonce}, atau pencacah
+        menghasilkan perubahan besar pada keystream.
+    \end{block}
+\end{frame}
+
+\begin{frame}{ChaCha20: Tiga Perbedaan dari Salsa20}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{enumerate}
+                \item Tata letak keadaan awal berbeda.
+                \item Bentuk QR berbeda, dengan rotasi 16, 12, 8, dan 7 bit.
+                \item ChaCha memakai putaran kolom dan putaran diagonal.
+            \end{enumerate}
+            \vspace{0.1cm}
+            \begin{block}{Keluarga ChaCha}
+                ChaCha20 adalah anggota keluarga ChaCha bersama ChaCha6 dan
+                ChaCha7. Tujuannya adalah difusi yang lebih baik dengan
+                kecepatan dan kesederhanaan ARX.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{QR ChaCha20}
+                \scriptsize
+                \begin{align*}
+                    a&\leftarrow a+b, &
+                    d&\leftarrow d\oplus a, &
+                    d&\leftarrow d\lll 16,\\
+                    c&\leftarrow c+d, &
+                    b&\leftarrow b\oplus c, &
+                    b&\leftarrow b\lll 12,\\
+                    a&\leftarrow a+b, &
+                    d&\leftarrow d\oplus a, &
+                    d&\leftarrow d\lll 8,\\
+                    c&\leftarrow c+d, &
+                    b&\leftarrow b\oplus c, &
+                    b&\leftarrow b\lll 7.
+                \end{align*}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{exampleblock}{ARX}
+        Seluruh operasi hanya penjumlahan (\textit{add}), rotasi
+        (\textit{rotate}), dan XOR. Tidak ada perkalian atau tabel
+        substitusi.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{ChaCha20: Putaran dan Keunggulan}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Pemilihan indeks kata}
+                \scriptsize
+                \begin{tabular}{@{}ll@{}}
+                    \toprule
+                    Putaran kolom & Putaran diagonal \\
+                    \midrule
+                    QR(0, 4, 8, 12)  & QR(0, 5, 10, 15) \\
+                    QR(1, 5, 9, 13)  & QR(1, 6, 11, 12) \\
+                    QR(2, 6, 10, 14) & QR(2, 7, 8, 13) \\
+                    QR(3, 7, 11, 15) & QR(3, 4, 9, 14) \\
+                    \bottomrule
+                \end{tabular}
+            \end{block}
+            {\scriptsize Empat QR per putaran kolom dan empat QR per putaran
+            diagonal.}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{itemize}
+                \item ARX cepat di perangkat lunak dan mudah diimplementasikan.
+                \item Setiap blok keystream bergantung pada kunci,
+                      \textit{nonce}, dan pencacah.
+                \item Blok dapat dihitung secara independen dan paralel.
+                \item ChaCha20 banyak dipakai dalam protokol modern.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{block}{Inti perbandingan}
+        Salsa20 dan ChaCha20 sama-sama menghasilkan blok 512 bit dengan
+        kunci 256 bit. ChaCha20 mengubah tata letak keadaan dan pola QR
+        agar difusi per putaran lebih baik.
+    \end{block}
+\end{frame}
+
+% =====================================================================
+\section{Rangkuman dan Penutup}
+% =====================================================================
+
+\begin{frame}{Rangkuman (1/2)}
+    \footnotesize
+    \begin{itemize}
+        \item Cipher modern bekerja pada bit dan byte; XOR menjadi operasi
+              dasar karena $a\oplus a=0$ membuat enkripsi dan dekripsi
+              memakai fungsi yang sama.
+        \item Cipher alir mengenkripsi per bit, byte, atau $n$ bit dengan
+              $c_i=p_i\oplus k_i$.
+        \item Keamanan cipher alir bergantung pada keystream generator:
+              generator menerima umpan $U$ dan menghasilkan keystream acak
+              semu yang dapat dibangkitkan ulang.
+        \item FSR menggeser register dan mengumpanbalikkan sebagian bit;
+              LFSR membatasi umpan balik pada XOR.
+        \item LFSR $n$ bit dapat mencapai periode $2^n-1$. Contoh 4 bit
+              dengan $U=\code{1111}$ menghasilkan periode 15 bit.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Rangkuman (2/2)}
+    \footnotesize
+    \begin{center}
+        \scriptsize
+        \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.4cm}
+                >{\raggedright\arraybackslash}p{3.1cm}
+                >{\raggedright\arraybackslash}p{1.9cm}
+                >{\raggedright\arraybackslash}X@{}}
+            \toprule
+            Cipher & Struktur & Keluaran & Catatan \\
+            \midrule
+            RC4 & larik $S$ 256 byte; KSA dan PRGA & byte &
+                byte awal berkorelasi dengan kunci; tidak aman \\
+            \addlinespace
+            A5/1 & tiga LFSR 19/22/23 bit & bit per detak &
+                kaidah mayoritas; sudah dipecahkan \\
+            \addlinespace
+            Trivium & tiga NLFSR 93/84/111 bit & bit &
+                pemanasan 1152 detak; ringan \\
+            \addlinespace
+            Salsa20 & $4\times4$ kata 32 bit & 512 bit per panggilan &
+                20 putaran; ARX \\
+            \addlinespace
+            ChaCha20 & $4\times4$ kata 32 bit & 512 bit per panggilan &
+                QR 16/12/8/7; kolom dan diagonal \\
+            \bottomrule
+        \end{tabularx}
+    \end{center}
+    \vspace{0.1cm}
+    \begin{block}{Benang merah}
+        RC4 dan A5/1 menunjukkan bahwa desain lama sudah kedaluwarsa.
+        Trivium menambah nonlinearitas melalui gerbang AND, sedangkan
+        Salsa20/ChaCha20 memakai ARX untuk difusi yang cepat.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Penutup}
+    \begin{block}{Tiga hal yang harus dibawa dari pertemuan ini}
+        \begin{enumerate}
+            \item Cipher alir adalah XOR plainteks dengan keystream acak
+                  semu; keamanannya bergantung pada generator dan umpan.
+            \item LFSR adalah generator paling sederhana; periode maksimumnya
+                  $2^n-1$, dan contoh 4 bit menghasilkan 15 bit keystream.
+            \item RC4 dan A5/1 sudah dipecahkan; Trivium memakai NLFSR dan
+                  gerbang AND, sedangkan Salsa20/ChaCha20 memakai ARX.
+        \end{enumerate}
+    \end{block}
+    \vspace{0.3cm}
+    \begin{exampleblock}{Pertemuan berikutnya --- Minggu 8}
+        \textbf{Minggu 8 --- UTS}\\
+        Ujian Tengah Semester: CPMK-2 serta CPMK-1 (cipher klasik, OTP,
+        dan stream cipher).
+    \end{exampleblock}
+\end{frame}
+
+\end{document}

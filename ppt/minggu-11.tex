@@ -1,0 +1,1018 @@
+% =====================================================================
+%  minggu-11.tex  --  Slide Pertemuan Minggu ke-11
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Algoritma RSA
+%  Sumber materi : buku_ajar/chapters/10 (Bab 10)
+%  Sub-CPMK      : 1.4
+%
+%  Kompilasi dari dalam folder ppt/:
+%      pdflatex -interaction=nonstopmode minggu-11.tex   (dua kali)
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Algoritma RSA}
+\subtitle{Satu modulus, dua kunci, dan keamanan yang bersandar pada sulitnya memfaktorkan}
+\setWeekInfo{Minggu 11}{Algoritma RSA}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \slidejudul{Lima bagian}
+            \begin{enumerate}
+                \item \textbf{Gagasan dan properti} --- peran kunci publik
+                      dan kunci privat, serta lambang yang dipakai RSA.
+                \item \textbf{Landasan matematis} --- Fungsi Totient Euler,
+                      Teorema Euler, dan penurunan rumus.
+                \item \textbf{Pembangkitan kunci} --- dari dua bilangan prima
+                      sampai pasangan $(e,n)$ dan $(d,n)$.
+                \item \textbf{Enkripsi dan dekripsi} --- rumus dan contoh
+                      angka satu blok serta pesan multi-blok.
+                \item \textbf{Keamanan dan kelemahan} --- pemfaktoran, panjang
+                      modulus, kriptografi hibrida, \textit{padding}, dan
+                      \textit{man-in-the-middle}.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 10 buku ajar; Munir, \textit{IF4020 Kriptografi}, ITB,
+                2026 (modul 13)
+            \end{block}
+            \begin{exampleblock}{Pertanyaan pemandu}
+                \footnotesize
+                Mengapa kunci yang boleh dibaca semua orang tetap tidak
+                membocorkan kunci rahasianya?
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK yang dibebankan}
+        \footnotesize
+        \textbf{Sub-CPMK 1.4} --- Mengenal algoritma kriptografi kunci
+        publik, yaitu RSA, Diffie--Hellman, ElGamal, knapsack, dan Elliptic
+        Curve Cryptography (ECC), beserta persoalan matematis yang
+        mendasarinya.
+    \end{block}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \footnotesize
+        \begin{itemize}
+            \item menjelaskan pembagian tugas kunci publik dan kunci privat
+                  pada RSA;
+            \item menjelaskan properti setiap lambang RSA dan status
+                  kerahasiaannya;
+            \item menjelaskan peran Fungsi Totient Euler dan Teorema Euler
+                  dalam penurunan rumus RSA;
+            \item membangkitkan pasangan kunci dari dua bilangan prima kecil;
+            \item menghitung enkripsi dan dekripsi satu blok serta pesan
+                  multi-blok;
+            \item menjelaskan mengapa keamanan RSA bersandar pada sulitnya
+                  pemfaktoran;
+            \item mengidentifikasi kelemahan RSA dan risiko
+                  \textit{man-in-the-middle}.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Gagasan dan Properti RSA}
+% =====================================================================
+
+\begin{frame}{Dua Kunci, Dua Tugas}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Kunci publik $(e,n)$}
+                \begin{itemize}
+                    \item Dipakai pengirim untuk mengenkripsi pesan.
+                    \item Boleh diketahui siapa saja, termasuk penyadap.
+                    \item Tidak memuat $d$, sehingga tidak dapat dipakai
+                          membuka cipherteks.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Kunci privat $(d,n)$}
+                \begin{itemize}
+                    \item Dipakai pemilik untuk mendekripsi cipherteks.
+                    \item Harus disimpan rahasia dan tidak pernah dikirim.
+                    \item Dibentuk dari $p$, $q$, dan $\varphi(n)$ yang juga
+                          rahasia.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{alertblock}{Satu modulus untuk dua kunci}
+        \footnotesize
+        $n$ muncul pada kedua kunci karena seluruh perhitungan dilakukan
+        modulo $n$. Bila $p$, $q$, dan $\varphi(n)$ bocor, siapa pun dapat
+        menghitung $d$; karena itu ketiganya tidak boleh disebarkan.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Penemu Algoritma RSA}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Ron Rivest, Adi Shamir, dan Len Adleman merumuskan
+                      algoritma ini di MIT pada tahun 1976.
+                \item Nama RSA disusun dari huruf awal nama belakang
+                      ketiganya.
+                \item RSA adalah algoritma kunci publik yang paling dikenal
+                      dan paling banyak dipakai.
+                \item Yang disebarkan hanyalah kunci publik; kunci privat
+                      tetap di tangan pemiliknya.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{10}{penemu-rsa.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Pergeseran gagasan}
+        \footnotesize
+        Kriptografi simetri memakai satu kunci untuk mengunci dan membuka.
+        RSA memisahkan kedua tugas itu ke dua kunci berbeda.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Lambang dan Status Kerahasiaan}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}X c@{}}
+        \toprule
+        \textbf{Lambang} & \textbf{Arti} & \textbf{Status} \\
+        \midrule
+        $p,\ q$      & Dua bilangan prima pembentuk modulus & Rahasia \\
+        $n = p \cdot q$ & Modulus; panjangnya menentukan ukuran kunci & Umum \\
+        $\varphi(n)$ & Fungsi Totient Euler, $(p-1)(q-1)$ & Rahasia \\
+        $e$          & Eksponen enkripsi, disebut kunci publik & Umum \\
+        $d$          & Eksponen dekripsi, disebut kunci privat & Rahasia \\
+        $m$          & Plainteks yang dikirim & Rahasia \\
+        $c$          & Cipherteks hasil enkripsi & Umum \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.15cm}
+    \begin{block}{Dua pasangan yang beredar}
+        \footnotesize
+        Kunci publik adalah pasangan $(e,n)$; kunci privat adalah pasangan
+        $(d,n)$. Hanya $n$ dan $e$ yang boleh disebarkan, sedangkan $p$, $q$,
+        $\varphi(n)$, dan $d$ harus tetap rahasia.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Mengapa Modulus Dipakai Dua Kali}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{itemize}
+                \item Enkripsi dan dekripsi sama-sama dihitung modulo $n$.
+                \item Tanpa modulus yang sama, hasil dekripsi tidak kembali
+                      kepada plainteks semula.
+                \item Karena itu $n$ menjadi bagian dari kunci publik
+                      sekaligus kunci privat.
+                \item Yang membedakan kedua kunci hanyalah eksponennya:
+                      $e$ untuk mengunci, $d$ untuk membuka.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Yang boleh dilihat penyadap}
+                $n$ dan $e$ diketahui. Yang tidak diketahui adalah $p$, $q$,
+                $\varphi(n)$, dan $d$. Selama $n$ sukar difaktorkan, $d$
+                tetap terlindung.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{alertblock}{Kesalahan yang sering terjadi}
+        \footnotesize
+        Menyebarkan $(e,n)$ adalah hal biasa; menyebarkan $p$, $q$, atau
+        $\varphi(n)$ sama saja dengan menyerahkan kunci privat.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Landasan Matematis}
+% =====================================================================
+
+\begin{frame}{Fungsi Totient Euler}
+    \footnotesize
+    \begin{block}{Definisi}
+        $\varphi(n)$ menghitung banyaknya bilangan antara $1$ dan $n$ yang
+        relatif prima terhadap $n$, yaitu bilangan yang pembagi bersama
+        terbesarnya dengan $n$ sama dengan satu.
+    \end{block}
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{exampleblock}{Contoh dari buku: $\varphi(20) = 8$}
+                \footnotesize
+                Bilangan yang relatif prima terhadap $20$ adalah
+                \[
+                    1,\ 3,\ 7,\ 9,\ 11,\ 13,\ 17,\ 19 .
+                \]
+                Ada delapan bilangan, jadi $\varphi(20) = 8$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Cara memeriksa}
+                Setiap bilangan diuji dengan $\text{PBB}(a,20)$. Bilangan
+                genap dan kelipatan lima gugur, sehingga yang tersisa tepat
+                delapan bilangan.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Totient untuk Modulus Dua Prima}
+    \footnotesize
+    \begin{block}{Rumus yang dipakai RSA}
+        Bila $n = pq$ dengan $p$ dan $q$ prima, maka
+        \[
+            \varphi(n) = \varphi(p)\,\varphi(q) = (p-1)(q-1).
+        \]
+    \end{block}
+    \begin{exampleblock}{Penerapan pada contoh buku}
+        \footnotesize
+        Untuk $p = 47$ dan $q = 71$:
+        \[
+            n = 47 \times 71 = 3337,
+            \qquad
+            \varphi(n) = 46 \times 70 = 3220 .
+        \]
+    \end{exampleblock}
+    \begin{alertblock}{Mengapa $(p-1)(q-1)$}
+        \footnotesize
+        Di rentang $1$ sampai $pq$, yang tidak relatif prima hanyalah
+        kelipatan $p$ atau $q$, sebanyak $q+p-1$. Sisanya
+        $pq-(p+q-1)=(p-1)(q-1)$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Teorema Euler}
+    \footnotesize
+    \begin{block}{Pernyataan}
+        Bila $a$ relatif prima terhadap $n$, yaitu $\text{PBB}(a,n) = 1$,
+        maka
+        \[
+            a^{\varphi(n)} \equiv 1 \pmod{n}.
+        \]
+    \end{block}
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Syarat tidak boleh dilupakan}
+                Tanpa $\text{PBB}(a,n)=1$, kekongruenan itu tidak dijamin
+                berlaku.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Akibat untuk eksponen}
+                Perpangkatan dapat direduksi modulo $\varphi(n)$: eksponen
+                yang berbeda tetapi kongruen modulo $\varphi(n)$ memberi
+                hasil yang sama.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{block}{Tempatnya dalam RSA}
+        Teorema ini yang membuat $m^{ed}$ dapat dikembalikan menjadi $m$.
+        Seluruh kebenaran dekripsi RSA bertumpu padanya.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Menurunkan Rumus Enkripsi dan Dekripsi}
+    \footnotesize
+    Titik tolaknya Teorema Euler. Kedua ruas dipangkatkan $k$, lalu $a$
+    diganti dengan plainteks $m$:
+    \begin{align*}
+        a^{\varphi(n)} &\equiv 1 \pmod{n}, \\
+        a^{k\varphi(n)} &\equiv 1 \pmod{n}, \\
+        m^{k\varphi(n)} &\equiv 1 \pmod{n}.
+    \end{align*}
+    Kedua ruas dikalikan $m$, sehingga
+    \[
+        m^{k\varphi(n)+1} \equiv m \pmod{n}.
+    \]
+    \begin{exampleblock}{Syarat pada $e$ dan $d$}
+        \footnotesize
+        Pilih $e$ dan $d$ sehingga $e \cdot d \equiv 1 \pmod{\varphi(n)}$,
+        yang setara dengan $e \cdot d = k\varphi(n) + 1$.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Dari Penurunan ke Sepasang Rumus}
+    \footnotesize
+    \begin{block}{Bukti bahwa dekripsi membalik enkripsi}
+        \[
+            (m^{e})^{d} = m^{e \cdot d}
+            = m^{\,k\varphi(n)+1} \equiv m \pmod{n}.
+        \]
+        Jadi enkripsi lalu dekripsi mengembalikan pesan semula.
+    \end{block}
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Enkripsi}
+                \[ c = m^{e} \bmod n \]
+                Memakai kunci publik $(e,n)$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Dekripsi}
+                \[ m = c^{d} \bmod n \]
+                Memakai kunci privat $(d,n)$.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Satu syarat tambahan}
+        \footnotesize
+        Pesan $m$ harus lebih kecil daripada $n$. Pesan yang lebih panjang
+        dipecah menjadi blok sebelum dienkripsi.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Pembangkitan Pasangan Kunci}
+% =====================================================================
+
+\begin{frame}{Lima Langkah Pembangkitan Kunci}
+    \footnotesize
+    Pembangkitan kunci dijalankan satu kali oleh pemilik kunci.
+    \begin{enumerate}
+        \item Pilih dua bilangan prima $p$ dan $q$, sebaiknya $p \neq q$.
+        \item Hitung modulus $n = p \cdot q$.
+        \item Hitung $\varphi(n) = (p-1)(q-1)$.
+        \item Pilih $e$ yang relatif prima terhadap $\varphi(n)$.
+        \item Hitung $d$ dengan
+              \[
+                  e \cdot d \equiv 1 \pmod{\varphi(n)}
+                  \quad \text{atau} \quad
+                  d \equiv e^{-1} \pmod{\varphi(n)} .
+              \]
+    \end{enumerate}
+    \begin{block}{Hasil akhir}
+        \footnotesize
+        Kunci publik $(e,n)$ dan kunci privat $(d,n)$. Nilai $p$, $q$, dan
+        $\varphi(n)$ tidak lagi diperlukan setelah $d$ dihitung, tetapi
+        tetap harus dimusnahkan atau disimpan rahasia.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Memilih $e$ dan Menghitung $d$}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Syarat $e$}
+                \begin{itemize}
+                    \item Relatif prima terhadap $\varphi(n)$.
+                    \item Ganjil dan tidak terlalu kecil.
+                    \item Nilai lazim $e = 65537$, dipakai pustaka RSA
+                          karena aman dan efisien.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Mencari $d$}
+                Dari $e \cdot d = 1 + k\varphi(n)$ diperoleh
+                \[
+                    d = \frac{1 + k\,\varphi(n)}{e}.
+                \]
+                Nilai $k = 1, 2, 3, \dots$ dicoba sampai pembilangnya habis
+                dibagi $e$.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Mengapa $p \neq q$}
+        \footnotesize
+        Bila $p = q$, modulus berbentuk kuadrat sempurna sehingga $p$ dapat
+        ditemukan lewat akar kuadrat biasa. Keamanan RSA hilang tanpa perlu
+        pemfaktoran umum.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Contoh: Membangkitkan Kunci dari $p=47$ dan $q=71$}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{align*}
+                n &= 47 \times 71 = 3337, \\
+                \varphi(n) &= 46 \times 70 = 3220, \\
+                \text{PBB}(79,3220) &= 1.
+            \end{align*}
+            Karena $79$ relatif prima terhadap $3220$, nilai $e = 79$ sah
+            sebagai kunci publik. Kunci privat dicari dari
+            \[
+                d = \frac{1 + 3220k}{79}.
+            \]
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{tabular}{@{}c c c c@{}}
+                \toprule
+                $k$ & $1+3220k$ & $/79$ & Bulat? \\
+                \midrule
+                $1$  & $3221$  & $40{,}77$ & tidak \\
+                $2$  & $6441$  & $81{,}53$ & tidak \\
+                $25$ & $80501$ & $1019$    & ya \\
+                \bottomrule
+            \end{tabular}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Pemeriksaan}
+        \footnotesize
+        $d = 80501/79 = 1019$, dan $79 \times 1019 = 80501 = 1 + 25 \times
+        3220$. Jadi kunci publik $(79,3337)$ dan kunci privat $(1019,3337)$.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Enkripsi dan Dekripsi}
+% =====================================================================
+
+\begin{frame}{Mengubah Pesan Menjadi Bilangan}
+    \footnotesize
+    \begin{block}{Pengodean}
+        Setiap huruf diberi dua digit: $\text{A}=00$, $\text{B}=01$, sampai
+        $\text{Z}=25$. Spasi tidak dikodekan dan ditambahkan kembali oleh
+        penerima.
+    \end{block}
+    \begin{block}{Pemecahan menjadi blok}
+        Deretan kode dipecah menjadi blok $m_1, m_2, \dots$ dengan syarat
+        \[
+            0 \le m_i \le n-1 .
+        \]
+        Setiap blok ditulis dengan panjang tetap, misalnya empat digit.
+    \end{block}
+    \begin{alertblock}{Nol di depan tidak boleh dibuang}
+        \footnotesize
+        Blok \code{0704} berbeda artinya dari \code{704} bila panjang blok
+        tidak tetap. Menjaga nol di depan membuat batas antarblok tidak
+        bergeser saat dirangkaikan kembali.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Enkripsi dengan Kunci Publik}
+    \footnotesize
+    \begin{block}{Rumus per blok}
+        Untuk setiap blok $m_i$ dan kunci publik $(e,n)$,
+        \[
+            c_i = m_i^{\,e} \bmod n .
+        \]
+    \end{block}
+    \begin{itemize}
+        \item Pengirim hanya memerlukan kunci publik penerima.
+        \item Setiap blok dienkripsi secara terpisah dengan rumus yang sama.
+        \item Cipherteks yang dikirim adalah deretan $c_1, c_2, \dots$ dengan
+              panjang blok tetap.
+        \item Ukuran blok harus lebih kecil daripada $n$ agar tidak ada
+              informasi yang hilang.
+    \end{itemize}
+    \begin{exampleblock}{Sifat operasinya}
+        \footnotesize
+        Enkripsi adalah perpangkatan modular: mudah dihitung maju, tetapi
+        akar pangkatnya sukar dicari tanpa kunci privat.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Dekripsi dengan Kunci Privat}
+    \footnotesize
+    \begin{block}{Rumus per blok}
+        Pemilik kunci privat $(d,n)$ menghitung
+        \[
+            m_i = c_i^{\,d} \bmod n .
+        \]
+    \end{block}
+    \begin{enumerate}
+        \item Hitung kembali setiap blok plainteks dengan kunci privat.
+        \item Rangkaikan seluruh $m_i$ sesuai urutan aslinya.
+        \item Terjemahkan deretan angka itu menjadi huruf semula.
+    \end{enumerate}
+    \begin{alertblock}{Mengapa hanya pemilik kunci yang bisa}
+        \footnotesize
+        Tanpa $d$, cipherteks hanya deretan bilangan. Menghitung $d$
+        menuntut $\varphi(n)$, dan menghitung $\varphi(n)$ menuntut
+        pemfaktoran $n$.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Alur Tiga Tahap RSA}
+    \footnotesize
+    \begin{center}
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center,
+                      font=\scriptsize, inner sep=4pt},
+        panah/.style={-{Latex[length=2.2mm]}, thick},
+        kunci/.style={-{Latex[length=2.2mm]}, thick, dashed},
+    ]
+        \node[kotak, fill=ubbblue!8, text width=9.6cm] (gen) at (0,0)
+            {Pembangkitan kunci: pilih $p,q$; hitung $n=pq$ dan
+             $\varphi(n)$; pilih $e$; hitung $d$};
+        \node[kotak, fill=ubbgreen!10, text width=2.8cm] (pub) at (-2.8,-1.4)
+            {Kunci publik $(e,n)$};
+        \node[kotak, fill=ubbred!8, text width=2.8cm] (priv) at (2.8,-1.4)
+            {Kunci privat $(d,n)$};
+
+        \node[kotak, fill=gray!8, text width=0.8cm] (m)   at (-5.9,-3.3) {$m$};
+        \node[kotak, fill=orange!12, text width=2.6cm] (enc) at (-3.45,-3.3)
+            {$c=m^{e}\bmod n$};
+        \node[kotak, fill=gray!8, text width=0.7cm] (c)   at (-1.2,-3.3) {$c$};
+        \node[kotak, fill=orange!12, text width=2.6cm] (dec) at (1.3,-3.3)
+            {$m=c^{d}\bmod n$};
+        \node[kotak, fill=gray!8, text width=0.8cm] (m2)  at (3.8,-3.3) {$m$};
+
+        \draw[panah] (gen.south) -- ++(0,-0.35) -| (pub.north);
+        \draw[panah] (gen.south) -- ++(0,-0.35) -| (priv.north);
+        \draw[kunci] (pub.south) -- (enc.north);
+        \draw[kunci] (priv.south) -- (dec.north);
+        \draw[panah] (m) -- (enc);
+        \draw[panah] (enc) -- (c);
+        \draw[panah] (c) -- (dec);
+        \draw[panah] (dec) -- (m2);
+    \end{tikzpicture}
+    \end{center}
+    \vspace{0.05cm}
+    \begin{block}{Bacaan gambar}
+        \footnotesize
+        Garis putus-putus adalah pemakaian kunci. Kunci publik mengunci,
+        kunci privat membuka; keduanya bekerja pada modulus $n$ yang sama.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Contoh Inti: Enkripsi dan Dekripsi $m = 16$}
+    \footnotesize
+    Kunci publik Alice $(e,n) = (79,3337)$ dan kunci privatnya
+    $(d,n) = (1019,3337)$.
+    \vspace{0.1cm}
+    \begin{enumerate}
+        \item \textbf{Enkripsi oleh Bob:}
+              \[
+                  c = m^{e} \bmod n = 16^{79} \bmod 3337 = 1493 .
+              \]
+        \item \textbf{Pengiriman:} cipherteks $c = 1493$ dikirim melalui
+              saluran terbuka.
+        \item \textbf{Dekripsi oleh Alice:}
+              \[
+                  m = c^{d} \bmod n = 1493^{1019} \bmod 3337 = 16 .
+              \]
+        \item \textbf{Pemeriksaan:} plainteks pulih tepat $m = 16$.
+    \end{enumerate}
+    \begin{alertblock}{Dua hal yang mudah salah dibaca}
+        \footnotesize
+        Angka $16$ adalah bilangan bulat, bukan huruf. Cipherteks $1493$
+        juga bukan pesan yang "disandikan huruf demi huruf"; seluruh blok
+        diperlakukan sebagai satu bilangan.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Contoh Multi-Blok: Mengodekan ``HELLO ALICE''}
+    \footnotesize
+    Aturan kode $\text{A}=00$ sampai $\text{Z}=25$; spasi diabaikan.
+    \begin{center}
+    \begin{tabular}{@{}l*{10}{c}@{}}
+        \toprule
+        Huruf & H & E & L & L & O & A & L & I & C & E \\
+        \midrule
+        Kode  & 07 & 04 & 11 & 11 & 14 & 00 & 11 & 08 & 02 & 04 \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    Deretan kodenya menjadi
+    \[
+        m = 07041111140011080204 .
+    \]
+    Bilangan itu lebih besar daripada $n = 3337$, sehingga dipecah menjadi
+    lima blok empat digit:
+    \[
+        m_1 = 0704,\quad m_2 = 1111,\quad m_3 = 1400,\quad
+        m_4 = 1108,\quad m_5 = 0204 .
+    \]
+    \begin{exampleblock}{Pemeriksaan syarat blok}
+        \footnotesize
+        Kelima blok memenuhi $0 \le m_i \le 3336$, jadi masing-masing dapat
+        dienkripsi tanpa pemotongan.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Enkripsi Lima Blok}
+    \footnotesize
+    Setiap blok dienkripsi dengan kunci publik Alice,
+    $c_i = m_i^{79} \bmod 3337$.
+    \vspace{0.1cm}
+    \begin{center}
+    \begin{tabular}{@{}c c c@{}}
+        \toprule
+        \textbf{Plainteks} & \textbf{Operasi} & \textbf{Cipherteks} \\
+        \midrule
+        $m_1 = \code{0704}$ & $704^{79} \bmod 3337$  & $c_1 = \code{0328}$ \\
+        $m_2 = \code{1111}$ & $1111^{79} \bmod 3337$ & $c_2 = \code{0301}$ \\
+        $m_3 = \code{1400}$ & $1400^{79} \bmod 3337$ & $c_3 = \code{2653}$ \\
+        $m_4 = \code{1108}$ & $1108^{79} \bmod 3337$ & $c_4 = \code{2986}$ \\
+        $m_5 = \code{0204}$ & $204^{79} \bmod 3337$  & $c_5 = \code{1164}$ \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Cipherteks yang dikirim}
+        \footnotesize
+        $C = 0328,\ 0301,\ 2653,\ 2986,\ 1164$. Setiap blok ditulis empat
+        digit; nol di depan pada \code{0328} dan \code{0301} tetap
+        dipertahankan.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Dekripsi Lima Blok}
+    \footnotesize
+    Alice memakai kunci privatnya, $m_i = c_i^{1019} \bmod 3337$.
+    \vspace{0.1cm}
+    \begin{center}
+    \begin{tabular}{@{}c c c l@{}}
+        \toprule
+        \textbf{Cipherteks} & \textbf{Operasi} & \textbf{Pulih} & \textbf{Huruf} \\
+        \midrule
+        $c_1 = \code{0328}$ & $328^{1019} \bmod 3337$  & \code{0704} & H, E \\
+        $c_2 = \code{0301}$ & $301^{1019} \bmod 3337$  & \code{1111} & L, L \\
+        $c_3 = \code{2653}$ & $2653^{1019} \bmod 3337$ & \code{1400} & O, A \\
+        $c_4 = \code{2986}$ & $2986^{1019} \bmod 3337$ & \code{1108} & L, I \\
+        $c_5 = \code{1164}$ & $1164^{1019} \bmod 3337$ & \code{0204} & C, E \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.1cm}
+    \begin{block}{Pesan kembali utuh}
+        \footnotesize
+        Deretan pulih $07041111140011080204$ diterjemahkan kembali menjadi
+        ``HELLO ALICE''. Penerima menambahkan spasi yang tadi tidak
+        dikodekan.
+    \end{block}
+\end{frame}
+
+% =====================================================================
+\section{Keamanan RSA}
+% =====================================================================
+
+\begin{frame}{Keamanan Bertumpu pada Pemfaktoran}
+    \footnotesize
+    \begin{block}{Satu langkah yang membuka semuanya}
+        Bila $n$ berhasil difaktorkan menjadi $p$ dan $q$, maka
+        \[
+            \varphi(n) = (p-1)(q-1)
+        \]
+        dapat langsung dihitung.
+    \end{block}
+    \begin{block}{Kunci privat menyusul}
+        Karena $e$ sudah diumumkan, nilai $d$ diperoleh dari
+        \[
+            e \cdot d \equiv 1 \pmod{\varphi(n)}
+            \;\Longrightarrow\;
+            d = \frac{1 + k\,\varphi(n)}{e}.
+        \]
+    \end{block}
+    \begin{alertblock}{Kesimpulan}
+        \footnotesize
+        Memfaktorkan $n$ berarti memperoleh seluruh kunci privat. Inilah
+        satu-satunya landasan keamanan RSA menurut bab ini.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Biaya Pemfaktoran dan Panjang Modulus}
+    \footnotesize
+    \begin{block}{Kompleksitas algoritma tercepat saat ini}
+        \[
+            O\!\left(\exp\!\left(\sqrt[3]{\frac{64}{9}}\;
+            b\,(\log b)^{2}\right)\right)
+        \]
+        untuk bilangan $n$ sepanjang $b$ bit. Sampai kini belum ada
+        algoritma pemfaktoran bilangan besar dalam waktu polinomial;
+        semakin panjang $n$, semakin lama pemfaktorannya.
+    \end{block}
+    \begin{exampleblock}{Perkiraan yang dikutip bab}
+        \footnotesize
+        \begin{itemize}
+            \item $p$ dan $q$ lebih dari 100 digit: $n$ lebih dari 200
+                  digit, diperkirakan perlu 4 miliar tahun.
+            \item $n$ sepanjang 500 digit: diperkirakan perlu $10^{25}$
+                  tahun.
+            \item Perkiraan memakai komputer berkecepatan 1 milidetik per
+                  operasi.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Ukuran Modulus dan Rekor Pemfaktoran}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{tabular}{@{}l l@{}}
+                \toprule
+                \textbf{Panjang $n$} & \textbf{Keadaan menurut bab} \\
+                \midrule
+                $\le 256$ bit & beberapa jam dengan PC \\
+                $\le 512$ bit & beberapa ratus komputer \\
+                $> 1024$ bit & dianggap aman \\
+                \bottomrule
+            \end{tabular}
+            \vspace{0.1cm}
+            \begin{block}{Padanan desimal}
+                $n$ 1024 bit setara 300 angka desimal; $p$ dan $q$
+                masing-masing sekitar 154 angka desimal.
+            \end{block}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{exampleblock}{Sayembara 1977}
+                \footnotesize
+                Ketiga penemu RSA menantang pembaca \textit{Scientific
+                American} memecahkan cipherteks RSA dengan hadiah \$100.
+                Tantangan itu baru terpecahkan pada 1994, setelah 8 bulan
+                kerja kolaborasi lewat internet.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Bacaan praktis}
+        \footnotesize
+        Rekor pemfaktoran terus bergerak. Modulus yang dulu dianggap besar
+        dapat menjadi rentan hanya karena kemajuan perangkat keras.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Ancaman Komputasi Kuantum}
+    \footnotesize
+    \begin{block}{Algoritma Shor}
+        Komputer kuantum dapat memfaktorkan $n$ dalam waktu polinomial.
+        Persoalan yang menjadi landasan RSA berubah dari "sukar" menjadi
+        "dapat diselesaikan".
+    \end{block}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Keamanan RSA bergantung pada pemfaktoran yang lambat.
+        \item Memperpanjang modulus hanya menambah biaya, bukan mengubah
+              sifat persoalan.
+        \item Karena itu panjang kunci tidak dapat dipakai sebagai penangkal
+              serangan kuantum.
+    \end{itemize}
+    \begin{alertblock}{Batas klaim}
+        \footnotesize
+        Ancaman ini bersifat prospektif: yang dibahas adalah akibat bila
+        komputer kuantum berskala besar benar-benar terwujud. Selama itu
+        belum terjadi, RSA masih dipakai dan masih aman terhadap penyerang
+        klasik.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Kelemahan dan Man-in-the-Middle}
+% =====================================================================
+
+\begin{frame}{Kelemahan Pertama: RSA Lambat}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Sebab}
+                Perpangkatan modular dengan eksponen besar jauh lebih mahal
+                daripada operasi blok pada cipher simetri. RSA lebih lambat
+                daripada DES dan AES.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Akibat praktis}
+                RSA tidak dipakai untuk mengenkripsi berkas berukuran
+                besar.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{block}{Jalan keluar: kriptografi hibrida}
+        \footnotesize
+        \begin{enumerate}
+            \item RSA mengenkripsi kunci sesi yang pendek dengan kunci
+                  publik penerima.
+            \item Pesan dienkripsi dengan cipher simetri, misalnya DES atau
+                  AES, memakai kunci sesi itu.
+            \item Penerima membuka kunci sesi dengan kunci privatnya, lalu
+                  memakai kunci sesi untuk membuka pesan.
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Kelemahan Kedua: Enkripsi Deterministik}
+    \footnotesize
+    \begin{alertblock}{Masalah bila pesan dienkripsi langsung}
+        Tanpa \textit{padding}, pesan $m$ yang sama selalu menghasilkan
+        cipherteks $c$ yang sama. Penyadap dapat mengenali pesan yang
+        berulang, dan RSA terbuka terhadap serangan kriptografi.
+    \end{alertblock}
+    \begin{block}{OAEP sebagai penambal}
+        OAEP (\textit{Optimal Asymmetric Encryption Padding}) diperkenalkan
+        Bellare dan Rogaway pada 1994. Pesan diberi data tambahan sebelum
+        dienkripsi:
+        \[
+            M \;\rightarrow\; \text{OAEP} \;\rightarrow\;
+            \text{encoded message} \;\rightarrow\; \text{RSA}.
+        \]
+    \end{block}
+    \begin{exampleblock}{Dua akibat yang diharapkan}
+        \footnotesize
+        Cipherteks menjadi tidak deterministik: enkripsi pesan yang sama dua
+        kali memberi hasil berbeda. OAEP juga membuat RSA aman terhadap
+        \textit{chosen-ciphertext attack}.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Peta Kelemahan RSA}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                                    >{\raggedright\arraybackslash}X
+                                    >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Kelemahan} & \textbf{Pangkal} & \textbf{Akibat atau penanganan} \\
+        \midrule
+        Lambat & perpangkatan modular berukuran besar &
+            tidak untuk data besar; dipakai hibrida \\
+        \hline
+        Deterministik & tanpa padding, $m$ sama memberi $c$ sama &
+            pola terbaca; perlu OAEP \\
+        \hline
+        Modulus pendek & pemfaktoran makin murah &
+            256 dan 512 bit tidak lagi memadai \\
+        \hline
+        Kunci tidak diautentikasi & kunci publik dapat diganti di jalan &
+            \textit{man-in-the-middle} \\
+        \hline
+        Komputasi kuantum & algoritma Shor &
+            modulus berapa pun tidak menolong \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.1cm}
+    \begin{block}{Bacaan tabel}
+        \footnotesize
+        Hanya baris pertama dan kedua yang dapat ditambal di dalam algoritma
+        RSA sendiri. Tiga baris sisanya menuntut keputusan di luar
+        algoritma: panjang kunci, keaslian kunci, dan ancaman perangkat.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Serangan Man-in-the-Middle: Skenario}
+    \footnotesize
+    Alice dan Bob bertukar kunci publik melalui saluran terbuka. Carol
+    mencegat keduanya.
+    \vspace{0.1cm}
+    \begin{enumerate}
+        \item Alice mengirim kunci publiknya kepada Bob.
+        \item Carol menahannya dan mengirim kunci publik Carol kepada Bob,
+              seolah-olah itu kunci Alice.
+        \item Carol melakukan hal yang sama terhadap Alice: kunci publik
+              Carol dikirim seolah-olah itu kunci Bob.
+        \item Alice dan Bob sama-sama percaya bahwa mereka memegang kunci
+              lawan yang sah.
+    \end{enumerate}
+    \vspace{0.1cm}
+    \begin{center}
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, align=center,
+                      font=\scriptsize, inner sep=4pt},
+        panah/.style={-{Latex[length=2mm]}, thick},
+    ]
+        \node[kotak, fill=ubbgreen!10, text width=2.2cm] (A) at (0,0) {Alice};
+        \node[kotak, fill=ubbred!10, text width=2.2cm] (C) at (3.6,0) {Carol};
+        \node[kotak, fill=ubbgreen!10, text width=2.2cm] (B) at (7.2,0) {Bob};
+        \draw[panah] (A) -- node[above, font=\tiny] {$K_A$} (C);
+        \draw[panah] (C) -- node[above, font=\tiny] {$K_C$} (B);
+        \draw[panah, dashed] (A.south) to[out=-35, in=215]
+            node[below, font=\tiny] {Carol menyamar sebagai Bob} (B.south);
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Man-in-the-Middle: Akibat dan Pelajarannya}
+    \footnotesize
+    \begin{block}{Yang dilakukan Carol}
+        \begin{enumerate}
+            \item Bob mengenkripsi pesan dengan kunci yang disangkanya kunci
+                  Alice, padahal kunci Carol.
+            \item Carol mendekripsi pesan itu dengan kunci privatnya dan
+                  menyimpan salinannya.
+            \item Carol mengenkripsi ulang pesan dengan kunci publik Alice
+                  yang asli, lalu meneruskannya.
+        \end{enumerate}
+    \end{block}
+    \begin{alertblock}{Mengapa tidak terdeteksi}
+        \footnotesize
+        Alice menerima pesan yang memang dapat dibuka dengan kunci
+        privatnya, dan Bob yakin telah mengirim kepada Alice. Keduanya tidak
+        melihat tanda apa pun bahwa Carol berada di tengah.
+    \end{alertblock}
+    \begin{exampleblock}{Pelajaran}
+        \footnotesize
+        RSA memberi kerahasiaan, bukan identitas. Keaslian kunci publik
+        harus dipastikan melalui saluran lain yang dipercaya sebelum kunci
+        itu dipakai.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Rangkuman}
+% =====================================================================
+
+\begin{frame}{Rangkuman (1/2): Gagasan dan Prosedur}
+    \footnotesize
+    \begin{itemize}
+        \item RSA memakai sepasang kunci: $(e,n)$ untuk enkripsi dan
+              $(d,n)$ untuk dekripsi. Hanya $n$ dan $e$ yang disebarkan.
+        \item $p$ dan $q$ prima rahasia, $n = pq$ umum, dan
+              $\varphi(n) = (p-1)(q-1)$ rahasia.
+        \item Teorema Euler, $a^{\varphi(n)} \equiv 1 \pmod n$ untuk
+              $\text{PBB}(a,n)=1$, menopang penurunan rumus RSA.
+        \item Dari $e \cdot d = k\varphi(n)+1$ diperoleh
+              $m^{ed} \equiv m \pmod n$, sehingga dekripsi membalik
+              enkripsi.
+        \item Pembangkitan kunci: pilih $p,q$; hitung $n$ dan
+              $\varphi(n)$; pilih $e$ yang relatif prima; hitung
+              $d \equiv e^{-1} \pmod{\varphi(n)}$.
+        \item Pesan dipecah menjadi blok $0 \le m_i \le n-1$, ditulis
+              dengan panjang tetap agar nol di depan tidak hilang.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Rangkuman (2/2): Contoh, Keamanan, dan Kelemahan}
+    \footnotesize
+    \begin{itemize}
+        \item Contoh buku: $p=47$, $q=71$ memberi $n=3337$,
+              $\varphi(n)=3220$, $e=79$, dan $d=1019$.
+        \item Enkripsi $m=16$ memberi $c = 16^{79} \bmod 3337 = 1493$;
+              dekripsi $1493^{1019} \bmod 3337$ memulihkan $16$.
+        \item ``HELLO ALICE'' dikodekan menjadi
+              $07041111140011080204$, dipecah lima blok, dan dienkripsi
+              menjadi $0328, 0301, 2653, 2986, 1164$.
+        \item Keamanan bersandar pada pemfaktoran $n$: sekali $p$ dan $q$
+              diketahui, $\varphi(n)$ dan $d$ menyusul.
+        \item Kelemahan utamanya: lambat, deterministik tanpa padding,
+              rentan bila modulus pendek, dan tidak menjamin keaslian kunci.
+        \item \textit{Man-in-the-middle} berhasil karena kunci publik dapat
+              diganti di jalan; penangkalnya adalah kepastian identitas
+              pemilik kunci.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Latihan}
+    \footnotesize
+    \begin{enumerate}
+        \item Dengan $p = 47$ dan $q = 71$, hitunglah $\varphi(n)$. Periksa
+              bahwa $e = 17$ memenuhi syarat, lalu tentukan $d$.
+        \item Jelaskan mengapa $p$, $q$, dan $\varphi(n)$ harus dirahasiakan,
+              sedangkan $n$ boleh diketahui umum.
+        \item Dengan kunci publik $(79,3337)$ dan kunci privat
+              $(1019,3337)$, enkripsikan $m = 16$ lalu dekripsikan hasilnya.
+        \item Mengapa pesan yang lebih panjang daripada modulus harus
+              dipecah menjadi blok dengan syarat $0 \le m_i \le n-1$?
+        \item Jelaskan mengapa OAEP membuat cipherteks RSA menjadi tidak
+              deterministik.
+        \item Uraikan jalannya \textit{man-in-the-middle} ketika Alice dan
+              Bob bertukar kunci publik, lalu sebutkan apa yang diperlukan
+              untuk mencegahnya.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Penutup}
+    \begin{block}{Yang harus diingat}
+        \footnotesize
+        \begin{itemize}
+            \item RSA memisahkan tugas mengunci dan membuka ke dua kunci
+                  berbeda.
+            \item Kebenaran dekripsi berasal dari Teorema Euler dan syarat
+                  $ed \equiv 1 \pmod{\varphi(n)}$.
+            \item Keamanannya hanya sekuat kesulitan memfaktorkan $n$.
+            \item RSA lambat, sehingga dipakai secara hibrida untuk
+                  membungkus kunci sesi.
+            \item Tanpa kepastian keaslian kunci publik, RSA tidak menahan
+                  \textit{man-in-the-middle}.
+        \end{itemize}
+    \end{block}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 12 --- Diffie--Hellman dan ElGamal}: logaritma
+        diskret, pertukaran kunci Diffie--Hellman, serangan pada DH, dan
+        algoritma ElGamal.
+    \end{exampleblock}
+\end{frame}
+
+\end{document}

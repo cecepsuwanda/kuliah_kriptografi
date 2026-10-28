@@ -1,0 +1,186 @@
+% =====================================================================
+%  beamer-preamble.tex  --  prasarana dan gaya slide kuliah
+%
+%  Mata kuliah : Pengantar Kriptografi (MPFA014)
+%  Program     : Program Studi Matematika, FMIPA, Universitas Bale Bandung
+%
+%  Berkas ini TIDAK memuat \documentclass. Setiap berkas minggu memuatnya
+%  sendiri lalu menarik berkas ini:
+%
+%      \documentclass[aspectratio=169,11pt]{beamer}
+%      \input{beamer-preamble}
+%      \title{...} \subtitle{...} \setWeekInfo{Minggu n}{Topik}
+%
+%  Berkas minggu hanya berisi \setWeekInfo dan lingkungan frame.
+%  Kompilasi dijalankan DARI DALAM folder ppt/ (lihat compile-ppt.bat),
+%  karena gambar buku dirujuk dengan jalur relatif ../buku_ajar/.
+% =====================================================================
+
+% ---------------------------------------------------------------- bahasa
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[indonesian]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% ------------------------------------------------------------- matematika
+\usepackage{amsmath,amssymb,mathtools}
+
+% ----------------------------------------------------------------- tabel
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+
+% --------------------------------------------------------------- grafik
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc,fit,backgrounds}
+
+% ---------------------------------------------------------- kode program
+\usepackage{listings}
+\lstdefinestyle{slidecode}{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{ubbblue}\bfseries,
+    commentstyle=\color{ubbgreen}\itshape,
+    stringstyle=\color{ubbred},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=6pt,
+    frame=single,
+    rulecolor=\color{ubbblue!40},
+    backgroundcolor=\color{ubbblue!3},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    columns=fullflexible,
+    keepspaces=true,
+}
+\lstset{style=slidecode}
+
+% =====================================================================
+%  WARNA INSTITUSI
+% =====================================================================
+\definecolor{ubbblue}{RGB}{12, 62, 120}      % warna utama
+\definecolor{ubbteal}{RGB}{0, 118, 110}      % aksen kedua
+\definecolor{ubbgreen}{RGB}{22, 122, 74}     % untuk blok contoh
+\definecolor{ubbred}{RGB}{168, 42, 42}       % untuk blok peringatan
+\definecolor{ubbgray}{RGB}{70, 76, 84}       % teks sekunder
+
+% =====================================================================
+%  IDENTITAS MATA KULIAH
+% =====================================================================
+\newcommand{\CourseName}{Pengantar Kriptografi}
+\newcommand{\CourseCode}{MPFA014}
+\newcommand{\CourseSemester}{Semester Ganjil}
+\newcommand{\CourseProgram}{Program Studi Matematika}
+\newcommand{\CourseFaculty}{Fakultas Matematika dan Ilmu Pengetahuan Alam}
+\newcommand{\CourseInstitution}{Universitas Bale Bandung}
+\newcommand{\CourseLecturer}{Cecep Suwanda, S.Si., M.Kom.}
+
+% Label minggu, disetel tiap berkas lewat \setWeekInfo
+\newcommand{\WeekLabel}{}
+\newcommand{\WeekTopic}{}
+\newcommand{\setWeekInfo}[2]{%
+    \renewcommand{\WeekLabel}{#1}%
+    \renewcommand{\WeekTopic}{#2}%
+}
+
+% =====================================================================
+%  TEMA: header, footer, warna blok
+% =====================================================================
+\usetheme{default}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+\setbeamercolor{palette primary}{bg=ubbblue, fg=white}
+\setbeamercolor{palette secondary}{bg=ubbgray, fg=white}
+\setbeamercolor{palette tertiary}{bg=ubbteal, fg=white}
+
+\setbeamercolor{structure}{fg=ubbblue}
+\setbeamercolor{normal text}{fg=black!92}
+\setbeamercolor{alerted text}{fg=ubbred}
+
+\setbeamercolor{block title}{bg=ubbblue, fg=white}
+\setbeamercolor{block body}{bg=ubbblue!6, fg=black!92}
+\setbeamercolor{block title alerted}{bg=ubbred, fg=white}
+\setbeamercolor{block body alerted}{bg=ubbred!6, fg=black!92}
+\setbeamercolor{block title example}{bg=ubbgreen, fg=white}
+\setbeamercolor{block body example}{bg=ubbgreen!6, fg=black!92}
+
+\setbeamercolor{itemize item}{fg=ubbblue}
+\setbeamercolor{itemize subitem}{fg=ubbteal}
+\setbeamercolor{enumerate item}{fg=ubbblue}
+
+\setbeamerfont{headline}{size=\scriptsize}
+\setbeamerfont{footline}{size=\scriptsize}
+\setbeamerfont{block title}{size=\normalsize}
+
+% Badan blok rata kiri (bukan rata kanan-kiri): teks slide lebih mudah dibaca
+% dan baris terakhir yang pendek tidak lagi memicu "Underfull \hbox".
+\addtobeamertemplate{block body begin}{\raggedright}{}
+\addtobeamertemplate{block alerted body begin}{\raggedright}{}
+\addtobeamertemplate{block example body begin}{\raggedright}{}
+
+% Header: nama mata kuliah dan kode MK
+\setbeamertemplate{headline}{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=1.2ex,leftskip=1em,rightskip=1em]{palette primary}%
+        \usebeamerfont{headline}\CourseName\ \textperiodcentered\ \CourseCode%
+        \hfill \CourseProgram%
+    \end{beamercolorbox}%
+}
+
+% Footer: minggu dan nomor halaman
+\setbeamertemplate{footline}{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.4ex,dp=1.2ex,leftskip=1em,rightskip=1em]{palette secondary}%
+        \usebeamerfont{footline}\WeekLabel\ \textperiodcentered\ \WeekTopic%
+        \hfill \insertframenumber\,/\,\inserttotalframenumber%
+    \end{beamercolorbox}%
+}
+
+% Halaman judul: judul, subjudul, lalu blok identitas mata kuliah
+\setbeamertemplate{title page}{%
+    \begin{centering}
+        \vskip1.0em
+        {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
+        \vskip0.3em
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}
+        \vskip1.2em
+        \textcolor{ubbblue}{\rule{0.72\textwidth}{0.8pt}}
+        \vskip1.2em
+        {\small
+            \textbf{\CourseName}\ (\CourseCode)\par
+            \vskip0.4em
+            \CourseProgram\par
+            \CourseFaculty\par
+            \CourseInstitution\par
+            \vskip0.6em
+            \CourseSemester\ \textperiodcentered\ \WeekLabel\par
+            \vskip0.8em
+            Dosen Pengampu: \CourseLecturer\par
+        }
+        \vskip1.0em
+        \textcolor{ubbblue}{\rule{0.72\textwidth}{0.4pt}}
+    \end{centering}
+}
+
+% =====================================================================
+%  PERINTAH BANTU
+% =====================================================================
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+% Rujukan gambar dari buku: \bookfig[lebar]{NN}{namaberkas.png}
+% Jalur relatif terhadap folder ppt/ (dikompilasi dari sana).
+\newcommand{\bookfig}[3][0.80\linewidth]{%
+    \includegraphics[width=#1]{../buku_ajar/chapters/#2/figures/#3}%
+}
+
+% Keterangan sumber gambar, sepadan dengan \sumber di buku
+\newcommand{\figsumber}[1]{%
+    \par\vspace{1pt}{\tiny\itshape Sumber: #1\par}%
+}
+
+% Penanda blok materi yang sering dipakai di slide
+\newcommand{\slidejudul}[1]{{\large\bfseries\textcolor{ubbblue}{#1}}\par\vspace{2pt}}
+\newcommand{\kunci}[1]{\textcolor{ubbred}{\textbf{#1}}}

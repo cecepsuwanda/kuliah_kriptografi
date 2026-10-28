@@ -1,0 +1,1084 @@
+% =====================================================================
+%  minggu-12.tex  --  Slide Pertemuan Minggu ke-12
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Diffie--Hellman dan ElGamal
+%  Sumber materi : buku_ajar/chapters/11 (Bab 11), 12 (Bab 12)
+%  Sub-CPMK      : 1.4
+%
+%  Kompilasi dari dalam folder ppt/:
+%      pdflatex -interaction=nonstopmode minggu-12.tex   (dua kali)
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Kesepakatan Kunci di Saluran Terbuka}
+\subtitle{Logaritma diskret, protokol Diffie--Hellman, dan algoritma ElGamal}
+\setWeekInfo{Minggu 12}{Diffie--Hellman dan ElGamal}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \slidejudul{Lima bagian}
+            \footnotesize
+            \begin{enumerate}
+                \item \textbf{Logaritma diskret} --- akar primitif dan
+                      persoalan membalik perpangkatan modular.
+                \item \textbf{Diffie--Hellman} --- parameter publik, prosedur
+                      empat langkah, dan bukti kesamaan kunci.
+                \item \textbf{Serangan pada DH} --- penyadapan pasif dan
+                      \textit{man-in-the-middle}.
+                \item \textbf{ElGamal} --- pembangkitan kunci, enkripsi, dan
+                      dekripsi.
+                \item \textbf{Contoh terhitung} --- satu contoh DH dan satu
+                      contoh ElGamal dari buku ajar.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 11 dan Bab 12 buku ajar; Munir, \textit{IF4020
+                Kriptografi}, ITB, 2026 (modul 15 dan 14)
+            \end{block}
+            \begin{exampleblock}{Benang merah}
+                \footnotesize
+                Diffie--Hellman membangun \kunci{kesepakatan kunci};
+                ElGamal mengubah gagasan itu menjadi \kunci{enkripsi}.
+                Keduanya bertumpu pada satu persoalan: logaritma diskret.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK yang dibebankan}
+        \textbf{Sub-CPMK 1.4} --- Mengenal algoritma kriptografi kunci publik,
+        yaitu RSA, Diffie--Hellman, ElGamal, knapsack, dan \textit{Elliptic
+        Curve Cryptography} (ECC), beserta persoalan matematis yang
+        mendasarinya.
+    \end{block}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \footnotesize
+        \begin{itemize}
+            \item menjelaskan persoalan logaritma diskret dan akar primitif
+                  sebagai landasan keamanan;
+            \item menjelaskan prosedur pertukaran kunci Diffie--Hellman dan
+                  alasan kedua pihak memperoleh kunci yang sama;
+            \item mengidentifikasi serangan pasif dan serangan
+                  \textit{man-in-the-middle} pada Diffie--Hellman;
+            \item menjelaskan pembangkitan kunci, enkripsi, dan dekripsi
+                  algoritma ElGamal;
+            \item membandingkan peran Diffie--Hellman dan ElGamal dalam
+                  kriptografi kunci publik.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Logaritma Diskret}
+% =====================================================================
+
+\begin{frame}{Dari Perpangkatan ke Logaritma Diskret}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            Perpangkatan modular mudah dihitung, bahkan untuk eksponen besar.
+            Persoalan yang sukar adalah kebalikannya:
+            \begin{itemize}
+                \item diberikan $g$, $p$, dan $b$, carilah $x$ sehingga
+                      $g^{x} \equiv b \pmod p$;
+                \item nilai $x$ disebut \kunci{logaritma diskret} dari $b$
+                      untuk basis $g$ modulo $p$;
+                \item daerah jawabannya terbatas, yaitu $0 \le x \le p-1$.
+            \end{itemize}
+            \[
+                b \equiv g^{x} \pmod p, \qquad 0 \le x \le p-1 .
+            \]
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \begin{tikzpicture}[
+                kotak/.style={draw, rounded corners, align=center,
+                              font=\scriptsize, inner sep=4pt,
+                              minimum width=3.2cm, minimum height=0.7cm},
+                panah/.style={-{Latex[length=1.8mm]}, thick},
+                balik/.style={-{Latex[length=1.8mm]}, thick, dashed,
+                              ubbred},
+                node distance=0.42cm,
+            ]
+                \node[kotak, fill=ubbblue!8] (maju)
+                    {$g$, $x$, $p$};
+                \node[kotak, fill=ubbgreen!10, below=of maju] (hasil)
+                    {$b = g^{x} \bmod p$};
+                \node[kotak, fill=ubbred!6, below=0.75cm of hasil] (balik)
+                    {$x = \log_{g} b \pmod p$};
+                \draw[panah] (maju) -- node[right, font=\tiny] {mudah} (hasil);
+                \draw[balik] (hasil) -- node[right, font=\tiny] {sukar} (balik);
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Asimetri yang dimanfaatkan}
+        \footnotesize
+        Arah maju dapat diselesaikan dalam waktu polinomial terhadap
+        $\log p$; arah balik tidak mempunyai cara efisien yang diketahui
+        untuk $p$ yang besar.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Akar Primitif: Syarat Basis yang Baik}
+    \footnotesize
+    Untuk bilangan prima $p$, bilangan $g$ disebut \kunci{akar primitif}
+    bila perpangkatan $g^{1}, g^{2}, \dots, g^{p-1}$ modulo $p$
+    menghasilkan seluruh residu $1$ sampai $p-1$ tepat satu kali.
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Contoh $p = 7$}
+                \footnotesize
+                $g = 3$ menghasilkan $(3,2,6,4,5,1)$, sehingga $3$ adalah
+                akar primitif. $g = 2$ hanya menghasilkan $(2,4,1)$ yang
+                berulang dengan periode $3$, sehingga bukan akar primitif.
+            \end{block}
+        \end{column}
+        \begin{column}{0.50\textwidth}
+            \centering
+            \begin{tabular}{@{}l c c c c c c@{}}
+                \toprule
+                $i$ & 1 & 2 & 3 & 4 & 5 & 6 \\
+                \midrule
+                $3^{i} \bmod 7$ & 3 & 2 & 6 & 4 & 5 & 1 \\
+                $2^{i} \bmod 7$ & 2 & 4 & 1 & 2 & 4 & 1 \\
+                \bottomrule
+            \end{tabular}
+            \par\vspace{0.12cm}
+            {\scriptsize Baris $g=3$ memuat semua residu bukan-nol.}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Mengapa penting}
+        \footnotesize
+        Bila $g$ bukan akar primitif, tidak semua nilai $b$ mempunyai
+        logaritma diskret. Basis yang salah membuat sebagian pesan tidak
+        dapat diwakili.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Contoh Logaritma Diskret}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            Bilangan $7$ adalah akar primitif dari $p = 41$. Kita mencari
+            $x$ yang memenuhi
+            \[
+                15 \equiv 7^{x} \pmod{41} .
+            \]
+            Hitung pangkat secara bertahap:
+            \[
+                7^{1} = 7, \qquad
+                7^{2} = 49 \equiv 8 \pmod{41},
+            \]
+            \[
+                7^{3} = 343 = 8 \cdot 41 + 15 \equiv 15 \pmod{41} .
+            \]
+            Jadi, $x = 3$ adalah logaritma diskret dari $15$ untuk basis $7$
+            modulo $41$.
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{exampleblock}{Cara memeriksa}
+                \footnotesize
+                Substitusikan kembali jawaban:
+                \[
+                    7^{3} = 343,
+                \]
+                \[
+                    343 \bmod 41 = 15 .
+                \]
+                Hasilnya sama dengan nilai $b$ yang diberikan.
+            \end{exampleblock}
+            \begin{alertblock}{Skala persoalan}
+                \footnotesize
+                Untuk $p$ kecil, jawaban dapat dicari dengan mencoba satu per
+                satu. Untuk $p$ besar, biaya pencarian menyeluruh tumbuh
+                sebanding $p$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Mengapa Logaritma Diskret Sukar}
+    \footnotesize
+    \begin{itemize}
+        \item Ruang jawaban berukuran $p$: penelusuran menyeluruh menuntut
+              sekitar $p$ percobaan.
+        \item Perpangkatan modular dapat dihitung cepat dengan pengkuadratan
+              berulang, jadi kecepatan arah maju tidak membantu arah balik.
+        \item Tidak ada algoritma efisien yang diketahui untuk menghitung
+              logaritma diskret pada $p$ besar secara umum.
+        \item Karena itu $p$ harus dipilih sangat besar; nilai $p = 353$
+              atau $p = 2357$ hanya dipakai untuk memperlihatkan langkah.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Akibat bagi dua algoritma}
+        \footnotesize
+        Diffie--Hellman dan ElGamal sama-sama menaruh rahasianya pada
+        eksponen. Selama logaritma diskret sukar, eksponen itu tetap
+        terlindungi meskipun nilai pangkatnya disiarkan.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Pertukaran Kunci Diffie--Hellman}
+% =====================================================================
+
+\begin{frame}{Persoalan Distribusi Kunci}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            Cipher kunci-simetri menuntut kedua pihak sudah memegang kunci
+            yang sama sebelum pesan pertama dikirim. Bila kunci itu harus
+            dikirim lebih dahulu, saluran justru menjadi titik lemah.
+            \begin{itemize}
+                \item \textbf{Kriptografi hibrida}: kunci sesi dibungkus
+                      dengan kunci publik penerima, lalu dipulihkan dengan
+                      kunci privatnya.
+                \item \textbf{Pertukaran kunci}: kedua pihak menghitung kunci
+                      yang sama dari nilai-nilai yang dipertukarkan terbuka.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \begin{block}{Diffie--Hellman (1976)}
+                \footnotesize
+                Kunci rahasia \emph{tidak pernah dikirim}. Yang melewati
+                saluran hanyalah nilai publik yang tidak berguna bagi
+                penyadap.
+            \end{block}
+            \begin{alertblock}{Batas tugasnya}
+                \footnotesize
+                DH tidak mengenkripsi pesan. Ia hanya menetapkan kunci
+                bersama untuk dipakai cipher simetri.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Pertanyaan yang dijawab}
+        \footnotesize
+        Bagaimana Alice dan Bob sampai pada kunci yang sama tanpa seorang
+        pun di antara mereka dapat menyimpulkan kunci itu dari lalu lintas
+        yang terlihat?
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Analogi Pencampuran Cat}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \centering
+            \bookfig[0.86\linewidth]{11}{analogi-cat-dh.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \footnotesize
+            Alice dan Bob menyepakati warna publik, misalnya kuning.
+            Masing-masing menambahkan warna rahasianya, bertukar campuran,
+            lalu menambahkan lagi warna rahasianya sendiri.
+            \begin{itemize}
+                \item Pencampuran mudah dilakukan, tetapi memisahkan kembali
+                      warna penyusunnya sukar.
+                \item Urutan pencampuran tidak mengubah hasil akhir.
+                \item Warna publik berperan seperti $p$ dan $g$; warna
+                      rahasia berperan seperti eksponen $a$ dan $b$.
+            \end{itemize}
+            \begin{exampleblock}{Pesan analogi}
+                \footnotesize
+                Nilai yang dipertukarkan boleh dilihat semua orang, asalkan
+                operasi baliknya cukup sukar.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Parameter Publik dan Kunci Masing-Masing}
+    \footnotesize
+    Sebelum bertukar nilai, Alice dan Bob menyepakati dua parameter:
+    \begin{itemize}
+        \item $p$ adalah bilangan prima;
+        \item $g$ adalah akar primitif dari $p$, dengan $g < p$.
+    \end{itemize}
+    Kedua nilai itu \kunci{tidak rahasia}; keduanya boleh dibicarakan
+    melalui saluran terbuka.
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Alice}
+                \footnotesize
+                Memilih eksponen rahasia $a$, lalu menghitung kunci
+                publiknya
+                \[ A = g^{a} \bmod p . \]
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Bob}
+                \footnotesize
+                Memilih eksponen rahasia $b$, lalu menghitung kunci
+                publiknya
+                \[ B = g^{b} \bmod p . \]
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Yang rahasia dan yang publik}
+        \footnotesize
+        Hanya $a$ dan $b$ yang dirahasiakan. Nilai $p$, $g$, $A$, dan $B$
+        boleh diketahui siapa saja tanpa membocorkan kunci bersama.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Prosedur Pertukaran Kunci}
+    \centering
+    \begin{tikzpicture}[
+        pihak/.style={draw, rounded corners, minimum width=2.6cm,
+                      minimum height=0.62cm, font=\small},
+        panah/.style={-{Latex[length=2.2mm]}, thick},
+        label/.style={font=\scriptsize, align=center, fill=white,
+                      inner sep=2pt},
+        sisi/.style={font=\scriptsize, align=center, fill=white,
+                     inner sep=2pt},
+    ]
+        \node[pihak, fill=ubbblue!8] (a) at (0,0) {Alice};
+        \node[pihak, fill=ubbgreen!12] (b) at (7.2,0) {Bob};
+        \draw[dashed] (a.south) -- ++(0,-4.05);
+        \draw[dashed] (b.south) -- ++(0,-4.05);
+
+        \node[sisi] at (0,-0.95) {1. pilih $a$ rahasia};
+        \node[sisi] at (7.2,-0.95) {2. pilih $b$ rahasia};
+
+        \draw[panah] (0,-1.85) -- node[label] {$A = g^{a} \bmod p$} (7.2,-1.85);
+        \draw[panah] (7.2,-2.65) -- node[label] {$B = g^{b} \bmod p$} (0,-2.65);
+
+        \node[sisi] at (0,-3.65) {3. $K = B^{a} \bmod p$};
+        \node[sisi] at (7.2,-3.65) {4. $K = A^{b} \bmod p$};
+    \end{tikzpicture}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.58\textwidth}
+            \footnotesize
+            Alice mengirim $A$, Bob mengirim $B$. Masing-masing lalu
+            memangkatkan nilai yang diterima dengan eksponen rahasianya
+            sendiri.
+        \end{column}
+        \begin{column}{0.38\textwidth}
+            \begin{exampleblock}{Hasil}
+                \footnotesize
+                Kedua pihak berakhir dengan satu nilai $K$ yang sama tanpa
+                pernah mengirim $K$ itu.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Mengapa Kedua Kunci Sama}
+    \footnotesize
+    Substitusikan definisi $A$ dan $B$ ke dalam perhitungan kedua pihak:
+    \[
+        \begin{aligned}
+            K_{\text{Alice}}
+                &= B^{a} \bmod p = (g^{b})^{a} \bmod p
+                 = g^{ab} \bmod p, \\
+            K_{\text{Bob}}
+                &= A^{b} \bmod p = (g^{a})^{b} \bmod p
+                 = g^{ab} \bmod p .
+        \end{aligned}
+    \]
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Sifat yang dipakai}
+                \footnotesize
+                $(g^{b})^{a} = g^{ba} = g^{ab} = (g^{a})^{b}$. Perkalian
+                eksponen bersifat komutatif.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Urutan berbeda}
+                \footnotesize
+                Alice memangkatkan $B$ dengan $a$; Bob memangkatkan $A$
+                dengan $b$. Kedua jalur bertemu pada residu yang sama.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Sejarah dan Penamaan}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Protokol ini dipublikasikan Whitfield Diffie dan
+                      Martin Hellman pada tahun 1976.
+                \item Istilah yang tepat adalah \emph{protokol}, bukan
+                      algoritma, karena melibatkan pertukaran pesan antara
+                      dua pihak.
+                \item Gagasan distribusi kunci melalui saluran terbuka juga
+                      dikembangkan Ralph Merkle.
+                \item Pada tahun 2002 Hellman mengusulkan nama
+                      \textit{Diffie--Hellman--Merkle} untuk mengakui
+                      sumbangan Merkle.
+                \item Ketiganya menerima IEEE Koji Kobayashi Computers and
+                      Communications Award pada tahun 1999.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{11}{pionir-diffie-hellman.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Ekstensi ke Tiga Pihak}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            Protokol dua pihak dapat diperluas kepada Alice, Bob, dan
+            Carol yang menyepakati satu kunci bersama.
+            \begin{itemize}
+                \item Ketiganya menyepakati $p$ dan $g$, lalu memilih
+                      eksponen rahasia $a$, $b$, dan $c$.
+                \item Nilai diputar dalam lingkaran: setiap pihak
+                      memangkatkan nilai yang diterima dengan eksponennya
+                      sendiri, lalu meneruskannya.
+                \item Setelah tiga jalur selesai, ketiganya memegang
+                      $g^{abc} \bmod p$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Tiga jalur menuju kunci yang sama}
+                \footnotesize
+                \[
+                    (g^{ab})^{c} = (g^{bc})^{a} = (g^{ca})^{b}
+                    = g^{abc} \pmod p .
+                \]
+                Urutan perkalian eksponen tidak mengubah hasil.
+            \end{block}
+            \begin{alertblock}{Bukan primitif baru}
+                \footnotesize
+                Ekstensi ini hanya mengulang gagasan DH dengan lebih banyak
+                putaran dan pihak.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Serangan pada Diffie--Hellman}
+% =====================================================================
+
+\begin{frame}{Penyadap Pasif: Berhadapan dengan Logaritma Diskret}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \footnotesize
+            Penyadap Eve melihat seluruh lalu lintas, yaitu
+            \[
+                p,\ g,\ A = g^{a} \bmod p,\ B = g^{b} \bmod p .
+            \]
+            Tidak satu pun nilai itu rahasia. Untuk memperoleh kunci, Eve
+            harus lebih dahulu menemukan $a$ atau $b$:
+            \[
+                g^{a} \equiv A \pmod p, \qquad
+                g^{b} \equiv B \pmod p .
+            \]
+            Keduanya adalah persoalan logaritma diskret.
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Bila eksponen diketahui}
+                \footnotesize
+                Dengan $a$, Eve menghitung $K = B^{a} \bmod p$. Dengan $b$,
+                ia menghitung $K = A^{b} \bmod p$. Keduanya memberi kunci
+                yang sama.
+            \end{block}
+            \begin{exampleblock}{Kesimpulan}
+                \footnotesize
+                Selama $p$ cukup besar, penyadapan pasif tidak memberi jalan
+                menghitung $K$.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Batas keamanan}
+        \footnotesize
+        Keamanan DH terhadap penyadapan sepenuhnya bergantung pada
+        kesukaran logaritma diskret. Bila $p$ kecil, seluruh rahasia dapat
+        dihitung dengan penelusuran biasa.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Serangan \textit{Man-in-the-Middle}: Mekanisme}
+    \centering
+    \begin{tikzpicture}[
+        kotak/.style={draw, rounded corners, minimum height=0.8cm,
+                      text width=2.1cm, align=center, font=\small,
+                      inner sep=3pt},
+        panah/.style={-{Latex[length=2.0mm]}, thick},
+        palsu/.style={-{Latex[length=2.0mm]}, thick, dashed, ubbred},
+        label/.style={font=\scriptsize, fill=white, inner sep=1pt},
+    ]
+        \node[kotak, fill=ubbblue!8]   (a) at (0,0)    {Alice};
+        \node[kotak, fill=gray!10]     (m) at (5.5,0)  {Mallory};
+        \node[kotak, fill=ubbgreen!12] (b) at (11,0)   {Bob};
+
+        % arah Alice -- Mallory
+        \draw[panah] (1.15,0.22)
+            -- node[label, above] {$g^{a} \bmod p$} (4.35,0.22);
+        \draw[palsu] (4.35,-0.22)
+            -- node[label, below] {$g^{m} \bmod p$} (1.15,-0.22);
+
+        % arah Mallory -- Bob
+        \draw[palsu] (6.65,0.22)
+            -- node[label, above] {$g^{m} \bmod p$} (9.85,0.22);
+        \draw[panah] (9.85,-0.22)
+            -- node[label, below] {$g^{b} \bmod p$} (6.65,-0.22);
+
+        \node[font=\scriptsize, align=center] at (0,-1.2)
+            {memegang $a$};
+        \node[font=\scriptsize, align=center] at (5.5,-1.2)
+            {memegang $m$};
+        \node[font=\scriptsize, align=center] at (11,-1.2)
+            {memegang $b$};
+    \end{tikzpicture}
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            Mallory menyamar sebagai Bob di hadapan Alice, dan sebagai
+            Alice di hadapan Bob. Ia mencegat $g^{a}$ dan $g^{b}$, lalu
+            menggantikan keduanya dengan $g^{m}$.
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \begin{alertblock}{Yang tidak perlu diketahui}
+                \footnotesize
+                Mallory tidak perlu menemukan $a$ atau $b$. Ia hanya
+                memakai eksponen rahasianya sendiri, $m$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Serangan \textit{Man-in-the-Middle}: Akibat}
+    \footnotesize
+    Setelah pertukaran yang dipalsukan, kedua pihak menghitung kunci yang
+    berbeda:
+    \[
+        K_1 = (g^{m})^{a} \bmod p = g^{am} \bmod p,
+        \qquad
+        K_2 = (g^{m})^{b} \bmod p = g^{bm} \bmod p .
+    \]
+    Mallory dapat menghitung keduanya dari nilai publik:
+    \[
+        K_1 = A^{m} \bmod p, \qquad K_2 = B^{m} \bmod p .
+    \]
+    \begin{itemize}
+        \item Alice mengira $K_1$ adalah kunci dengan Bob; Bob mengira
+              $K_2$ adalah kunci dengan Alice.
+        \item Mallory membuka pesan dengan $K_1$, lalu mengenkripsinya
+              kembali dengan $K_2$ sebelum diteruskan.
+        \item Alice dan Bob tidak menyadari bahwa mereka tidak pernah
+              berbagi kunci yang sama.
+    \end{itemize}
+    \begin{alertblock}{Pelajaran}
+        \footnotesize
+        DH aman terhadap penyadapan pasif, tetapi tidak menahan serangan
+        aktif. Kesepakatan kunci perlu diikat pada identitas pihak yang
+        berkomunikasi.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Algoritma ElGamal}
+% =====================================================================
+
+\begin{frame}{ElGamal: dari DH ke Enkripsi Kunci Publik}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.62\textwidth}
+            \footnotesize
+            \begin{itemize}
+                \item Algoritma ElGamal diperkenalkan Taher Elgamal pada
+                      tahun 1985.
+                \item Makalahnya terbit di \textit{IEEE Transactions on
+                      Information Theory}, volume 31, nomor 4.
+                \item Keamanannya bersandar pada kesukaran menghitung
+                      logaritma diskret di lapangan berhingga.
+                \item Gagasan utamanya: skema distribusi kunci
+                      Diffie--Hellman diubah menjadi sistem kriptografi
+                      kunci publik.
+                \item RSA bertumpu pada kesukaran pemfaktoran; ElGamal
+                      bertumpu pada logaritma diskret.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.34\textwidth}
+            \centering
+            \bookfig[0.94\linewidth]{12}{taher-elgamal.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Perbedaan peran}
+        \footnotesize
+        DH menghasilkan satu kunci untuk dua pihak. ElGamal memakai
+        kunci publik seorang penerima untuk mengenkripsi pesan, sehingga
+        pengirim tidak perlu berbagi rahasia lebih dahulu.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Parameter ElGamal dan Status Kerahasiaan}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}l l X c@{}}
+        \toprule
+        \textbf{Besaran} & \textbf{Arti} & \textbf{Peran} & \textbf{Rahasia?} \\
+        \midrule
+        $p$ & bilangan prima & modulus publik & tidak \\
+        \addlinespace
+        $g$ & akar primitif dari $p$ & basis publik & tidak \\
+        \addlinespace
+        $x$ & eksponen, $2 \le x \le p-2$ & kunci privat & \textbf{ya} \\
+        \addlinespace
+        $y$ & $y = g^{x} \bmod p$ & kunci publik & tidak \\
+        \addlinespace
+        $m$ & plainteks, $0 \le m \le p-1$ & pesan & \textbf{ya} \\
+        \addlinespace
+        $a,b$ & pasangan cipherteks & dikirim & tidak \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.2cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Kunci}
+                \footnotesize
+                Kunci publik berupa $(y,g,p)$. Kunci privat berupa
+                $(x,p)$; nilai $x$ tidak pernah meninggalkan pemiliknya.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Sumber keamanan}
+                \footnotesize
+                Penyerang yang melihat $y$ harus menemukan $x$ dari
+                $y = g^{x} \bmod p$. Itu persoalan logaritma diskret.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Pembangkitan Pasangan Kunci}
+    \footnotesize
+    Pemilik kunci menjalankan tiga langkah:
+    \begin{enumerate}
+        \item pilih bilangan prima $p$;
+        \item pilih $g$ yang merupakan akar primitif dari $p$, lalu pilih
+              kunci privat $x$ dengan $2 \le x \le p-2$;
+        \item hitung kunci publik
+              \[
+                  y = g^{x} \bmod p .
+              \]
+    \end{enumerate}
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.46\textwidth}
+            \begin{exampleblock}{Yang disiarkan}
+                \footnotesize
+                Tripel $(y,g,p)$ boleh diumumkan. Siapa pun dapat memakainya
+                untuk mengirim pesan kepada pemilik kunci.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.50\textwidth}
+            \begin{alertblock}{Yang disimpan}
+                \footnotesize
+                Pasangan $(x,p)$ tetap rahasia. Dari $y$ dan $g$, nilai $x$
+                hanya dapat diperoleh dengan menyelesaikan logaritma
+                diskret.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Enkripsi ElGamal}
+    \footnotesize
+    Pengirim memakai kunci publik $(y,g,p)$ dan menjalankan tiga langkah:
+    \begin{enumerate}
+        \item pecah plainteks menjadi blok $m_1, m_2, \dots$ dengan syarat
+              setiap blok berada pada selang $0 \le m \le p-1$;
+        \item pilih bilangan acak $k$ dengan $1 \le k \le p-2$;
+        \item untuk setiap blok $m$, hitung pasangan
+              \[
+                  a = g^{k} \bmod p,
+                  \qquad
+                  b = y^{k} \cdot m \bmod p .
+              \]
+    \end{enumerate}
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Cipherteks}
+                \footnotesize
+                Pasangan $(a,b)$ adalah cipherteks satu blok. Ukurannya dua
+                kali ukuran plainteks karena terdiri atas dua residu modulo
+                $p$.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Peran $k$}
+                \footnotesize
+                $k$ dipilih acak untuk setiap pesan. Nilai $a = g^{k}$
+                tidak bergantung pada $m$; pesan disamarkan oleh faktor
+                $y^{k}$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Dekripsi ElGamal}
+    \footnotesize
+    Penerima memakai kunci privat $x$ untuk memulihkan $m$ dari $(a,b)$.
+    \begin{enumerate}
+        \item hitung invers dari $a^{x}$ modulo $p$:
+              \[
+                  (a^{x})^{-1} \equiv a^{\,p-1-x} \pmod p ;
+              \]
+        \item kalikan cipherteks $b$ dengan invers itu:
+              \[
+                  m = b \cdot (a^{x})^{-1} \bmod p .
+              \]
+    \end{enumerate}
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Mengapa rumus invers benar}
+                \footnotesize
+                $a^{x} \cdot a^{p-1-x} = a^{p-1} \equiv 1 \pmod p$,
+                sehingga $a^{p-1-x}$ memang invers dari $a^{x}$.
+            \end{block}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{exampleblock}{Yang dihitung penerima}
+                \footnotesize
+                Hanya satu perpangkatan untuk invers dan satu perkalian
+                modular untuk memulihkan pesan.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Mengapa Dekripsi Berhasil}
+    \footnotesize
+    Substitusikan definisi $b$, $y$, dan $a$:
+    \[
+        \begin{aligned}
+            \frac{b}{a^{x}}
+                &\equiv \frac{y^{k} m}{a^{x}} \pmod p \\
+                &\equiv \frac{g^{xk} m}{g^{xk}} \pmod p \\
+                &\equiv m \pmod p .
+        \end{aligned}
+    \]
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Dua kesamaan yang dipakai}
+                \footnotesize
+                $a^{x} = (g^{k})^{x} = g^{kx}$ dan
+                $y^{k} = (g^{x})^{k} = g^{xk}$.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Faktor yang saling meniadakan}
+                \footnotesize
+                Faktor $g^{xk}$ muncul di pembilang dan penyebut. Yang
+                tersisa hanya $m$.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Sifat Probabilistik dan Ukuran Cipherteks}
+    \footnotesize
+    \begin{itemize}
+        \item Karena $k$ dipilih acak, pesan yang sama menghasilkan
+              pasangan $(a,b)$ yang berbeda pada setiap enkripsi.
+        \item $k$ harus dipilih baru untuk setiap pesan; nilai acak itu
+              adalah bagian dari algoritma, bukan tambahan opsional.
+        \item Cipherteks berukuran dua kali plainteks karena memuat dua
+              residu, yaitu $a$ dan $b$.
+        \item Komponen $a = g^{k}$ tidak memuat $m$; informasi pesan
+              tersembunyi pada $b = y^{k}m \bmod p$.
+        \item Dekripsi menghapus topeng $y^{k}$ dengan memakai $x$.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Akibat praktis}
+        \footnotesize
+        Dua pengiriman pesan yang identik tidak menghasilkan cipherteks
+        yang identik. Sifat ini berbeda dari cipher deterministik yang
+        selalu memberi keluaran sama untuk masukan yang sama.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Contoh Terhitung}
+% =====================================================================
+
+\begin{frame}{Contoh Diffie--Hellman (1/2): Kunci Publik}
+    \footnotesize
+    Alice dan Bob menyepakati $p = 353$ dan $g = 3$. Bilangan $3$ adalah
+    akar primitif dari $353$, dan syarat $g < p$ terpenuhi.
+    \vspace{0.15cm}
+    \begin{block}{Langkah 1 --- Alice memilih $a = 97$ dan menghitung}
+        \footnotesize
+        \[
+            A = g^{a} \bmod p = 3^{97} \bmod 353 = 40 .
+        \]
+    \end{block}
+    \begin{block}{Langkah 2 --- Bob memilih $b = 233$ dan menghitung}
+        \footnotesize
+        \[
+            B = g^{b} \bmod p = 3^{233} \bmod 353 = 248 .
+        \]
+    \end{block}
+    \begin{exampleblock}{Yang melewati saluran}
+        \footnotesize
+        Alice mengirim $A = 40$ kepada Bob; Bob mengirim $B = 248$ kepada
+        Alice. Kedua nilai itu publik.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Contoh Diffie--Hellman (2/2): Kunci Bersama}
+    \footnotesize
+    Setelah bertukar kunci publik, kedua pihak menghitung kunci rahasia
+    dari sisi masing-masing.
+    \vspace{0.15cm}
+    \begin{block}{Langkah 3 --- Alice memakai $B = 248$ dan $a = 97$}
+        \footnotesize
+        \[
+            K = B^{a} \bmod p = 248^{97} \bmod 353 = 160 .
+        \]
+    \end{block}
+    \begin{block}{Langkah 4 --- Bob memakai $A = 40$ dan $b = 233$}
+        \footnotesize
+        \[
+            K = A^{b} \bmod p = 40^{233} \bmod 353 = 160 .
+        \]
+    \end{block}
+    \begin{exampleblock}{Pemeriksaan dan kesimpulan}
+        \footnotesize
+        Kedua jalur bertemu pada $K = 160$, sama dengan
+        $g^{ab} = 3^{97 \cdot 233} \bmod 353 = 160$. Kunci ini siap dipakai
+        cipher simetri.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Contoh ElGamal (1/3): Pembangkitan Kunci}
+    \footnotesize
+    Bob memilih parameter dan kunci privatnya:
+    \[
+        p = 2357, \qquad g = 2, \qquad x = 1751 .
+    \]
+    Syarat terpenuhi: $2$ adalah akar primitif dari $2357$ dan
+    $2 \le 1751 \le 2355$.
+    \vspace{0.15cm}
+    \begin{block}{Menghitung kunci publik}
+        \footnotesize
+        \[
+            y = g^{x} \bmod p = 2^{1751} \bmod 2357 = 1185 .
+        \]
+    \end{block}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Kunci publik Bob}
+                \footnotesize
+                $(y,g,p) = (1185, 2, 2357)$. Nilai ini diberitahukan kepada
+                Alice.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Kunci privat Bob}
+                \footnotesize
+                $(x,p) = (1751, 2357)$. Nilai $x$ tidak dikirim kepada
+                siapa pun.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Contoh ElGamal (2/3): Enkripsi}
+    \footnotesize
+    Alice akan mengirim pesan $m = 2035$. Nilai itu berada di dalam selang
+    $[0,2356]$, sehingga dapat dienkripsi sebagai satu blok.
+    \vspace{0.1cm}
+    \begin{block}{Alice memilih $k = 1520$ dan menghitung}
+        \footnotesize
+        \[
+            a = g^{k} \bmod p = 2^{1520} \bmod 2357 = 1430,
+        \]
+        \[
+            b = y^{k} \cdot m \bmod p
+              = 1185^{1520} \cdot 2035 \bmod 2357 = 697 .
+        \]
+    \end{block}
+    \begin{exampleblock}{Cipherteks yang dikirim}
+        \footnotesize
+        Pasangan $(a,b) = (1430, 697)$. Ukurannya dua kali ukuran
+        plainteks, sesuai sifat ElGamal.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Contoh ElGamal (3/3): Dekripsi}
+    \footnotesize
+    Bob memakai kunci privat $(x,p) = (1751, 2357)$ pada cipherteks
+    $(a,b) = (1430,697)$.
+    \vspace{0.1cm}
+    \begin{block}{Langkah 1 --- menghitung invers}
+        \footnotesize
+        Eksponen invers adalah $p-1-x = 2357-1-1751 = 605$:
+        \[
+            (a^{x})^{-1} = a^{\,p-1-x} \bmod p
+            = 1430^{605} \bmod 2357 = 872 .
+        \]
+    \end{block}
+    \begin{block}{Langkah 2 --- memulihkan pesan}
+        \footnotesize
+        \[
+            m = b \cdot (a^{x})^{-1} \bmod p
+              = 697 \cdot 872 \bmod 2357 = 2035 .
+        \]
+    \end{block}
+    \begin{exampleblock}{Pemeriksaan}
+        \footnotesize
+        $a^{x} = 1430^{1751} \bmod 2357 = 2084$, dan
+        $2084 \cdot 872 \bmod 2357 = 1$. Jadi $872$ memang invers yang
+        benar, dan plainteks $m = 2035$ kembali utuh.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Contoh ElGamal: Pesan ``HALO'' Multi-Blok}
+    \footnotesize
+    Dengan pengodean $A = 00, \dots, Z = 25$, kata ``HALO'' menjadi
+    \[
+        \mathrm{H}=07,\quad \mathrm{A}=00,\quad \mathrm{L}=11,\quad
+        \mathrm{O}=14
+        \qquad \Longrightarrow \qquad 07001114 .
+    \]
+    Parameter Alice: $p = 2273$, $g = 3$, $x = 243$, dan
+    $y = 3^{243} \bmod 2273 = 461$.
+
+    Pesan dipecah menjadi $m_1 = 0700 = 700$ dan $m_2 = 1114$.
+    \vspace{0.1cm}
+    \centering
+    \begin{tabular}{@{}l c c c c@{}}
+        \toprule
+        Blok & $m$ & $k$ & $a = g^{k} \bmod p$ & $b = y^{k}m \bmod p$ \\
+        \midrule
+        $m_1$ & 700  & 1463 & $3^{1463} \bmod 2273 = 1439$
+              & $461^{1463} \cdot 700 \bmod 2273 = 74$ \\
+        \addlinespace
+        $m_2$ & 1114 & 2001 & $3^{2001} \bmod 2273 = 1220$
+              & $461^{2001} \cdot 1114 \bmod 2273 = 1682$ \\
+        \bottomrule
+    \end{tabular}
+    \vspace{0.12cm}
+    \begin{exampleblock}{Dekripsi dengan $x = 243$}
+        \footnotesize
+        $74 \cdot 1439^{2029} \bmod 2273 = 700$ dan
+        $1682 \cdot 1220^{2029} \bmod 2273 = 1114$. Rangkaian
+        $07001114$ kembali berbunyi ``HALO''.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Rangkuman}
+% =====================================================================
+
+\begin{frame}{Perbandingan Diffie--Hellman dan ElGamal}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}>{\bfseries\raggedright\arraybackslash}p{2.3cm}
+                                   >{\raggedright\arraybackslash}X
+                                   >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        Aspek & Diffie--Hellman & ElGamal \\
+        \midrule
+        Tujuan & menyepakati satu kunci bersama & mengenkripsi pesan dengan
+        kunci publik \\
+        \addlinespace
+        Keluaran & satu nilai $K = g^{ab} \bmod p$ & pasangan cipherteks
+        $(a,b)$ \\
+        \addlinespace
+        Rahasia & eksponen $a$ dan $b$ & kunci privat $x$ dan bilangan acak
+        $k$ \\
+        \addlinespace
+        Publik & $p$, $g$, $A$, $B$ & $p$, $g$, $y$, dan $(a,b)$ \\
+        \addlinespace
+        Landasan & logaritma diskret & logaritma diskret \\
+        \addlinespace
+        Sifat & protokol dua arah & enkripsi probabilistik \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Hubungan keduanya}
+        \footnotesize
+        ElGamal dapat dipandang sebagai gagasan DH yang dipakai untuk
+        mengenkripsi: kunci publik $y$ berperan seperti nilai publik DH,
+        sedangkan kunci privat $x$ berperan seperti eksponen rahasianya.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Rangkuman}
+    \footnotesize
+    \begin{itemize}
+        \item Logaritma diskret adalah kebalikan perpangkatan modular:
+              diberikan $g$, $p$, dan $b$, carilah $x$ pada
+              $g^{x} \equiv b \pmod p$.
+        \item Arah maju mudah dihitung; arah balik sukar untuk $p$ besar.
+              Inilah satu-satunya sumber keamanan DH dan ElGamal.
+        \item DH memakai $p$ dan $g$ publik, eksponen $a$ dan $b$ rahasia,
+              lalu bertukar $A = g^{a}$ dan $B = g^{b}$.
+        \item Kedua pihak memperoleh $K = g^{ab} \bmod p$ karena perkalian
+              eksponen komutatif.
+        \item DH aman terhadap penyadapan pasif, tetapi tidak menahan
+              \textit{man-in-the-middle} yang mengganti $A$ dan $B$ dengan
+              $g^{m}$.
+        \item ElGamal memakai kunci publik $(y,g,p)$ dan kunci privat
+              $(x,p)$; enkripsi memberi $a = g^{k}$ dan
+              $b = y^{k}m \bmod p$.
+        \item Dekripsi berhasil karena $y^{k} = a^{xk}$, sehingga faktor
+              itu saling meniadakan dan menyisakan $m$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Penutup}
+    \begin{block}{Yang harus diingat}
+        \footnotesize
+        \begin{itemize}
+            \item Dasar keamanan kedua algoritma adalah eksponen rahasia;
+                  nilai pangkatnya boleh disiarkan.
+            \item Diffie--Hellman menetapkan kunci, bukan mengirimkannya.
+            \item Tanpa autentikasi pihak, DH dapat dibelokkan oleh
+                  \textit{man-in-the-middle}.
+            \item ElGamal memperluas DH menjadi enkripsi dengan pasangan
+                  $(a,b)$ dan bilangan acak $k$.
+            \item Cipherteks ElGamal dua kali lebih panjang dan berubah
+                  setiap kali pesan dienkripsi.
+        \end{itemize}
+    \end{block}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 13 --- Kriptografi kurva eliptik}: grup dan medan
+        berhingga seperlunya, kurva eliptik, ECDLP, ECDH, ECEG, keamanan,
+        dan keuntungan ECC.
+    \end{exampleblock}
+\end{frame}
+
+\end{document}

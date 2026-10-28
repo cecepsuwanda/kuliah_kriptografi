@@ -1,0 +1,1348 @@
+% =====================================================================
+%  minggu-15.tex  --  Slide Pertemuan Minggu ke-15
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Review CPMK-1 dan CPMK-2
+%  Sumber materi : buku_ajar/chapters/01--14 (ringkasan empat belas
+%                  pertemuan; Bab 15 dan Bab 16 tidak dipakai)
+%  Sub-CPMK      : 1.1--1.4 dan 2.1--2.5
+%
+%  Kompilasi dari dalam folder ppt/:
+%      compile-ppt.bat 15
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Satu Semester Kriptografi dalam Satu Peta}
+\subtitle{Review CPMK-1 dan CPMK-2: dari layanan keamanan sampai steganografi}
+\setWeekInfo{Minggu 15}{Review CPMK-1 dan CPMK-2}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% -------------------------------------------------------------------- peta
+\begin{frame}{Peta Empat Belas Pertemuan}
+    \scriptsize
+    \vspace{-0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}X@{}}
+                \toprule
+                \textbf{Mg} & \textbf{Topik dan bab} \\
+                \midrule
+                1 & Pengantar dan urgensi (Bab 1) \\
+                \addlinespace[1pt]
+                2 & Layanan keamanan dan serangan (Bab 2) \\
+                \addlinespace[1pt]
+                3 & Landasan matematika (Bab 3) \\
+                \addlinespace[1pt]
+                4 & Klasik I: substitusi dan transposisi (Bab 4 \S1, \S5) \\
+                \addlinespace[1pt]
+                5 & Klasik II: Vigen\`ere, Playfair, Hill, Enigma (Bab 4 \S2--\S4) \\
+                \addlinespace[1pt]
+                6 & One-time pad (Bab 4 \S6) \\
+                \addlinespace[1pt]
+                7 & Kriptografi modern dan cipher alir (Bab 5) \\
+                \bottomrule
+            \end{tabularx}
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \begin{tabularx}{\linewidth}{@{}c >{\raggedright\arraybackslash}X@{}}
+                \toprule
+                \textbf{Mg} & \textbf{Topik dan bab} \\
+                \midrule
+                8 & \textbf{Ujian Tengah Semester} \\
+                \addlinespace[1pt]
+                9 & Cipher blok, mode, DES, Triple DES (Bab 6--7) \\
+                \addlinespace[1pt]
+                10 & AES dan cipher blok lain (Bab 8--9) \\
+                \addlinespace[1pt]
+                11 & Algoritma RSA (Bab 10) \\
+                \addlinespace[1pt]
+                12 & Diffie--Hellman dan ElGamal (Bab 11--12) \\
+                \addlinespace[1pt]
+                13 & Kriptografi kurva eliptik (Bab 14) \\
+                \addlinespace[1pt]
+                14 & Knapsack, steganografi, steganalisis (Bab 13; modul 19--20) \\
+                \bottomrule
+            \end{tabularx}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{block}{Referensi}
+        \footnotesize
+        Bab 1--14 buku ajar; Munir, IF4020 Kriptografi, ITB, 2026 (modul 01--18)
+    \end{block}
+    \vspace{-0.1cm}
+    \begin{alertblock}{Dua pertemuan ujian}
+        \footnotesize
+        Pertemuan 15 adalah review; pertemuan 16 adalah UAS. Tidak ada materi
+        baru pada pertemuan review ini.
+    \end{alertblock}
+\end{frame}
+
+% ----------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran Minggu 15}
+    \scriptsize
+    \vspace{-0.12cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{CPMK-2: konsep dan urgensi}
+                \begin{itemize}
+                    \setlength{\itemsep}{0pt}
+                    \item \textbf{2.1} Menjelaskan definisi, terminologi,
+                          sejarah, dan empat layanan kriptografi (kerahasiaan,
+                          integritas, autentikasi, dan non-repudiation).
+                    \item \textbf{2.2} Menjelaskan urgensi kriptografi dalam
+                          teknologi informasi berdasarkan kasus kebocoran data,
+                          kesalahan umum penggunaan kriptografi, dan tantangan
+                          masa depan.
+                    \item \textbf{2.3} Menjelaskan landasan matematika dasar
+                          untuk kriptografi, yaitu aritmetika modulo, relatif
+                          prima, invers modulo, bilangan prima, serta entropi
+                          dan teori informasi.
+                    \item \textbf{2.4} Mengidentifikasi jenis-jenis serangan
+                          terhadap kriptografi berdasarkan data yang tersedia,
+                          sifat serangan pasif atau aktif, dan side-channel
+                          attack.
+                    \item \textbf{2.5} Menjelaskan gagasan steganografi dan
+                          steganalisis sebagai pelengkap kriptografi dalam
+                          penyembunyian informasi beserta urgensinya.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \begin{block}{CPMK-1: algoritma klasik dan modern}
+                \begin{itemize}
+                    \setlength{\itemsep}{0pt}
+                    \item \textbf{1.1} Mengenal cipher klasik, yaitu substitusi
+                          (Caesar, monoalfabetik, Affine), transposisi
+                          (Rail Fence), Vigen\`ere, Playfair, Hill, dan Enigma,
+                          beserta gagasan kriptanalisisnya (analisis frekuensi
+                          dan metode Kasiski).
+                    \item \textbf{1.2} Mengenal one-time pad serta stream cipher
+                          modern, yaitu representasi bit, operasi XOR,
+                          keystream generator, FSR, RC4, A5, Trivium, Salsa20,
+                          dan ChaCha20.
+                    \item \textbf{1.3} Mengenal block cipher dan mode
+                          operasinya (ECB, CBC, CFB, OFB, CTR), jaringan
+                          Feistel, DES, Triple DES, AES, serta beberapa block
+                          cipher lain (GOST, RC5, RC6, Blowfish, Serpent,
+                          Twofish, dan MARS).
+                    \item \textbf{1.4} Mengenal algoritma kriptografi kunci
+                          publik, yaitu RSA, Diffie--Hellman, ElGamal,
+                          knapsack, dan Elliptic Curve Cryptography (ECC),
+                          beserta persoalan matematis yang mendasarinya.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Layanan, Serangan, dan Matematika}
+% =====================================================================
+
+\begin{frame}{Empat Layanan dan Bentuk Pelanggarannya}
+    \scriptsize
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.0cm} >{\raggedright\arraybackslash}p{5.0cm} >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Layanan} & \textbf{Pertanyaan yang dijawab} & \textbf{Bentuk pelanggaran} \\
+        \midrule
+        Kerahasiaan & Apakah isi pesan tertutup bagi penyadap? & Intersepsi lalu lintas tanpa enkripsi; penyadapan kabel, elektromagnetik, dan akustik. \\
+        \addlinespace[2pt]
+        Integritas & Apakah pesan belum diubah di perjalanan? & Modifikasi nomor rekening atau nominal pada perintah pembayaran. \\
+        \addlinespace[2pt]
+        Autentikasi & Apakah pengirim benar-benar pihak yang diklaim? & Surel dengan alamat pengirim palsu; pemutaran ulang pesan sah. \\
+        \addlinespace[2pt]
+        Non-repudiation & Dapatkah pengirim menyangkal pesannya? & Sengketa transaksi tanpa bukti kriptografis yang mengikat pengirim. \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.2cm}
+    \begin{alertblock}{Prinsip Kerckhoffs}
+        \footnotesize
+        Algoritma boleh dan harus publik; \kunci{hanya kunci yang rahasia}.
+        Keamanan adalah pernyataan tentang kesulitan komputasi, bukan tentang
+        ketidaktahuan penyerang.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Mengapa Kriptografi Penting}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Tiga pemicu urgensi}
+                \begin{itemize}
+                    \setlength{\itemsep}{2pt}
+                    \item \textbf{Kebocoran data}: data pribadi dan keuangan
+                          yang tersimpan tanpa enkripsi dapat dibaca utuh.
+                    \item \textbf{Penyadapan komunikasi}: kabel, radiasi
+                          elektromagnetik, dan getaran akustik membocorkan isi
+                          percakapan.
+                    \item \textbf{Transaksi elektronik}: tanda terima, perintah
+                          bayar, dan identitas digital harus dapat dipercaya.
+                \end{itemize}
+            \end{block}
+            \begin{exampleblock}{Kesalahan umum}
+                \footnotesize
+                Menganggap penyandian (\textit{encoding}) atau tokenisasi
+                sebagai enkripsi; memakai kunci pendek; dan mengulang
+                \textit{nonce} atau IV.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Tantangan masa depan}
+                \begin{itemize}
+                    \setlength{\itemsep}{2pt}
+                    \item Kriptografi ringan untuk perangkat IoT.
+                    \item Kriptografi pasca-kuantum.
+                    \item Kriptografi berbasis kecerdasan buatan.
+                    \item \textit{Selective encryption} untuk data multimedia.
+                \end{itemize}
+            \end{block}
+            \begin{alertblock}{Bacaan untuk UAS}
+                \footnotesize
+                Urgensi bukan daftar berita, melainkan alasan mengapa layanan
+                keamanan tidak dapat ditunda. Setiap kasus kebocoran menunjukkan
+                satu layanan yang gagal.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Serangan: dari Informasi ke Tujuan}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Berdasarkan informasi yang dimiliki}
+                \begin{enumerate}
+                    \setlength{\itemsep}{1pt}
+                    \item \textit{Ciphertext-only}: hanya cipherteks; yang
+                          tersulit.
+                    \item \textit{Known-plaintext}: pasangan plainteks dan
+                          cipherteks.
+                    \item \textit{Chosen-plaintext}: penyerang memilih
+                          plainteks.
+                    \item \textit{Adaptive chosen-plaintext}: pilihan berikutnya
+                          bergantung pada jawaban sebelumnya.
+                    \item \textit{Chosen-ciphertext}: penyerang memilih
+                          cipherteks dan melihat hasil dekripsi.
+                \end{enumerate}
+            \end{block}
+            \begin{exampleblock}{Dua contoh dari buku}
+                \footnotesize
+                Caesar \code{KHOORZRUOG} dipecahkan dengan 25 pergeseran.
+                Vigen\`ere dengan plainteks \code{AAAAA} membocorkan kunci
+                karena cipherteksnya sama dengan kunci.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Berdasarkan tujuan akhir}
+                \begin{itemize}
+                    \setlength{\itemsep}{1pt}
+                    \item \textit{Key-recovery}: menemukan kunci.
+                    \item \textit{Plaintext-recovery}: menemukan pesan.
+                    \item \textit{Distinguishing}: membedakan cipherteks dari
+                          acak.
+                    \item \textit{Forgeries}: memalsukan pesan atau tag.
+                    \item \textit{Replay}: mengirim ulang pesan sah.
+                \end{itemize}
+            \end{block}
+            \begin{alertblock}{Keamanan komputasi}
+                \footnotesize
+                Algoritma disebut aman secara komputasi bila biaya serangan
+                melampaui nilai informasi dan waktu serangan melampaui masa
+                kerahasiaan informasi.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Pasif, Aktif, dan Saluran Samping}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{block}{Serangan pasif}
+                Hanya menyadap tanpa mengubah data: intersepsi dan analisis
+                lalu lintas. Serangan pasif \kunci{sulit dideteksi}.
+            \end{block}
+            \begin{block}{Serangan aktif}
+                Mengintervensi komunikasi: interupsi, fabrikasi, modifikasi,
+                pemutaran ulang, dan \textit{man-in-the-middle}.
+            \end{block}
+            \begin{alertblock}{Serangan saluran samping}
+                Memanfaatkan kebocoran fisik: waktu eksekusi, konsumsi daya
+                (SPA/DPA), radiasi elektromagnetik, dan penyuntikan kesalahan
+                (DFA).
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \bookfig[0.80\linewidth]{02}{serangan-mitm.png}
+            \figsumber{Bab 2, \textit{Pengantar Kriptografi}.}
+            \vspace{0.1cm}
+            \begin{exampleblock}{MITM}
+                \footnotesize
+                Penyerang meneruskan pesan sambil membacanya.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Matematika yang Dipakai Berulang}
+    \scriptsize
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Konsep} & \textbf{Bentuk yang dipakai} & \textbf{Muncul kembali pada} \\
+        \midrule
+        Aritmetika modulo & $a = qn + r$, $0 \le r < n$; contoh $-24 \bmod 11 = 9$ & Hill ($\bmod 26$), AES ($\mathrm{GF}(2^8)$), semua aritmetika kunci publik \\
+        \addlinespace[1pt]
+        Kekongruenan & $a \equiv b \pmod n \iff n \mid (a-b)$ & RSA, ElGamal, Diffie--Hellman \\
+        \addlinespace[1pt]
+        PBB dan Euclid & $\operatorname{PBB}(a,b)=1$ berarti relatif prima & syarat invers pada Affine dan RSA \\
+        \addlinespace[1pt]
+        Invers modulo & $a \cdot a^{-1} \equiv 1 \pmod n$; contoh $4^{-1} \bmod 9 = 7$ & Affine, RSA, ElGamal, knapsack \\
+        \addlinespace[1pt]
+        Bilangan prima dan totient & $\varphi(pq)=(p-1)(q-1)$ & pembangkitan kunci RSA \\
+        \addlinespace[1pt]
+        Teorema Euler & $a^{\varphi(n)} \equiv 1 \pmod n$ bila $\operatorname{PBB}(a,n)=1$ & kebenaran dekripsi RSA \\
+        \addlinespace[1pt]
+        Akar primitif dan logaritma diskret & $b \equiv g^{x} \pmod p$; mencari $x$ sukar & Diffie--Hellman, ElGamal, ECC (ECDLP) \\
+        \addlinespace[1pt]
+        Entropi Shannon & $H(X)=-\sum_i p(x_i)\log_2 p(x_i)$ & analisis frekuensi dan penilaian kebocoran \\
+        \bottomrule
+    \end{tabularx}
+\end{frame}
+
+\begin{frame}{Entropi: Mengapa Bahasa Alamiah Rapuh}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \footnotesize
+            Entropi maksimum alfabet 26 huruf adalah
+            $\log_2 26 = 4{,}7004$ bit/karakter. Untuk 256 karakter ASCII,
+            maksimumnya $\log_2 256 = 8$ bit/karakter.
+            \vspace{0.12cm}
+            \begin{exampleblock}{Contoh berita Kota Ternate}
+                Entropi plainteks $H(P)=3{,}8988$ bit/karakter, yaitu
+                $82{,}95\%$ dari maksimum. Setelah enkripsi,
+                $H(C)=4{,}3035$ bit/karakter atau $91{,}55\%$ dari maksimum.
+            \end{exampleblock}
+            \begin{alertblock}{Redundansi}
+                Selisih entropi teks alamiah dan maksimumnya adalah
+                \kunci{redundansi}. Itulah bahan bakar analisis frekuensi.
+                Entropi tinggi bukan bukti keamanan, melainkan alat diagnosis.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{03}{frekuensi-huruf-ternate.png}
+            \figsumber{Bab 3, \textit{Pengantar Kriptografi}.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Kriptografi Klasik dan One-Time Pad}
+% =====================================================================
+
+\begin{frame}{Perbandingan Keluarga Cipher Klasik}
+    \scriptsize
+    \renewcommand{\arraystretch}{0.94}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.8cm} >{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Keluarga} & \textbf{Satuan dan kunci} & \textbf{Kekuatan} & \textbf{Titik lemah} \\
+        \midrule
+        Caesar & per huruf; 26 pergeseran & rumus sederhana & dicoba 25 kali \\
+        \addlinespace[0pt]
+        Monoalfabetik & per huruf; $26!$ kunci & menyembunyikan identitas huruf & frekuensi huruf tetap \\
+        \addlinespace[0pt]
+        Affine & $C \equiv mP+b \pmod{26}$; 300 kunci & dua parameter & dua pasangan $P$--$C$ cukup \\
+        \addlinespace[0pt]
+        Vigen\`ere & kunci kata berulang & abjad-majemuk & metode Kasiski \\
+        \addlinespace[0pt]
+        Playfair & bigram; matriks $5\times5$ & mengolah pasangan huruf & 676 bigram terdistribusi \\
+        \addlinespace[0pt]
+        Hill & blok; matriks $K$ & difusi lokal & $\det(K)$ relatif prima 26; \textit{known-plaintext} \\
+        \addlinespace[0pt]
+        Enigma & rotor; posisi awal & periode sangat panjang & mesin \textit{Bombe} \\
+        \addlinespace[0pt]
+        Transposisi & posisi huruf; kunci permutasi & distribusi huruf utuh & bigram dan trigram terbaca \\
+        \addlinespace[0pt]
+        Super-enkripsi & substitusi lalu transposisi & dua lapis pertahanan & tetap cipher klasik \\
+        \bottomrule
+    \end{tabularx}
+\end{frame}
+
+\begin{frame}{Kriptanalisis Klasik: Tiga Perkakas}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \scriptsize
+            \begin{block}{Analisis frekuensi}
+                Huruf yang paling sering pada cipherteks cenderung mewakili
+                huruf yang paling sering pada bahasa aslinya. Bigram dan
+                trigram memperkuat dugaan.
+            \end{block}
+            \begin{block}{Indeks kebetulan}
+                Sekitar $0{,}065$ untuk cipher abjad-tunggal dan sekitar
+                $0{,}038$ untuk teks acak atau cipher abjad-majemuk.
+            \end{block}
+            \begin{alertblock}{Kasiski dan Hill}
+                Jarak kemunculan ulang kriptogram membocorkan panjang kunci
+                Vigen\`ere. Hill dapat dipecahkan dengan pasangan
+                plainteks--cipherteks yang diketahui.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \centering
+            \bookfig[0.92\linewidth]{04}{tabel-frekuensi-huruf.png}
+            \figsumber{Bab 4, \textit{Pengantar Kriptografi}.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{One-Time Pad: Janji Sempurna dan Harganya}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            OTP (Vernam 1917; dibuktikan Shannon 1949) adalah
+            \kunci{satu-satunya cipher berkerahasiaan sempurna}:
+            $H(P \mid C)=H(P)$.
+            \vspace{0.12cm}
+            \begin{block}{Tiga syarat}
+                \begin{enumerate}
+                    \setlength{\itemsep}{1pt}
+                    \item kunci benar-benar acak;
+                    \item panjang kunci sama dengan panjang pesan;
+                    \item kunci hanya dipakai satu kali.
+                \end{enumerate}
+            \end{block}
+            \begin{alertblock}{Kelemahan praktis}
+                Pembangkitan dan distribusi kunci sepanjang pesan sukar.
+                Pemakaian ulang kunci menghasilkan \textit{two-time pad}:
+                $C_1 \oplus C_2 = P_1 \oplus P_2$, sehingga kunci saling
+                menghapus.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{04}{contoh-one-time-pad.png}
+            \figsumber{Bab 4, \textit{Pengantar Kriptografi}.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Contoh Klasik yang Harus Bisa Diulang}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \begin{exampleblock}{Caesar, $k=3$}
+                \code{temui saya di jembatan merah nanti malam}
+                \par\vspace{2pt}
+                $\longrightarrow$ \code{WHPXL VDBD GL MHPEDWDQ PHUDK QDQWL PDODP}
+                \par\vspace{2pt}
+                Huruf \code{t} $=19$ menjadi $(19+3)\bmod 26=22=\code{W}$.
+            \end{exampleblock}
+            \begin{exampleblock}{Vigen\`ere, kunci \code{soreang}}
+                \code{terimapesanangulaikambing}
+                \par\vspace{2pt}
+                $\longrightarrow$ \code{LSIMMNVWGRRAAMMZRMKNSTWEK}
+                \par\vspace{2pt}
+                Tiga huruf pertama: $(19+18)\bmod 26=11=\code{L}$,
+                $(4+14)\bmod 26=18=\code{S}$,
+                $(17+17)\bmod 26=8=\code{I}$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \begin{exampleblock}{One-time pad}
+                Plainteks \code{onetimepad}, kunci \code{tbfrgfarhm}.
+                \par\vspace{2pt}
+                $\longrightarrow$ \code{HOJKOREGHP}
+                \par\vspace{2pt}
+                Huruf pertama: $(14+19)\bmod 26=7=\code{H}$.
+            \end{exampleblock}
+            \begin{alertblock}{Pola yang sama}
+                Ketiga contoh memakai aritmetika modulo 26. Yang berubah hanya
+                \emph{cara memilih pergeseran}: tetap, berulang, atau acak
+                sepanjang pesan.
+            \end{alertblock}
+            \begin{block}{Catatan}
+                Spasi dan tanda baca dibuang sebelum perhitungan, lalu
+                dikembalikan setelah dekripsi.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Cipher Alir}
+% =====================================================================
+
+\begin{frame}{Perbandingan Cipher Alir}
+    \scriptsize
+    \vspace{-0.06cm}
+    \renewcommand{\arraystretch}{0.94}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.8cm} >{\raggedright\arraybackslash}p{3.7cm} >{\raggedright\arraybackslash}p{4.4cm} >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Cipher} & \textbf{Kunci dan IV} & \textbf{Struktur} & \textbf{Catatan} \\
+        \midrule
+        LFSR $n$ bit & muatan awal $n$ bit & register geser, umpan balik XOR & periode maksimum $2^n-1$ \\
+        \addlinespace[0pt]
+        RC4 & kunci 40--2048 bit & larik $S$ 256 byte; KSA lalu PRGA & byte awal berkorelasi dengan kunci; tidak lagi dipakai \\
+        \addlinespace[0pt]
+        A5/1 & kunci sesi 64 bit & tiga LFSR 19, 22, 23 bit; kaidah mayoritas & frame GSM 228 bit setiap 4,6 ms; dipecahkan 1994 \\
+        \addlinespace[0pt]
+        Trivium & kunci 80 bit; IV 80 bit & tiga NLFSR 93, 84, 111 bit; gerbang AND & pemanasan 1152 detak \\
+        \addlinespace[0pt]
+        Salsa20 & kunci 256 bit; nonce 64 bit & ARX pada 16 kata 32 bit & satu blok \textit{keystream} 512 bit \\
+        \addlinespace[0pt]
+        ChaCha20 & kunci 256 bit & ARX; putaran kolom dan diagonal & difusi lebih baik daripada Salsa20 \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.08cm}
+    \begin{block}{Pelajaran}
+        \footnotesize
+        Keamanan cipher alir ditentukan oleh ada tidaknya \kunci{hubungan
+        statistik} antara kunci dan \textit{keystream}, bukan oleh panjang
+        kunci saja.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Dari LFSR ke RC4}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \scriptsize
+            \begin{block}{LFSR}
+                Setiap detak menggeser register satu posisi. Bit yang keluar
+                menjadi \textit{keystream}, bit umpan balik mengisi posisi
+                kosong.
+            \end{block}
+            \begin{exampleblock}{LFSR 4 bit}
+                Muatan awal \code{1111}, umpan balik $f=b_4\oplus b_1$.
+                Keluaran 15 detak: \code{111101011001000}. Setelah 15 detak
+                register kembali ke \code{1111}.
+            \end{exampleblock}
+            \begin{block}{RC4}
+                KSA mengacak larik $S$ 256 byte dengan kunci; PRGA menarik
+                \textit{keystream} dari larik itu. Implementasi hati-hati
+                membuang 256--512 byte awal.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{05}{lfsr.png}
+            \figsumber{Bab 5, \textit{Pengantar Kriptografi}.}
+            \vspace{0.12cm}
+            \begin{alertblock}{Batas pemakaian}
+                \footnotesize
+                RC4 tidak lagi aman karena byte awal \textit{keystream}
+                berkorelasi dengan kunci.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{A5/1, Trivium, dan Keluarga ARX}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{A5/1}
+                Tiga LFSR berukuran 19, 22, dan 23 bit. Kaidah mayoritas
+                menentukan register mana yang bergeser. Satu frame GSM
+                berukuran 228 bit setiap 4,6 milidetik. Serangan
+                \textit{known-plaintext} Anderson (1994) memecahkannya.
+            \end{block}
+            \begin{block}{Trivium}
+                Tiga NLFSR berukuran 93, 84, dan 111 bit; gerbang AND membuat
+                strukturnya nirliniar. Pemanasan 1152 detak mencampur kunci
+                dan IV.
+            \end{block}
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Salsa20 dan ChaCha20}
+                Keduanya memakai operasi ARX (\textit{add, rotate, xor}) pada
+                matriks keadaan $4 \times 4$ berisi 16 kata 32 bit. Satu
+                pemanggilan menghasilkan blok \textit{keystream} 512 bit.
+            \end{block}
+            \begin{exampleblock}{Mengapa dapat paralel}
+                Setiap blok bergantung pada kunci, \textit{nonce}, dan pencacah.
+                Karena tidak merantai blok sebelumnya, beberapa blok dapat
+                dihitung serentak.
+            \end{exampleblock}
+            \begin{alertblock}{Perbedaan}
+                ChaCha20 mengubah tata letak keadaan dan bentuk
+                \textit{quarter round} agar difusinya lebih cepat.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Cipher Blok sampai AES}
+% =====================================================================
+
+\begin{frame}{Prinsip Cipher Blok: Confusion dan Diffusion}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \scriptsize
+            \begin{block}{Dua ukuran}
+                Ukuran \textbf{blok} menentukan luas difusi; ukuran
+                \textbf{kunci} menentukan ketahanan terhadap pencarian
+                menyeluruh. Blok 64 bit hanya boleh dipakai sekitar $2^{32}$
+                blok per kunci.
+            \end{block}
+            \begin{block}{Confusion dan diffusion}
+                Confusion menyembunyikan hubungan plainteks, cipherteks, dan
+                kunci melalui substitusi nirlanjar, misalnya S-box DES
+                $\code{110100}\to\code{1001}$. Diffusion menyebarkan pengaruh
+                satu bit ke banyak bit melalui permutasi dan pergeseran.
+            \end{block}
+            \begin{alertblock}{Jaringan Feistel}
+                $L_i=R_{i-1}$ dan $R_i=L_{i-1}\oplus f(R_{i-1},K_i)$.
+                Struktur ini reversibel untuk sembarang fungsi $f$, sehingga
+                dekripsi memakai urutan kunci terbalik.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{06}{jaringan-feistel.png}
+            \figsumber{Bab 6, \textit{Pengantar Kriptografi}.}
+            \vspace{0.1cm}
+            \begin{exampleblock}{Cipher mainan}
+                \footnotesize
+                $(P \oplus K) \ll 1$ memperlihatkan enkripsi dan dekripsi yang
+                saling membalik, tetapi sangat lemah karena hanya satu putaran.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Mode Operasi: Pilihan yang Menentukan Keselamatan}
+    \scriptsize
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.4cm} >{\raggedright\arraybackslash}p{5.1cm} >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Mode} & \textbf{Rumus} & \textbf{Sifat dan pemakaian} \\
+        \midrule
+        ECB & $C_i = E_K(P_i)$ & Blok identik menghasilkan cipherteks identik; pola data bocor. \\
+        \addlinespace[1pt]
+        CBC & $C_i = E_K(P_i \oplus C_{i-1})$, $C_0=\mathrm{IV}$ & Pola berulang hilang; galat menjalar ke blok berikutnya. \\
+        \addlinespace[1pt]
+        CFB & $C_j = P_j \oplus \operatorname{MSB}_s(E_K(X_j))$ & Cipher blok dipakai seperti cipher alir; umpan balik dari cipherteks. \\
+        \addlinespace[1pt]
+        OFB & $C_j = P_j \oplus \operatorname{MSB}_s(E_K(X_j))$ & Umpan balik dari keluaran $E_K$; galat tidak menjalar. \\
+        \addlinespace[1pt]
+        CTR & $C_j = P_j \oplus E_K(T_j)$ & Paralel dan akses acak; \kunci{counter tidak boleh berulang}. \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.12cm}
+    \begin{exampleblock}{Batas mode}
+        \footnotesize
+        Mode mengatur \emph{cara memakai} cipher blok, bukan kekuatan ciphernya.
+        Tidak satu pun mode memperpanjang kunci efektif.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{DES, Double DES, dan Triple DES}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.53\textwidth}
+            \scriptsize
+            \begin{block}{Parameter DES}
+                Blok 64 bit; kunci eksternal 64 bit, tetapi hanya
+                \kunci{56 bit} yang dipakai karena 8 bit paritas. Jaringan
+                Feistel 16 putaran. Ruang kunci $2^{56} =
+                72.057.594.037.927.936$.
+            \end{block}
+            \begin{exampleblock}{Biaya pencarian menyeluruh}
+                Pada laju $10^6$ kunci/detik: sekitar 2.284 tahun terburuk dan
+                1.142 tahun rata-rata.
+            \end{exampleblock}
+            \begin{block}{Double dan Triple DES}
+                Double DES tumbang oleh \textit{meet-in-the-middle} dengan
+                sekitar $2^{56}$ penyimpanan. Triple DES EDE memberi 112 bit
+                (dua kunci) atau 168 bit (tiga kunci), tetapi blok 64 bit tetap
+                menjadi batasnya.
+            \end{block}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \centering
+            \bookfig[0.86\linewidth]{07}{skema-enkripsi-des.png}
+            \figsumber{Bab 7, \textit{Pengantar Kriptografi}.}
+            \vspace{0.1cm}
+            \begin{alertblock}{Fungsi putaran}
+                \footnotesize
+                Ekspansi $32\to48$ bit, XOR dengan kunci putaran, delapan S-box
+                $6\to4$ bit, lalu permutasi $P$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{AES: Standar yang Berlaku Sekarang}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \scriptsize
+            \begin{block}{Parameter}
+                Blok tetap \kunci{128 bit}; kunci 128, 192, atau 256 bit;
+                putaran 10, 12, atau 14. \texttt{State} berupa matriks
+                $4 \times 4$ byte yang diisi kolom demi kolom.
+            \end{block}
+            \begin{block}{Alur satu putaran}
+                Putaran awal hanya \textit{AddRoundKey}. Lalu $N_r-1$ putaran
+                berisi \textit{SubBytes}, \textit{ShiftRows},
+                \textit{MixColumns}, dan \textit{AddRoundKey}. Putaran terakhir
+                tidak memakai \textit{MixColumns}.
+            \end{block}
+            \begin{exampleblock}{Contoh \textit{MixColumns}}
+                Kolom $[\code{26}\ \code{7B}\ \code{BD}\ \code{43}]^{T}$
+                menjadi $[\code{3F}\ \code{4F}\ \code{F9}\ \code{2A}]^{T}$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \centering
+            \bookfig[0.96\linewidth]{08}{alur-enkripsi-aes.png}
+            \figsumber{Bab 8, \textit{Pengantar Kriptografi}.}
+            \vspace{0.1cm}
+            \begin{alertblock}{Aritmetika dan keamanan}
+                \footnotesize
+                Operasi berada di $\mathrm{GF}(2^8)$ dengan polinom reduksi
+                $x^8+x^4+x^3+x+1$. Ruang kunci AES-128 berisi
+                $2^{128}=3{,}4\times10^{38}$ kemungkinan.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Perbandingan Cipher Blok}
+    \scriptsize
+    \renewcommand{\arraystretch}{0.94}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.7cm} >{\raggedright\arraybackslash}p{3.0cm} c >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Cipher} & \textbf{Blok / kunci} & \textbf{Putaran} & \textbf{Ciri dan status} \\
+        \midrule
+        DES & 64 / 56 bit & 16 & Feistel; dipecahkan 1998--1999 \\
+        \addlinespace[0pt]
+        Triple DES & 64 / 112--168 bit & 48 & EDE; kompatibel DES; blok 64 bit \\
+        \addlinespace[0pt]
+        AES & 128 / 128--256 bit & 10/12/14 & SPN; standar saat ini \\
+        \addlinespace[0pt]
+        GOST (Magma) & 64 / 256 bit & 32 & Feistel; delapan S-box $4\times4$ \\
+        \addlinespace[0pt]
+        RC5 & 32/64/128 / 0--2040 bit & 0--255 & Tiga parameter bebas $w$, $r$, $b$ \\
+        \addlinespace[0pt]
+        RC6 & 128 / 128--2040 bit & --- & Empat register; perkalian $x(2x+1)$ \\
+        \addlinespace[0pt]
+        Blowfish & 64 / 32--448 bit & 16 & Empat S-box dan larik $P$ \\
+        \addlinespace[0pt]
+        Serpent & 128 / 128--256 bit & 32 & SPN murni; delapan S-box $4\times4$ \\
+        \addlinespace[0pt]
+        Twofish & 128 / sampai 256 bit & 16 & Empat S-box $8\times8$ bergantung kunci \\
+        \addlinespace[0pt]
+        MARS & 128 / 128--448 bit & 32 & Feistel tak seimbang: $8+16+8$ \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.1cm}
+    \begin{block}{Bacaan}
+        \footnotesize
+        Semua baris adalah cipher blok. Yang berubah adalah struktur putaran,
+        ukuran blok, dan cara kunci putaran diturunkan; ukuran blok menentukan
+        batas aman pemakaian satu kunci.
+    \end{block}
+\end{frame}
+
+% =====================================================================
+\section{Kriptografi Kunci-Publik}
+% =====================================================================
+
+\begin{frame}{Gagasan Kunci-Publik dan Kriptografi Hibrida}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Dua kunci}
+                Kunci publik boleh disebarkan; kunci privat dijaga. Yang
+                dienkripsi dengan kunci publik hanya dapat dibuka dengan kunci
+                privat yang bersesuaian.
+            \end{block}
+            \begin{block}{Persoalan yang mendasari}
+                \begin{itemize}
+                    \setlength{\itemsep}{1pt}
+                    \item RSA: memfaktorkan $n=pq$.
+                    \item Diffie--Hellman dan ElGamal: logaritma diskret.
+                    \item ECC: logaritma diskret pada kurva eliptik.
+                    \item Knapsack: himpunan bagian dengan jumlah tertentu.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Kriptografi hibrida}
+                Kunci sesi $K$ dienkripsi dengan RSA,
+                $C_K=E_{\mathrm{RSA},\mathrm{PK}_{\mathrm{Bob}}}(K)$.
+                Pesan dienkripsi dengan AES,
+                $C_M=E_{\mathrm{AES},K}(M)$. Penerima memulihkan $K$ lalu $M$.
+            \end{exampleblock}
+            \begin{alertblock}{Dua kelemahan yang harus diingat}
+                \begin{itemize}
+                    \setlength{\itemsep}{1pt}
+                    \item RSA tanpa \textit{padding} bersifat deterministik.
+                    \item Distribusi kunci publik rentan
+                          \textit{man-in-the-middle}.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{RSA: Keamanan yang Bersandar pada Faktorisasi}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.51\textwidth}
+            \begin{block}{Pembangkitan kunci}
+                Pilih prima $p,q$; hitung $n=pq$ dan
+                $\varphi(n)=(p-1)(q-1)$; pilih $e$ dengan
+                $\operatorname{PBB}(e,\varphi(n))=1$; hitung
+                $d \equiv e^{-1} \pmod{\varphi(n)}$.
+                \[
+                    c=m^{e} \bmod n, \qquad m=c^{d} \bmod n.
+                \]
+            \end{block}
+            \begin{exampleblock}{Contoh dari bab}
+                $p=47$, $q=71$ memberi $n=3337$, $\varphi(n)=3220$,
+                $e=79$, dan $d=1019$. Pesan $m=16$ menjadi
+                $c=16^{79}\bmod 3337=1493$, lalu
+                $1493^{1019}\bmod 3337=16$. Pesan panjang dipecah menjadi blok
+                $0 \le m_i \le n-1$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.47\textwidth}
+            \begin{alertblock}{Keamanan dan kelemahan}
+                \begin{itemize}
+                    \setlength{\itemsep}{1pt}
+                    \item Keamanan terletak pada sulitnya memfaktorkan $n$.
+                    \item Modulus 256 bit pecah dalam beberapa jam; 512 bit
+                          dengan beberapa ratus komputer. Bahan kuliah
+                          menyatakan $n$ di atas 1024 bit baru aman.
+                    \item Tanpa OAEP, cipherteks deterministik dan dapat
+                          diserang \textit{chosen-ciphertext}. Distribusi kunci
+                          publik juga rentan \textit{man-in-the-middle}.
+                    \item Algoritma Shor memfaktorkan $n$ dalam waktu
+                          polinomial pada komputer kuantum.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Diffie--Hellman: Menyepakati Rahasia di Saluran Terbuka}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Protokol}
+                Parameter publik: prima $p$ dan akar primitif $g$.
+                Alice mengirim $A=g^{a}\bmod p$; Bob mengirim
+                $B=g^{b}\bmod p$. Keduanya memperoleh
+                \[
+                    K=B^{a}=A^{b}=g^{ab}\bmod p.
+                \]
+            \end{block}
+            \begin{exampleblock}{Contoh dari bab}
+                $p=353$, $g=3$, $a=97$, $b=233$ memberi
+                $A=40$, $B=248$, dan $K=160$ dari kedua arah.
+            \end{exampleblock}
+            \begin{alertblock}{Serangan MITM}
+                Mallory mengganti $g^{a}$ dan $g^{b}$ dengan $g^{m}$, sehingga
+                ia memegang $K_1=g^{am}$ dan $K_2=g^{bm}$. Penangkalnya adalah
+                otentikasi, bukan memperbesar $p$.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \centering
+            \bookfig[0.92\linewidth]{11}{contoh-numerik-dh.png}
+            \figsumber{Bab 11, \textit{Pengantar Kriptografi}.}
+            \vspace{0.1cm}
+            \begin{block}{Perluasan}
+                \footnotesize
+                Protokol dapat diperluas ke tiga pihak dengan pola melingkar;
+                ketiganya sampai pada $K=g^{abc}\bmod p$.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{ElGamal: Enkripsi yang Memakai Kunci Sesaat}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Kunci dan enkripsi}
+                Kunci privat $x$; kunci publik $y=g^{x}\bmod p$. Untuk pesan
+                $m$ dan kunci sesaat acak $k$:
+                \[
+                    a=g^{k}\bmod p, \qquad b=y^{k}\cdot m \bmod p.
+                \]
+                Cipherteksnya pasangan $(a,b)$.
+            \end{block}
+            \begin{block}{Dekripsi}
+                Hitung $(a^{x})^{-1} \equiv a^{\,p-1-x} \pmod p$, lalu
+                $m=b\cdot(a^{x})^{-1}\bmod p$.
+            \end{block}
+            \begin{exampleblock}{Contoh dari bab}
+                $p=2273$, $g=3$, $x=243$ memberi $y=461$. Pesan $m=700$
+                dengan $k=1463$ menjadi $(1439,74)$ dan kembali menjadi $700$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Yang menguntungkan}
+                Karena $k$ dipilih acak untuk setiap pesan, plainteks yang sama
+                dapat menghasilkan cipherteks berbeda.
+            \end{block}
+            \begin{alertblock}{Yang merugikan}
+                \begin{itemize}
+                    \setlength{\itemsep}{2pt}
+                    \item Cipherteks dua kali panjang plainteks.
+                    \item Setiap blok pesan harus berada di $[0,p-1]$.
+                    \item Keamanan bergantung pada sulitnya logaritma diskret.
+                \end{itemize}
+            \end{alertblock}
+            \begin{exampleblock}{Akar primitif}
+                \footnotesize
+                $a$ adalah akar primitif modulo $p$ bila
+                $a^{1},a^{2},\dots,a^{p-1}$ menghasilkan seluruh residu bukan
+                nol tepat satu kali.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Perbandingan Keluarga Kunci-Publik}
+    \scriptsize
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.6cm} >{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Algoritma} & \textbf{Kegunaan} & \textbf{Persoalan matematis} & \textbf{Kelemahan utama} \\
+        \midrule
+        RSA & Enkripsi dan pembungkusan kunci sesi & Memfaktorkan $n=pq$ & Lambat; deterministik tanpa OAEP; butuh modulus besar \\
+        \addlinespace[1pt]
+        Diffie--Hellman & Menyepakati kunci bersama & Logaritma diskret & Tidak saling mengotentikasi; rentan MITM \\
+        \addlinespace[1pt]
+        ElGamal & Enkripsi pesan atau kunci & Logaritma diskret & Cipherteks dua kali panjang; $k$ harus acak per pesan \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.12cm}
+    \begin{block}{Benang merah}
+        \footnotesize
+        Ketiganya tidak menyembunyikan pesan dengan substitusi biasa, melainkan
+        bersandar pada satu \kunci{persoalan komputasi yang diyakini sukar}.
+        Karena itu panjang kunci dan struktur parameter menentukan keamanan.
+    \end{block}
+    \begin{alertblock}{Ancaman yang sama}
+        \footnotesize
+        Algoritma Shor memecahkan RSA, Diffie--Hellman, dan ElGamal pada komputer
+        kuantum. Ketiganya harus bermigrasi ke skema pasca-kuantum.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{ECC, Knapsack, dan Steganografi}
+% =====================================================================
+
+\begin{frame}{ECC: Keamanan pada Kunci yang Pendek}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Kurva dan grup}
+                $y^{2}=x^{3}+ax+b$ dengan $4a^{3}+27b^{2}\neq0$. Titik-titiknya
+                bersama titik di ketakhinggaan $\mathcal{O}$ membentuk grup
+                abelian.
+            \end{block}
+            \begin{block}{Operasi titik}
+                Penjumlahan memakai gradien
+                $m=(y_p-y_q)(x_p-x_q)^{-1}$, penggandaan memakai
+                $m=(3x_p^{2}+a)(2y_p)^{-1}$. Koordinat hasil:
+                $x_r=m^{2}-x_p-x_q$ dan
+                $y_r=m(x_p-x_r)-y_p$, semuanya modulo $p$.
+            \end{block}
+            \begin{alertblock}{ECDLP}
+                Diberikan $P$ dan $Q=kP$, mencari $k$ sangat sukar. Inilah dasar
+                ECDH dan ECEG.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \centering
+            \bookfig[0.88\linewidth]{14}{sebaran-titik-gf11.png}
+            \figsumber{Bab 14, \textit{Pengantar Kriptografi}.}
+            \vspace{0.1cm}
+            \begin{exampleblock}{Ukuran kunci}
+                \footnotesize
+                ECC 160 bit setara RSA 1024 bit; ECC 256 bit setara RSA
+                3072 bit. Kunci pendek menghemat bandwidth dan memori, sehingga
+                cocok untuk perangkat nirkabel.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{ECC: Satu Contoh Hitung}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Kurva $y^{2}\equiv x^{3}+x+6 \pmod{11}$}
+                Kurva ini berorde 13. Titik $P(2,4)$ dan $Q(5,9)$ terletak
+                pada kurva.
+            \end{block}
+            \begin{exampleblock}{Penjumlahan $P+Q$}
+                $m \equiv (9-4)(5-2)^{-1} \equiv 5\cdot4 \equiv 9 \pmod{11}$.
+                \par\vspace{1pt}
+                $x_r \equiv 9^{2}-2-5=74\equiv8$;
+                $y_r \equiv 9(2-8)-4=-58\equiv8$.
+                \par\vspace{1pt}
+                Jadi $P+Q=(8,8)$.
+            \end{exampleblock}
+            \begin{exampleblock}{Penggandaan $2P$}
+                $m \equiv (3\cdot2^{2}+1)(2\cdot4)^{-1}\equiv13\cdot7\equiv3$;
+                hasilnya $2P=(5,9)=Q$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{ECDH pada kurva kecil}
+                Kurva $y^{2}\equiv x^{3}+2x+1\pmod5$ berorde 7 dengan basis
+                $B(0,1)$. Alice memilih $a=2$, Bob $b=3$:
+                \[
+                    P_A=2B=(1,3), \qquad P_B=3B=(3,3).
+                \]
+                Kunci bersama:
+                \[
+                    K=2P_B=3P_A=(0,4).
+                \]
+            \end{block}
+            \begin{alertblock}{Bacaan}
+                \footnotesize
+                Menghitung $kP$ mudah; mengembalikan $k$ dari $P$ dan $kP$
+                sukar.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Knapsack Merkle--Hellman}
+    \scriptsize
+    \vspace{-0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{block}{Gagasan}
+                Knapsack mencari bit $b_i\in\{0,1\}$ dengan
+                $\sum_i b_i w_i=M$. Versi umumnya \textit{NP-complete}.
+                Barisan \textit{superincreasing} memenuhi
+                $w_i>\sum_{j<i}w_j$, sehingga solusinya tunggal dan dapat
+                dicari secara \textit{greedy} dalam $O(n)$.
+            \end{block}
+            \begin{block}{Menyembunyikan kemudahan}
+                $w'_i=(w_i\cdot n)\bmod m$ dengan $m>\sum_i w_i$ dan
+                $\operatorname{PBB}(n,m)=1$. Enkripsi
+                $C=\sum_i b_i w'_i$; dekripsi
+                $C'=(C\cdot n^{-1})\bmod m$, lalu \textit{greedy}.
+            \end{block}
+            \begin{exampleblock}{Contoh dari bab}
+                $W_{priv}=\{2,3,6,13,27,52\}$, $m=105$, $n=31$ memberi
+                $W_{pub}=\{62,93,81,88,102,37\}$ dan $n^{-1}=61$.
+                Blok \code{110101} menjadi $280$; dekripsi $280$ memberi
+                $C'=70$ lalu \code{110101}.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \bookfig[0.55\linewidth]{13}{ilustrasi-masalah-knapsack.png}
+            \figsumber{Bab 13, \textit{Pengantar Kriptografi}.}
+            \vspace{0.08cm}
+            \begin{alertblock}{Mengapa patah}
+                \footnotesize
+                Shamir (1982) merekonstruksi barisan \textit{superincreasing}
+                dari kunci publik dalam waktu polinomial. \kunci{Struktur
+                rahasia} yang membangun sistem justru membocorkan jalan pintas.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Perbandingan Knapsack dan ECC}
+    \scriptsize
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Aspek} & \textbf{Knapsack Merkle--Hellman} & \textbf{ECC} \\
+        \midrule
+        Persoalan dasar & Himpunan bagian dengan jumlah tertentu & Logaritma diskret pada kurva eliptik (ECDLP) \\
+        \addlinespace[1pt]
+        Kunci publik & Barisan bobot $W_{pub}$ & Titik $Q=xB$ pada kurva \\
+        \addlinespace[1pt]
+        Operasi inti & Penjumlahan bobot dan modulo $m$ & Penjumlahan dan penggandaan titik \\
+        \addlinespace[1pt]
+        Ukuran cipherteks & Lebih besar daripada plainteks & Pasangan titik pada ECEG \\
+        \addlinespace[1pt]
+        Status & Patah sejak 1982 & Dipakai luas; kunci 256 bit setara RSA 3072 bit \\
+        \addlinespace[1pt]
+        Pelajaran & Persoalan sukar tidak menjamin sistem aman & Keamanan bergantung pada pemilihan kurva dan parameter \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.12cm}
+    \begin{alertblock}{Satu pertanyaan pembeda}
+        \footnotesize
+        Knapsack menyembunyikan barisan mudah dengan transformasi rahasia;
+        ECC tidak menyembunyikan struktur, tetapi memilih grup yang operasinya
+        mudah dibalik satu arah dan sukar dibalik arah lain.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Perbandingan Steganografi dan Kriptografi}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Gagasan}
+                Steganografi menyembunyikan \kunci{keberadaan} pesan di dalam
+                media sampul (\textit{cover}); hasilnya disebut
+                \textit{stego-object}. Kriptografi menyembunyikan isi, tetapi
+                keberadaan cipherteks tetap terlihat.
+            \end{block}
+            \begin{block}{LSB pada citra dan audio}
+                Bit pesan menggantikan bit paling tidak berarti pada byte
+                citra atau sampel audio. Perubahan satu tingkat hampir tidak
+                terlihat atau terdengar. Semakin banyak bit dipakai, semakin
+                besar kapasitas, tetapi semakin turun kualitas media.
+            \end{block}
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \begin{block}{Tabel pembanding}
+                \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+                    \toprule
+                    \textbf{Aspek} & \textbf{Kriptografi} & \textbf{Steganografi} \\
+                    \midrule
+                    Yang disembunyikan & isi pesan & keberadaan pesan \\
+                    \addlinespace[0pt]
+                    Hasil terlihat & cipherteks & media tampak normal \\
+                    \addlinespace[0pt]
+                    Deteksi & ada, tetapi tidak terbaca & tidak diketahui ada \\
+                    \bottomrule
+                \end{tabularx}
+            \end{block}
+            \begin{block}{Steganalisis}
+                \textit{Visual attack}, \textit{targeted steganalysis}, dan
+                \textit{blind steganalysis}. Berhasil bila keputusannya lebih
+                baik daripada menebak acak.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Latihan}
+% =====================================================================
+
+\begin{frame}{Latihan 1: Klasik dan One-Time Pad}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{enumerate}
+                \setlength{\itemsep}{4pt}
+                \item Dekripsikan cipherteks Caesar \code{KHOORZRUOG}.
+                \item Enkripsikan \code{halo} dengan Affine $m=7$, $b=10$,
+                      dan $n=26$.
+                \item Pada cipherteks Vigen\`ere ditemukan kriptogram berulang
+                      dengan jarak 15, 20, dan 30 huruf. Berapa panjang kunci
+                      yang paling mungkin?
+                \item Mengapa kunci one-time pad tidak boleh dipakai dua kali?
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Kunci jawaban}
+                \begin{enumerate}
+                    \setlength{\itemsep}{3pt}
+                    \item \code{HELLO WORLD}; setiap huruf digeser tiga
+                          ke belakang.
+                    \item \code{HKJE}. Contoh: \code{h}$=7$ menjadi
+                          $(7\cdot7+10)\bmod26=7=\code{h}$.
+                    \item $\operatorname{PBB}(15,20,30)=5$, jadi panjang kunci
+                          5 huruf.
+                    \item Karena $C_1\oplus C_2=P_1\oplus P_2$; kunci saling
+                          menghapus dan dua plainteks dapat dipisahkan.
+                \end{enumerate}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Latihan 2: Simetris Modern}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{enumerate}
+                \setlength{\itemsep}{4pt}
+                \item Hitung \code{10110010} $\oplus$ \code{11001010}.
+                \item Berapa panjang kunci efektif DES, dan ke mana perginya
+                      delapan bit sisanya?
+                \item Terapkan \textit{MixColumns} AES pada kolom
+                      $[\code{26}\ \code{7B}\ \code{BD}\ \code{43}]^{T}$.
+                \item Pada mode CBC, satu bit blok cipherteks $C_3$ rusak.
+                      Blok plainteks mana saja yang terpengaruh?
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Kunci jawaban}
+                \begin{enumerate}
+                    \setlength{\itemsep}{3pt}
+                    \item \code{01111000}.
+                    \item 56 bit; delapan bit pada posisi 8, 16, 24, 32, 40,
+                          48, 56, dan 64 adalah paritas.
+                    \item $[\code{3F}\ \code{4F}\ \code{F9}\ \code{2A}]^{T}$.
+                    \item $P_3$ rusak seluruhnya dan $P_4$ berubah satu bit;
+                          $P_5$ dan seterusnya pulih normal.
+                \end{enumerate}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Latihan 3: Kunci-Publik}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{enumerate}
+                \setlength{\itemsep}{4pt}
+                \item Dengan $p=47$, $q=71$, dan $e=17$, hitung
+                      $\varphi(n)$ dan $d$.
+                \item Dengan kunci publik $(79,3337)$, enkripsikan $m=16$.
+                \item Pada Diffie--Hellman $p=353$, $g=3$, $a=97$, $b=233$,
+                      hitung $A$, $B$, dan $K$.
+                \item Pada ElGamal $p=2273$, $g=3$, $x=243$, hitung $y$.
+                      Lalu enkripsikan $m=700$ dengan $k=1463$.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Kunci jawaban}
+                \begin{enumerate}
+                    \setlength{\itemsep}{3pt}
+                    \item $\varphi(n)=46\cdot70=3220$ dan
+                          $d=17^{-1}\bmod3220=2273$.
+                    \item $c=16^{79}\bmod3337=1493$; dekripsi mengembalikan 16.
+                    \item $A=40$, $B=248$, dan $K=160$ dari kedua sisi.
+                    \item $y=3^{243}\bmod2273=461$; cipherteksnya
+                          $(a,b)=(1439,74)$.
+                \end{enumerate}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Latihan 4: Knapsack, ECC, dan Steganografi}
+    \scriptsize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{enumerate}
+                \setlength{\itemsep}{4pt}
+                \item Apakah $W=\{3,7,14,29,60,118\}$ \textit{superincreasing}?
+                      Pecahkan $M=96$ secara \textit{greedy}.
+                \item Pada $y^{2}\equiv x^{3}+x+6\pmod{11}$, hitung
+                      $(2,4)+(8,8)$.
+                \item Kriptogram knapsack $C=280$ dengan $n^{-1}=61$ dan
+                      $m=105$. Tentukan $C'$ dan blok bitnya.
+                \item Sebutkan tiga jenis steganalisis dan tujuannya.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Kunci jawaban}
+                \begin{enumerate}
+                    \setlength{\itemsep}{3pt}
+                    \item Ya, karena setiap elemen melebihi jumlah semua
+                          sebelumnya. Solusinya $7+29+60=96$, yaitu
+                          \code{010110}.
+                    \item Gradien $m=8$, sehingga hasilnya $(10,9)$.
+                    \item $C'=(280\cdot61)\bmod105=70$; \textit{greedy} memberi
+                          \code{110101}.
+                    \item \textit{Visual}, \textit{targeted}, dan
+                          \textit{blind}; tujuannya memutuskan apakah media
+                          memuat pesan tersembunyi.
+                \end{enumerate}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Penutup}
+% =====================================================================
+
+\begin{frame}{Enam Gagasan yang Harus Terbawa}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Yang harus diingat}
+                \begin{enumerate}
+                    \setlength{\itemsep}{1pt}
+                    \item Keamanan bertumpu pada kunci, bukan pada kerahasiaan
+                          algoritma.
+                    \item Empat layanan menuntut mekanisme yang berbeda.
+                    \item Cipher klasik runtuh karena statistik bahasa; cipher
+                          modern dirancang agar statistik itu hilang.
+                    \item Simetri menang di kecepatan; nir-simetri menang di
+                          pengelolaan kunci.
+                    \item Panjang kunci bukan penentu tunggal; struktur dan
+                          persoalan matematis juga menentukan.
+                    \item Steganografi menyembunyikan keberadaan; kriptografi
+                          menyembunyikan isi.
+                \end{enumerate}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Kekeliruan yang paling sering muncul}
+                \begin{itemize}
+                    \setlength{\itemsep}{2pt}
+                    \item Menganggap OTP praktis tanpa syarat kunci.
+                    \item Memakai ECB pada data yang berulang.
+                    \item Mengira RSA aman tanpa \textit{padding}.
+                    \item Memakai Diffie--Hellman tanpa otentikasi.
+                    \item Mengira knapsack aman karena persoalannya
+                          \textit{NP-complete}.
+                \end{itemize}
+            \end{alertblock}
+            \begin{exampleblock}{Cara belajar}
+                \footnotesize
+                Untuk setiap keluarga, hafalkan tiga hal: satuan pemrosesan,
+                ukuran kunci, dan satu titik lemahnya.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Penutup: Menuju Ujian Akhir Semester}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Cakupan UAS}
+                Seluruh materi pertemuan 1--14: layanan dan serangan,
+                matematika, cipher klasik dan OTP, cipher alir, cipher blok
+                sampai AES, RSA, Diffie--Hellman, ElGamal, ECC, knapsack, serta
+                steganografi dan steganalisis.
+            \end{block}
+            \begin{exampleblock}{Yang diperiksa}
+                \footnotesize
+                Definisi dan syarat setiap algoritma; ukuran kunci dan blok;
+                satu contoh hitung; dan alasan mengapa sebuah algoritma
+                ditinggalkan.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Minggu 16 --- UAS}
+                Pertemuan berikutnya adalah \kunci{UAS}, bukan pertemuan tatap
+                muka. Tidak ada materi baru. Seluruh cakupan CPMK-1 dan CPMK-2
+                yang telah dibahas pada empat belas pertemuan menjadi bahan
+                ujian.
+            \end{alertblock}
+            \begin{block}{Sebelum masuk ruang ujian}
+                \footnotesize
+                Periksa kembali contoh angka RSA, Diffie--Hellman, ElGamal,
+                knapsack, dan ECC. Kelimanya paling sering muncul sebagai soal
+                hitung.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\end{document}

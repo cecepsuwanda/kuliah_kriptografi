@@ -1,0 +1,692 @@
+% =====================================================================
+%  minggu-02.tex  --  Slide Pertemuan Minggu ke-2
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Layanan keamanan & serangan
+%  Sumber materi : buku_ajar/chapters/02 (Bab 2)
+%  Sub-CPMK      : 2.1 dan 2.4
+%
+%  Kompilasi dari dalam folder ppt/:
+%      compile-ppt.bat 02
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Layanan Keamanan dan Serangan}
+\subtitle{Membaca serangan dari informasi, tujuan, dan keterlibatan penyerang}
+\setWeekInfo{Minggu 2}{Layanan keamanan \& serangan}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \slidejudul{Lima bagian}
+            \begin{enumerate}
+                \item Konsep dasar serangan
+                \item Jenis serangan berdasarkan informasi
+                \item Tujuan serangan
+                \item Serangan pasif dan serangan aktif
+                \item Keamanan komputasi dan serangan saluran samping
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 2 buku ajar; Munir, \textit{IF4020 Kriptografi},
+                ITB, 2026 (modul 06).
+            \end{block}
+            \begin{exampleblock}{Tiga pertanyaan pemandu}
+                \footnotesize
+                Apa yang \emph{dimiliki} penyerang? Apa yang ingin ia
+                \emph{peroleh}? Apakah ia \emph{mengubah} komunikasi?
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \footnotesize
+    \begin{block}{Sub-CPMK yang dibebankan}
+        \begin{itemize}
+            \item \textbf{Sub-CPMK 2.1} --- Menjelaskan definisi, terminologi,
+                  sejarah, dan empat layanan kriptografi (kerahasiaan, integritas,
+                  autentikasi, dan non-repudiation).
+            \item \textbf{Sub-CPMK 2.4} --- Mengidentifikasi jenis-jenis serangan
+                  terhadap kriptografi berdasarkan data yang tersedia, sifat
+                  serangan pasif atau aktif, dan \textit{side-channel attack}.
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \begin{itemize}
+            \item menjelaskan definisi serangan dan Prinsip Kerckhoffs;
+            \item mengidentifikasi lima jenis serangan berdasarkan informasi
+                  yang tersedia;
+            \item membedakan serangan pasif dan aktif beserta contohnya;
+            \item mengidentifikasi empat jenis serangan saluran samping.
+        \end{itemize}
+    \end{exampleblock}
+    \vspace{0.1cm}
+    {\scriptsize\textcolor{ubbgray}{Cakupan 2.1 pada pertemuan ini: definisi
+    dan terminologi serangan; empat layanan telah dibahas pada Minggu 1.}}
+\end{frame}
+
+% =====================================================================
+\section{Konsep Dasar Serangan}
+% =====================================================================
+
+\begin{frame}{Apa yang Disebut Serangan?}
+    \begin{block}{Definisi}
+        Serangan (\textit{attack}) adalah setiap usaha pihak lawan untuk
+        menemukan kunci atau menemukan plainteks dari cipherteksnya.
+    \end{block}
+    \vspace{0.25cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \slidejudul{Pihak lawan}
+            \begin{itemize}
+                \item Disebut musuh, lawan, penyadap, atau kriptanalis.
+                \item Bertujuan memperoleh plainteks atau kunci dekripsi.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \slidejudul{Mengapa kunci diburu}
+            \begin{itemize}
+                \item Satu kunci membuka potongan cipherteks yang lain.
+                \item Dengan kunci itu, cipherteks berikutnya dapat
+                      didekripsi.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    \vspace{0.2cm}
+    \begin{alertblock}{Tujuan kriptografi}
+        Menjaga kerahasiaan pesan atau kunci dari pihak ketiga.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Prinsip Kerckhoffs}
+    \begin{alertblock}{Prinsip Kerckhoffs}
+        Semua algoritma kriptografi harus publik; hanya kuncinya yang rahasia.
+    \end{alertblock}
+    \vspace{0.3cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Yang publik}
+                Algoritma dan cara kerjanya.
+            \end{block}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Yang rahasia}
+                Kunci yang dipakai untuk enkripsi dan dekripsi.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.3cm}
+    \begin{exampleblock}{Konsekuensi}
+        Penyerang dianggap mengetahui algoritma yang dipakai. Keamanan sistem
+        terletak pada \kunci{kunci}, bukan pada kerahasiaan algoritmanya.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Tiga Cara Mengelompokkan Serangan}
+    Serangan dapat dibaca dari tiga sudut yang berbeda.
+    \vspace{0.35cm}
+    \begin{enumerate}
+        \item Berdasarkan \textbf{informasi yang tersedia} bagi penyerang.
+              \hfill\textcolor{ubbblue}{\textbf{apa yang dimilikinya?}}
+        \item Berdasarkan \textbf{tujuan atau hasil} yang ingin dicapai.
+              \hfill\textcolor{ubbblue}{\textbf{apa yang ingin diperoleh?}}
+        \item Berdasarkan \textbf{keterlibatan penyerang} dalam komunikasi.
+              \hfill\textcolor{ubbblue}{\textbf{apakah ia mengubah data?}}
+    \end{enumerate}
+    \vspace{0.35cm}
+    \begin{exampleblock}{Cara membaca}
+        Ketiganya adalah lensa yang berbeda untuk serangan yang sama. Satu
+        serangan dapat dijelaskan dari lebih dari satu sudut.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Serangan Berdasarkan Informasi}
+% =====================================================================
+
+\begin{frame}{Lima Jenis Berdasarkan Informasi}
+    \scriptsize
+    Semakin banyak informasi di tangan penyerang, semakin besar peluang
+    serangan berhasil.
+    \vspace{0.1cm}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.45cm}
+        >{\raggedright\arraybackslash}p{4.55cm}
+        >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Jenis} & \textbf{Informasi yang dimiliki} & \textbf{Ilustrasi pada Caesar} \\
+        \midrule
+        \textit{Ciphertext-only} & Hanya cipherteks $C_i=E_k(P_i)$. &
+        \code{KHOORZRUOG}; tebak $P$ atau $k$. \\
+        \addlinespace
+        \textit{Known-plaintext} & Pasangan $P_i$ dan $C_i=E_k(P_i)$. &
+        Duga ada \code{HELLO}; dari H$\to$K, $k=3$. \\
+        \addlinespace
+        \textit{Chosen-plaintext} & Memilih $P_i$; punya akses ke sistem
+        enkripsi. & Kirim \code{AAAAA}; keluar \code{FFFFF}, $k=5$. \\
+        \addlinespace
+        \textit{Adaptive chosen-plaintext} & $P$ berikutnya menyesuaikan $C$
+        sebelumnya. & \code{A}$\to$\code{F}, lalu \code{B}$\to$\code{G};
+        $k=5$. \\
+        \addlinespace
+        \textit{Chosen-ciphertext} & Memilih $C_i$; memakai \textit{oracle}
+        dekripsi. & \code{A} didekripsi menjadi \code{X}; $k=3$. \\
+        \bottomrule
+    \end{tabularx}
+\end{frame}
+
+\begin{frame}{\textit{Ciphertext-Only Attack}}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \slidejudul{Hanya cipherteks}
+            \begin{itemize}
+                \item Informasi paling sedikit, sehingga serangan paling sulit.
+                \item Penyerang memegang $C_j=E_k(P_j)$ untuk $j=1,\dots,i$.
+                \item Ia harus mendeduksi $P_1,\dots,P_i$ atau kunci $k$.
+            \end{itemize}
+            \begin{exampleblock}{Teknik yang dipakai}
+                \footnotesize
+                Pencarian kunci menyeluruh, terkaan, dan analisis frekuensi.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \centering
+            \bookfig[0.95\linewidth]{02}{serangan-ciphertext-only.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.05cm}
+    \begin{block}{Ilustrasi dari bab}
+        \footnotesize
+        Caesar \code{KHOORZRUOG}: ada 25 kemungkinan pergeseran; percobaan
+        $k=3$ menghasilkan \code{HELLOWORLD}.
+    \end{block}
+\end{frame}
+
+\begin{frame}{\textit{Known-Plaintext Attack}}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.55\textwidth}
+            \slidejudul{Pasangan yang diketahui}
+            \begin{itemize}
+                \item Penyerang memiliki pasangan $P_j$ dan $C_j=E_k(P_j)$
+                      untuk $j=1,\dots,i$.
+                \item Yang dicari adalah kunci $k$.
+                \item Dengan $k$, $P_{i+1}$ diperoleh dari
+                      $C_{i+1}=E_k(P_{i+1})$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.43\textwidth}
+            \begin{exampleblock}{Mengapa sering terjadi}
+                \footnotesize
+                \begin{itemize}
+                    \item Surel memuat \textit{From} dan \textit{To}.
+                    \item Surat resmi memuat ``Dengan hormat'' atau
+                          ``wassalam''.
+                    \item Berkas sumber memuat \code{\#include} atau
+                          \code{program}.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Contoh pada Caesar}
+        \footnotesize
+        Cipherteks \code{KHOOR ZRUOG}; penyerang menduga ada \code{HELLO}.
+        Dari pasangan H$\to$K ia menyimpulkan $k=3$, lalu membuka seluruh
+        cipherteks.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{\textit{Chosen-Plaintext Attack}}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.55\textwidth}
+            \slidejudul{Memilih plainteks}
+            \begin{itemize}
+                \item Penyerang dapat memilih plainteks yang akan
+                      dienkripsikan.
+                \item Ia dianggap memiliki akses ke sistem enkripsi.
+                \item Diperoleh pasangan $P_j$ dan $C_j=E_k(P_j)$ untuk
+                      $j=1,\dots,i$.
+                \item Target akhirnya tetap kunci $k$.
+                \item Contoh Caesar: pilih \code{AAAAA}, keluar
+                      \code{FFFFF}; A$\to$F berarti $k=5$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.43\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{02}{serangan-chosen-plaintext.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.05cm}
+    \begin{block}{Kasus pada mesin ATM}
+        \footnotesize
+        Kriptanalis 1 mengubah PIN; kriptanalis 2 menyadap cipherteks bank.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Contoh Terhitung: \textit{Chosen-Plaintext} pada Vigen\`ere}
+    \footnotesize
+    Pada Vigen\`ere berlaku $C_i=(P_i+K_i)\bmod 26$.
+    \vspace{0.1cm}
+    \begin{enumerate}
+        \item Kunci \code{SCRAM}: S$\to$18, C$\to$2, R$\to$17, A$\to$0,
+              M$\to$12, sehingga $K=(18,2,17,0,12)$.
+        \item Penyerang memilih $P=\code{AAAAA}$, yaitu
+              $(0,0,0,0,0)$.
+        \item Hitung $C_i=(0+K_i)\bmod 26=K_i$.
+        \item Hasil $C=(18,2,17,0,12)=\code{SCRAM}$.
+    \end{enumerate}
+    \vspace{0.1cm}
+    \begin{alertblock}{Hasil}
+        Cipherteks yang keluar sama dengan kuncinya. Satu \textit{query} sudah
+        cukup untuk memulihkan seluruh kunci.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{\textit{Adaptive Chosen-Plaintext Attack}}
+    \slidejudul{Variasi yang menyesuaikan diri}
+    \begin{itemize}
+        \item Masih termasuk \textit{chosen-plaintext attack}.
+        \item Penyerang memilih plainteks berikutnya berdasarkan cipherteks
+              dari \textit{query} sebelumnya.
+        \item Ia belajar secara bertahap, bukan menyusun seluruh
+              \textit{query} di muka.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.47\textwidth}
+            \begin{block}{Contoh pada Caesar}
+                \footnotesize
+                Pilih \code{A}, keluar \code{F}; pergeseran mungkin 5.
+                Pilih \code{B}, keluar \code{G}; polanya konsisten, sehingga
+                $k=5$ dipastikan.
+            \end{block}
+        \end{column}
+        \begin{column}{0.49\textwidth}
+            \begin{exampleblock}{Contoh pada Vigen\`ere}
+                \footnotesize
+                Masukkan \code{AAAA} sehingga cipherteks sama dengan kunci.
+                Setelah kunci diketahui, masukkan \code{BBBB} untuk
+                memverifikasi hasilnya.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{\textit{Chosen-Ciphertext Attack}}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \slidejudul{Oracle dekripsi}
+            \begin{itemize}
+                \item Penyerang memilih cipherteks tertentu.
+                \item Ia memakai \textit{oracle}, yaitu sistem yang dapat
+                      mendekripsi.
+                \item Diperoleh pasangan $C_j$ dan $P_j=D_k(C_j)$ untuk
+                      $j=1,\dots,i$.
+                \item Hasil dekripsi dipakai untuk menemukan kunci.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \begin{exampleblock}{Contoh pada Caesar}
+                \footnotesize
+                Pilih $C=\code{A}$; dekripsi menghasilkan $P=\code{X}$.
+                Karena A adalah X yang digeser, $k=3$.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    \begin{alertblock}{Inti}
+        Penyerang tidak menebak plainteks; ia mengirim cipherteks dan membaca
+        jawaban sistem.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Tujuan Serangan}
+% =====================================================================
+
+\begin{frame}{Lima Tujuan Serangan}
+    \footnotesize
+    Pertanyaannya berubah: bukan ``apa yang dimiliki penyerang?'', melainkan
+    ``apa yang ingin ia capai?''
+    \vspace{0.1cm}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.1cm}
+        >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Tujuan} & \textbf{Yang ingin dicapai} \\
+        \midrule
+        \textit{Key-recovery} & Memperoleh kunci $K$ pada $C=E_K(P)$. \\
+        \addlinespace
+        \textit{Plaintext-recovery} & Memperoleh plainteks, meskipun kunci
+        tidak ditemukan. \\
+        \addlinespace
+        \textit{Distinguishing} & Menentukan apakah data adalah keluaran
+        algoritma kriptografi atau data acak. \\
+        \addlinespace
+        \textit{Forgery} & Membuat pesan palsu yang diterima sistem sebagai
+        pesan sah. \\
+        \addlinespace
+        \textit{Replay} & Mengirim ulang pesan sah untuk memicu tindakan yang
+        sama. \\
+        \bottomrule
+    \end{tabularx}
+\end{frame}
+
+\begin{frame}{Ukuran Keberhasilan Tiga Tujuan}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\textit{Key-recovery}}
+                \footnotesize
+                Kunci 16 karakter dicoba satu per satu:
+                $K_1\to P_1$, $K_2\to P_2$, $K_3\to P_3$, \dots sampai
+                ditemukan plainteks bermakna.
+            \end{block}
+            \begin{block}{\textit{Plaintext-recovery}}
+                \footnotesize
+                Cipherteks $C=\text{XQZ}\dots$; strukturnya menunjukkan pesan
+                mungkin berbunyi \text{MEET AT THE STATION}.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\textit{Distinguishing}}
+                \footnotesize
+                Keluaran $10101010\dots$ jelas berpola, sehingga mudah
+                dibedakan dari data acak.
+            \end{block}
+            \begin{alertblock}{\textit{Forgery}}
+                \footnotesize
+                Membuat pesan palsu yang diterima sistem sebagai pesan sah.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{\textit{Replay Attack} dan Penangkalannya}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.55\textwidth}
+            \slidejudul{Tanpa memecahkan enkripsi}
+            \begin{itemize}
+                \item Penyerang menangkap pesan sah lalu mengirimnya ulang.
+                \item Setiap pengiriman ulang memicu tindakan yang sama.
+                \item Penangkal: \textit{nonce}, cap waktu
+                      (\textit{timestamp}), atau nomor urut
+                      (\textit{sequence number}).
+            \end{itemize}
+            \begin{exampleblock}{Nomor urut}
+                \footnotesize
+                Sistem menyimpan nomor terakhir 103. Perintah 101 ditolak
+                karena $101\not>103$; perintah 104 diterima dan menjadi nomor
+                terakhir.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.43\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{02}{serangan-replay.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Serangan Pasif dan Serangan Aktif}
+% =====================================================================
+
+\begin{frame}{Serangan Pasif}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.55\textwidth}
+            \slidejudul{Tidak terlibat, hanya menyadap}
+            \begin{itemize}
+                \item Penyerang tidak mengubah komunikasi.
+                \item Ia mengumpulkan data sebanyak mungkin.
+                \item Enkripsi mencegah penyadap memahami isi pesan.
+            \end{itemize}
+            \begin{block}{Dua bentuk}
+                \begin{itemize}
+                    \item \textbf{Intersepsi}: menyadap isi pesan.
+                    \item \textbf{Analisis lalu lintas}: mengamati pola tanpa
+                          membaca isinya.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.43\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{02}{serangan-pasif-intersepsi.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Analisis Lalu Lintas}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.53\textwidth}
+            \slidejudul{Isi tersembunyi, pola tetap terlihat}
+            \begin{itemize}
+                \item Penyerang mengamati pola lalu lintas.
+                \item Ia tidak membaca isi pesan.
+                \item Yang menjadi sasaran adalah pola komunikasi, bukan
+                      maknanya.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{02}{serangan-analisis-lalu-lintas.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.05cm}
+    \begin{block}{Poin}
+        Pola lalu lintas saja sudah memberi informasi, meskipun isi pesannya
+        tidak terbaca.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Ketika Data Tidak Dienkripsi: Wireshark}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \slidejudul{Isi terbaca langsung}
+            \begin{itemize}
+                \item Wireshark memantau lalu lintas jaringan.
+                \item Bila data tidak dienkripsi, penyadap tidak perlu
+                      menganalisis apa pun.
+                \item Nama pengguna dan kata sandi tampak pada tangkapan
+                      paket.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{02}{wireshark-plaintext.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Tiga Metode Penyadapan Fisik}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \footnotesize
+            Selain penyadapan perangkat lunak, dikenal tiga metode yang
+            bekerja pada tingkat fisik.
+            \begin{enumerate}
+                \item \textbf{Penyadapan kabel} (\textit{wiretapping}):
+                      menempelkan alat pada saluran komunikasi. Sistem
+                      telepon kabel rentan karena rancangannya sederhana.
+                \item \textbf{Penyadapan elektromagnetik}: menangkap radiasi
+                      elektromagnetik yang dipancarkan perangkat elektronik.
+                \item \textbf{Penyadapan akustik}: memanfaatkan getaran atau
+                      suara, termasuk \textit{vibrometry} nirkabel.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{02}{penyadapan-elektromagnetik.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Penyadapan Akustik}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \slidejudul{Getaran dan suara}
+            \begin{itemize}
+                \item Penyadapan akustik memanfaatkan getaran atau suara.
+                \item Salah satu ragamnya adalah \textit{vibrometry}
+                      nirkabel.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{02}{penyadapan-akustik.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Serangan Aktif dan \textit{Man-in-the-Middle}}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \slidejudul{Mengintervensi komunikasi}
+            \begin{itemize}
+                \item Menghapus sebagian cipherteks.
+                \item Mengubah cipherteks.
+                \item Menyisipkan potongan cipherteks palsu.
+                \item Memutar ulang pesan lama.
+                \item Mengubah informasi yang tersimpan.
+            \end{itemize}
+            \begin{alertblock}{Contoh}
+                \textit{Man-in-the-middle}: koneksi dialihkan melalui
+                penyerang.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{02}{serangan-mitm.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.05cm}
+    \begin{block}{Yang membuat MITM berbahaya}
+        Kedua pihak merasa berkomunikasi langsung dengan pihak yang benar.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Serangan Pasif dan Aktif: Perbandingan}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.4cm}
+        >{\raggedright\arraybackslash}X
+        >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Aspek} & \textbf{Serangan pasif} & \textbf{Serangan aktif} \\
+        \midrule
+        Keterlibatan & Tidak terlibat; hanya menyadap. & Mengintervensi dan
+        memengaruhi sistem. \\
+        \addlinespace
+        Bentuk & Intersepsi dan analisis lalu lintas. & Menghapus, mengubah,
+        atau menyisipkan cipherteks; memutar ulang pesan; mengubah informasi
+        tersimpan; MITM. \\
+        \addlinespace
+        Data & Tidak diubah. & Diubah, ditambah, atau dihapus. \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.2cm}
+    \begin{alertblock}{Poin}
+        Klasifikasi ini berasal dari keterlibatan penyerang dalam komunikasi.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Keamanan Komputasi dan Serangan Saluran Samping}
+% =====================================================================
+
+\begin{frame}{Keamanan Komputasi}
+    \begin{block}{Aman secara komputasi}
+        Sebuah algoritma aman secara komputasi bila memenuhi tiga syarat.
+    \end{block}
+    \vspace{0.15cm}
+    \begin{enumerate}
+        \item Persamaan matematika yang menggambarkan operasi algoritma sangat
+              kompleks sehingga tidak mungkin dipecahkan secara analitik.
+        \item Biaya untuk memecahkan cipherteks melampaui nilai informasi
+              yang terkandung di dalamnya.
+        \item Waktu yang diperlukan untuk memecahkan cipherteks melampaui
+              lamanya informasi harus dijaga kerahasiaannya.
+    \end{enumerate}
+    \vspace{0.1cm}
+    \begin{alertblock}{Konteks}
+        Ketiga syarat bergantung pada keadaan. Algoritma yang sama dapat
+        dianggap aman pada satu situasi dan tidak aman pada situasi lain.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Serangan Saluran Samping}
+    \footnotesize
+    Serangan saluran samping tidak menyerang matematika algoritmanya, tetapi
+    memanfaatkan informasi yang bocor ketika algoritma dijalankan pada
+    perangkat fisik.
+    \vspace{0.1cm}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.0cm}
+        >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Jenis} & \textbf{Informasi yang dimanfaatkan} \\
+        \midrule
+        Pewaktuan (\textit{timing}) & Perbedaan lama eksekusi operasi. \\
+        \addlinespace
+        Daya (\textit{power}) & Pola konsumsi daya perangkat; ragamnya SPA
+        dan DPA. \\
+        \addlinespace
+        Elektromagnetik & Radiasi elektromagnetik yang dihasilkan perangkat. \\
+        \addlinespace
+        Penyuntikan kesalahan & Keluaran yang menyimpang akibat kesalahan
+        buatan; contohnya DFA. \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.15cm}
+    \begin{alertblock}{Poin}
+        Algoritma yang kuat secara matematis tetap dapat bocor melalui cara
+        pelaksanaannya pada perangkat fisik.
+    \end{alertblock}
+\end{frame}
+
+% ------------------------------------------------------------------ penutup
+\begin{frame}{Yang Harus Diingat}
+    \footnotesize
+    \begin{block}{Yang harus diingat}
+        \begin{itemize}
+            \item Serangan adalah usaha menemukan kunci atau plainteks;
+                  Prinsip Kerckhoffs menegaskan algoritma publik dan hanya
+                  kunci yang rahasia.
+            \item Berdasarkan informasi: \textit{ciphertext-only},
+                  \textit{known-plaintext}, \textit{chosen-plaintext},
+                  \textit{adaptive chosen-plaintext}, dan
+                  \textit{chosen-ciphertext}.
+            \item Berdasarkan tujuan: \textit{key-recovery},
+                  \textit{plaintext-recovery}, \textit{distinguishing},
+                  \textit{forgery}, dan \textit{replay}.
+            \item Serangan pasif menyadap; serangan aktif mengintervensi,
+                  termasuk \textit{man-in-the-middle}.
+            \item Serangan saluran samping: pewaktuan, daya, elektromagnetik,
+                  dan penyuntikan kesalahan.
+        \end{itemize}
+    \end{block}
+    \vspace{0.35cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 3 --- Landasan matematika}
+    \end{exampleblock}
+\end{frame}
+
+\end{document}

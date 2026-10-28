@@ -1,0 +1,900 @@
+% =====================================================================
+%  minggu-10.tex  --  Slide Pertemuan Minggu ke-10
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : AES dan cipher blok lain
+%  Sumber materi : buku_ajar/chapters/08 (Bab 8) dan chapters/09 (Bab 9)
+%  Sub-CPMK      : 1.3
+%
+%  Kompilasi dari dalam folder ppt/:
+%      pdflatex -interaction=nonstopmode minggu-10.tex   (dua kali)
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{AES dan Cipher Blok Lain}
+\subtitle{Rijndael, state $4 \times 4$, dan tujuh cipher blok pembanding}
+\setWeekInfo{Minggu 10}{AES dan cipher blok lain}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \slidejudul{Empat bagian}
+            \begin{enumerate}
+                \item Dari DES ke AES: syarat, finalis, dan varian.
+                \item State $4 \times 4$ dan empat transformasi putaran.
+                \item Contoh kerja satu state menembus tiga transformasi.
+                \item Cipher blok lain: GOST, RC5, RC6, Blowfish,
+                      Serpent, Twofish, dan MARS.
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.40\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 8 dan Bab 9 buku ajar; Munir, \textit{IF4020
+                Kriptografi}, ITB, 2026 (modul 10 dan 11)
+            \end{block}
+            \begin{exampleblock}{Dua bab, satu pertemuan}
+                \footnotesize
+                Bab 8 membahas AES secara utuh; Bab 9 menjadi kamus
+                pembanding tujuh cipher blok lain.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK 1.3}
+        \footnotesize
+        Mengenal block cipher dan mode operasinya (ECB, CBC, CFB, OFB,
+        CTR), jaringan Feistel, DES, Triple DES, AES, serta beberapa block
+        cipher lain (GOST, RC5, RC6, Blowfish, Serpent, Twofish, dan MARS).
+    \end{block}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \footnotesize
+        \begin{itemize}
+            \item menjelaskan alasan lahirnya AES dan persyaratan calon
+                  pemenang sayembara;
+            \item menjelaskan peran state $4 \times 4$ dan keempat
+                  transformasi putaran AES;
+            \item mengidentifikasi ukuran blok, ukuran kunci, dan ciri
+                  pembeda tiap cipher blok lain;
+            \item membandingkan AES dengan GOST, RC5, RC6, Blowfish,
+                  Serpent, Twofish, dan MARS.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Dari DES ke AES}
+% =====================================================================
+
+\begin{frame}{Mengapa Lahir Standar Baru}
+    \footnotesize
+    \begin{itemize}
+        \item Kunci DES yang hanya 56 bit dapat dihabiskan dengan
+              penelusuran menyeluruh.
+        \item Diperlukan cipher blok baru yang tahan terhadap serangan
+              semacam itu.
+        \item Sayembara terbuka: setiap rancangan dinilai di muka umum,
+              tanpa bagian yang dirahasiakan.
+        \item Oktober 2000: Rijndael karya Joan Daemen dan Vincent Rijmen
+              dipilih sebagai pemenang.
+        \item November 2001: Rijndael ditetapkan sebagai \textit{Advanced
+              Encryption Standard} (AES).
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{alertblock}{Nama dan asal}
+        \footnotesize
+        ``Rijndael'' dibaca \textit{rhine-doll}; AES adalah nama standar
+        yang melekat pada rancangan itu.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Lima Persyaratan Calon AES}
+    \footnotesize
+    \begin{enumerate}
+        \item Termasuk kriptografi simetri berbasis cipher blok.
+        \item Seluruh rancangan publik; tidak ada bagian yang
+              dirahasiakan.
+        \item Panjang kunci fleksibel: 128, 192, dan 256 bit.
+        \item Ukuran blok yang dienkripsi 128 bit.
+        \item Dapat diimplementasikan sebagai perangkat lunak maupun
+              perangkat keras.
+    \end{enumerate}
+    \vspace{0.2cm}
+    \begin{alertblock}{Konsekuensi syarat kedua}
+        \footnotesize
+        Keamanan tidak boleh bergantung pada kerahasiaan algoritma.
+        Yang dirahasiakan hanyalah kuncinya.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Lima Finalis dan Pemenang}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.64\textwidth}
+            \begin{tabularx}{\linewidth}{@{}l >{\raggedright\arraybackslash}X c@{}}
+                \toprule
+                \textbf{Algoritma} & \textbf{Perancang dan asal} & \textbf{Suara} \\
+                \midrule
+                Rijndael & Daemen dan Rijmen (Belgia) & 86 \\
+                Serpent & Anderson, Biham, Knudsen & 59 \\
+                Twofish & Tim yang diketuai Schneier & 31 \\
+                RC6 & RSA Laboratories (Amerika) & 23 \\
+                MARS & IBM & 13 \\
+                \bottomrule
+            \end{tabularx}
+            \vspace{0.15cm}
+            Rijndael memperoleh 86 suara, terbanyak di antara kelima
+            finalis, lalu ditetapkan sebagai AES.
+        \end{column}
+        \begin{column}{0.32\textwidth}
+            \centering
+            \bookfig[0.95\linewidth]{08}{perancang-aes.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Tiga Varian AES}
+    \footnotesize
+    Satuan panjang kunci dan blok adalah \textit{word} 32 bit. Parameter
+    varian ditulis $N_k$ (word kunci), $N_b$ (word blok), dan $N_r$
+    (jumlah putaran).
+    \vspace{0.1cm}
+    \begin{center}
+    \begin{tabular}{@{}l c c c c@{}}
+        \toprule
+        \textbf{Varian} & \textbf{Panjang kunci} & $N_k$ & $N_b$ & $N_r$ \\
+        \midrule
+        AES-128 & 128 bit & 4 word & 4 word & 10 \\
+        AES-192 & 192 bit & 6 word & 4 word & 12 \\
+        AES-256 & 256 bit & 8 word & 4 word & 14 \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Rijndael membolehkan kunci 128 sampai 256 bit dengan
+              kenaikan 32 bit.
+        \item Panjang kunci dan ukuran blok pada Rijndael dapat dipilih
+              terpisah; AES mengunci blok pada 128 bit.
+        \item Dalam praktik, AES-128 dan AES-256 yang lazim dipakai;
+              kunci 192 bit jarang.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ruang Kunci dan Penelusuran Menyeluruh}
+    \begin{block}{Banyaknya kemungkinan kunci AES-128}
+        \[
+            2^{128} = 3{,}4 \times 10^{38}
+        \]
+    \end{block}
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.47\textwidth}
+            \begin{exampleblock}{Satu juta kunci per detik}
+                \footnotesize
+                Waktu rata-rata mencoba seluruh kunci:
+                \[
+                    5{,}4 \times 10^{24} \text{ tahun}.
+                \]
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.47\textwidth}
+            \begin{exampleblock}{Satu miliar kunci per detik}
+                \footnotesize
+                Waktu rata-rata turun menjadi
+                \[
+                    5{,}4 \times 10^{21} \text{ tahun}.
+                \]
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Kesimpulan}
+        \footnotesize
+        Bahkan dengan laju yang jauh melampaui komputer biasa, penelusuran
+        kunci menyeluruh tetap tidak praktis.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Ciri Rancangan AES}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Bekerja pada byte}
+                Seluruh operasi memandang data sebagai satuan 8 bit, bukan
+                rangkaian bit tunggal.
+            \end{block}
+            \begin{block}{Bukan jaringan Feistel}
+                Setiap putaran mengolah seluruh state, bukan hanya separuh
+                bagian seperti pada jaringan Feistel.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Kunci putaran berbeda}
+                Setiap putaran memakai kunci internal tersendiri yang
+                diturunkan dari kunci pengguna.
+            \end{block}
+            \begin{block}{Substitusi dan permutasi}
+                Tiap putaran menggabungkan operasi substitusi dengan
+                operasi permutasi.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.15cm}
+    Perbedaan cara bekerja inilah yang membuat AES tidak dapat dipandang
+    sebagai DES dengan kunci yang diperpanjang.
+\end{frame}
+
+% =====================================================================
+\section{State dan Empat Transformasi}
+% =====================================================================
+
+\begin{frame}{State: Matriks $4 \times 4$}
+    \footnotesize
+    Selama enkripsi, data disimpan dalam \texttt{state}, yaitu matriks
+    byte berukuran $N_{\text{rows}} \times N_{\text{cols}}$. Untuk blok
+    128 bit, ukurannya $4 \times 4$.
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.46\textwidth}
+            \begin{block}{Pemetaan masukan}
+                Enam belas byte $in_0, \dots, in_{15}$ disalin kolom demi
+                kolom:
+                \[
+                    s_{r,c} = in_{r + 4c}, \qquad r,c \in \{0,1,2,3\}.
+                \]
+            \end{block}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \[
+            \begin{bmatrix}
+                in_0 & in_4 & in_8  & in_{12} \\
+                in_1 & in_5 & in_9  & in_{13} \\
+                in_2 & in_6 & in_{10} & in_{14} \\
+                in_3 & in_7 & in_{11} & in_{15}
+            \end{bmatrix}
+            \]
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Kekeliruan yang sering terjadi}
+        \footnotesize
+        Empat byte pertama mengisi kolom pertama, bukan baris pertama.
+        Urutan yang tertukar akan mengacaukan seluruh hasil.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{SubBytes}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.58\textwidth}
+            \begin{block}{Operasi}
+                Setiap byte diganti nilai dari tabel substitusi
+                \textbf{S-box}. Posisi byte tidak berubah; hanya nilainya
+                yang berubah:
+                \[
+                    s'_{r,c} = \text{S-box}(x,y), \quad s_{r,c} = xy.
+                \]
+            \end{block}
+            \begin{exampleblock}{Contoh buku}
+                Byte \code{23} memiliki digit atas 2 dan digit bawah 3.
+                S-box baris 2 kolom 3 bernilai \code{26}, sehingga
+                $\code{23} \to \code{26}$.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.38\textwidth}
+            \centering
+            \scriptsize
+            \begin{tabular}{@{}c ccc@{}}
+                \toprule
+                & \textbf{2} & \textbf{3} & \textbf{4} \\
+                \midrule
+                \textbf{1} & C9 & 7D & FA \\
+                \textbf{2} & 93 & \textbf{26} & 36 \\
+                \textbf{3} & \textbf{23} & C3 & 18 \\
+                \bottomrule
+            \end{tabular}
+        \end{column}
+    \end{columns}
+    \vspace{0.1cm}
+    \begin{alertblock}{Peran dalam AES}
+        \footnotesize
+        SubBytes adalah satu-satunya transformasi nonlinear; di sinilah
+        sifat \textit{confusion} dibangun.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{ShiftRows}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \begin{block}{Operasi}
+                Tiga baris terakhir digeser siklik ke kiri. Baris $r$
+                bergeser sejauh $r$ byte:
+                \[
+                    s'_{r,c} = s_{r,\,(c+r) \bmod 4}.
+                \]
+            \end{block}
+            \begin{itemize}
+                \item Baris 0 tetap.
+                \item Baris 1 bergeser 1 byte.
+                \item Baris 2 bergeser 2 byte.
+                \item Baris 3 bergeser 3 byte.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{08}{shiftrows-aes.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.05cm}
+    \begin{alertblock}{Peran dalam AES}
+        \footnotesize
+        Setelah pergeseran, satu kolom memuat byte dari empat kolom asal
+        yang berbeda. Penyebaran antarposisi ini mendukung
+        \textit{diffusion}.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{MixColumns}
+    \footnotesize
+    \begin{block}{Operasi}
+        Setiap kolom dikalikan dengan matriks tetap. Seluruh perkalian dan
+        penjumlahan berlangsung di $\text{GF}(2^8)$:
+        \[
+        \begin{bmatrix}
+            s'_{0,c} \\ s'_{1,c} \\ s'_{2,c} \\ s'_{3,c}
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+            \code{02} & \code{03} & \code{01} & \code{01} \\
+            \code{01} & \code{02} & \code{03} & \code{01} \\
+            \code{01} & \code{01} & \code{02} & \code{03} \\
+            \code{03} & \code{01} & \code{01} & \code{02}
+        \end{bmatrix}
+        \begin{bmatrix}
+            s_{0,c} \\ s_{1,c} \\ s_{2,c} \\ s_{3,c}
+        \end{bmatrix}.
+        \]
+    \end{block}
+    \vspace{0.05cm}
+    \begin{itemize}
+        \item Penjumlahan di $\text{GF}(2^8)$ sama dengan XOR.
+        \item Perkalian direduksi oleh polinom
+              $x^8 + x^4 + x^3 + x + 1$.
+        \item Setiap byte masukan memengaruhi keempat byte keluaran pada
+              kolom yang sama.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{AddRoundKey}
+    \footnotesize
+    \begin{block}{Operasi}
+        State di-XOR dengan kunci putaran pada posisi yang sama:
+        \[
+            s'_{r,c} = s_{r,c} \oplus k_{r,c}.
+        \]
+        Tidak ada aritmetika medan di sini; operasinya murni XOR byte.
+    \end{block}
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Hanya transformasi yang menyisipkan kunci ke dalam state.
+        \item Bersifat membalik dirinya sendiri: XOR dua kali dengan kunci
+              yang sama mengembalikan nilai semula.
+        \item Kunci putaran $k_{r,c}$ berasal dari proses
+              \textit{key expansion}, bukan langsung dari kunci pengguna.
+    \end{itemize}
+    \vspace{0.05cm}
+    \begin{alertblock}{Tanpa AddRoundKey}
+        \footnotesize
+        SubBytes, ShiftRows, dan MixColumns tidak mengenal kunci sama
+        sekali; tanpa AddRoundKey, enkripsi tidak bergantung pada kunci.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Alur Enkripsi AES-128}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{enumerate}
+                \item \textit{AddRoundKey} awal: state di-XOR dengan kunci
+                      pengguna.
+                \item Sebanyak $N_r - 1 = 9$ putaran penuh, masing-masing
+                      SubBytes, ShiftRows, MixColumns, lalu AddRoundKey.
+                \item Putaran terakhir: SubBytes, ShiftRows, dan
+                      AddRoundKey, \emph{tanpa} MixColumns.
+            \end{enumerate}
+            \vspace{0.1cm}
+            \begin{alertblock}{Putaran terakhir}
+                \footnotesize
+                Hanya tiga transformasi yang dijalankan; dekripsi membalik
+                urutan itu dengan transformasi inversnya.
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \bookfig[0.98\linewidth]{08}{alur-enkripsi-aes.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Key Expansion}
+    \footnotesize
+    Semua kunci putaran diturunkan dari satu \textit{cipher key} melalui
+    fungsi \textit{KeyExpansion}. Satuannya \textit{word} 32 bit; AES-128
+    menghasilkan larik $w[0]$ sampai $w[43]$, yaitu 11 kunci putaran.
+    \vspace{0.1cm}
+    \begin{enumerate}
+        \item Salin kunci pengguna ke $w[0], w[1], w[2], w[3]$.
+        \item Untuk $i = 4$ sampai 43, simpan $w[i-1]$ di peubah
+              \textit{temp}.
+        \item Bila $i$ kelipatan 4, jalankan fungsi $g$: RotWord
+              (geser satu byte), SubWord (substitusi S-box), lalu XOR
+              dengan $Rcon[i/4]$.
+        \item $w[i] = w[i-4] \oplus \textit{temp}$.
+    \end{enumerate}
+    \vspace{0.05cm}
+    \begin{alertblock}{Konstanta putaran}
+        \footnotesize
+        $RC[1]$ sampai $RC[10]$: \code{01}, \code{02}, \code{04},
+        \code{08}, \code{10}, \code{20}, \code{40}, \code{80},
+        \code{1B}, \code{36}.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Contoh Key Expansion dari Buku}
+    \footnotesize
+    Kunci pengguna adalah teks ASCII ``Two One Nine Two'':
+    \[
+        (\code{54},\code{77},\code{6F},\code{20},\code{4F},\code{6E},
+        \code{65},\code{20},\code{4E},\code{69},\code{6E},\code{65},
+        \code{20},\code{54},\code{77},\code{6F}).
+    \]
+    Word terakhir kunci adalah $w[3] = (\code{20},\code{54},\code{77},
+    \code{6F})$. Pembangkitan $w[4]$ berjalan sebagai berikut.
+    \vspace{0.05cm}
+    \begin{align*}
+        \text{RotWord} &: (\code{20},\code{54},\code{77},\code{6F})
+        \longrightarrow (\code{54},\code{77},\code{6F},\code{20}), \\
+        \text{SubWord} &: (\code{54},\code{77},\code{6F},\code{20})
+        \longrightarrow (\code{20},\code{F5},\code{A8},\code{B7}), \\
+        \text{XOR } Rcon[1] &: (\code{20},\code{F5},\code{A8},\code{B7})
+        \oplus (\code{01},\code{00},\code{00},\code{00})
+        = (\code{21},\code{F5},\code{A8},\code{B7}), \\
+        w[4] &= w[0] \oplus g(w[3]) \\
+        &= (\code{54},\code{77},\code{6F},\code{20})
+        \oplus (\code{21},\code{F5},\code{A8},\code{B7})
+        = (\code{75},\code{82},\code{C7},\code{97}).
+    \end{align*}
+    \vspace{-0.1cm}
+    \begin{exampleblock}{Lanjutan}
+        \scriptsize
+        $w[5] = w[4] \oplus w[1] = \code{3AECA2B7}$,\quad
+        $w[6] = w[5] \oplus w[2] = \code{7485CCD2}$,\quad
+        $w[7] = w[6] \oplus w[3] = \code{54D1BBBD}$.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Dekripsi AES}
+    \footnotesize
+    Dekripsi membalik urutan enkripsi dengan tiga transformasi invers.
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Urutan kerja}
+                \begin{itemize}
+                    \item Cipherteks di-XOR dengan kunci putaran terakhir.
+                    \item Setiap putaran: InvShiftRows, InvSubBytes,
+                          AddRoundKey, lalu InvMixColumns.
+                    \item Putaran terakhir tanpa InvMixColumns.
+                    \item Ditutup XOR dengan kunci awal.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Transformasi invers}
+                \begin{itemize}
+                    \item InvSubBytes memakai S-box invers:
+                          $\code{26} \to \code{23}$.
+                    \item InvShiftRows menggeser baris ke kanan sejauh $r$.
+                    \item InvMixColumns memakai matriks berkoefisien
+                          \code{0E}, \code{0B}, \code{0D}, dan \code{09}.
+                \end{itemize}
+            \end{exampleblock}
+            \begin{alertblock}{Simetri}
+                Struktur enkripsi dan dekripsi sama; yang berubah adalah
+                arah dan tabelnya.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Contoh Kerja Transformasi}
+% =====================================================================
+
+\begin{frame}{Contoh: State Awal}
+    \footnotesize
+    State berikut dipakai pada tiga slide berikutnya. Seluruh nilai dalam
+    heksadesimal dan diambil dari contoh Bab 8.
+    \vspace{0.15cm}
+    \[
+        \text{state} =
+        \begin{bmatrix}
+            \code{23} & \code{A2} & \code{BC} & \code{4A} \\
+            \code{D4} & \code{03} & \code{97} & \code{F3} \\
+            \code{16} & \code{48} & \code{CD} & \code{50} \\
+            \code{FF} & \code{DA} & \code{10} & \code{64}
+        \end{bmatrix}
+    \]
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Baris 0 memuat \code{23}, \code{A2}, \code{BC}, \code{4A}.
+        \item Baris 3 memuat \code{FF}, \code{DA}, \code{10}, \code{64}.
+        \item Byte \code{23} berada di posisi $(0,0)$; byte \code{64} di
+              posisi $(3,3)$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Contoh: SubBytes}
+    \footnotesize
+    Setiap byte diganti nilai S-box pada baris dan kolom digitnya.
+    \vspace{0.1cm}
+    \[
+        \begin{bmatrix}
+            \code{23} & \code{A2} & \code{BC} & \code{4A} \\
+            \code{D4} & \code{03} & \code{97} & \code{F3} \\
+            \code{16} & \code{48} & \code{CD} & \code{50} \\
+            \code{FF} & \code{DA} & \code{10} & \code{64}
+        \end{bmatrix}
+        \longrightarrow
+        \begin{bmatrix}
+            \code{26} & \code{3A} & \code{65} & \code{D6} \\
+            \code{48} & \code{7B} & \code{88} & \code{0D} \\
+            \code{47} & \code{52} & \code{BD} & \code{53} \\
+            \code{16} & \code{57} & \code{CA} & \code{43}
+        \end{bmatrix}
+    \]
+    \vspace{0.05cm}
+    \begin{exampleblock}{Tiga pembacaan S-box}
+        \scriptsize
+        \code{23}: baris 2 kolom 3 $\to$ \code{26};\quad
+        \code{A2}: baris A kolom 2 $\to$ \code{3A};\quad
+        \code{FF}: baris F kolom F $\to$ \code{16}.
+    \end{exampleblock}
+    \vspace{0.02cm}
+    Posisi setiap byte tetap; hanya nilainya yang berubah.
+\end{frame}
+
+\begin{frame}{Contoh: ShiftRows}
+    \footnotesize
+    Baris $r$ digeser siklik ke kiri sejauh $r$ byte.
+    \vspace{0.1cm}
+    \[
+        \begin{bmatrix}
+            \code{26} & \code{3A} & \code{65} & \code{D6} \\
+            \code{7B} & \code{88} & \code{0D} & \code{48} \\
+            \code{BD} & \code{53} & \code{47} & \code{52} \\
+            \code{43} & \code{16} & \code{57} & \code{CA}
+        \end{bmatrix}
+        \longrightarrow
+        \begin{bmatrix}
+            \code{26} & \code{3A} & \code{65} & \code{D6} \\
+            \code{88} & \code{0D} & \code{48} & \code{7B} \\
+            \code{47} & \code{52} & \code{BD} & \code{53} \\
+            \code{CA} & \code{43} & \code{16} & \code{57}
+        \end{bmatrix}
+    \]
+    \vspace{0.05cm}
+    \begin{itemize}
+        \item Baris 0 tidak bergeser: \code{26}, \code{3A},
+              \code{65}, \code{D6}.
+        \item Baris 1 bergeser satu byte: \code{7B} pindah ke ujung kanan.
+        \item Baris 3 bergeser tiga byte: \code{CA} pindah ke ujung kiri.
+    \end{itemize}
+    \begin{alertblock}{Hasil yang penting}
+        \scriptsize
+        Kolom 0 kini memuat \code{26}, \code{7B}, \code{BD}, \code{43}.
+        SubBytes dan ShiftRows dapat ditukar urutannya, sehingga hasil ini
+        setara dengan contoh ShiftRows pada buku.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Contoh: MixColumns}
+    \footnotesize
+    Kolom 0 hasil ShiftRows adalah $[\code{26}\ \code{7B}\ \code{BD}\
+    \code{43}]^{T}$.
+    \vspace{0.05cm}
+    \[
+        \begin{bmatrix}
+            \code{02} & \code{03} & \code{01} & \code{01} \\
+            \code{01} & \code{02} & \code{03} & \code{01} \\
+            \code{01} & \code{01} & \code{02} & \code{03} \\
+            \code{03} & \code{01} & \code{01} & \code{02}
+        \end{bmatrix}
+        \begin{bmatrix}
+            \code{26} \\ \code{7B} \\ \code{BD} \\ \code{43}
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+            \code{3F} \\ \code{4F} \\ \code{F9} \\ \code{2A}
+        \end{bmatrix}
+    \]
+    \vspace{0.02cm}
+    \begin{exampleblock}{Rincian baris pertama}
+        \scriptsize
+        $\code{02} \bullet \code{26} = \code{4C}$,\quad
+        $\code{03} \bullet \code{7B} = \code{8D}$,\quad
+        $\code{01} \bullet \code{BD} = \code{BD}$,\quad
+        $\code{01} \bullet \code{43} = \code{43}$.\\[2pt]
+        $\code{4C} \oplus \code{8D} = \code{C1}$,\quad
+        $\code{C1} \oplus \code{BD} = \code{7C}$,\quad
+        $\code{7C} \oplus \code{43} = \code{3F}$.
+    \end{exampleblock}
+    \vspace{0.02cm}
+    Baris lain dihitung dengan pola yang sama dan menghasilkan
+    \code{4F}, \code{F9}, serta \code{2A}.
+\end{frame}
+
+% =====================================================================
+\section{Cipher Blok Lain}
+% =====================================================================
+
+\begin{frame}{GOST (Magma)}
+    \footnotesize
+    \begin{itemize}
+        \item Blok 64 bit, kunci 256 bit, dan 32 putaran Jaringan Feistel.
+        \item Standar Uni Soviet GOST 28147-89; standar baru memberinya
+              nama Magma.
+        \item Hanya ada delapan kunci putaran $K_1$ sampai $K_8$: dipakai
+              berulang tiga kali, lalu urutannya dibalik pada delapan
+              putaran terakhir.
+        \item Fungsi $f$: jumlah modulo $2^{32}$ dengan kunci, substitusi
+              delapan kotak-S $4 \times 4$ bit, lalu rotasi kiri 11 bit.
+        \item Ciri pembeda: blok 64 bit dengan kunci 256 bit dan jadwal
+              kunci yang sangat sederhana.
+    \end{itemize}
+    \vspace{0.05cm}
+    \begin{alertblock}{Kunci panjang bukan jaminan}
+        \footnotesize
+        Serangan struktural menurunkan kompleksitas dari $2^{256}$ ke
+        sekitar $2^{178}$. Untuk blok 64 bit, satu kunci juga dibatasi
+        sekitar $2^{32}$ blok (kira-kira 32 GiB).
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{RC5}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.58\textwidth}
+            \begin{itemize}
+                \item Blok $2w$ bit: 32, 64, atau 128 bit untuk $w = 16,
+                      32, 64$.
+                \item Kunci 0 sampai 2040 bit; putaran 0 sampai 255.
+                \item Jumlah kunci putaran $t = 2r + 2$; larik $S$
+                      diinisialisasi dengan $P_w$ dan $Q_w$.
+                \item Tiap putaran memakai XOR, rotasi sirkuler, dan
+                      penjumlahan modulo $2^w$.
+                \item Ciri pembeda: besar rotasi ditentukan oleh data
+                      (nilai $B$ atau $A$), bukan konstanta tetap.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.36\textwidth}
+            \centering
+            \bookfig[0.72\linewidth]{09}{putaran-rc5.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{RC6}
+    \footnotesize
+    \begin{itemize}
+        \item Blok 128 bit; kunci 128, 192, 256 sampai 2040 bit.
+        \item Dikembangkan dari RC5 oleh Rivest, Robshaw, Sidney, dan Yin
+              pada 1998; menjadi finalis AES.
+        \item Memakai empat register $A$, $B$, $C$, dan $D$, masing-masing
+              $w$ bit.
+        \item Ciri pembeda: perkalian $f(x) = x(2x+1)$ ikut menentukan
+              besar rotasi.
+        \item Dapat dipandang sebagai dua RC5 yang bekerja paralel;
+              penjadwalan kuncinya sama dengan RC5.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Yang bertambah dari RC5}
+        \footnotesize
+        Operasi dasarnya tetap XOR, penjumlahan, dan rotasi; RC6
+        menambahkan perkalian dan satu pasang register.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Blowfish}
+    \footnotesize
+    \begin{itemize}
+        \item Blok 64 bit; kunci 32 sampai 448 bit; 16 putaran Jaringan
+              Feistel.
+        \item Dirancang Bruce Schneier pada 1993 dan memakai empat kotak-S.
+        \item Fungsi $F$ memecah 32 bit menjadi empat byte $a,b,c,d$:
+              \[
+                  F(x) = \bigl((S_1[a] \boxplus S_2[b]) \oplus S_3[c]\bigr)
+                  \boxplus S_4[d].
+              \]
+        \item Ciri pembeda: empat kotak-S dan penyaringan keluaran dengan
+              $K_{17}$ serta $K_{18}$ setelah 16 putaran.
+    \end{itemize}
+    \vspace{0.05cm}
+    \begin{alertblock}{Penyaringan keluaran}
+        \footnotesize
+        Pertukaran terakhir pada Jaringan Feistel dibatalkan lebih dahulu;
+        enkripsi kemudian ditutup dengan dua kunci tambahan itu.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Serpent}
+    \footnotesize
+    \begin{itemize}
+        \item Blok 128 bit; kunci 128, 192, atau 256 bit; 32 putaran.
+        \item Dirancang Anderson, Biham, dan Knudsen; finalis AES.
+        \item Setiap putaran melakukan XOR dengan subkunci, substitusi
+              kotak-S, lalu transformasi linear.
+        \item Memakai delapan kotak-S, permutasi awal, dan permutasi akhir.
+        \item Ciri pembeda: 32 putaran yang dibingkai permutasi awal dan
+              permutasi akhir.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{exampleblock}{Penilaian Bab 9}
+        \footnotesize
+        Tabel perbandingan cipher simetris menempatkan Serpent pada
+        kategori sangat kuat.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Twofish}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            \begin{itemize}
+                \item Blok 128 bit; kunci sampai 256 bit; 16 putaran.
+                \item Finalis AES, dirancang Bruce Schneier, dan
+                      dipandang sebagai kelanjutan Blowfish.
+                \item Memakai empat kotak-S $8 \times 8$ yang bergantung
+                      pada kunci.
+                \item Ciri pembeda: dua fungsi $g$, matriks MDS, dan
+                      transformasi PHT dalam setiap putaran.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.38\textwidth}
+            \centering
+            \bookfig[0.70\linewidth]{09}{putaran-twofish.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{MARS}
+    \footnotesize
+    \begin{itemize}
+        \item Blok 128 bit; kunci 128 sampai 448 bit dengan kenaikan
+              32 bit; 32 putaran.
+        \item Finalis AES yang dirancang IBM.
+        \item Bukan cipher substitusi--permutasi biasa, melainkan
+              Jaringan Feistel tak seimbang.
+        \item Ciri pembeda: 32 putaran terbagi menjadi 8 putaran
+              \textit{forward mixing}, 16 putaran inti, dan 8 putaran
+              \textit{backward mixing}.
+        \item Fase pencampuran memakai kotak-S $8 \times 32$, pergeseran
+              8 bit, penjumlahan, dan XOR.
+    \end{itemize}
+    \vspace{0.1cm}
+    \begin{alertblock}{Penyaringan}
+        \footnotesize
+        Penyaringan memakai $K_0$ sampai $K_3$ serta $K_{36}$ sampai
+        $K_{39}$.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Perbandingan dan Penutup}
+% =====================================================================
+
+\begin{frame}{Perbandingan Cipher Blok Pertemuan Ini}
+    \scriptsize
+    \begin{tabularx}{\linewidth}{@{}l c c c >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Cipher} & \textbf{Blok} & \textbf{Kunci} & \textbf{Putaran} &
+        \textbf{Ciri pembeda} \\
+        \midrule
+        AES & 128 & 128/192/256 & 10/12/14 & Substitusi--permutasi pada byte \\
+        GOST & 64 & 256 & 32 & Feistel, 8 kotak-S $4 \times 4$ \\
+        RC5 & $2w$ & 0--2040 & 0--255 & Rotasi bergantung data \\
+        RC6 & 128 & 128--2040 & $r$ & Perkalian $x(2x+1)$ \\
+        Blowfish & 64 & 32--448 & 16 & Kotak-S bergantung kunci \\
+        Serpent & 128 & 128/192/256 & 32 & Delapan kotak-S, 32 putaran \\
+        Twofish & 128 & s.d. 256 & 16 & MDS dan PHT \\
+        MARS & 128 & 128--448 & 32 & Feistel tak seimbang 8+16+8 \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.15cm}
+    \begin{alertblock}{Dua ukuran yang menentukan pemakaian}
+        \footnotesize
+        Blok 64 bit membatasi data per kunci sekitar $2^{32}$ blok;
+        blok 128 bit memberi ruang yang jauh lebih besar.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Rangkuman (1/2)}
+    \footnotesize
+    \begin{itemize}
+        \item AES adalah Rijndael karya Daemen dan Rijmen; bloknya 128 bit,
+              kuncinya 128/192/256 bit, dan putarannya 10/12/14.
+        \item Data selama enkripsi disimpan pada state $4 \times 4$ byte;
+              masukan disalin kolom demi kolom.
+        \item SubBytes mengganti byte lewat S-box, ShiftRows menggeser
+              baris, MixColumns mengalikan kolom di $\text{GF}(2^8)$, dan
+              AddRoundKey melakukan XOR dengan kunci putaran.
+        \item Alur AES-128: AddRoundKey awal, sembilan putaran penuh, lalu
+              putaran terakhir tanpa MixColumns.
+        \item Key expansion memakai RotWord, SubWord, dan konstanta
+              $Rcon$ untuk membangkitkan sebelas kunci putaran.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Rangkuman (2/2)}
+    \footnotesize
+    \begin{itemize}
+        \item Ruang kunci AES-128 berisi $2^{128} \approx 3{,}4 \times
+              10^{38}$ kemungkinan, sehingga penelusuran menyeluruh tidak
+              praktis.
+        \item Contoh buku: state \code{23}\,\code{A2}\,\code{BC}\,\code{4A}
+              dan seterusnya, setelah SubBytes dan ShiftRows menghasilkan
+              kolom \code{26}\,\code{7B}\,\code{BD}\,\code{43}, lalu
+              MixColumns memberi \code{3F}\,\code{4F}\,\code{F9}\,\code{2A}.
+        \item GOST: blok 64 bit, kunci 256 bit, 32 putaran Feistel.
+        \item RC5 dan RC6 menonjol karena parameter dan rotasi yang
+              lentur; Blowfish dan Twofish memakai kotak-S bergantung
+              kunci.
+        \item Serpent menekankan banyak putaran, sedangkan MARS memakai
+              Feistel tak seimbang tiga fase.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Penutup}
+    \begin{block}{Yang harus diingat}
+        \footnotesize
+        \begin{itemize}
+            \item AES bukan jaringan Feistel dan bekerja pada byte.
+            \item Empat transformasi putaran memiliki peran berbeda:
+                  substitusi, pergeseran, penyebaran, dan penyisipan kunci.
+            \item Panjang kunci bukan satu-satunya ukuran keamanan;
+                  struktur dan batas \textit{rekeying} ikut menentukan.
+            \item Cipher blok lain dibedakan oleh ukuran blok, ukuran
+                  kunci, jumlah putaran, dan struktur putarannya.
+        \end{itemize}
+    \end{block}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 11 --- Algoritma RSA}: properti, pembangkitan kunci,
+        enkripsi dan dekripsi, keamanan, kelemahan, serta
+        \textit{man-in-the-middle}.
+    \end{exampleblock}
+\end{frame}
+
+\end{document}

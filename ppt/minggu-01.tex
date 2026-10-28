@@ -1,0 +1,683 @@
+% =====================================================================
+%  minggu-01.tex  --  Slide Pertemuan Minggu ke-1
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Pengantar & urgensi kriptografi
+%  Sumber materi : buku_ajar/chapters/01 (Bab 1)
+%  Sub-CPMK      : 2.1, 2.2
+%
+%  Kompilasi dari dalam folder ppt/:
+%      pdflatex -interaction=nonstopmode minggu-01.tex   (dua kali)
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Pengantar dan Urgensi Kriptografi}
+\subtitle{Konsep dasar, layanan keamanan, dan mengapa kriptografi penting}
+\setWeekInfo{Minggu 1}{Pengantar \& urgensi kriptografi}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            \slidejudul{Enam bagian}
+            \begin{enumerate}
+                \item Konsep dasar komunikasi
+                \item Empat masalah keamanan
+                \item Apa itu kriptografi
+                \item Terminologi dasar
+                \item Kriptanalisis dan kriptologi
+                \item Urgensi dalam teknologi informasi
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 1 buku ajar; Munir, \textit{IF4020 Kriptografi},
+                ITB, 2026 (modul 01).
+            \end{block}
+            \begin{exampleblock}{Bobot penilaian}
+                \footnotesize
+                Tugas 15\%, Kuis 10\%, Praktikum 20\%,\\
+                Proyek 15\%, UTS 20\%, UAS 20\%.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK yang dibebankan}
+        \begin{itemize}
+            \item \textbf{Sub-CPMK 2.1} --- Menjelaskan definisi, terminologi,
+                  sejarah, dan empat layanan kriptografi.
+            \item \textbf{Sub-CPMK 2.2} --- Menjelaskan urgensi kriptografi
+                  dalam teknologi informasi berdasarkan kasus kebocoran data,
+                  kesalahan umum, dan tantangan masa depan.
+        \end{itemize}
+    \end{block}
+    \vspace{0.3cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \begin{itemize}
+            \item membedakan empat layanan keamanan dan memberi contoh pelanggarannya;
+            \item menyatakan sistem kriptografi sebagai \textit{quintuple};
+            \item menjelaskan Prinsip Kerckhoffs;
+            \item menyebutkan kasus nyata yang menunjukkan urgensi kriptografi.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Konsep Dasar Komunikasi}
+% =====================================================================
+
+\begin{frame}{Pihak yang Berkomunikasi dan Salurannya}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.56\textwidth}
+            Model komunikasi kriptografi memakai tiga tokoh:
+            \begin{description}
+                \item[Alice] pihak yang mengirim pesan.
+                \item[Bob] pihak yang menerima pesan.
+                \item[Eve] penyusup (\textit{eavesdropper}) yang mengancam.
+            \end{description}
+            \vspace{0.2cm}
+            Salurannya bersifat \kunci{publik}: siapa pun dapat mendengar,
+            menyalin, atau menyisipkan pesan.
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[0.95\linewidth]{01}{alur-enkripsi-dekripsi.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.05cm}
+    \begin{alertblock}{Poin kunci}
+        Kriptografi tidak menyembunyikan \emph{keberadaan} pesan, melainkan
+        menyembunyikan \emph{maknanya}. Penyadap boleh melihat seluruh bit yang
+        melintas, tetapi bit itu harus tidak bermakna baginya.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Penyusup dan Kemampuannya}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}>{\bfseries}p{2.9cm} X@{}}
+        \toprule
+        Kemampuan & Bentuk tindakan \\
+        \midrule
+        Menyadap & membaca pesan yang melintas di saluran publik. \\
+        \addlinespace
+        Menyisipkan & memasukkan pesan sendiri ke dalam saluran. \\
+        \addlinespace
+        Menyamar & berpura-pura menjadi pihak lain yang sah. \\
+        \addlinespace
+        Membajak sesi & mengambil alih sesi komunikasi yang sudah berjalan. \\
+        \addlinespace
+        Menolak layanan & menghambat atau melumpuhkan layanan yang tersedia. \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.25cm}
+    \begin{block}{Akibatnya}
+        Keamanan tidak boleh bersandar pada asumsi bahwa saluran komunikasi tidak
+        menarik perhatian siapa pun.
+    \end{block}
+\end{frame}
+
+% =====================================================================
+\section{Empat Masalah Keamanan}
+% =====================================================================
+
+\begin{frame}{Empat Pertanyaan yang Harus Dijawab}
+    Ketika memakai saluran publik, muncul empat pertanyaan. Perhatikan bahwa
+    keempatnya adalah pertanyaan praktis, bukan pertanyaan ahli matematika.
+    \vspace{0.3cm}
+    \begin{enumerate}
+        \item Bagaimana Alice memastikan pesannya tidak dapat dibaca penyadap?
+              \hfill\textcolor{ubbblue}{\textbf{kerahasiaan}}
+        \item Bagaimana Bob memastikan pesan itu benar-benar dari Alice?
+              \hfill\textcolor{ubbblue}{\textbf{otentikasi}}
+        \item Bagaimana Bob memastikan pesan itu belum diubah di perjalanan?
+              \hfill\textcolor{ubbblue}{\textbf{integritas}}
+        \item Bagaimana Alice dicegah menyangkal telah mengirim pesan itu?
+              \hfill\textcolor{ubbblue}{\textbf{nir-penyangkalan}}
+    \end{enumerate}
+    \vspace{0.3cm}
+    \begin{exampleblock}{Catatan}
+        Kriptografi tumbuh dari kebutuhan praktis, dan barulah kemudian
+        dirumuskan secara matematis.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Kerahasiaan (\textit{Confidentiality})}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.55\textwidth}
+            Masalah ini tidak menuntut pesannya \emph{tersembunyi dari pandangan},
+            melainkan \emph{tersembunyi maknanya}.
+            \vspace{0.2cm}
+            \begin{exampleblock}{Ilustrasi}
+                Pesan ``serang fajar besok'' berubah menjadi rentetan huruf tanpa
+                makna. Panjangnya bahkan boleh sama, tetapi kandungan informasinya
+                tertutup.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{01}{penyadapan-confidentiality.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \vspace{0.25cm}
+    \begin{alertblock}{Prinsip Kerckhoffs}
+        Kerahasiaan tidak boleh bergantung pada kerahasiaan algoritma. Musuh
+        mengenal sepenuhnya sistem yang dipakai, dan \kunci{satu-satunya rahasia
+        adalah kuncinya}.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Kerckhoffs: Mengapa Algoritma Harus Publik}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Bila algoritma dirahasiakan}
+                \begin{itemize}
+                    \item tidak dapat diperiksa pihak luar;
+                    \item tidak dapat distandarkan;
+                    \item runtuh seketika begitu satu orang membocorkannya.
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Bila keamanan bergantung pada kunci}
+                \begin{itemize}
+                    \item membocorkan algoritma tidak merugikan siapa pun;
+                    \item penggantian kunci cukup dengan membangkitkan kunci baru.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    \vspace{0.35cm}
+    Prinsip ini dirumuskan Auguste Kerckhoffs pada abad ke-19, lalu ditegaskan
+    kembali oleh Claude Shannon dalam bentuk yang lebih tajam.
+\end{frame}
+
+\begin{frame}{Otentikasi, Integritas, dan Nir-Penyangkalan}
+    \begin{block}{Otentikasi}
+        Pada saluran publik tidak ada yang dapat memastikan identitas secara
+        otomatis: alamat pengirim surel dapat dipalsukan, nomor telepon dapat
+        dipalsukan, alamat sumber paket data dapat tidak benar. Kerahasiaan dan
+        otentikasi adalah dua masalah yang berbeda.
+    \end{block}
+    \begin{block}{Integritas data}
+        Stasiun cuaca mengirim $33^{\circ}$C, pihak tak berwenang mengubahnya
+        menjadi $32^{\circ}$C. Kerahasiaan tidak dilanggar --- suhu boleh diketahui
+        siapa saja --- tetapi integritasnya rusak.
+    \end{block}
+    \begin{block}{Nir-penyangkalan}
+        Mencegah pengirim menyangkal pesan yang sudah dikirimnya. Menjadi syarat
+        mutlak bagi transaksi elektronik yang mengikat secara hukum.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Ringkasan Empat Layanan}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}>{\bfseries}p{3.0cm} p{5.2cm} X@{}}
+        \toprule
+        Layanan & Pertanyaan yang dijawab & Contoh pelanggaran \\
+        \midrule
+        Kerahasiaan & Apakah isi pesan tertutup bagi penyadap? & Penyadapan lalu lintas tanpa enkripsi. \\
+        \addlinespace
+        Otentikasi & Apakah pengirim benar-benar pihak yang diklaim? & Surel dengan alamat pengirim palsu. \\
+        \addlinespace
+        Integritas & Apakah pesan belum diubah di perjalanan? & Pembacaan suhu $33^\circ$C diubah menjadi $32^\circ$C. \\
+        \addlinespace
+        Nir-penyangkalan & Dapatkah pengirim menyangkal pesannya? & Sengketa transaksi tanpa tanda tangan digital. \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.3cm}
+    \begin{alertblock}{Penting}
+        Keempatnya tidak dapat dipenuhi oleh satu mekanisme tunggal. Setiap
+        layanan menuntut mekanisme tersendiri.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Apa Itu Kriptografi}
+% =====================================================================
+
+\begin{frame}{Definisi dan Etimologi}
+    \begin{block}{Definisi}
+        Kriptografi adalah ilmu dan seni menjaga keamanan pesan melalui teknik
+        matematika.
+    \end{block}
+    \vspace{0.2cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.46\textwidth}
+            \begin{exampleblock}{Etimologi}
+                \textit{crypt\'os} = rahasia\\
+                \textit{gr\'aphein} = tulisan
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.50\textwidth}
+            \begin{alertblock}{Yang dijaga}
+                Bukan keberadaan pesan, melainkan maknanya --- melalui perubahan
+                representasi pesan, bukan penyembunyian keberadaannya.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Layanan Kriptografi}
+    Kriptografi menyediakan lebih dari sekadar kerahasiaan:
+    \begin{itemize}
+        \item kerahasiaan (\textit{confidentiality});
+        \item integritas data (\textit{integrity});
+        \item otentikasi (\textit{authentication});
+        \item nir-penyangkalan (\textit{non-repudiation}).
+    \end{itemize}
+    \vspace{0.3cm}
+    \begin{block}{Empat layanan, empat masalah}
+        Setiap layanan menjawab satu masalah keamanan komunikasi pada
+        bagian sebelumnya.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Tiga Jenis Algoritma Kriptografi}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.32\textwidth}
+            \centering
+            \bookfig[0.92\linewidth]{01}{kriptografi-simetri.png}\\
+            {\footnotesize\textbf{Simetri}\\ $k_{\text{enkripsi}} = k_{\text{dekripsi}}$}
+        \end{column}
+        \begin{column}{0.32\textwidth}
+            \centering
+            \bookfig[0.92\linewidth]{01}{kriptografi-nirsimetri.png}\\
+            {\footnotesize\textbf{Nir-simetri}\\ $k_{\text{enkripsi}} \ne k_{\text{dekripsi}}$}
+        \end{column}
+        \begin{column}{0.30\textwidth}
+            \vspace{0.4cm}
+            \begin{block}{Fungsi hash}
+                \footnotesize
+                Tanpa kunci, berpanjang tetap, dan \kunci{tidak dapat dibalik}.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.35cm}
+    \begin{alertblock}{Catatan}
+        Fungsi hash sengaja melanggar syarat $D_k(E_k(m)) = m$ --- dan justru
+        pelanggaran itulah yang menjadi gunanya.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Dua Aplikasi Utama Enkripsi}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\textit{Encryption at rest}}
+                Dokumen yang tersimpan di dalam penyimpanan.\\
+                \footnotesize Contoh: enkripsi basis data dan cakram keras.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{\textit{Encryption in motion}}
+                Pesan yang sedang dikirim melalui jaringan.\\
+                \footnotesize Contoh: pesan pada aplikasi perpesanan.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.35cm}
+    Sebagian besar kebocoran data terjadi bukan karena algoritma dipecahkan,
+    melainkan karena \kunci{pengabaian encryption at rest} dan pengelolaan kunci
+    yang buruk.
+\end{frame}
+
+\begin{frame}{Sejarah Singkat}
+    \begin{itemize}
+        \item \textbf{Abad ke-9} --- \textbf{Al-Kindi} merintis kriptanalisis melalui
+              \emph{analisis frekuensi}: huruf yang paling sering muncul pada
+              cipherteks cenderung mewakili huruf yang paling sering muncul pada
+              bahasa aslinya.
+        \item Perkembangan berlanjut melalui cipher klasik (Caesar, Vigen\`ere,
+              Playfair, Hill, Enigma) yang dibahas pada Bab 4.
+        \item \textbf{Abad ke-20} --- Shannon meletakkan dasar teori informasi;
+              lahirlah kriptografi modern yang bekerja pada bit, bukan huruf.
+        \item \textbf{1976--1977} --- Diffie--Hellman dan RSA membuka era
+              kriptografi kunci-publik.
+    \end{itemize}
+    \vspace{0.3cm}
+    \begin{exampleblock}{Benang merah}
+        Setiap algoritma baru melahirkan kriptanalisis baru, dan setiap
+        kriptanalisis baru menuntut algoritma yang lebih kuat. Bidang ini bergerak
+        karena tarik-menarik itu.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Terminologi Dasar}
+% =====================================================================
+
+\begin{frame}{Sistem Kriptografi sebagai \textit{Quintuple}}
+    Sistem kriptografi dinyatakan sebagai
+    $(\mathcal{E}, \mathcal{D}, \mathcal{M}, \mathcal{K}, \mathcal{C})$ dengan:
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}
+                \item $\mathcal{M}$ --- himpunan plainteks;
+                \item $\mathcal{K}$ --- himpunan kunci;
+                \item $\mathcal{C}$ --- himpunan cipherteks;
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}
+                \item $\mathcal{E}$ --- $E: \mathcal{M} \times \mathcal{K} \to \mathcal{C}$;
+                \item $\mathcal{D}$ --- $D: \mathcal{C} \times \mathcal{K} \to \mathcal{M}$.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    \vspace{0.3cm}
+    \begin{alertblock}{Syarat yang harus berlaku}
+        \[
+            D_k\bigl(E_k(m)\bigr) = m
+            \qquad \text{untuk setiap } k \in \mathcal{K},\ m \in \mathcal{M}.
+        \]
+        Inilah yang membedakan cipher dari sekadar pengacak.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Contoh: Caesar Cipher sebagai \textit{Quintuple}}
+    \begin{itemize}
+        \item $\mathcal{M} = \{$huruf-huruf alfabet$\}$
+        \item $\mathcal{K} = \{k \mid k$ bilangan bulat dan $0 \le k \le 25\}$
+        \item $\mathcal{E} = \{E_k \mid E_k(m) = (m + k) \bmod 26\}$
+        \item $\mathcal{D} = \{D_k \mid D_k(c) = (c - k) \bmod 26\}$
+        \item $\mathcal{C} = \mathcal{M}$
+    \end{itemize}
+    \vspace{0.3cm}
+    \begin{exampleblock}{Perhatikan}
+        Pada Caesar cipher, $\mathcal{C} = \mathcal{M}$. Sifat ini \emph{tidak}
+        berlaku umum: pada cipher modern, cipherteks biasanya berupa deretan bit
+        yang panjangnya justru dipaksa berbeda dari plainteksnya.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Miskonsepsi Umum}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            Pemahaman istilah yang longgar melahirkan kekeliruan yang berulang:
+            \begin{itemize}
+                \item menganggap enkripsi sama dengan \textit{encoding};
+                \item menganggap enkripsi sama dengan \textit{hashing};
+                \item menganggap enkripsi sama dengan tokenisasi;
+                \item tidak memahami perbedaan simetri dan nir-simetri.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{01}{encoding-hashing-encryption.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+    \begin{alertblock}{Akibatnya}
+        Menyamakan kelima hal itu --- \textit{encoding}, \textit{hashing}, enkripsi,
+        tokenisasi, dan tanda tangan digital --- menimbulkan \kunci{rasa aman yang
+        semu}.
+    \end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Kriptanalisis dan Kriptologi}
+% =====================================================================
+
+\begin{frame}{Kriptografi, Kriptanalisis, dan Kriptologi}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Kriptografi}
+                Merancang algoritma agar pesan aman.
+            \end{block}
+            \begin{alertblock}{Kriptanalisis}
+                Memecahkan cipherteks tanpa memiliki kunci. Dirintis Al-Kindi
+                pada abad ke-9.
+            \end{alertblock}
+            \begin{exampleblock}{Kriptologi}
+                Payung yang mencakup kriptografi \emph{dan} kriptanalisis.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{01}{kriptologi-cabang.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Urgensi dalam Teknologi Informasi}
+% =====================================================================
+
+\begin{frame}{Kebocoran Data di Indonesia (1/2)}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        Peristiwa & Skala & Keterangan \\
+        \midrule
+        BPJS Kesehatan (Mei 2021) & 279 juta & NIK, nama, alamat, nomor telepon, surel, foto; dijual di Raid Forums dengan harga 0,15 BTC, saat itu setara Rp70--80 juta. \\
+        \addlinespace
+        Tokopedia (2020) & 91 juta pengguna + 7 juta \textit{merchant} & basis data pengguna. \\
+        \addlinespace
+        KPU (2020) & 2,3 juta & data pemilih Pemilu 2014. \\
+        \addlinespace
+        Pasien Covid-19 (2020) & 250 ribu & data pasien. \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.2cm}
+    \begin{alertblock}{Yang perlu dicermati}
+        Harga jualnya sangat murah dibandingkan kerugian yang ditimbulkan. Bagi
+        penyerang, biaya memperoleh data semacam itu memang rendah bila sejak awal
+        tidak dilindungi.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Kebocoran Data di Indonesia (2/2)}
+    \footnotesize
+    \begin{itemize}
+        \item \textbf{Kementerian Pertahanan} --- 1,64 terabita data.
+        \item \textbf{Bank Syariah Indonesia} (Mei 2023) --- 1,5 TB data nasabah,
+              dibobol kelompok peretas LockBit 3.0.
+        \item Dugaan kebocoran data pemilih Pemilu 2014 dan kebocoran sertifikat
+              vaksin.
+    \end{itemize}
+    \vspace{0.15cm}
+    \begin{alertblock}{Kesimpulan yang penting}
+        Persoalannya bukan kecelakaan tunggal, melainkan \kunci{kelemahan yang
+        sistemik}. Umumnya kasus itu \emph{bukan} kegagalan memecahkan algoritma
+        yang kuat, melainkan kunci yang tidak dikelola dengan benar, basis data
+        yang tersimpan tanpa enkripsi, atau kredensial yang bocor.
+    \end{alertblock}
+    \vspace{0.15cm}
+    \begin{block}{Konsekuensi regulasi}
+        Masyarakat berhak mengetahui tujuan penggunaan datanya dan meminta
+        penghapusan; pengelola wajib memitigasi kebocoran dan dapat dikenai sanksi.
+        Tanpa enkripsi yang memadai, mitigasi hanya bersifat administratif.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Penyadapan Komunikasi}
+    \begin{itemize}
+        \item \textbf{Kedutaan Besar RI di Yangon, Myanmar} --- dinilai melanggar
+              Konvensi Wina karena mengganggu fasilitas kedutaan dan menyangkut
+              kerahasiaan.
+        \item \textbf{2013} --- dugaan penyadapan telepon Presiden Susilo Bambang
+              Yudhoyono oleh pemerintah Australia; Indonesia memanggil pulang
+              dubesnya dari Canberra untuk berkonsultasi.
+        \item \textbf{WikiLeaks} --- 400 ribu dokumen Perang Irak (Oktober 2010) dan
+              kawat diplomatik Amerika Serikat (November 2010).
+    \end{itemize}
+    \vspace{0.3cm}
+    \begin{alertblock}{Pelajaran}
+        Penyadapan tidak terbatas pada pelaku kejahatan --- negara pun
+        melakukannya, dan sasarannya dapat berupa saluran komunikasi tingkat
+        tertinggi. Begitu data rahasia tersimpan dalam bentuk yang dapat dibaca,
+        kebocorannya hanya menunggu waktu.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Keamanan Transaksi Elektronik}
+    Kriptografi dipakai untuk melindungi transaksi elektronik, baik data yang
+    disimpan maupun pesan yang dikirim.
+    \vspace{0.25cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Data yang disimpan}
+                Data transaksi dijaga kerahasiaannya di dalam penyimpanan.
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Pesan yang dikirim}
+                Pesan transaksi dijaga kerahasiaannya saat melintas jaringan.
+            \end{block}
+        \end{column}
+    \end{columns}
+    \vspace{0.3cm}
+    Tanpa perlindungan itu, kepercayaan publik terhadap layanan elektronik
+    sulit dibangun.
+\end{frame}
+
+\begin{frame}{Lembaga Terkait Kriptografi di Indonesia}
+    \begin{enumerate}
+        \item \textbf{Badan Siber dan Sandi Negara (BSSN)} --- penggabungan Lembaga
+              Sandi Negara (Lemsaneg) dengan Direktorat Jenderal Aplikasi
+              Informatika (Aptika) Kementerian Komunikasi dan Informatika.
+        \item \textbf{Politeknik Siber dan Sandi Negara (PSSN)} ---
+              menyelenggarakan pendidikan vokasi di bidang persandian.
+    \end{enumerate}
+    \vspace{0.3cm}
+    \begin{exampleblock}{Museum Sandi, Yogyakarta}
+        Beralamat di Jalan Faridan Muridan Noto Nomor 21, Kota Baru, Yogyakarta.
+        Dikatakan sebagai satu-satunya museum sandi di Indonesia, bahkan di dunia.
+        Koleksinya mencakup mesin sandi SN-101.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Tantangan Masa Depan}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \begin{itemize}
+                \item \textbf{Kriptografi ringan} (\textit{lightweight
+                      cryptography}) --- hemat daya, memori, dan siklus komputasi,
+                      layak dipasang pada perangkat IoT.
+                \item \textbf{Kriptografi pasca-kuantum} --- algoritma Shor
+                      mengancam RSA dan ECC, sehingga dikembangkan keluarga baru
+                      berbasis \textit{hash}, kode, multivariat, dan kisi.
+                \item \textbf{Kriptografi berbasis kecerdasan buatan} ---
+                      mempercepat kriptanalisis sekaligus merancang primitif baru.
+                \item \textbf{\textit{Selective encryption}} --- menyandikan hanya
+                      bagian terpenting aliran video.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{01}{lightweight-cryptography-iot.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Rangkuman dan Latihan}
+% =====================================================================
+
+\begin{frame}{Rangkuman (1/2)}
+    \footnotesize
+    \begin{itemize}
+        \item Kriptografi adalah ilmu dan seni menjaga keamanan pesan melalui
+              teknik matematika; dari \textit{crypt\'os} dan \textit{gr\'aphein}.
+        \item Dalam model komunikasi kriptografi, pengirim ditokohkan sebagai
+              \textbf{Alice} dan penerima sebagai \textbf{Bob}; pihak ketiga yang
+              mengancam disebut penyusup.
+        \item Empat masalah keamanan komunikasi pada saluran publik: kerahasiaan,
+              otentikasi, integritas data, dan nir-penyangkalan.
+        \item Sistem kriptografi dimodelkan sebagai \textit{quintuple}
+              $(\mathcal{E},\mathcal{D},\mathcal{M},\mathcal{K},\mathcal{C})$
+              dengan syarat $D_k(E_k(m)) = m$ untuk setiap kunci yang sah.
+        \item Menurut \textbf{Prinsip Kerckhoffs}, algoritma boleh dan harus
+              publik; satu-satunya rahasia adalah kunci.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Rangkuman (2/2)}
+    \footnotesize
+    \begin{itemize}
+        \item Tiga keluarga algoritma: simetri, nir-simetri, dan fungsi hash.
+        \item Enkripsi dipakai untuk \textit{encryption at rest} dan
+              \textit{encryption in motion}.
+        \item Kriptanalisis adalah upaya memecahkan cipherteks tanpa kunci,
+              dirintis Al-Kindi pada abad ke-9 melalui analisis frekuensi;
+              kriptologi mencakup kriptografi sekaligus kriptanalisis.
+        \item \textit{Encoding}, \textit{hashing}, enkripsi, tokenisasi, dan tanda
+              tangan digital adalah lima hal yang berbeda.
+        \item Urgensi nyata: kebocoran data (BPJS Kesehatan, Tokopedia, KPU,
+              Kemenhan, BSI), penyadapan diplomatik, dan pengamanan transaksi
+              elektronik.
+        \item Di Indonesia ditangani BSSN dan PSSN; Museum Sandi di Yogyakarta
+              menjadi sarana pelestarian.
+        \item Tantangan ke depan: kriptografi ringan, pasca-kuantum, berbasis AI,
+              dan \textit{selective encryption}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Latihan}
+    \footnotesize
+    \begin{enumerate}
+        \item Jelaskan perbedaan \textit{confidentiality} dan \textit{integrity}
+              memakai contoh pengiriman nilai ujian mahasiswa.
+        \item Mengapa Prinsip Kerckhoffs menyatakan algoritma harus publik dan
+              hanya kunci yang rahasia? Apa risikonya bila algoritma juga
+              dirahasiakan?
+        \item Sebuah perusahaan menyimpan basis data pelanggan dalam berkas
+              Base64, dan manajemennya mengklaim data itu ``sudah terenkripsi''.
+              Bantah klaim itu dengan menunjukkan apa yang dapat dilakukan
+              penyerang dalam hitungan detik.
+        \item Mengapa empat layanan kriptografi tidak dapat dipenuhi satu
+              mekanisme tunggal? Beri satu contoh ketika kerahasiaan terpenuhi
+              tetapi integritas tidak.
+        \item Bandingkan kriptografi simetri dan nir-simetri dari jumlah kunci
+              yang dikelola dan kecepatan komputasi.
+        \item Tuliskan Caesar cipher sebagai
+              $(\mathcal{E},\mathcal{D},\mathcal{M},\mathcal{K},\mathcal{C})$.
+        \item Sebuah tim mengamankan komunikasi 200 cabang bank. Hitung kunci yang
+              diperlukan pada kriptografi simetri, dan pasangan kunci pada
+              kriptografi nir-simetri.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Checklist Pencapaian Kompetensi}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}X c@{}}
+        \toprule
+        Indikator Kompetensi & Tercapai \\
+        \midrule
+        Saya dapat menjelaskan definisi dan terminologi dasar kriptografi & $\square$ \\
+        \hline
+        Saya dapat membedakan 4 layanan utama (kerahasiaan, otentikasi, integritas, nir-penyangkalan) & $\square$ \\
+        \hline
+        Saya dapat membedakan algoritma simetri dan nir-simetri & $\square$ \\
+        \hline
+        Saya dapat menjelaskan Prinsip Kerckhoffs beserta konsekuensinya & $\square$ \\
+        \hline
+        Saya dapat memberikan contoh kasus urgensi kriptografi di dunia TI & $\square$ \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.35cm}
+    \begin{block}{Pertemuan berikutnya}
+        \textbf{Minggu 2} --- Layanan keamanan dan serangan
+        (Bab 2): jenis-jenis serangan, model ancaman, dan kriptanalisis.
+    \end{block}
+\end{frame}
+
+\end{document}

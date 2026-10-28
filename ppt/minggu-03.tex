@@ -1,0 +1,594 @@
+% =====================================================================
+%  minggu-03.tex  --  Slide Pertemuan Minggu ke-3
+%  Pengantar Kriptografi (MPFA014) -- Prodi Matematika FMIPA UBB
+%
+%  Topik silabus : Landasan matematika
+%  Sumber materi : buku_ajar/chapters/03 (Bab 3)
+%  Sub-CPMK      : 2.3
+%
+%  Kompilasi dari dalam folder ppt/:
+%      compile-ppt.bat 03
+% =====================================================================
+
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{beamer-preamble}
+
+\title{Landasan Matematika untuk Kriptografi}
+\subtitle{Aritmetika modulo, invers modulo, bilangan prima, dan entropi}
+\setWeekInfo{Minggu 3}{Landasan matematika}
+
+\begin{document}
+
+% ----------------------------------------------------------- halaman judul
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------ peta
+\begin{frame}{Peta Materi Pertemuan Ini}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \slidejudul{Enam perkakas}
+            \begin{enumerate}
+                \item Aritmetika modulo dan kekongruenan
+                \item Relatif prima dan PBB
+                \item Algoritma Euclidean
+                \item Invers modulo
+                \item Bilangan prima
+                \item Entropi dan teori informasi
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \begin{block}{Referensi}
+                \footnotesize
+                Bab 3 buku ajar; Munir, \textit{IF4020 Kriptografi},
+                ITB, 2026 (modul 02)
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ---------------------------------------------------- capaian pembelajaran
+\begin{frame}{Capaian Pembelajaran}
+    \begin{block}{Sub-CPMK yang dibebankan}
+        \footnotesize
+        \textbf{Sub-CPMK 2.3} --- Menjelaskan landasan matematika dasar untuk
+        kriptografi, yaitu aritmetika modulo, relatif prima, invers modulo,
+        bilangan prima, serta entropi dan teori informasi.
+    \end{block}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Setelah pertemuan ini, mahasiswa mampu}
+        \begin{itemize}
+            \item menjelaskan aturan sisa bagi dan kekongruenan;
+            \item menjelaskan syarat dua bilangan relatif prima;
+            \item mengidentifikasi invers modulo dan memeriksa hasilnya;
+            \item menjelaskan peran bilangan prima pada algoritma kunci publik;
+            \item menjelaskan entropi dan menafsirkan nilainya.
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Aritmetika Modulo dan Kekongruenan}
+% =====================================================================
+
+\begin{frame}{Mengapa Kriptografi Menuntut Matematika}
+    Caesar cipher cukup dijelaskan dengan pergeseran huruf; algoritma kunci
+    publik tidak.
+    \vspace{0.1cm}
+    \footnotesize
+    \begin{tabularx}{\linewidth}{@{}>{\bfseries\raggedright\arraybackslash}p{4.8cm}
+                                  >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        Perkakas matematika & Dipakai untuk \\
+        \midrule
+        Aritmetika modulo dan kekongruenan & Cipher substitusi seperti Caesar,
+        Vigen\`ere, dan affine. \\
+        \addlinespace
+        PBB, relatif prima, invers modulo & Pemilihan kunci dan dekripsi RSA. \\
+        \addlinespace
+        Bilangan prima & Pembangkitan kunci pada algoritma kunci publik. \\
+        \addlinespace
+        Entropi dan teori informasi & Mengukur kebocoran informasi dan menilai
+        ketahanan cipherteks. \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.15cm}
+    \begin{alertblock}{Benang merah}
+        Tanpa landasan ini, algoritma kriptografi hanya tampak sebagai langkah
+        yang dihafal.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Aritmetika Modulo: Sisa Bagi yang Selalu Nonnegatif}
+    Jika $a$ bilangan bulat dan $n$ bilangan bulat positif, maka $a \bmod n$
+    adalah sisa pembagian $a$ oleh $n$.
+    \[ a = qn + r, \qquad 0 \le r < n. \]
+    Nilai $r$ inilah yang disebut $a \bmod n$, dan syarat $0 \le r < n$ membuat
+    hasilnya \kunci{tunggal}.
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Contoh}
+                \begin{itemize}
+                    \item $23 \bmod 5 = 3$, karena $23 = 4 \cdot 5 + 3$.
+                    \item $-41 \bmod 9 = 4$, karena
+                          $-41 = (-5)\cdot 9 + 4$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Membaca hasilnya}
+                Pada contoh kedua, $-45$ adalah kelipatan 9 terbesar yang tidak
+                melebihi $-41$; selisihnya $4$ menjadi sisa.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Contoh Modulo Bilangan Negatif}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            Aturannya tidak berubah: jawaban harus berada pada $0 \le r < n$.
+            Karena itu hasil modulo bilangan negatif \kunci{tidak boleh negatif}.
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item $-41 \bmod 9 = 4$, sebab
+                      $-41 = (-5)\cdot 9 + 4$.
+                \item $-24 \bmod 11 = 9$, sebab
+                      $-24 = (-3)\cdot 11 + 9$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \begin{exampleblock}{Pemeriksaan}
+                Pada contoh kedua, $(-3)\cdot 11 = -33$ dan
+                $-24 - (-33) = 9$. Mengalikan kembali seperti ini adalah
+                kebiasaan memeriksa yang baik.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Kekongruenan: Pernyataan tentang Selisih}
+    Dua bilangan $a$ dan $b$ disebut \textbf{kongruen modulo $n$}, ditulis
+    $a \equiv b \pmod n$, jika $n$ membagi habis $a - b$.
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}
+                \item $17 \equiv 2 \pmod 3$, karena $3 \mid (17 - 2)$.
+                \item $-7 \equiv 15 \pmod{11}$, karena
+                      $11 \mid (-7 - 15)$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Dua notasi yang berbeda}
+                $a \bmod n$ adalah sebuah \emph{bilangan}, yaitu sisanya;
+                $a \equiv b \pmod n$ adalah \emph{pernyataan} benar atau salah.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Sifat yang Mengikuti Definisi Kekongruenan}
+    Bila $a \equiv b \pmod n$, maka menambahkan atau mengalikan bilangan yang
+    sama pada kedua ruas tidak mengubah kebenarannya.
+    \vspace{0.2cm}
+    \begin{block}{Tiga akibat langsung}
+        \begin{itemize}
+            \item $a + c \equiv b + c \pmod n$ untuk setiap bilangan bulat $c$;
+            \item $a \cdot c \equiv b \cdot c \pmod n$ untuk setiap bilangan
+                  bulat $c$;
+            \item $a^k \equiv b^k \pmod n$ untuk setiap bilangan bulat positif
+                  $k$.
+        \end{itemize}
+    \end{block}
+    \vspace{0.15cm}
+    \begin{exampleblock}{Contoh pemakaian}
+        Karena $17 \equiv 2 \pmod 3$, maka $17 \cdot 5 \equiv 2 \cdot 5
+        \pmod 3$ dan $17^2 \equiv 2^2 \pmod 3$.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Relatif Prima dan Invers Modulo}
+% =====================================================================
+
+\begin{frame}{Relatif Prima dan Pembagi Persekutuan Terbesar}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Definisi}
+                PBB dari $a$ dan $b$ adalah bilangan bulat positif terbesar
+                yang membagi habis keduanya. Bila $\text{PBB}(a,b) = 1$, maka
+                $a$ dan $b$ disebut \textbf{relatif prima}.
+            \end{block}
+            \begin{itemize}
+                \item $23$ dan $40$ relatif prima karena
+                      $\text{PBB}(23,40) = 1$.
+                \item $48$ dan $18$ tidak relatif prima karena
+                      $\text{PBB}(48,18) = 6$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{alertblock}{Kaitannya dengan invers}
+                Relatif prima adalah syarat keberadaan invers modulo: invers
+                $a$ modulo $n$ hanya ada bila $\text{PBB}(a,n) = 1$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Algoritma Euclidean}
+    PBB dihitung dengan pembagian berulang sampai sisanya nol. Sisa bukan nol
+    terakhir adalah PBB-nya.
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \[
+            \begin{aligned}
+                48 &= 2 \cdot 18 + 12\\
+                18 &= 1 \cdot 12 + 6\\
+                12 &= 2 \cdot 6 + 0
+            \end{aligned}
+            \]
+            Sisa bukan nol terakhir adalah $6$, jadi
+            \kunci{$\text{PBB}(48,18) = 6$}.
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Cara kerja}
+                Setiap langkah mengganti pasangan bilangan dengan pasangan
+                baru yang lebih kecil, yaitu pembagi dan sisanya. Proses
+                berhenti ketika sisa menjadi nol.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Invers Modulo}
+    Invers modulo $a$ modulo $n$ adalah bilangan $x$ yang memenuhi
+    \[ a \cdot x \equiv 1 \pmod n. \]
+    Invers itu ada jika dan hanya jika $a$ dan $n$ relatif prima.
+    \vspace{0.1cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{exampleblock}{Dua contoh dari buku ajar}
+                \begin{itemize}
+                    \item $4^{-1} \bmod 9 \equiv 7 \pmod 9$, karena
+                          $4 \cdot 7 = 28 = 3 \cdot 9 + 1$.
+                    \item $23^{-1} \bmod 10 \equiv -3 \equiv 7 \pmod{10}$,
+                          karena $23 \cdot (-3) = -69 = (-7)\cdot 10 + 1$.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{alertblock}{Bukan kebalikan biasa}
+                Pada modulo 9, $4^{-1}$ bukan $1/4$ melainkan $7$. Invers
+                selalu diperiksa dengan mengalikan kembali lalu mengurangi
+                modulo $n$.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Contoh Terhitung --- Invers $23^{-1} \bmod 10$ (1/2)}
+    \footnotesize
+    Syarat diperiksa lebih dahulu dengan Algoritma Euclidean. Setiap baris
+    mencatat operasi pembagian dan sisanya.
+    \vspace{0.15cm}
+    \begin{tabularx}{\linewidth}{@{}>{\bfseries}p{1.0cm}
+                                  >{\raggedright\arraybackslash}p{7.0cm}
+                                  >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        No. & Operasi & Hasil \\
+        \midrule
+        1 & $23 = 2 \cdot 10 + 3$ & sisa $3$ \\
+        \addlinespace
+        2 & $10 = 3 \cdot 3 + 1$ & sisa $1$ \\
+        \addlinespace
+        3 & $3 = 3 \cdot 1 + 0$ & sisa $0$ \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.25cm}
+    \begin{block}{Hasil pemeriksaan syarat}
+        Sisa bukan nol terakhir adalah $1$, sehingga
+        $\text{PBB}(23,10) = 1$. Karena kedua bilangan relatif prima, invers
+        $23^{-1} \bmod 10$ ada.
+    \end{block}
+\end{frame}
+
+\begin{frame}{Contoh Terhitung --- Invers $23^{-1} \bmod 10$ (2/2)}
+    \footnotesize
+    Koefisien dicari dengan substitusi balik dari sisa terakhir ke atas.
+    \vspace{0.15cm}
+    \begin{tabularx}{\linewidth}{@{}>{\bfseries}p{1.0cm}
+                                  >{\raggedright\arraybackslash}p{8.2cm}
+                                  >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        No. & Operasi & Hasil \\
+        \midrule
+        4 & $1 = 10 - 3 \cdot 3$ & bentuk awal \\
+        \addlinespace
+        5 & $3 = 23 - 2 \cdot 10$ & siap disubstitusikan \\
+        \addlinespace
+        6 & $1 = 10 - 3(23 - 2 \cdot 10) = 7 \cdot 10 - 3 \cdot 23$
+          & koefisien $23$ adalah $-3$ \\
+        \addlinespace
+        7 & $x \equiv -3 \pmod{10}$ lalu dinormalkan & $x = 7$ \\
+        \bottomrule
+    \end{tabularx}
+    \vspace{0.2cm}
+    \begin{exampleblock}{Pemeriksaan hasil}
+        $23 \cdot 7 = 161 = 16 \cdot 10 + 1$, jadi
+        $23 \cdot 7 \equiv 1 \pmod{10}$. Hasil ini setara dengan
+        $23 \cdot (-3) = -69 = (-7)\cdot 10 + 1$ pada buku ajar.
+    \end{exampleblock}
+\end{frame}
+
+% =====================================================================
+\section{Bilangan Prima}
+% =====================================================================
+
+\begin{frame}{Bilangan Prima}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Definisi}
+                Bilangan prima adalah bilangan bulat lebih besar dari 1 yang
+                hanya habis dibagi oleh 1 dan dirinya sendiri.
+            \end{block}
+            \begin{itemize}
+                \item $2, 3, 5, 7, 11, 13$ adalah bilangan prima.
+                \item $9$ bukan prima karena $9 = 3 \cdot 3$.
+                \item $1$ bukan prima karena tidak lebih besar dari 1.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{alertblock}{Perannya pada kriptografi}
+                Bilangan prima dipakai pada algoritma kunci publik. Sifat
+                \"hanya habis dibagi 1 dan dirinya sendiri\" menjadi bahan
+                pembangkitan kunci.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Teori Informasi dan Entropi}
+% =====================================================================
+
+\begin{frame}{Teori Informasi: Ukuran dalam Bit}
+    Teori informasi mempelajari kuantisasi, penyimpanan, transmisi, dan
+    pengolahan informasi. Bagi kriptografi, ia memberi ukuran seberapa besar
+    informasi yang dibocorkan sebuah pesan.
+    \vspace{0.15cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.50\textwidth}
+            \begin{block}{Banyaknya bit bergantung pada pilihan}
+                \begin{itemize}
+                    \item $1$ bit cukup untuk jenis kelamin, karena ada dua
+                          kemungkinan.
+                    \item $3$ bit untuk nama hari, karena $2^3 = 8 \ge 7$.
+                    \item $4$ bit untuk angka $0$ sampai $9$, karena
+                          $2^4 = 16 \ge 10$.
+                \end{itemize}
+            \end{block}
+        \end{column}
+        \begin{column}{0.46\textwidth}
+            \begin{exampleblock}{Penyimpanan}
+                Pemampatan data mengurangi ukuran ruang penyimpanan dengan
+                membuang bagian pesan yang dapat diduga.
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Entropi Shannon}
+    \begin{block}{Rumus entropi}
+        \[ H(X) = -\sum_{i=1}^{n} p(x_i) \log_2 p(x_i), \]
+        dengan $X$ variabel acak pesan, $x_i$ simbol ke-$i$, $n$ banyaknya
+        simbol, dan $p(x_i)$ peluang kemunculan simbol $x_i$.
+    \end{block}
+    \vspace{0.15cm}
+    Entropi mengukur ketidakpastian, yaitu jumlah rata-rata informasi di
+    dalam pesan, dan dinyatakan dalam bit.
+    \vspace{0.1cm}
+    \begin{itemize}
+        \item Semakin acak suatu data, semakin tinggi entropinya.
+        \item Cipherteks adalah pesan dengan entropi tinggi.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Contoh Entropi Sebuah Pesan Pendek}
+    \footnotesize
+    Pesan $X = \code{AABBCBDB}$ memuat 8 simbol dengan $p(A) = 2/8$,
+    $p(B) = 4/8$, serta $p(C) = p(D) = 1/8$. Substitusi ke rumus memberi
+    \[
+    \begin{aligned}
+        H(X) &= -\left(\tfrac14 \log_2 \tfrac14 + \tfrac12 \log_2 \tfrac12
+                 + \tfrac18 \log_2 \tfrac18 + \tfrac18 \log_2 \tfrac18\right)\\
+             &= -\left(\tfrac14(-2) + \tfrac12(-1) + \tfrac18(-3)
+                 + \tfrac18(-3)\right)\\
+             &= 1{,}75\ \text{bit/simbol}.
+    \end{aligned}
+    \]
+    \begin{exampleblock}{Tafsir}
+        Entropi maksimum untuk empat simbol adalah $\log_2 4 = 2$ bit.
+        Sebaran yang tidak seragam ini menghasilkan $1{,}75$ bit/simbol,
+        yaitu lebih rendah daripada maksimumnya.
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Rentang Nilai Entropi}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.54\textwidth}
+            \[ 0 \le H(X) \le \log_2 n. \]
+            \begin{itemize}
+                \item \textbf{Minimum} $H = 0$ bit terjadi bila hanya ada satu
+                      simbol dengan peluang 1: $H = -1 \cdot \log_2 1 = 0$.
+                \item \textbf{Maksimum} $H = \log_2 n$ bit terjadi bila semua
+                      simbol berpeluang sama $1/n$. Untuk empat simbol dengan
+                      peluang $0{,}25$, diperoleh $2$ bit.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.42\textwidth}
+            \centering
+            \begin{tikzpicture}[font=\scriptsize]
+                \draw[-{Latex[length=2.2mm]}, thick] (0,0) -- (5.2,0);
+                \draw[ubbblue, line width=5pt] (0.25,0.22) -- (4.95,0.22);
+                \node[below] at (0.25,-0.02) {$0$};
+                \node[below] at (4.95,-0.02) {$\log_2 n$};
+                \node[above, align=center] at (1.15,0.50)
+                    {satu simbol};
+                \node[above, align=center] at (4.15,0.50)
+                    {semua peluang sama};
+            \end{tikzpicture}
+            \figsumber{Rentang entropi, diringkas dari buku ajar Bab 3.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Entropi Maksimum Alfabet Tertentu}
+    Bila seluruh 26 huruf A--Z berpeluang sama, yaitu $p_i = 1/26$, maka
+    \[
+        H_{\max} = -\sum_{i=1}^{26} \frac{1}{26} \log_2 \frac{1}{26}
+                 = \log_2 26 = 4{,}7004\ \text{bit/karakter}.
+    \]
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Pembanding}
+                Untuk 256 karakter ASCII, entropi maksimumnya adalah
+                $\log_2 256 = 8$ bit/karakter.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Teks nyata tidak seragam}
+                Pesan bermakna tidak memakai huruf dengan peluang sama,
+                sehingga entropinya berada di bawah $4{,}7004$ bit/karakter.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Studi Kasus: Entropi Berita Kota Ternate}
+    \footnotesize
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.52\textwidth}
+            Kutipan berita memuat 296 huruf setelah spasi dan tanda baca
+            dibuang, dengan 21 huruf berbeda. Sebarannya tidak rata: huruf A
+            muncul 59 kali, N 34 kali, dan E 29 kali.
+            \vspace{0.1cm}
+            \[ H(P) = 3{,}8988\ \text{bit/karakter} \approx 82{,}95\%. \]
+            Setelah dienkripsi, entropi cipherteks menjadi
+            \[ H(C) = 4{,}3035\ \text{bit/karakter} \approx 91{,}55\%. \]
+            Kedua persentase dihitung terhadap $\log_2 26 = 4{,}7004$.
+        \end{column}
+        \begin{column}{0.44\textwidth}
+            \centering
+            \bookfig[1.0\linewidth]{03}{frekuensi-huruf-ternate.png}
+            \figsumber{Munir, \textit{IF4020 Kriptografi}, ITB.}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Entropi dan Keamanan Cipherteks}
+    \begin{block}{Makin tinggi entropi, makin sulit dipecahkan}
+        Cipherteks yang sebarannya masih menyerupai plainteks menyimpan pola
+        bahasa dan rentan terhadap analisis frekuensi.
+    \end{block}
+    \vspace{0.2cm}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Cipherteks yang baik}
+                Sebaran hurufnya lebih rata, sehingga pola plainteks tidak
+                lagi tampak.
+            \end{exampleblock}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Pelajaran dari studi kasus}
+                Entropi naik dari $3{,}8988$ menjadi $4{,}3035$
+                bit/karakter setelah enkripsi meratakan sebaran huruf.
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Rangkuman dan Latihan}
+% =====================================================================
+
+\begin{frame}{Rangkuman (1/2)}
+    \footnotesize
+    \begin{itemize}
+        \item $a \bmod n$ adalah sisa pembagian dengan $0 \le r < n$;
+              untuk bilangan negatif hasilnya tetap nonnegatif, misalnya
+              $-41 \bmod 9 = 4$ dan $-24 \bmod 11 = 9$.
+        \item $a \equiv b \pmod n$ berarti $n$ membagi habis $a - b$;
+              notasi ini menyatakan pernyataan, bukan bilangan.
+        \item Penjumlahan, perkalian, dan pemangkatan pada kedua ruas
+              mempertahankan kebenaran kekongruenan.
+        \item Dua bilangan relatif prima bila PBB keduanya 1, misalnya
+              $\text{PBB}(23,40) = 1$.
+        \item Algoritma Euclidean mencari PBB melalui pembagian berulang;
+              contohnya $\text{PBB}(48,18) = 6$.
+        \item Invers modulo $x = a^{-1} \bmod n$ memenuhi
+              $a \cdot x \equiv 1 \pmod n$ dan hanya ada bila
+              $\text{PBB}(a,n) = 1$; contohnya $4^{-1} \bmod 9 \equiv 7$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Rangkuman (2/2)}
+    \footnotesize
+    \begin{itemize}
+        \item Bilangan prima adalah bilangan lebih besar dari 1 yang hanya
+              habis dibagi 1 dan dirinya sendiri, misalnya
+              $2, 3, 5, 7, 11, 13$.
+        \item Bilangan prima dipakai pada algoritma kunci publik.
+        \item Entropi Shannon
+              $H(X) = -\sum_i p(x_i)\log_2 p(x_i)$ mengukur ketidakpastian
+              pesan dalam bit.
+        \item Rentang entropi adalah $0 \le H(X) \le \log_2 n$; nilai minimum
+              terjadi pada satu simbol berpeluang 1, nilai maksimum pada
+              sebaran seragam.
+        \item Entropi maksimum alfabet 26 huruf adalah
+              $\log_2 26 = 4{,}7004$ bit/karakter, sedangkan ASCII memberi
+              $8$ bit/karakter.
+        \item Pada berita Kota Ternate, entropi naik dari $3{,}8988$ menjadi
+              $4{,}3035$ bit/karakter setelah enkripsi.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Latihan}
+    \footnotesize
+    \begin{enumerate}
+        \item Hitunglah nilai dari $-24 \bmod 11$.
+        \item Tentukan invers modulo dari $12 \bmod 5$, lalu periksa hasilnya
+              dengan mengalikan kembali.
+        \item Sebuah pesan memiliki huruf A, B, C, dan D dengan peluang
+              masing-masing $0{,}25$. Hitunglah entropinya.
+        \item Tentukan $\text{PBB}(48,18)$ dengan Algoritma Euclidean.
+        \item Jelaskan mengapa invers modulo $a^{-1} \bmod n$ hanya ada jika
+              $\text{PBB}(a,n) = 1$.
+        \item Sebuah pesan 200 huruf memiliki entropi $4{,}2$ bit/karakter.
+              Berapa persen entropi maksimum alfabet 26 huruf yang dicapainya,
+              dan apa artinya bagi ketahanan cipherteks terhadap analisis
+              frekuensi?
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Yang Harus Diingat}
+    \begin{block}{Empat butir kunci}
+        \begin{itemize}
+            \item Sisa bagi selalu memenuhi $0 \le r < n$, termasuk ketika
+                  bilangan yang dibagi negatif.
+            \item Invers modulo hanya ada untuk pasangan yang relatif prima,
+                  dan hasilnya diperiksa dengan perkalian.
+            \item Bilangan prima menjadi bahan algoritma kunci publik.
+            \item Entropi mengukur ketidakpastian; enkripsi yang meratakan
+                  sebaran huruf menaikkan entropi cipherteks.
+        \end{itemize}
+    \end{block}
+    \vspace{0.3cm}
+    \begin{exampleblock}{Pertemuan berikutnya}
+        \textbf{Minggu 4 --- Kriptografi klasik I}
+    \end{exampleblock}
+\end{frame}
+
+\end{document}
